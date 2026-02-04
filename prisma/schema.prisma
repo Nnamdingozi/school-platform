@@ -5,10 +5,337 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+// ---------------- Enums ----------------
+
+enum Role {
+  SUPER_ADMIN
+  SCHOOL_ADMIN
+  TEACHER
+  STUDENT
+  PARENT
+  INDIVIDUAL_LEARNER
+}
+
+enum AssessmentType {
+  TOPIC_BASED
+  WEEKLY
+  TERMLY
+  YEARLY
+}
+
+// ---------------- Core Tenancy Models ----------------
+
+model School {
+  id           String     @id @default(uuid())
+  name         String
+  curriculumId String
+  curriculum   Curriculum @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
+
+  users     User[]
+  classes   Class[]
+  curricula Curriculum[] @relation("SchoolCurriculum")
+
+  grades           Grade[]
+  terms            Term[]
+  subjects         Subject[]
+  topics           Topic[]
+  classEnrollments ClassEnrollment[]
+  assessments      Assessment[]
+  lessons          Lesson[]
+  feedbacks        Feedback[]
+  gradeSubjects    GradeSubject[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id    String  @id @default(uuid())
+  email String  @unique
+  name  String?
+  role  Role
+
+  // Tenancy
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  // Every user has a curriculum
+  curriculumId String
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
+
+  // Relations
+  taughtClasses       Class[]           @relation("TeacherClasses")
+  assessments         Assessment[]      @relation("StudentAssessments")
+  gradeSubjectsTaught GradeSubject[]    @relation("TeacherGradeSubjects")
+  classEnrollments    ClassEnrollment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+  @@index([curriculumId])
+}
+
+// ---------------- Curriculum Hierarchy ----------------
+
+model Curriculum {
+  id   String @id @default(uuid())
+  name String
+
+  // Optional: which school is using this curriculum as tenant-scoped copy
+  schoolId String?
+  school   School? @relation("SchoolCurriculum", fields: [schoolId], references: [id])
+
+  grades         Grade[]
+  subjects       Subject[]
+  users          User[]
+  primarySchools School[]  @relation("SchoolPrimaryCurriculum")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+}
+
+model Grade {
+  id    String @id @default(uuid())
+  // Structural / canonical level (curriculum-agnostic)
+  level Int // e.g. 1, 2, 3...
+  slug  String // e.g. "grade-1", "year-1", "primary-1"
+
+  // Curriculum-specific display naming
+  displayName String // e.g. "Grade 1", "Year 1", "Primary 1"
+  shortName   String? // e.g. "G1", "Y1"
+
+  curriculumId String
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  terms         Term[]
+  classes       Class[]
+  gradeSubjects GradeSubject[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([curriculumId, level])
+  @@index([schoolId])
+  @@index([curriculumId])
+}
+
+model Term {
+  id    String @id @default(uuid())
+  // Structural index within a grade
+  index Int // e.g. 1, 2, 3...
+
+  // Curriculum-specific display naming
+  displayName String // e.g. "Term 1", "Semester 1", "Trimester 1"
+
+  gradeId String
+  grade   Grade  @relation(fields: [gradeId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  topics Topic[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([gradeId, index])
+  @@index([schoolId])
+}
+
+model Subject {
+  id   String @id @default(uuid())
+  name String
+
+  curriculumId String
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  gradeSubjects GradeSubject[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+  @@index([curriculumId])
+}
+
+model Topic {
+  id    String @id @default(uuid())
+  title String
+
+  gradeSubjectId String
+  gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
+
+  termId String
+  term   Term   @relation(fields: [termId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  lessons     Lesson[]
+  assessments Assessment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+}
+
+// ---------------- Classroom & Teaching ----------------
+
+model Class {
+  id   String @id @default(uuid())
+  name String
+
+  gradeId String
+  grade   Grade  @relation(fields: [gradeId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  teacherId String
+  teacher   User   @relation("TeacherClasses", fields: [teacherId], references: [id])
+
+  // Optional: membership through join table
+  enrollments ClassEnrollment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+}
+
+model ClassEnrollment {
+  id        String @id @default(uuid())
+  classId   String
+  studentId String
+
+  class   Class @relation(fields: [classId], references: [id])
+  student User  @relation(fields: [studentId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+}
+
+// ---------------- Assessment System ----------------
+
+model Assessment {
+  id   String         @id @default(uuid())
+  type AssessmentType
+
+  // Required: the student being assessed
+  studentId String
+  student   User   @relation("StudentAssessments", fields: [studentId], references: [id])
+
+  // Links to the specific subject taught in a grade
+  gradeSubjectId String
+  gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
+
+  // Optional: topic-level assessment within that GradeSubject
+  topicId String?
+  topic   Topic?  @relation(fields: [topicId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  score    Float?
+  maxScore Float?
+  comments String?
+
+  feedbacks Feedback[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+}
+
+// ---------------- AI & Integration ----------------
+
+model Lesson {
+  id      String  @id @default(uuid())
+  title   String
+  content String?
+
+  topicId String
+  topic   Topic  @relation(fields: [topicId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  // AI-generated scripts, charts, etc.
+  aiContent Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+}
+
+model Feedback {
+  id           String     @id @default(uuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  message String?
+
+  // WhatsApp tracking
+  whatsappSid String?
+  sentAt      DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+}
+
+// ---------------- Grade-Subject Architecture ----------------
+
+model GradeSubject {
+  id String @id @default(uuid())
+
+  gradeId String
+  grade   Grade  @relation(fields: [gradeId], references: [id])
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  // Teacher responsible for this subject in this grade (usually across all terms)
+  teacherId String?
+  teacher   User?   @relation("TeacherGradeSubjects", fields: [teacherId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  topics      Topic[]
+  assessments Assessment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([gradeId, subjectId])
+  @@index([schoolId])
 }
