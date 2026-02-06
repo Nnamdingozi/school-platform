@@ -7,11 +7,9 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "postgresql"
 }
-
 // ---------------- Enums ----------------
 
 enum Role {
@@ -87,7 +85,12 @@ model User {
 
 model Curriculum {
   id   String @id @default(uuid())
-  name String
+  name String // e.g., "British National"
+
+  // Magic labels: naming per country/curriculum
+  yearLabel    String @default("Year")    // "Year", "Grade", or "Class"
+  termLabel    String @default("Term")    // "Term", "Semester", or "Quarter"
+  subjectLabel String @default("Subject") // "Subject" or "Course"
 
   // Optional: which school is using this curriculum as tenant-scoped copy
   schoolId String?
