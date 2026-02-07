@@ -56,7 +56,7 @@ export function PerformanceCharts() {
                 color: "#10b981",
               },
             }}
-            className="h-[200px] w-full"
+            className="h-50 w-full"
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topicScores} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -92,7 +92,7 @@ export function PerformanceCharts() {
           <CardDescription>Term 2 progress overview</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center">
-          <div className="relative h-[160px] w-[160px]">
+          <div className="relative h-40 w-40">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
