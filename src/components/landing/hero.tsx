@@ -82,7 +82,7 @@ export function Hero() {
             >
               <Button 
                 size="lg" 
-                className="group gap-2 bg-amber-500 px-8 text-base font-semibold text-white hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-amber-500/20"
+                className="group gap-2 bg-amber-500 px-8 text-base font-semibold text-white hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 shadow-lg shadow-amber-500/20"
               >
                 Register Your School
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -125,29 +125,29 @@ export function Hero() {
                 className="relative z-10 h-auto w-full rounded-xl shadow-inner"
               />
               
-              {/* Floating Badge 1 */}
-              <motion.div
-                className="absolute -left-6 bottom-12 z-20 hidden rounded-xl border border-white/30 bg-white/80 px-4 py-3 shadow-xl backdrop-blur-md lg:flex"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                  <span className="text-xs font-bold text-slate-800">AI Lesson Generated</span>
-                </div>
-              </motion.div>
+          {/* Floating Badge 1 - Moved INWARD from the left */}
+<motion.div
+  className="absolute left-6 bottom-12 z-20 hidden rounded-xl border border-white/40 bg-white/70 px-4 py-3 shadow-lg backdrop-blur-md lg:flex"
+  animate={{ y: [0, -10, 0] }}
+  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+>
+  <div className="flex items-center gap-2">
+    <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+    <span className="text-xs font-bold text-slate-800">AI Lesson Generated</span>
+  </div>
+</motion.div>
 
-              {/* Floating Badge 2 */}
-              <motion.div
-                className="absolute -right-6 top-12 z-20 hidden rounded-xl border border-white/30 bg-white/80 px-4 py-3 shadow-xl backdrop-blur-md lg:flex"
-                animate={{ y: [0, -12, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-                  <span className="text-xs font-bold text-slate-800">98% Mastery Rate</span>
-                </div>
-              </motion.div>
+{/* Floating Badge 2 - Moved INWARD from the right */}
+<motion.div
+  className="absolute right-6 top-12 z-20 hidden rounded-xl border border-white/40 bg-white/70 px-4 py-3 shadow-lg backdrop-blur-md lg:flex"
+  animate={{ y: [0, -12, 0] }}
+  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+>
+  <div className="flex items-center gap-2">
+    <div className="h-2.5 w-2.5 rounded-full bg-amber-500 animate-pulse" />
+    <span className="text-xs font-bold text-slate-800">98% Mastery Rate</span>
+  </div>
+</motion.div>
             </motion.div>
           </motion.div>
 
