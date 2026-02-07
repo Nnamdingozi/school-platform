@@ -13,6 +13,20 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
+const cardVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        delay: i * 0.1, // Staggers the cards
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    }),
+  };
+
 const pillars = [
   {
     icon: School,
@@ -49,79 +63,93 @@ const pillars = [
   },
 ];
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 32 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, delay: i * 0.15, ease: [0.25, 0.4, 0.25, 1] },
-  }),
-};
+// const cardVariants = {
+//   hidden: { opacity: 0, y: 32 },
+//   visible: (i: number) => ({
+//     opacity: 1,
+//     y: 0,
+//     transition: { duration: 0.5, delay: i * 0.15, ease: [0.25, 0.4, 0.25, 1] },
+//   }),
+// };
 
 export function Pillars() {
   return (
-    <section className="bg-background py-20 lg:py-28">
-      <div className="mx-auto max-w-7xl px-6">
-        <motion.div
-          className="mx-auto mb-16 max-w-2xl text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
-        >
-          <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-primary">
-            Built for Everyone
-          </p>
-          <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            Three Pillars,{" "}
-            <span className="bg-gradient-to-r from-[hsl(217,91%,60%)] to-[hsl(199,89%,48%)] bg-clip-text text-transparent">
-              One Platform
-            </span>
-          </h2>
-          <p className="mt-4 text-pretty text-lg leading-relaxed text-muted-foreground">
-            Whether you run a school, teach a class, or support your child at
-            home, SchoolPlatform has you covered.
-          </p>
-        </motion.div>
+    <section className="bg-background py-24 lg:py-32">
+  <div className="mx-auto max-w-7xl px-6">
+    {/* Header Section */}
+    <motion.div
+      className="mx-auto mb-20 max-w-2xl text-center"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.7, ease: "easeOut" }}
+    >
+      <p className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-amber-600">
+        Built for Everyone
+      </p>
+      <h2 className="text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+        Three Pillars,{" "}
+        <span className="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 bg-clip-text text-transparent">
+          One Platform
+        </span>
+      </h2>
+      <p className="mt-6 text-pretty text-lg leading-relaxed text-muted-foreground">
+        Whether you run a school, teach a class, or support your child at
+        home, SchoolPlatform has you covered.
+      </p>
+    </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-3">
-          {pillars.map((pillar, i) => (
-            <motion.div
-              key={pillar.title}
-              custom={i}
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-60px" }}
-              whileHover={{ y: -6, transition: { duration: 0.25 } }}
-              className="group rounded-2xl border border-border bg-card p-8 transition-shadow hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
-            >
+    {/* Grid of Pillar Cards */}
+    <div className="grid gap-8 md:grid-cols-3">
+      {pillars.map((pillar, i) => (
+        <motion.div
+          key={pillar.title}
+          custom={i}
+          variants={cardVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          whileHover={{ 
+            y: -10, 
+            scale: 1.02,
+            transition: { duration: 0.3 } 
+          }}
+          className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 shadow-sm transition-all hover:border-amber-500/30 hover:shadow-2xl hover:shadow-amber-500/10"
+        >
+          {/* Subtle background glow on hover */}
+          <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-amber-500/5 blur-3xl transition-opacity group-hover:opacity-100" />
+
+          {/* Icon Container */}
+          <div className="mb-8 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 ring-1 ring-amber-200/50 transition-colors group-hover:bg-amber-500 group-hover:text-white">
+            <pillar.icon className="h-7 w-7" />
+          </div>
+
+          <h3 className="mb-4 text-2xl font-bold text-foreground">
+            {pillar.title}
+          </h3>
+          
+          <p className="mb-8 leading-relaxed text-muted-foreground">
+            {pillar.description}
+          </p>
+
+          {/* Feature List */}
+          <div className="flex flex-col gap-4">
+            {pillar.features.map((feature) => (
               <div
-                className={`mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl ${pillar.color}`}
+                key={feature.text}
+                className="flex items-center gap-3 text-sm font-medium text-foreground/80"
               >
-                <pillar.icon className="h-6 w-6" />
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-amber-600 group-hover:bg-amber-500/10">
+                   <feature.icon className="h-3 w-3" />
+                </div>
+                {feature.text}
               </div>
-              <h3 className="mb-3 text-xl font-semibold text-foreground">
-                {pillar.title}
-              </h3>
-              <p className="mb-6 leading-relaxed text-muted-foreground">
-                {pillar.description}
-              </p>
-              <div className="flex flex-col gap-3">
-                {pillar.features.map((feature) => (
-                  <div
-                    key={feature.text}
-                    className="flex items-center gap-3 text-sm text-foreground"
-                  >
-                    <feature.icon className="h-4 w-4 text-primary" />
-                    {feature.text}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
+            ))}
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
   );
 }
