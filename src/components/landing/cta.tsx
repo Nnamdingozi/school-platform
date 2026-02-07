@@ -42,7 +42,8 @@ export function CTA() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               Ready to{" "}
-              <span className="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 bg-clip-text text-transparent">
+
+              <span className="bg-linear-to-r from-[hsl(217,91%,60%)] to-[hsl(199,89%,48%)] bg-clip-text text-transparent">
                 Transform
               </span>{" "}
               Your School?
