@@ -1,0 +1,144 @@
+{
+    "subject": "Physics",
+    "curriculum": [
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Fundamentals and Derived Quantities and Units" },
+              { "week": 2, "topic": "Measurements of Mass, Weight, Length and Time" },
+              { "week": 3, "topic": "Position, Distance and Displacement" },
+              { "week": 4, "topic": "Scalars and Vectors" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Speed, Velocity and Acceleration" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Motion" },
+              { "week": 9, "topic": "Motion (Continued)" },
+              { "week": 10, "topic": "Motion (Continued)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Linear Momentum: Newton’s Laws of Motion" },
+              { "week": 2, "topic": "Work, Energy and Power" },
+              { "week": 3, "topic": "Mechanical Energy: Machines" },
+              { "week": 4, "topic": "Heat Energy I: Temperature and Its Measurement" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Heat Energy II: Heat Measurement" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Particulate Nature of Matter" },
+              { "week": 9, "topic": "Particulate Nature of Matter (Continued)" },
+              { "week": 10, "topic": "Particulate Nature of Matter (Continued)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Fluids at Rest and in Motion" },
+              { "week": 2, "topic": "Gas Laws" },
+              { "week": 3, "topic": "Simple Harmonic Motion" },
+              { "week": 4, "topic": "Projectile" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Types of Waves" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Properties of Waves" },
+              { "week": 9, "topic": "Properties of Waves (Continued)" },
+              { "week": 10, "topic": "Properties of Waves (Continued)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Light Waves I" },
+              { "week": 2, "topic": "Light Waves II" },
+              { "week": 3, "topic": "Sound Waves" },
+              { "week": 4, "topic": "Human Eye" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Application of Sound Waves" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Electric Charges" },
+              { "week": 9, "topic": "Description and Properties of Fields" },
+              { "week": 10, "topic": "Gravitational Field" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Electric Field" },
+              { "week": 2, "topic": "Magnetic Fields" },
+              { "week": 3, "topic": "Electro-Magnetic Field" },
+              { "week": 4, "topic": "Simple A.C. Circuits" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Battery" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Solar Collector" },
+              { "week": 9, "topic": "Revision" },
+              { "week": 10, "topic": "Examination" },
+              { "week": 11, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Electrical Continuity Testing" },
+              { "week": 2, "topic": "Electroplating" },
+              { "week": 3, "topic": "Application of Electromagnetic Field" },
+              { "week": 4, "topic": "Models of the Atom" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Nucleus" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Energy Quantization" },
+              { "week": 9, "topic": "Duality of Matter" },
+              { "week": 10, "topic": "Energy and Society" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Conversion of Energy" },
+              { "week": 2, "topic": "Transmission System" },
+              { "week": 3, "topic": "Uses of Machines" },
+              { "week": 4, "topic": "Repair and Maintenance of Machines" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Dams and Energy Production" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Rockets and Satellites" },
+              { "week": 9, "topic": "Niger-SAT 1" },
+              { "week": 10, "topic": "NICOM-SAT 1" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

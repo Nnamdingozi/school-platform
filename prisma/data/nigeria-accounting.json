@@ -1,0 +1,132 @@
+{
+  "subject": "Financial Accounting",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Book-Keeping and Accounting", "description": "Meaning of book-keeping; Difference between book-keeping and accounting; Importance of accounting" },
+            { "week": 2, "topic": "Ethics of Accounting", "description": "Accounting ethics; Professional conduct; Confidentiality, transparency, integrity" },
+            { "week": 3, "topic": "Principles of Double Entry (Part 1)", "description": "Meaning of double entry; Debit and credit principles" },
+            { "week": 4, "topic": "Principles of Double Entry (Part 2)", "description": "Application of double entry in accounts" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Accounting Concepts (Part 1)", "description": "Meaning of accounting concepts; Going concern, accrual, materiality" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Accounting Concepts (Part 2)", "description": "Consistency, dual aspect, prudence" },
+            { "week": 9, "topic": "General Journal", "description": "Meaning, features, and uses; Simple journal entries" },
+            { "week": 10, "topic": "Analytical Cash Book", "description": "Meaning, format, and preparation of analytical cash book" },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Bank Reconciliation Statement (Part 1)", "description": "Concept, causes of differences between cash book and bank statement" },
+            { "week": 2, "topic": "Bank Reconciliation Statement (Part 2)", "description": "Procedure and preparation of bank reconciliation" },
+            { "week": 3, "topic": "Classification of Accounts", "description": "Personal, real, and nominal accounts; Rules of debit and credit" },
+            { "week": 4, "topic": "Trial Balance (Part 1)", "description": "Meaning and structure of trial balance" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Correction of Errors (Part 2)", "description": "Types of errors: errors of omission, commission, principle, compensating, etc.; Treatment" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Trading Account", "description": "Meaning, format, and preparation" },
+            { "week": 9, "topic": "Profit and Loss Account", "description": "Meaning, format, and preparation" },
+            { "week": 10, "topic": "Adjustments in Profit and Loss Account", "description": "Closing stock, prepayments, accruals, depreciation, provisions" },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Balance Sheet (Part 1)", "description": "Meaning and structure of balance sheet" },
+            { "week": 2, "topic": "Balance Sheet (Part 2)", "description": "Preparation and classification into assets and liabilities" },
+            { "week": 3, "topic": "Sales Ledger Control Account", "description": "Meaning, preparation of total debtors control account" },
+            { "week": 4, "topic": "Purchases Ledger Control Account", "description": "Meaning, preparation of total creditors control account" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Depreciation", "description": "Meaning, causes, and methods of providing for depreciation" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Depreciation (Reducing Balance Method)", "description": "Reducing balance / written down value method explained and applied" },
+            { "week": 9, "topic": "Manufacturing Account", "description": "Meaning, format, and preparation of manufacturing account" },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Profit and Loss Appropriation Account", "description": "Meaning and purpose; differences between profit and loss account and profit and loss appropriation account; items appearing in the account (interest on drawings, interest on capital, partners’ salary, partners’ commission, share of profit/loss)." },
+            { "week": 2, "topic": "Partnership Capital Account", "description": "Definition; features of capital accounts; distinction between fixed and fluctuating capital accounts; format and preparation." },
+            { "week": 3, "topic": "Partnership Current Account", "description": "Meaning; purpose; format of current account; items affecting current account (drawings, interest on drawings, partners’ salary, interest on capital, share of profit/loss)." },
+            { "week": 4, "topic": "Current Account in Partnership Accounting", "description": "Relationship between capital and current accounts; preparation of current accounts under fixed capital method; worked examples." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Admission of a New Partner and Goodwill Account", "description": "Meaning of goodwill; types (purchased and inherent); methods of valuation; treatment of goodwill on admission of a new partner; revaluation of assets and liabilities." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Receipts and Payments Account / Income and Expenditure Account", "description": "Meaning; features; differences between receipts and payments account and income and expenditure account; preparation of accounts." },
+            { "week": 9, "topic": "Single Entry (Incomplete Records)", "description": "Meaning; limitations; conversion of single entry to double entry; statement of affairs method; preparation of final accounts from incomplete records." },
+            { "week": 10, "topic": "Revision", "description": "Review of first term’s work." },
+            { "week": 11, "topic": "Examination", "description": "–" },
+            { "week": 12, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Formation of a Company", "description": "Meaning of a company; steps and procedures in formation (promotion, incorporation, flotation); documents required (memorandum of association, articles of association, prospectus, certificate of incorporation)." },
+            { "week": 2, "topic": "Private and Public Companies", "description": "Meaning and differences; features of private and public companies; advantages and disadvantages of each." },
+            { "week": 3, "topic": "Quoted and Unquoted Companies", "description": "Definition; differences; examples of quoted companies in Nigeria; requirements for listing on the stock exchange." },
+            { "week": 4, "topic": "Financial System", "description": "Meaning; components (money market, capital market, insurance, banking system, pension funds); importance of the financial system to economic growth." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Issue of Shares", "description": "Meaning; types of shares (ordinary, preference, deferred); methods of issue (public offer, rights issue, bonus issue); accounting entries for share issue." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Loan Capital", "description": "Meaning; types of loan capital (debentures, bonds, bank loans); advantages and disadvantages; accounting treatment of loan capital." },
+            { "week": 9, "topic": "Revision", "description": "Review of second term’s work." },
+            { "week": 10, "topic": "Examination", "description": "–" },
+            { "week": 11, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Methods of Raising Funds from the Capital Market", "description": "Public issue, rights issue, private placement, offer for sale, government bonds; advantages and disadvantages of each method." },
+            { "week": 2, "topic": "Requirements for Accessing the Capital Markets", "description": "Regulatory requirements; eligibility criteria for companies; role of Securities and Exchange Commission (SEC) and Nigerian Stock Exchange (NSE)." },
+            { "week": 3, "topic": "Benefits of Capital Market", "description": "Importance to companies, investors, and the economy; mobilization of savings, liquidity, capital formation, and wealth creation." },
+            { "week": 4, "topic": "Final Accounts", "description": "Meaning; preparation of trading, profit and loss account and balance sheet; adjustments in final accounts (depreciation, prepayments, accruals, bad debts, provision for doubtful debts)." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Regulation of the Capital Market", "description": "Role of regulatory agencies (SEC, NSE, CBN); laws and policies guiding the capital market; investor protection." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Hire Purchase and Installment Payment Account", "description": "Meaning; differences between hire purchase and installment payment; accounting entries; preparation of relevant accounts." },
+            { "week": 9, "topic": "Revision", "description": "Review of third term’s work." },
+            { "week": 10, "topic": "Examination", "description": "–" },
+            { "week": 11, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Consignment Account – Meaning and Features", "description": "Meaning of consignment; parties involved (consignor and consignee); features of consignment; proforma invoice; account sales; difference between consignment and sales; terms used in consignment (del credere commission, ordinary commission, expenses, abnormal/normal losses)." },
+            { "week": 2, "topic": "Consignment Account – Accounting Treatment", "description": "Ledger entries for goods sent on consignment; recording expenses; valuation of unsold stock; treatment of abnormal loss; preparation of consignment account, consignee’s account, and goods sent on consignment account." },
+            { "week": 3, "topic": "Joint Venture Account", "description": "Meaning and features of joint ventures; differences between joint venture and partnership; accounting procedures: (i) Separate set of books method (ii) Memorandum joint venture account method; preparation of accounts for each method." },
+            { "week": 4, "topic": "Contract Account", "description": "Meaning and features; difference between contract and job costing; important terms (retention money, progress payment, work-in-progress, notional profit); accounting treatment for incomplete and completed contracts; calculation of profit on incomplete contracts." },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of topics covered in Weeks 1–4." },
+            { "week": 6, "topic": "Departmental Account", "description": "Meaning and purpose; reasons for departmental accounts; apportionment and allocation of expenses; preparation of departmental trading, profit, and loss account." },
+            { "week": 7, "topic": "Midterm break", "description": "" },
+            { "week": 8, "topic": "Branch Account", "description": "Meaning, types of branches (dependent, independent); systems of branch accounting (debtors system, stock & debtors system, final accounts system); preparation of branch accounts under the debtors system." },
+            { "week": 9, "topic": "Public Sector Accounting", "description": "Meaning and objectives; sources of revenue and types of expenditure; differences between public sector and private sector accounting; structure of government accounting; preparation of simple public sector accounts." },
+            { "week": 10, "topic": "Revision & Examination", "description": "General revision and final examination." }
+          ]
+        }
+      ]
+    }
+  ]
+}

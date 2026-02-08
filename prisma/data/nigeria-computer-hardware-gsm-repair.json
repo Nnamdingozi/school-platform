@@ -1,0 +1,350 @@
+{
+  "subject": "Computer Hardware and GSM Repairs",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Computer Hardware & GSM Repairs", "description": "Meaning, importance, career opportunities" },
+            { "week": 2, "topic": "History of Computers & GSM", "description": "Development of computers and mobile phones" },
+            { "week": 3, "topic": "Basic Computer Hardware Components", "description": "Input, output, processing, storage devices" },
+            { "week": 4, "topic": "Identification of GSM Components", "description": "Screen, keypad, battery, SIM, circuit board" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Safety Precautions in Workshop", "description": "Handling tools, electricity, ESD safety" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Tools for Computer & GSM Repairs", "description": "Screwdrivers, testers, soldering iron, pliers" },
+            { "week": 9, "topic": "Peripheral Devices", "description": "Printers, scanners, flash drives" },
+            { "week": 10, "topic": "Basic Care & Maintenance of Computer/GSM", "description": "Cleaning, charging, battery care" },
+            { "week": 11, "topic": "Revision", "description": "—" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Classification of Computers", "description": "Digital, analogue, hybrid; sizes and uses" },
+            { "week": 2, "topic": "Types of Mobile Phones", "description": "Feature phones vs. smartphones" },
+            { "week": 3, "topic": "System Unit Parts", "description": "Motherboard, CPU, RAM, power supply" },
+            { "week": 4, "topic": "SIM Cards & Memory Cards", "description": "Types, uses, care" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Introduction to Software", "description": "System vs. application software" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Power Supply in Computers and Phones", "description": "Batteries, chargers, UPS" },
+            { "week": 9, "topic": "Basic Troubleshooting", "description": "Computer not booting, phone not charging" },
+            { "week": 10, "topic": "Practical: Disassembling a Phone", "description": "Opening and identifying parts" },
+            { "week": 11, "topic": "Revision", "description": "—" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Computer Storage Devices", "description": "Hard disk, SSD, flash drives, memory cards" },
+            { "week": 2, "topic": "GSM Networks", "description": "2G, 3G, 4G, 5G" },
+            { "week": 3, "topic": "Assembling a Simple Computer", "description": "Step-by-step practice" },
+            { "week": 4, "topic": "Common GSM Problems", "description": "Screen damage, battery fault" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Practical: Replacing GSM Parts", "description": "Battery, screen, keypad" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Introduction to Soldering", "description": "Tools and safety" },
+            { "week": 9, "topic": "Practical: Soldering Simple Joints", "description": "Circuit connection" },
+            { "week": 10, "topic": "Preventive Maintenance", "description": "Regular servicing of computer & GSM" },
+            { "week": 11, "topic": "Revision", "description": "—" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of JSS 1 Work", "description": "Recap of phone parts, safety, and tools" },
+            { "week": 2, "topic": "Introduction to Mobile Circuits", "description": "Meaning of circuit; Simple phone circuit components and symbols" },
+            { "week": 3, "topic": "Power Section of a Mobile Phone", "description": "Charging system, battery, and power IC functions" },
+            { "week": 4, "topic": "Display and Network Sections", "description": "Screen components; Antenna, network IC, SIM section; Troubleshooting display and network faults" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Sound and Charging Sections", "description": "Microphone, speaker, ringer, charging port; Common faults and repairs" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Software Updates and Flashing", "description": "Meaning of flashing; Importance of updating OS; Tools and apps for flashing" },
+            { "week": 9, "topic": "Fault Diagnosis and Testing", "description": "Use of multimeter; Continuity test; Battery voltage test" },
+            { "week": 10, "topic": "Practical: Fault Detection and Repair", "description": "Step-by-step testing and replacement of faulty parts" },
+            { "week": 11, "topic": "Revision", "description": "—" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing / Vacation", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Entrepreneurship Mindset", "description": "Meaning and importance; Thinking like an entrepreneur" },
+            { "week": 2, "topic": "Concept of Entrepreneurship", "description": "Identifying opportunities in GSM repair; Risk-taking and innovation" },
+            { "week": 3, "topic": "Concept of Money", "description": "Use of money in business transactions; Savings and reinvestment" },
+            { "week": 4, "topic": "Bookkeeping in GSM Repairs", "description": "Business records — daily sales, repairs log, expenses; Balance sheet basics" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Business Startup in GSM Repairs", "description": "Writing a simple business plan; Budgeting and equipment listing" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Customer Relations", "description": "Handling customers professionally; Honesty and reliability in service delivery" },
+            { "week": 9, "topic": "Rights and Duties of Citizens in Business", "description": "Consumer rights and seller responsibilities; Ethical practices in mobile repair" },
+            { "week": 10, "topic": "Practical: Business Simulation", "description": "Role-play of shop management and customer service" },
+            { "week": 11, "topic": "Revision", "description": "—" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing / Vacation", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Software Tools", "description": "Common repair tools (Miracle Box, SP Flash Tool, etc.); Installation and usage" },
+            { "week": 2, "topic": "Phone Unlocking and Password Reset", "description": "Security locks, factory reset, bypassing screen locks" },
+            { "week": 3, "topic": "Virus and Malware Removal", "description": "Meaning, types, and removal of malware from devices" },
+            { "week": 4, "topic": "Data Recovery", "description": "Causes of data loss; Tools and steps in data recovery" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Phone Testing and Quality Control", "description": "Testing repaired phones before delivery; Ensuring quality" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Record Keeping and Reporting", "description": "Writing job completion reports; Daily repair log" },
+            { "week": 9, "topic": "Practical: Full Repair Cycle", "description": "Receiving a faulty phone, diagnosing, repairing, and documenting the process" },
+            { "week": 10, "topic": "Revision", "description": "—" },
+            { "week": 11, "topic": "Examination", "description": "—" },
+            { "week": 12, "topic": "Closing / Vacation", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of JSS 2 Work", "description": "Recap of circuits, entrepreneurship, and software tools" },
+            { "week": 2, "topic": "Introduction to Advanced GSM Repairs", "description": "Identifying advanced faults; Board-level repairs" },
+            { "week": 3, "topic": "Soldering and Desoldering Techniques", "description": "Tools for soldering; Safety precautions" },
+            { "week": 4, "topic": "Replacing Phone Components", "description": "Replacing charging ports, screens, speakers, and buttons" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Troubleshooting Advanced Faults", "description": "Power IC, CPU, and memory-related issues" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Flashing and Unlocking Complex Devices", "description": "Flashing Android and iPhones; IMEI repair; Avoiding software bricking" },
+            { "week": 9, "topic": "Practical: Complex Fault Repair", "description": "Hands-on practice with multiple faults" },
+            { "week": 10, "topic": "Revision", "description": "—" },
+            { "week": 11, "topic": "Examination", "description": "—" },
+            { "week": 12, "topic": "Closing / Vacation", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Entrepreneurship in GSM Repairs", "description": "Expanding repair services; Managing customers and suppliers" },
+            { "week": 2, "topic": "Concept of Money and Investment", "description": "Reinvestment, cost management, and profit calculation" },
+            { "week": 3, "topic": "Business Start-up Procedures", "description": "Registration, business name, and licensing" },
+            { "week": 4, "topic": "Bookkeeping and Financial Records", "description": "Ledger, profit/loss, and financial reporting" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Marketing of GSM Repair Services", "description": "Advertising, branding, and online presence" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Rights and Duties of Citizens", "description": "Consumer protection laws, integrity, and accountability" },
+            { "week": 9, "topic": "Practical: Setting up a Mini GSM Shop", "description": "Designing a small-scale business plan and layout" },
+            { "week": 10, "topic": "Revision", "description": "—" },
+            { "week": 11, "topic": "Examination", "description": "—" },
+            { "week": 12, "topic": "Closing / Vacation", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Final Business Project", "description": "Developing and presenting a GSM repair business plan" },
+            { "week": 2, "topic": "Exhibition and Product Display", "description": "Demonstration of repair skills and innovations" },
+            { "week": 3, "topic": "Entrepreneurship Fair Preparation", "description": "Preparing for BECE practicals and presentation" },
+            { "week": 4, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 5, "topic": "Revision and BECE Preparation", "description": "Review of JSS1–3 topics and practicals" },
+            { "week": "6-13", "topic": "BECE Examination and Closing", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Computer Hardware and GSM Repairs", "description": "Scope, importance, career opportunities" },
+            { "week": 2, "topic": "Classification of Computer Hardware", "description": "Input, output, storage, processing units" },
+            { "week": 3, "topic": "Peripheral Devices", "description": "Printers, scanners, projectors, functions, and maintenance" },
+            { "week": 4, "topic": "Internal Components of a Computer", "description": "Motherboard, CPU, RAM, power supply" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Safety Rules and Workshop Practices", "description": "Electrostatic discharge precautions, safe handling" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Tools for Computer and GSM Repairs", "description": "Screwdrivers, spudgers, multimeter, soldering tools" },
+            { "week": 9, "topic": "Computer Assembly I", "description": "Installing RAM, HDD, power supply" },
+            { "week": 10, "topic": "Computer Assembly II", "description": "BIOS setup, OS installation basics" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to GSM Technology", "description": "Evolution of mobile phones, GSM architecture" },
+            { "week": 2, "topic": "GSM Hardware Components", "description": "Screen, keypad, battery, SIM slot, charging port" },
+            { "week": 3, "topic": "GSM Software Components", "description": "Firmware, IMEI, OS in smartphones" },
+            { "week": 4, "topic": "GSM Repair Tools", "description": "Soldering station, hot air gun, flashing tools" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Disassembly and Reassembly of GSM Phones", "description": "Step-by-step process" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Common GSM Faults I", "description": "Charging faults, battery faults, power issues" },
+            { "week": 9, "topic": "Common GSM Faults II", "description": "Network issues, microphone/speaker problems" },
+            { "week": 10, "topic": "GSM Software Issues", "description": "Flashing, unlocking, virus removal" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Maintenance of Computer Hardware", "description": "Cleaning, cooling, upgrading components" },
+            { "week": 2, "topic": "Power Supply Systems", "description": "UPS, stabilizers, inverters" },
+            { "week": 3, "topic": "Introduction to Networking Hardware", "description": "Modems, routers, switches" },
+            { "week": 4, "topic": "GSM Communication Principles", "description": "Frequency, signal transmission, SIM technology" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "GSM Connectivity Issues", "description": "No service, SIM errors, network configuration" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Computer and GSM Accessories", "description": "Identification, functions, replacement" },
+            { "week": 9, "topic": "Preventive Maintenance Practices", "description": "Routine checks, record keeping" },
+            { "week": 10, "topic": "Entrepreneurship in ICT", "description": "Setting up a small repair business" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of SS1 Work", "description": "Questions and answers on key areas" },
+            { "week": 2, "topic": "Computer Storage Devices", "description": "HDD, SSD, optical drives, flash drives" },
+            { "week": 3, "topic": "Advanced Computer Components", "description": "Graphics card, sound card, expansion slots" },
+            { "week": 4, "topic": "Computer Troubleshooting I", "description": "POST errors, beep codes, diagnostic steps" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Computer Troubleshooting II", "description": "Boot failures, overheating, blue screen" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Maintenance of GSM Tools", "description": "Care of soldering iron, hot air gun, multimeter" },
+            { "week": 9, "topic": "GSM Circuit Boards", "description": "Identification of ICs, resistors, capacitors" },
+            { "week": 10, "topic": "GSM Circuit Tracing", "description": "Using multimeter for fault detection" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Review of GSM Hardware", "description": "Recap of SS1 GSM faults" },
+            { "week": 2, "topic": "GSM Power Section", "description": "Charging IC, power IC, battery connectors" },
+            { "week": 3, "topic": "GSM Audio Section", "description": "Speaker, earpiece, microphone faults" },
+            { "week": 4, "topic": "GSM Display Section", "description": "Screen replacement, LCD vs OLED" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "GSM Network Section", "description": "Antenna, RF IC, signal problems" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Software Flashing", "description": "Flashing Android devices, drivers, tools" },
+            { "week": 9, "topic": "Unlocking GSM Devices", "description": "IMEI repair, SIM unlocking, FRP bypass" },
+            { "week": 10, "topic": "Data Recovery Techniques", "description": "Memory card, internal storage recovery" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Advanced Computer Repairs I", "description": "BIOS update, OS reinstallation" },
+            { "week": 2, "topic": "Advanced Computer Repairs II", "description": "Hardware upgrades: RAM, HDD, GPU" },
+            { "week": 3, "topic": "Computer Viruses and Security", "description": "Types, prevention, antivirus tools" },
+            { "week": 4, "topic": "Networking Setup", "description": "LAN, Wi-Fi, network troubleshooting" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "GSM Software Optimization", "description": "Rooting, custom ROMs, updates" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Troubleshooting GSM Software Issues", "description": "Boot loop, app crashes, malware" },
+            { "week": 9, "topic": "Internet Connectivity Issues", "description": "Hotspot, APN, mobile data faults" },
+            { "week": 10, "topic": "Small-Scale ICT Business", "description": "Setting up GSM/computer repair shop" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of SS2 Work", "description": "Q&A, recap" },
+            { "week": 2, "topic": "Advanced Diagnostic Tools", "description": "Oscilloscope, DC power supply, software tools" },
+            { "week": 3, "topic": "GSM Schematic Diagrams", "description": "Reading and interpretation" },
+            { "week": 4, "topic": "Micro Soldering Techniques", "description": "IC replacement, jumper techniques" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Advanced Computer Networking", "description": "IP addressing, cabling, wireless setup" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Repair Case Studies", "description": "Real-life GSM/computer repair scenarios" },
+            { "week": 9, "topic": "Professional Ethics in ICT Repairs", "description": "Customer service, safety, data privacy" },
+            { "week": 10, "topic": "ICT Career Opportunities", "description": "Certification pathways (CompTIA, Cisco, GSM training)" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "GSM Advanced Repairs", "description": "Water-damaged phones, motherboard faults" },
+            { "week": 2, "topic": "Smartphone Technology", "description": "Android vs iOS architecture" },
+            { "week": 3, "topic": "Advanced Computer Maintenance", "description": "Server maintenance, virtualization basics" },
+            { "week": 4, "topic": "Entrepreneurship in ICT", "description": "Costing, pricing, business plan" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "E-Waste Management", "description": "Recycling, safe disposal of ICT waste" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "ICT Business Marketing", "description": "Branding, digital marketing, customer retention" },
+            { "week": 9, "topic": "Financial Management", "description": "Record keeping, profit analysis" },
+            { "week": 10, "topic": "Project Planning", "description": "Preparing for final year project" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Final Year Project Supervision", "description": "Proposal writing, approval" },
+            { "week": 2, "topic": "Project Execution", "description": "Hardware or GSM repair projects" },
+            { "week": 3, "topic": "Project Execution II", "description": "Practical demonstration" },
+            { "week": 4, "topic": "Project Report Writing", "description": "Documentation, diagrams, analysis" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Presentation Skills", "description": "Oral defense, use of slides" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Mock Exams", "description": "Past WAEC/NECO ICT-related papers" },
+            { "week": 9, "topic": "Revision of Practical Works", "description": "Hands-on review" },
+            { "week": 10, "topic": "WAEC/NECO Preparatory Classes", "description": "Key areas likely to appear" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing/Graduation", "description": "–" }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,334 @@
+{
+    "subject": "English Studies",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Speech; Organs of Speech / Parts of Speech; Nouns / The Family / Meaning of Composition / What is Literature?" },
+              { "week": 2, "topic": "Pure Vowel Sounds (Monothongs) / Pronouns / Reading Strategies / Elements of Composition / Features of Literature" },
+              { "week": 3, "topic": "Vowel Sound /i:/ / Verbs / SPQ3R Technique / Elements of Composition / Purpose/Functions of Literature" },
+              { "week": 4, "topic": "Vowel Sound /i/ / Verbs (continued) / Identifying Main and Supporting Ideas / Descriptive and Narrative Essays / Elements of Prose" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Vowel Sound /e/ / Adjectives / Differentiating Main Ideas / Paragraph Writing / Introduction to Drama" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Vowel Sound /æ/ / Adverbs / Reading to answer specific questions / Descriptive Essay – A Market Place / Introduction to Drama (Themes)" },
+              { "week": 9, "topic": "Vowel Sound /a:/ / Prepositions / Applying SPQ3R / Letter Writing – Introduction and Types / Folktales" },
+              { "week": 10, "topic": "Vowel Sound /p/ / Conjunctions / Asking questions to cover comprehension levels / Features of an Informal Letter / Figures of Speech" },
+              { "week": 11, "topic": "Vowel Sound /ɔ:/ / Adverbials / Asking specific questions to elicit opinions / Informal Letter – Features / Figures of Speech (continued)" },
+              { "week": 12, "topic": "Revision & Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Vowel Sounds /u/ and /u:/ / Adverbials – Frequency and Manner / Asking specific questions / Formal Letter – Features / African Tales" },
+              { "week": 2, "topic": "Vowel Sound /u:/ / Tenses – Simple Present / Asking projection questions / Formal Letter – To the school authority / Introduction to Poetry" },
+              { "week": 3, "topic": "Vowel Sound /ɑ:/ / Tenses – Simple Past / Asking recall questions / Guided Composition – FRSC / Poetry – Types" },
+              { "week": 4, "topic": "Vowel Sound /ɜ:/ / Tenses – Present Continuous / Reading to understand Author’s mood / Narrative Essay / Drama – Features" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Vowel Sound /ə/ / Tenses – Past Continuous / Reading between the lines / Argumentative Essay / Recommended prose text" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Vowel Contrasts / Making sentences with Simple Present & Simple Past / Author’s style / Expository Essay / Myths and Legends" },
+              { "week": 9, "topic": "Vowel Contrasts / Future Tense / Reading to interpret diagrams / Argumentative Essay / Myths and Legends (continued)" },
+              { "week": 10, "topic": "Introduction to Diphthongs / Making sentences with Simple Past / Reading diagrams/maps / Guided Composition / Dramatization" },
+              { "week": 11, "topic": "General Revision" },
+              { "week": 12, "topic": "End of Term Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Diphthongs / Introduction to Active and Passive Voice / Reading spatial description / Introduction to Expository Essay / Prose text themes" },
+              { "week": 2, "topic": "Identification of Diphthongs / Highlighting Active Voice / Identifying introductions and conclusions / Elements of Writing / Prose text Setting/Plot" },
+              { "week": 3, "topic": "Introduction to Consonant Sounds / Use of Passive Voice / Identifying keywords / Expository Essay – The Ebola Virus / Poetry language" },
+              { "week": 4, "topic": "Syllables / Exercises on Active Voice / Making meaning from spatial description / Argumentative Essay / Myths/Legends" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Syllables (continued) / Exercises on Passive Voice / Reading comprehension practice / Argumentative Essay / Poetry – Meaning and Figures of Speech" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Consonant Clusters / Statements and Tag Questions / Identifying topic sentences / Argumentative vs Expository Essays / Drama text writing" },
+              { "week": 9, "topic": "Word Boundaries – Linking sounds / Polar and Tag Questions / Reading comprehension practice / Expository Essay – How to Plant Trees / Drama text Similes and Metaphors" },
+              { "week": 10, "topic": "Contrasting diphthongs / Exercise on Adverbials / Spelling drills / Oral Composition – School Rules / Dramatization" },
+              { "week": 11, "topic": "Contrasting diphthongs (continued) / Revision of Nouns, Pronouns, Verbs, Adjectives / Reading for Evaluation / Revision of all essay types / Figures of Speech – Euphemism and Pun" },
+              { "week": 12, "topic": "End of Term Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Listening and Speaking – Revision of pure vowel sounds / Revision of Parts of Speech / Review of the SQ3R technique / Narrative Essay outline / Review of features of prose" },
+              { "week": 2, "topic": "Revision of consonant sounds and clusters / Transitive and Intransitive Verbs / Reading to understand writer’s purpose / Descriptive Essay outline / Prose text study" },
+              { "week": 3, "topic": "The /ɪə/ sound / More on Active and Passive Voice / Identifying writer’s intention / Elements of Composition / Features of folktales" },
+              { "week": 4, "topic": "The /ǝʊ/ sound / More on Tenses / Critical Reading / Descriptive Essay – A Local Festival / Prose text study" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Contrasting consonants /p/ and /t/ / Past Perfect Tense / Reading to identify facts and opinions / Narrative Essay – What I Do Every Day / Drama – Characterization and plot" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Consonant sounds /f/ and /v/ in contrast / Making sentences with conjunctions / Reading to explain facts and opinions / Letter Writing – A letter to your father / Novella vs Novel; Figures of Speech" },
+              { "week": 9, "topic": "The consonant sound /v/ / Making requests using will, could, may / Reinforcement of reading / Descriptive Essay – My Favourite Teacher / Select a folktale and explain theme" },
+              { "week": 10, "topic": "The consonant sound /h/ / Direct and Indirect Speech / Reinforcement of reading / Formal Letter – Invitation as a Guest Speaker / Drama text study" },
+              { "week": 11, "topic": "Revision of Literary Terms" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Revision of Diphthongs / Reported Speech – Rules / Reading to provide alternative words / Report Writing – Outline and features / Prose text study" },
+              { "week": 2, "topic": "Intonation patterns / Making sentences with Prepositions / Reading for speed / Report Writing – An Accident I Witnessed / Prose text Themes and Characterization" },
+              { "week": 3, "topic": "Stress and Intonation / Regular and Irregular Verbs / Skimming and Scanning / Informal Letter – School Inter-Sports / Drama text study" },
+              { "week": 4, "topic": "Stress – Identifying correct points of pauses / Reported Commands and Dialogue / Vocabulary Development – ICT / Formal Letter – To Local Government Chairman / Drama text study" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Rhythm – Identification / Reported Requests / Distinguishing facts and opinions / Argumentative Essay / Identification of figures of speech in prose" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Review of Stress and Intonation / Adverbials and the Present Tense / Vocabulary Development – Science and Technology / Expository Essay – Entrepreneurship / Figures of Speech; Drama writing" },
+              { "week": 9, "topic": "Consonants /s/ and /z/ / Introduction to Punctuation Marks / Reading to summarize / Narrative Essay – My Last Birthday / Summary of prose text" },
+              { "week": 10, "topic": "Consonant sounds /k/ and /g/ / Punctuation Marks – Full Stop and Comma / Reading to identify main and supporting ideas / Story Writing – The Meeting / Summary of drama text" },
+              { "week": 11, "topic": "Consonants /m/, /n/, /s/ / Punctuation Marks continued / Contextual vocabulary practice / Review of Types of Letters and Essays / Review of Literary Terms" },
+              { "week": 12, "topic": "Revision" },
+              { "week": 13, "topic": "Examination and Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Revision of Stress and Intonation / Use of conjunctions although and whereas / Reading to identify keywords / Review of Formal and Informal Letters / Review of Literary Terms and Figures of Speech" },
+              { "week": 2, "topic": "Consonant sounds /t/, /d/, /p/, /s/, /b/ / Using despite and in spite of / Reading to summarize / Report Writing / Prose text Themes" },
+              { "week": 3, "topic": "Consonant sounds /ʃ/ and /ʧ/ / The uses of have, has, and had / Reading to infer author’s intention / Composition – Pride Goes Before a Fall / Characterization, Theme, and Diction" },
+              { "week": 4, "topic": "Consonant sounds /θ/ and /ð/ / Synonyms / Identifying words that signal or redirect attention / Composition – The Responsibilities of Government / Prose text; Poetry writing" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Consonant sounds /w/ and /j/ / Antonyms / Conflict Resolution vocabulary / Composition – A Memorable Journey / Moral lessons in prose" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Contrasting vowels /ʊ/ and /uː/ / Causative verbs / Religion vocabulary / Writing a Dialogue / Figures of Speech in drama" },
+              { "week": 9, "topic": "Contrast between vowels /ᴣː/ and /ʌ/ / Adverbs of Place / Reading for author's intention / Composition – The Day I Would Not Like to Remember / Dramatization" },
+              { "week": 10, "topic": "Review of consonant and vowel sounds / Review of prefixes and suffixes / Reading for main points / Composition – The Rich Also Cry / Drama text study" },
+              { "week": 11, "topic": "Review of consonant sounds /θ/ and /ð/ / More on Question Tags / Review of Language Skills / Review of Letter and Essay Writing / Review of prose and drama texts" },
+              { "week": 12, "topic": "Revision" },
+              { "week": 13, "topic": "Examination and Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Revision of Speech Work / Revision of Parts of Speech / Scanning for main points / Informal Letter – Best friend plan / Introduction to Fiction & Non-Fiction" },
+              { "week": 2, "topic": "The Schwa /ə/ sound / Expressing emotions (Verb + Preposition) / Skimming for specific information / Writing to a Pen-pal / Poetry Analysis" },
+              { "week": 3, "topic": "Stress and Intonation (continued) / Adverbs of Frequency / Reading to cultivate referencing skills / Story Writing – All that glitters is not gold / Prose text study" },
+              { "week": 4, "topic": "Consonants /ʒ/ and /dʒ/ / Changing positive statements to negative / Scanning and skimming practice / Expository Essay – How to care for a motor vehicle / Prose – Characterization, Theme, Plot" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Contrast between /ɜ:/ and /ɔ:/ / Adjectives & Adverbs of willingness / Reading to make deductions / Guided Writing / Drama text study" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Consonants /s/, /ʃ/, and /tʃ/ / Adverbs of Place and Manner / Reading comprehension practice / Debate – Corruption / Drama – Costumes and Props" },
+              { "week": 9, "topic": "Consonants /ʃ/ and /t/ / Idiomatic Expressions / Reading comprehension practice / Descriptive Essay – My Favourite Subject / Prose text questions" },
+              { "week": 10, "topic": "Consonants /w/ and /j/ / Adverbs of Cause/Reason / Identifying topic sentences / Debate – Child Trafficking / Review of Prose and Drama" },
+              { "week": 11, "topic": "Revision – Parts of Speech, Tenses, Adverbs / General Reading Comprehension Revision / Revision of Essay Writing Types / General Literature Revision" },
+              { "week": 12, "topic": "End of Term Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Consonants /t/ and /θ/ / Revision of Parts of Speech / Reading for Critical Evaluation / Informal Letter – More on Writing to a Pen-pal / Review of Folktales" },
+              { "week": 2, "topic": "Consonant contrast /t/ and /s/ / Prepositions of relation / Listening for implied meanings / Guided Writing" },
+              { "week": 3, "topic": "Contrast consonants /ʃ/ and /ʒ/ / The Simple Sentence / Listening for main gist / Story Writing / Poetry writing; Short story" },
+              { "week": 4, "topic": "—" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Contrast vowels /ʌ/ and /a:/ / The Compound Sentence / Listening to questions / Informal Letter – To a friend / Prose text features" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Nasal sounds /m/, /n/, /ŋ/ / Punctuation Marks – Capital Letters / Listening to interpret ideas / Informal Letter – To your grandfather / Drama text study" },
+              { "week": 9, "topic": "Vowels /æ/ and /ɜ:/ / Reflexive and Relative Pronouns / Reading comprehension practice / Article Writing – Youth Unemployment / Drama – Short playlet" },
+              { "week": 10, "topic": "Vowels /ɔ:/ and /ɒ/ / Personal Pronouns / Reading comprehension practice / Expository Essay – Drug Addiction / Poetry language; Irony and Hyperbole" },
+              { "week": 11, "topic": "Vowels /u/ and /u:/ / Demonstrative Pronouns / Reading to summarize paragraphs / Argumentative Essay – Teachers vs Farmers / Summarizing Prose" },
+              { "week": 12, "topic": "Schwa /ə/ / Differentiating Demonstrative Pronouns and Adjectives / Reading comprehension practice / Expository Writing – Population Explosion / Drama – Revision of text" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Revision of last term’s exam" },
+              { "week": 2, "topic": "Review of Monotones / Review of Nouns and Pronouns / Past comprehension questions / Review of Narrative/Descriptive Essays / Review of Characters, Theme, Plot" },
+              { "week": 3, "topic": "Review of Diphthongs / Review of Verbs and Adverbs / Use past questions / Review of Argumentative/Expository Essay / Review of Literary Terms in Poetry" },
+              { "week": 4, "topic": "Review of Consonant Sounds / Review of Adjectives, Conjunctions, Prepositions, Interjections / Use past questions / Revisit Informal and Formal Letters / Use past questions (Literature)" },
+              { "week": 5, "topic": "General Revision (Weeks 5-10)" },
+              { "week": 11, "topic": "Examination" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Spoken English: Oral Composition Skills I (Narrative); Vocabulary: Associated with the Home; Grammar: Nouns – Numbers" },
+              { "week": 2, "topic": "Reading Comprehension: Word Meanings through Context; Vocabulary: Associated with Family Life; Continuous Writing: Narrative; Grammar: Nouns and Gender" },
+              { "week": 3, "topic": "Spoken English: Selected Consonant Sounds (θ, ð, ʒ, ʃ); Vocabulary: Associated with Agriculture; Reading Comprehension" },
+              { "week": 4, "topic": "Grammar: Countable and Uncountable Nouns; Listening Comprehension; Reading Comprehension; Continuous Writing: Narrative; Grammar: Types of Nouns" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Spoken English: Consonants followed by /w/; Vocabulary: Agriculture (Implements); Listening Comprehension; Grammar: Noun Phrases with the Definite Article" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Listening Comprehension: Grasping Main Ideas; Reading Comprehension: Contextual Word Meaning; Continuous Writing: Narrative; Grammar: Noun Phrases with Definite Article (exceptions)" },
+              { "week": 9, "topic": "Spoken English: Oral Composition Skills II (Descriptive); Vocabulary: Associated with Fishing; Continuous Writing: Descriptive; Grammar: Nominalization of Adjectives" },
+              { "week": 10, "topic": "Listening Comprehension: Grasping Main Points; Reading Comprehension: Comprehending Main Ideas; Continuous Writing: Descriptive; Grammar: Nominalization of Verbs" },
+              { "week": 11, "topic": "Vocabulary: Associated with Animal Husbandry; Spoken English: Consonants followed by /j/; Continuous Writing: Descriptive; Grammar: Irregular Verbs" },
+              { "week": 12, "topic": "Spoken English: Consonants followed by /j/ and /u:/ sounds; Listening Comprehension: Short Debate; Reading Comprehension: Main Ideas; Grammar: Irregular Verbs (continued)" },
+              { "week": 13, "topic": "Revision, Examination and Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Words Associated with Religions; Spoken English: Consonant sounds followed by /kw/; Reading Comprehension; Grammar: Simple tense forms" },
+              { "week": 2, "topic": "Vocabulary Associated with Christian Religion; Listening Comprehension: Identifying details; Continuous Writing: Informal letter; Grammar: Complex tense forms" },
+              { "week": 3, "topic": "Vocabulary Associated with Islamic Religion; Spoken English: Syllabic /l/; Reading Comprehension; Grammar: Simple and complex tense forms" },
+              { "week": 4, "topic": "Spoken English: Syllabic /n/; Listening Comprehension; Reading Comprehension; Continuous Writing: Informal letter – tone" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Vocabulary Development (Other Religious Expressions); Spoken English: Stress on two-syllable words; Listening Comprehension; Dictation" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Listening Comprehension: Mood, Tone, and Purpose; Reading Comprehension; Continuous Writing: Informal letter (revision); Grammar: Complex sentences" },
+              { "week": 9, "topic": "Words Associated with Profession – Advertising; Spoken English: Stress in three-syllable words; Continuous Writing: Semi-formal letter; Grammar: Complex sentences" },
+              { "week": 10, "topic": "Listening Comprehension: Poem & Debate; Reading Comprehension; Continuous Writing: Semi-formal letter; Dictation" },
+              { "week": 11, "topic": "Words Associated with Profession – Stock Exchange; Spoken English: Stress in four-syllable words; Reading Comprehension; Grammar: Compound and complex sentences" },
+              { "week": 12, "topic": "Spoken English: Advanced Stress and Record Keeping; Listening Comprehension: Following directions; Continuous Writing: Record keeping; Grammar: complex and compound sentences" },
+              { "week": 13, "topic": "Examination & Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Vocabulary: Antonyms (Words Exactly Opposite); Spoken English: Stress timing; Reading Comprehension; Grammar: Adjuncts (adverbs)" },
+              { "week": 2, "topic": "Vocabulary: Antonyms (Words Nearly Opposite); Listening Comprehension: identify speaker’s style; Continuous Writing: Record keeping; Grammar: Adjuncts (revision)" },
+              { "week": 3, "topic": "Vocabulary: Synonyms (Words the Same); Spoken English: Stress timing, phasing; Reading Comprehension; Grammar: Adjuncts – further examples" },
+              { "week": 4, "topic": "Listening Comprehension – Summary Skills; Reading Comprehension: Topical issues; Continuous Writing: Speech writing; Dictation" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Vocabulary: Synonyms (Words Nearly the Same); Spoken English: Oral composition (expository); Grammar: Phrasal verbs; Reading Comprehension" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Continuous Writing – Speech Writing (Revision); Vocabulary: Spelling of commonly misspelt words; Spoken English: Oral composition (argumentative); Grammar: Phrasal verbs" },
+              { "week": 9, "topic": "Continuous Writing – Newspaper Articles; Listening Comprehension: summary; Reading Comprehension; Dictation" },
+              { "week": 10, "topic": "Vocabulary: Commonly Misspelt Words II; Spoken English: Debate practice; Reading Comprehension; Grammar: Phrasal verbs" },
+              { "week": 11, "topic": "Spoken English – Debate Session; Continuous Writing: Writing articles; Grammar: Phrasal verbs" },
+              { "week": 12, "topic": "Revision" },
+              { "week": 13, "topic": "Examination & Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Grammar, Oral, Summary, Vocabulary: Nominalization, Voiced/Voiceless Consonants, Summary do’s and don’ts" },
+              { "week": 2, "topic": "Oral, Vocabulary/Comprehension, Writing, Vocabulary: Consonant clusters, Body systems vocabulary, Expository essay – HIV/AIDS" },
+              { "week": 3, "topic": "Structure, Oral, Vocabulary/Comprehension, Vocabulary: Nouns/Noun phrases, Transcription with stress, Health vocabulary" },
+              { "week": 4, "topic": "Structure, Summary, Vocabulary/Comprehension, Vocabulary: Pronouns, Reading to summarize, Building and construction vocabulary" },
+              { "week": 5, "topic": "Mid-Term Examination" },
+              { "week": 6, "topic": "Oral, Comprehension/Listening, Writing, Vocabulary: Word stress, Listening skills, Argumentative essay – Circumcision/Military rule" },
+              { "week": 7, "topic": "Mid-Term Break" },
+              { "week": 8, "topic": "Structure, Comprehension, Oral, Vocabulary: Plural forms, Reading to extract main points, Stress patterns" },
+              { "week": 9, "topic": "Comprehension, Oral, Summary, Vocabulary: Reading and note-taking, Emphatic stress, Summarizing arguments" },
+              { "week": 10, "topic": "Structure, Vocabulary, Comprehension, Writing, Vocabulary: Adverbs/Adverbial phrases, Words of colour/smell/taste, Report writing" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Revision of Last Term’s Work & Welcome Test: Consonant sounds, Possessive apostrophe, Reading to grasp main points" },
+              { "week": 2, "topic": "Structure, Vocabulary, Comprehension: Punctuation marks, Press and journalism vocabulary, Listening to poetry" },
+              { "week": 3, "topic": "Oral, Structure, Writing, Vocabulary: Intonation (surprise), Sentence types, Formal letter – complaint" },
+              { "week": 4, "topic": "Oral, Comprehension, Writing, Vocabulary: Falling tone, Reading for implied meaning, Informal letter" },
+              { "week": 5, "topic": "Mid-Term Examination" },
+              { "week": 6, "topic": "Oral, Structure, Comprehension, Vocabulary: Rhyme scheme, Pronouns (personal, relative), Note-making" },
+              { "week": 7, "topic": "Mid-Term Break" },
+              { "week": 8, "topic": "Oral, Vocabulary, Writing, Vocabulary: Rising tone, Environment vocabulary, Creative writing" },
+              { "week": 9, "topic": "Oral, Structure, Comprehension, Vocabulary: Consonant contrasts, Sequence of tenses, Reading for critical evaluation" },
+              { "week": 10, "topic": "Structure, Vocabulary, Writing, Vocabulary: Phrasal verbs, Building and construction vocabulary, Writing Articles" },
+              { "week": 11, "topic": "Structure, Vocabulary, Oral, Vocabulary: Active and passive sentences, Technology vocabulary, Stress patterns" },
+              { "week": 12, "topic": "Revision" },
+              { "week": 13, "topic": "Examination" },
+              { "week": 14, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Welcome Test; Grammar: Revise Tenses; Words for the Week" },
+              { "week": 2, "topic": "Grammar: Sentences (Conditional/Complex); Writing: Speech Writing for Special Purposes; Vocabulary: Publishing and printing" },
+              { "week": 3, "topic": "Grammar: Affixation (Prefixes); Writing: Summary (talk/lecture); Vocabulary: Industries" },
+              { "week": 4, "topic": "Grammar: Verb Forms (Active/Passive); Oral: Spelling; Writing: Article Writing" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Oral: Stress Placement (Two-syllable); Comprehension: Paraphrase poems/drama; Grammar: Rules of Concord" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Oral: Vowel Sounds; Structure: Adjuncts, Conjuncts, Disjuncts; Comprehension: structural patterns; Writing: Expository Essay" },
+              { "week": 9, "topic": "Structure: Prepositional Phrases; Vocabulary: Hotel and catering industry; Writing: Summary (implied meaning)" },
+              { "week": 10, "topic": "Structure: Idioms; Comprehension: Reading for critical evaluation; Vocabulary: Politics and government" },
+              { "week": 11, "topic": "Revision: Essay, Letter, Comprehension, Summary, Orals" },
+              { "week": 12, "topic": "Examinations" },
+              { "week": 13, "topic": "Closing Activities" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Vocabulary Development (Culture, Institutions and Ceremonies)" },
+              { "week": 2, "topic": "Spoken English – Revision of Intonation Patterns" },
+              { "week": 3, "topic": "Grammatical Structures – Nouns and Noun Phrases" },
+              { "week": 4, "topic": "Writing – Continuous Writing (Expository)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Comprehension – Silent Reading (Topical issues)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Summary Writing – Summarizing a Talk/Lecture" },
+              { "week": 9, "topic": "Spoken English – Consonant Clusters" },
+              { "week": 10, "topic": "Vocabulary Development – Motor Vehicles" },
+              { "week": 11, "topic": "Grammatical Structures – Pronouns" },
+              { "week": 12, "topic": "Listening Comprehension" },
+              { "week": 13, "topic": "Spoken English – Words with Schwa /ə/" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": "1-2", "topic": "Vocabulary Development (Government and administration)" },
+              { "week": 3, "topic": "Spoken English (Poetry); Listening (Arguments); Writing (Different audiences); Grammar (Adjuncts); Reading (Drama)" },
+              { "week": 4, "topic": "Listening (Paraphrasing); Reading (Summarizing); Vocabulary (Latin & Greek origin); Writing (Expository revision); Grammar (Adjectival clauses)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Listening (Poetry); Vocabulary (Law and order); Writing (Newspapers/magazines); Grammar (Complex sentences)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Writing (Reports, accidents, meetings); Comprehension (Topical issues); Vocabulary (Idioms)" },
+              { "week": 9, "topic": "Listening (Instructions); Reading (Argumentative passages); Grammar (Adverbial clauses); Writing (Report continuation)" },
+              { "week": 10, "topic": "Listening (Dramatic presentations); Revision: Drama" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

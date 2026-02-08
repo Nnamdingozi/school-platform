@@ -1,0 +1,182 @@
+{
+    "subject": "Intermediate Science",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Intermediate Science" },
+              { "week": 2, "topic": "Environmental Degradation: Erosion" },
+              { "week": 3, "topic": "Environmental Degradation: Flooding" },
+              { "week": 4, "topic": "Environmental Degradation: Bush Burning" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "MID-TERM BREAK" },
+              { "week": 7, "topic": "Climate and Weather" },
+              { "week": 8, "topic": "Environmental Protection" },
+              { "week": 9, "topic": "Sanitation and Waste Management" },
+              { "week": 10, "topic": "Review on Environmental Degradation" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Matter – Basic Concepts" },
+              { "week": 2, "topic": "Living Matter" },
+              { "week": 3, "topic": "Non-Living Matter" },
+              { "week": 4, "topic": "Energy" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "MID-TERM BREAK" },
+              { "week": 7, "topic": "Renewable Energy" },
+              { "week": 8, "topic": "Non-Renewable Energy" },
+              { "week": 9, "topic": "Energy Conversion and Conservation" },
+              { "week": 10, "topic": "Review on Matter and Energy" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Skill Acquisition" },
+              { "week": 2, "topic": "Ethical Issues in Science and Development" },
+              { "week": 3, "topic": "Familiarisation Tour of the Laboratory and Workshop" },
+              { "week": 4, "topic": "Workshop Accidents and Safety" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "MID-TERM BREAK" },
+              { "week": 7, "topic": "Materials: Wood, Metals, Ceramics, and Building Materials" },
+              { "week": 8, "topic": "Workshop Processes: Drawing Practice" },
+              { "week": 9, "topic": "Workshop Processes: Board Practice" },
+              { "week": 10, "topic": "Machines and Tools: Woodwork & Metalwork Hand Tools" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of JSS 1 Science Concepts" },
+              { "week": 2, "topic": "Components of the Environment" },
+              { "week": 3, "topic": "Soil Formation and Conservation" },
+              { "week": 4, "topic": "Environmental Pollution" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "MID-TERM BREAK" },
+              { "week": 7, "topic": "Waste and Its Management" },
+              { "week": 8, "topic": "Air and Water Pollution" },
+              { "week": 9, "topic": "Conservation of Natural Resources" },
+              { "week": 10, "topic": "Climate and Environmental Changes" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Elements, Compounds and Mixtures" },
+              { "week": 2, "topic": "Acids, Bases and Salts" },
+              { "week": 3, "topic": "The Human Body" },
+              { "week": 4, "topic": "Reproduction in Plants and Animals" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "MID-TERM BREAK" },
+              { "week": 7, "topic": "Classification of Living Things" },
+              { "week": 8, "topic": "Cells as the Basic Units of Life" },
+              { "week": 9, "topic": "Growth and Development" },
+              { "week": 10, "topic": "Microorganisms" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Forms and Sources of Energy" },
+              { "week": 2, "topic": "Heat and Temperature" },
+              { "week": 3, "topic": "Light and Its Properties" },
+              { "week": 4, "topic": "Sound" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "MID-TERM BREAK" },
+              { "week": 7, "topic": "Electricity and Magnetism" },
+              { "week": 8, "topic": "Machines" },
+              { "week": 9, "topic": "Science, Technology and Development" },
+              { "week": 10, "topic": "Skill Acquisition and Entrepreneurship" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of JSS 2 Work" },
+              { "week": 2, "topic": "Ecosystem" },
+              { "week": 3, "topic": "Natural Resources" },
+              { "week": 4, "topic": "Environmental Hazards" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "MID-TERM BREAK" },
+              { "week": 7, "topic": "Environmental Health" },
+              { "week": 8, "topic": "Waste Disposal and Recycling" },
+              { "week": 9, "topic": "Sustainable Development" },
+              { "week": 10, "topic": "Review of Environmental Concepts" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "The Cell and Its Functions" },
+              { "week": 2, "topic": "Tissues and Organs" },
+              { "week": 3, "topic": "Heredity and Variation" },
+              { "week": 4, "topic": "Adaptation of Organisms" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "MID-TERM BREAK" },
+              { "week": 7, "topic": "Atoms and Molecules" },
+              { "week": 8, "topic": "Changes in Matter" },
+              { "week": 9, "topic": "Water and Air" },
+              { "week": 10, "topic": "Microorganisms and Diseases" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Energy Transformation" },
+              { "week": 2, "topic": "Heat Transfer" },
+              { "week": 3, "topic": "Electrical Energy" },
+              { "week": 4, "topic": "Science, Technology and National Development" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "MID-TERM BREAK" },
+              { "week": 7, "topic": "Machines and Mechanisms" },
+              { "week": 8, "topic": "ICT and Scientific Advancement" },
+              { "week": 9, "topic": "Career Opportunities in Science and Technology" },
+              { "week": 10, "topic": "Science Projects and Exhibitions" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

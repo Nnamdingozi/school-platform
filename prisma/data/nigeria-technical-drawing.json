@@ -1,0 +1,163 @@
+{
+    "subject": "Technical Drawing",
+    "curriculum": [
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Technical Drawing" },
+              { "week": 2, "topic": "Safe Working Habits" },
+              { "week": 3, "topic": "Board Practice" },
+              { "week": 4, "topic": "Lines (Types of Lines)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Lettering and Numbering" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Plane Geometry – Division of Line" },
+              { "week": 9, "topic": "Circles" },
+              { "week": 10, "topic": "Angles – Construction and Measurement" },
+              { "week": 11, "topic": "Triangles" },
+              { "week": 12, "topic": "Quadrilaterals" },
+              { "week": 13, "topic": "Revision, Examination and Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Polygons – Properties and Construction of Polygons" },
+              { "week": 2, "topic": "Introduction to Polygons (Continued)" },
+              { "week": 3, "topic": "Introduction to Polygons (Continued)" },
+              { "week": 4, "topic": "Scales" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Enlargement and Reduction of Plane Figures" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Equal Areas of Similar Figures" },
+              { "week": 9, "topic": "Equal Areas of Similar Figures (Continued)" },
+              { "week": 10, "topic": "Tangents and Tangency – Properties and Construction" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Loci, Parabola, Hyperbola, Ellipse" },
+              { "week": 2, "topic": "Loci, Parabola, Hyperbola, Ellipse (Continued)" },
+              { "week": 3, "topic": "Loci, Parabola, Hyperbola, Ellipse (Continued)" },
+              { "week": 4, "topic": "Prisms" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Pyramids and Cones" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Surface Development" },
+              { "week": 9, "topic": "Surface Development (Continued)" },
+              { "week": 10, "topic": "Dimensioning" },
+              { "week": 11, "topic": "Construction of Isometric" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Revision of SS1 Work" },
+              { "week": 2, "topic": "Geometrical Construction" },
+              { "week": 3, "topic": "Geometrical Construction (Continued)" },
+              { "week": 4, "topic": "Geometrical Construction (Continued)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Simple Scale Drawing – Plain and Diagonal Scales" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Pictorial Drawings – Oblique Projection" },
+              { "week": 9, "topic": "Pictorial Drawings – Isometric Projection" },
+              { "week": 10, "topic": "Freehand Sketching" },
+              { "week": 11, "topic": "Freehand Sketching (Continued)" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Revision of First Term’s Work" },
+              { "week": 2, "topic": "Orthographic Projection" },
+              { "week": 3, "topic": "Orthographic Projection (Continued)" },
+              { "week": 4, "topic": "Sectional Views" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Sectional Views (Continued)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Auxiliary Views" },
+              { "week": 9, "topic": "Assembly Drawing" },
+              { "week": 10, "topic": "Assembly Drawing (Continued)" },
+              { "week": 11, "topic": "Fasteners" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Interpenetration and Development of Solids" },
+              { "week": 2, "topic": "Interpenetration and Development of Solids (Continued)" },
+              { "week": 3, "topic": "Building Drawings" },
+              { "week": 4, "topic": "Building Drawings (Continued)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Pictorial Drawing of Buildings" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Pictorial Drawing of Buildings (Continued)" },
+              { "week": 9, "topic": "Freehand Sketching" },
+              { "week": 10, "topic": "Freehand Sketching (Continued)" },
+              { "week": 11, "topic": "Specification Writing" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Engineering Designs and Working Drawing" },
+              { "week": 2, "topic": "Engineering Designs and Working Drawing (Continued)" },
+              { "week": 3, "topic": "Screw Threads, Fasteners and Locking Devices" },
+              { "week": 4, "topic": "Screw Threads, Fasteners and Locking Devices (Continued)" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Engineering Working Drawing" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Sections and Sectional Views" },
+              { "week": 9, "topic": "Block Sectioning" },
+              { "week": 10, "topic": "Block Sectioning (Continued)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Computer" },
+              { "week": 2, "topic": "Arches" },
+              { "week": 3, "topic": "Roofs" },
+              { "week": 4, "topic": "Conventional Representation of Materials and Symbols" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Blueprint Reading, Reproduction Services and Merchandising" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Blueprint Reading, Reproduction Services and Merchandising (Continued)" },
+              { "week": 9, "topic": "Computer-Aided Design (CAD)" },
+              { "week": 10, "topic": "Computer-Aided Design (Continued)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

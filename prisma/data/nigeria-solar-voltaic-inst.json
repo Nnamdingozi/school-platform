@@ -1,0 +1,339 @@
+{
+    "subject": "Solar Photovoltaic Installation and Maintenance",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Solar Photovoltaic (PV) System" },
+              { "week": 2, "topic": "Electrical Appliances Power Load / Load Sizing" },
+              { "week": 3, "topic": "Electrical Safety Precautions" },
+              { "week": 4, "topic": "Safety Precautions in Handling Solar PV System Materials" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "Solar PV Components: Solar Panels" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Solar PV Components: Inverters" },
+              { "week": 9, "topic": "Solar PV Components: Battery Bank Storage" },
+              { "week": 10, "topic": "System Sizing (Battery & Inverter)" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Review of First Term Work" },
+              { "week": 2, "topic": "Concept of Entrepreneurship" },
+              { "week": 3, "topic": "Concept of Money" },
+              { "week": 4, "topic": "Bookkeeping in Solar PV Installation and Maintenance" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "Business Start-Up in Solar PV Installation and Maintenance" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Marketing in Solar PV Installation and Maintenance (Goods and Services)" },
+              { "week": 9, "topic": "Safety in Solar Installation and Maintenance" },
+              { "week": 10, "topic": "Maintenance of Solar Tools and Equipment" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Review of Second Term Work" },
+              { "week": 2, "topic": "Introduction to Renewable Energy" },
+              { "week": 3, "topic": "Principles of Solar Energy" },
+              { "week": 4, "topic": "Components of Solar PV Systems" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "Energy Storage Systems" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Power Distribution and Load Management" },
+              { "week": 9, "topic": "Troubleshooting in Solar PV Systems" },
+              { "week": 10, "topic": "Field Practice and Demonstration" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of JSS 1 Work" },
+              { "week": 2, "topic": "Electricity Fundamentals" },
+              { "week": 3, "topic": "Energy Sources and Power Generation" },
+              { "week": 4, "topic": "Solar PV System Configuration" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "Solar Charge Controllers" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Solar Panels and Mounting Techniques" },
+              { "week": 9, "topic": "Electrical Wiring in Solar Systems" },
+              { "week": 10, "topic": "Entrepreneurship in Solar PV" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Review of First Term Work" },
+              { "week": 2, "topic": "Solar Batteries" },
+              { "week": 3, "topic": "Inverters and Converters" },
+              { "week": 4, "topic": "Load Estimation and Energy Demand" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "System Sizing and Design" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Installation Procedures" },
+              { "week": 9, "topic": "Safety Practices in Installation" },
+              { "week": 10, "topic": "Solar PV Maintenance and Troubleshooting" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Review of Second Term Work" },
+              { "week": 2, "topic": "Energy Storage Systems" },
+              { "week": 3, "topic": "Solar System Performance Evaluation" },
+              { "week": 4, "topic": "Fault Detection in PV Systems" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "Entrepreneurship in Solar Energy" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Career Opportunities in Renewable Energy" },
+              { "week": 9, "topic": "Environmental Impact of Solar Energy" },
+              { "week": 10, "topic": "Final Project and Demonstration" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction and Revision of Previous Work" },
+              { "week": 2, "topic": "Advanced Solar System Components" },
+              { "week": 3, "topic": "System Design and Sizing" },
+              { "week": 4, "topic": "Solar Installation Procedures (Advanced)" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "System Protection and Safety Devices" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Maintenance and Servicing of PV Systems" },
+              { "week": 9, "topic": "Renewable Energy Policies and Regulations" },
+              { "week": 10, "topic": "Entrepreneurship in Solar Energy (Revisited)" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Revision of First Term Work" },
+              { "week": 2, "topic": "Electrical Wiring for Solar Systems" },
+              { "week": 3, "topic": "Battery Bank Configuration" },
+              { "week": 4, "topic": "Inverter Operation and Connection" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "Solar Load Management" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Fault Detection and Troubleshooting" },
+              { "week": 9, "topic": "Solar System Testing and Commissioning" },
+              { "week": 10, "topic": "Documentation and Reporting" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Revision of Previous Work" },
+              { "week": 2, "topic": "Occupational Health and Safety (OHS) in Solar Work" },
+              { "week": 3, "topic": "Solar Site Assessment" },
+              { "week": 4, "topic": "System Installation Procedure" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "Maintenance and Servicing of Solar PV Systems" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Energy Conservation and Efficiency" },
+              { "week": 9, "topic": "Entrepreneurship in Solar Energy" },
+              { "week": 10, "topic": "Project Work and Field Demonstration" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Renewable Energy" },
+              { "week": 2, "topic": "Basics of Solar Energy" },
+              { "week": 3, "topic": "Solar Energy Terminologies" },
+              { "week": 4, "topic": "Types of Solar Energy Systems" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Components of PV Systems I (Solar Panels)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Components of PV Systems II (Charge Controllers)" },
+              { "week": 9, "topic": "Components of PV Systems III (Batteries)" },
+              { "week": 10, "topic": "Components of PV Systems IV (Inverters)" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Basic Electrical Concepts" },
+              { "week": 2, "topic": "Tools & Instruments in PV Installation" },
+              { "week": 3, "topic": "Solar Panel Connections I (Series)" },
+              { "week": 4, "topic": "Solar Panel Connections II (Parallel)" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Solar Panel Mounting Structures" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Wiring & Cabling" },
+              { "week": 9, "topic": "Earthing & Protection" },
+              { "week": 10, "topic": "Practical: Small Solar Setup" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "PV System Design Principles" },
+              { "week": 2, "topic": "Sizing Solar Panels" },
+              { "week": 3, "topic": "Sizing Batteries" },
+              { "week": 4, "topic": "Sizing Charge Controllers & Inverters" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Practical PV System Design" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "PV System Installation Steps I" },
+              { "week": 9, "topic": "PV System Installation Steps II" },
+              { "week": 10, "topic": "System Testing & Commissioning" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of SS1 Work" },
+              { "week": 2, "topic": "Advanced PV System Design" },
+              { "week": 3, "topic": "Solar Energy Storage Technologies" },
+              { "week": 4, "topic": "Energy Efficiency in Solar Systems" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Safety in PV Installation" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Nigerian & International Standards" },
+              { "week": 9, "topic": "Electrical Codes & Regulations" },
+              { "week": 10, "topic": "Practical: Grid-tied Solar Setup" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Solar Water Pumping Systems" },
+              { "week": 2, "topic": "Solar Street Lighting Systems" },
+              { "week": 3, "topic": "Solar Home Systems" },
+              { "week": 4, "topic": "Advanced Wiring Techniques" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "PV System Maintenance I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "PV System Maintenance II" },
+              { "week": 9, "topic": "Monitoring & Performance Evaluation" },
+              { "week": 10, "topic": "Practical: Maintenance of Installed Systems" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Solar Entrepreneurship" },
+              { "week": 2, "topic": "Business Skills in Solar Sector" },
+              { "week": 3, "topic": "Costing & Pricing of Solar Systems" },
+              { "week": 4, "topic": "Customer Service & Support" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Project Management in Solar Installations" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Case Studies of Nigerian Solar Projects" },
+              { "week": 9, "topic": "Practical: Business Simulation" },
+              { "week": 10, "topic": "Field Visit" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of SS1 & SS2 Work" },
+              { "week": 2, "topic": "Advanced PV Technologies" },
+              { "week": 3, "topic": "Smart Solar Systems" },
+              { "week": 4, "topic": "Hybrid Energy Systems" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Energy Policies in Nigeria" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Climate Change & Renewable Energy" },
+              { "week": 9, "topic": "Environmental Impacts of PV Systems" },
+              { "week": 10, "topic": "Practical: Smart Solar Monitoring System" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Preparation for SSCE" },
+              { "week": 2, "topic": "SSCE Past Questions – Theory" },
+              { "week": 3, "topic": "SSCE Past Questions – Practical" },
+              { "week": 4, "topic": "Mock Installation Project I" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Mock Installation Project II" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Mock Installation Project III" },
+              { "week": 9, "topic": "Mock SSCE" },
+              { "week": 10, "topic": "Exam Prep & Coaching" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Comprehensive Revision I" },
+              { "week": 2, "topic": "Comprehensive Revision II" },
+              { "week": 3, "topic": "Final Project Presentation" },
+              { "week": 4, "topic": "Mock Exams" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Final SSCE Preparation" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": "8-10", "topic": "WAEC/NECO Practical & Theory Exams" },
+              { "week": "11-13", "topic": "Closing & Graduation" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

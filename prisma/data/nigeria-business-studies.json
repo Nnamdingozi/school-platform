@@ -1,0 +1,165 @@
+{
+  "subject": "Business Studies",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Overview of Business Studies", "description": "Meaning of Business Studies; Components of Business Studies; Importance/Benefits of Business Studies; Career opportunities" },
+            { "week": 2, "topic": "Effective Office Practice I", "description": "The office: meaning, types, and functions" },
+            { "week": 3, "topic": "Effective Office Practice II", "description": "The office staff – clerical staff, functions, qualities" },
+            { "week": 4, "topic": "Right Attitude to Work", "description": "Punctuality and regularity; Rewards and punishment; Devotion to duty; Effects on productivity and development" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Departments in an Office/Organisation", "description": "Various departments in an organisation and their functions" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Commerce – The Heart of Business I", "description": "Introduction, meaning, importance of commerce; Activities that aid commerce (aids to trade)" },
+            { "week": 9, "topic": "Commerce – The Heart of Business II", "description": "Divisions of commerce – Home trade, foreign trade (imports, exports, entrepôt)" },
+            { "week": 10, "topic": "Production I", "description": "Meaning and stages (types) of production; Effects on society and environment" },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Production II", "description": "Factors of production – meaning, types, rewards, features, importance" },
+            { "week": 2, "topic": "Types of Occupation", "description": "Meaning of occupation; Types – direct and indirect services; Factors influencing occupation" },
+            { "week": 3, "topic": "Honesty in Business", "description": "Meaning of truthfulness; Attributes; Causes of dishonesty; Rewards/consequences" },
+            { "week": 4, "topic": "Fairplay and Ethics of Business", "description": "Fairplay; Meaning of ethics; Ethics guiding sourcing of chemicals; Meaning and facts about chemicals; Safe handling, distribution, and disposal" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Entrepreneurship", "description": "Meaning of entrepreneurship, enterprise, self-employment; Successful entrepreneurs (local, national, international); Importance" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Forms of Business Organisation I", "description": "Sole proprietorship; Partnership" },
+            { "week": 9, "topic": "Forms of Business Organisation II", "description": "Limited liability companies; Co-operative societies; Advantages and disadvantages" },
+            { "week": 10, "topic": "Consumer, Market and Society", "description": "Meaning of consumer, market, society; Consumer education – meaning, need, importance, consequences of lack of it" },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Book-keeping as a Tool in Business I", "description": "Introduction to book-keeping; Meaning; Importance; Qualities of a good book-keeper; Common practices" },
+            { "week": 2, "topic": "Source Documents and Special Journals I", "description": "Meaning/Uses of source documents; Types of source documents" },
+            { "week": 3, "topic": "Source Documents and Special Journals II", "description": "Journals: meaning, types; Format of a sales journal" },
+            { "week": 4, "topic": "Double Entry Book-keeping", "description": "Meaning; Treatment of assets, liabilities, expenses; Meaning and format of ledger; Classification of accounts" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Keyboarding as a Communication Tool I", "description": "Introduction to keyboarding; Meaning; Importance; Correct sitting posture" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Keyboarding as a Communication Tool II", "description": "The typewriter – meaning, types, parts; Computer keyboard – meaning, uses, similarities with typewriter" },
+            { "week": 9, "topic": "Keyboarding as a Communication Tool III", "description": "Care of the computer; Items used; Getting ready to keyboard (paper sizes, techniques, rows, divisions)" },
+            { "week": 10, "topic": "Keyboarding as a Communication Tool IV", "description": "Alphanumeric keys; Service keys; Function keys; Control keys; Special keys and their functions; Spacing and punctuation marks; Short forms" },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Effective Office Practice", "description": "Definition of an office; Types of offices; Importance of an office" },
+            { "week": 2, "topic": "The Reception Office", "description": "Meaning of reception office; Meaning of a receptionist; Importance of a receptionist" },
+            { "week": 3, "topic": "Duties of a Receptionist", "description": "Qualities of a good receptionist; How to receive and treat visitors" },
+            { "week": 4, "topic": "Office Etiquette", "description": "Appropriate office dress code; Documents handled by the receptionist" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Office Correspondence (Part 1)", "description": "Meaning of office correspondence; Types of correspondence" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Office Correspondence (Part 2)", "description": "Uses of office correspondence; Ways mails come into an organisation" },
+            { "week": 9, "topic": "Handling of Mail", "description": "Inward mail and outward mail; Mail handling procedures" },
+            { "week": 10, "topic": "Office Documents", "description": "Meaning of office documents; Types of office documents; Preparation and uses of sales & purchase documents" },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Right Attitude to Work", "description": "Meaning; Punctuality; Regularity; Reward and punishment" },
+            { "week": 2, "topic": "Devotion to Duty", "description": "Attributes of people who are devoted to duty; Effects of devotion to duty" },
+            { "week": 3, "topic": "Commerce: The Heart of Business", "description": "Meaning and importance of trade; Forms of trade" },
+            { "week": 4, "topic": "Aids to Trade", "description": "Meaning; Types; Role of Customs and Excise in foreign trade" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "The Market", "description": "Meaning; Features of a market; Commodity, money and capital markets" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Careers in the Capital Market", "description": "Various careers; Importance of capital market to business" },
+            { "week": 9, "topic": "Buying and Selling", "description": "Buying by cash and credit; Cost of sales; Mark-up; Turnover" },
+            { "week": 10, "topic": "Profit and Loss", "description": "Calculation of profit/loss; Importance of profit to business" },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Distribution", "description": "Meaning; Channels of distribution; Functions of wholesalers and retailers" },
+            { "week": 2, "topic": "Licensed Chemical Vendors", "description": "Handling & distribution of chemicals; Effects of wrong handling" },
+            { "week": 3, "topic": "Financial Institutions: Banks", "description": "Commercial banks; Bank services; Ethical issues in banking" },
+            { "week": 4, "topic": "Insurance", "description": "Meaning; Services rendered by insurance companies; Types and benefits of insurance" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Entrepreneurship", "description": "Meaning; Definition of entrepreneur; Personal qualities of an entrepreneur" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Business Opportunities", "description": "Meaning; How to discover opportunities; Types (local, national, international)" },
+            { "week": 9, "topic": "Consumer Rights & Responsibilities", "description": "Meaning of consumer rights; Consumerism; Eight universal rights of a consumer; Responsibilities of consumers" },
+            { "week": 10, "topic": "Shopping and After-Sales Services", "description": "Needs vs wants; Decision making; Impulse buying and its effects; After-sales services" },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Effective Office Practice", "description": "Meaning of office procedure; importance of office procedure." },
+            { "week": 2, "topic": "Office Procedure (Part 1)", "description": "Procedures for making payments; preparation of sales and purchases documents." },
+            { "week": 3, "topic": "Office Procedure (Part 2)", "description": "Imprest account: meaning, features, advantages." },
+            { "week": 4, "topic": "Store Records", "description": "Meaning of store records; delivery note; gate pass." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Stocktaking", "description": "Meaning of stocktaking; importance of stocktaking in business." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Office Equipment (Part 1)", "description": "Meaning of office equipment; types of office equipment." },
+            { "week": 9, "topic": "Office Equipment (Part 2)", "description": "Care of office equipment; advantages and disadvantages." },
+            { "week": 10, "topic": "Commerce – The Heart of Business", "description": "Nature of commerce as the center of business activities." },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "Weeks 1–10 topics." }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Advertising (Part 1)", "description": "Meaning of advertising; types of advertising." },
+            { "week": 2, "topic": "Advertising (Part 2)", "description": "Functions and methods of advertising." },
+            { "week": 3, "topic": "Advertising (Part 3)", "description": "Media of advertising; ethics of advertising; advertising jingles." },
+            { "week": 4, "topic": "Transportation", "description": "Meaning; importance of transportation to commerce; types, advantages and disadvantages." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Communication (Part 1)", "description": "Meaning of communication; process of effective communication; hindrances to communication." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Communication (Part 2)", "description": "Methods of communication; importance to business." },
+            { "week": 9, "topic": "Communication (Part 3)", "description": "Agencies of communication and their services; the Internet; GSM." },
+            { "week": 10, "topic": "Setting Simple Business Goals", "description": "Difference between goals and objectives; SWOT analysis; strengths, weaknesses, opportunities, threats." },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "Weeks 1–10 topics." }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Business Plans (Part 1)", "description": "Meaning of a business plan; importance of a business plan." },
+            { "week": 2, "topic": "Business Plans (Part 2)", "description": "Procedure for drawing up a simple business plan; format of a business plan." },
+            { "week": 3, "topic": "Consumer Protection (Part 1)", "description": "Meaning; need for consumer protection; agencies and their roles." },
+            { "week": 4, "topic": "Consumer Protection (Part 2)", "description": "Responsibilities of consumers; universal rights of consumers; instruments of consumer protection." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Consumer Protection (Part 3)", "description": "Complaints: meaning; justified vs unjustified complaints; steps in lodging complaints; writing a letter of complaint." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Consumer Protection (Part 4)", "description": "Reasons for banning/restricting harmful chemicals; procedure for banning chemicals; seeking redress." },
+            { "week": 9, "topic": "Personal Finance", "description": "Meaning; sources of finance for individuals; needs and wants; scale of preference; modesty and its effects." },
+            { "week": 10, "topic": "Bookkeeping and Business Success", "description": "Trial balance (meaning, uses, items, preparation); Trading, Profit and Loss accounts (meaning, purpose, preparation); Balance sheet (meaning, uses, contents, preparation)." },
+            { "week": "11-13", "topic": "Revision / Examination / Closing", "description": "Weeks 1–10 topics." }
+          ]
+        }
+      ]
+    }
+  ]
+}

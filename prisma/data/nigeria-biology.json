@@ -1,0 +1,147 @@
+{
+  "subject": "Biology",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Recognizing Living Things", "description": "Characteristics and differences between living and non-living things" },
+            { "week": 2, "topic": "Classification of Living Things", "description": "Importance of classification, levels of classification" },
+            { "week": 3, "topic": "Kingdoms of Living Things", "description": "Monera, Protista, Fungi, Plantae, Animalia" },
+            { "week": 4, "topic": "The Cell", "description": "Structure, types, and functions of cell organelles" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Cell and Its Environment", "description": "Diffusion, osmosis, active transport" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Properties and Functions of the Cell", "description": "Nutrition, respiration, growth, irritability" },
+            { "week": 9, "topic": "Respiration", "description": "Aerobic and anaerobic respiration" },
+            { "week": 10, "topic": "Growth and Irritability", "description": "Meaning, processes, importance of growth and response to stimuli" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Tissue and Supporting System", "description": "Types of tissues in plants and animals" },
+            { "week": 2, "topic": "Nutrition", "description": "Types of nutrition, autotrophic and heterotrophic" },
+            { "week": 3, "topic": "Basic Ecological Concepts", "description": "Habitat, ecosystem, ecological factors" },
+            { "week": 4, "topic": "Population Studies", "description": "Population density, size, growth, and regulation" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Functioning Ecosystem", "description": "Autotrophy, heterotrophy, food webs, trophic levels" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Energy Transformation in Nature", "description": "Energy flow, pyramid of energy, productivity" },
+            { "week": 9, "topic": "Relevance of Biology to Agriculture", "description": "Application of biological principles in agriculture" },
+            { "week": 10, "topic": "Micro-Organisms Around Us", "description": "Types, characteristics, and importance" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Micro-Organisms in Action", "description": "Roles in fermentation, decay, food spoilage, and diseases" },
+            { "week": 2, "topic": "Towards Better Health", "description": "Hygiene, sanitation, vaccination, disease prevention" },
+            { "week": 3, "topic": "Habitat", "description": "Meaning, types, and examples" },
+            { "week": 4, "topic": "Aquatic Habitat", "description": "Estuarine and freshwater habitats" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Terrestrial Habitat", "description": "Types and features" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Grassland Habitat", "description": "Features, adaptations of organisms" },
+            { "week": 9, "topic": "Reproduction in Unicellular Organisms and Invertebrates I", "description": "Binary fission, budding, spore formation" },
+            { "week": 10, "topic": "Reproduction in Unicellular Organisms and Invertebrates II", "description": "Sexual and asexual reproduction in invertebrates" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Digestive System I", "description": "Organs of the alimentary canal; associated glands; mechanical and chemical digestion." },
+            { "week": 2, "topic": "Digestive System II", "description": "Enzymes of digestion; absorption of digested food; assimilation and egestion." },
+            { "week": 3, "topic": "Transportation System I", "description": "Transport in unicellular and multicellular organisms; differences between diffusion, osmosis and active transport." },
+            { "week": 4, "topic": "Transportation System II", "description": "Circulatory system in mammals; structure and functions of the heart, blood vessels and blood components." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Respiratory System I", "description": "Meaning of respiration; structure of the respiratory system in man; breathing mechanism." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Respiratory System II", "description": "Types of respiration (aerobic and anaerobic); comparison; importance and energy yield." },
+            { "week": 9, "topic": "Excretory System", "description": "Excretory organs in man; structure and functions of the kidney; excretory products; disorders of the excretory system." },
+            { "week": 10, "topic": "Nutrient Cycling in Nature", "description": "Cycles of carbon, nitrogen and water; importance of nutrient cycling to living organisms." },
+            { "week": 11, "topic": "Revision", "description": "Review of first term’s work." },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Ecological Management", "description": "Meaning of ecology; concepts of association, tolerance and adaptation; examples in plants and animals." },
+            { "week": 2, "topic": "Pollution", "description": "Meaning and types (air, water, soil, noise); causes, effects and control of pollution." },
+            { "week": 3, "topic": "Conservation of Natural Resources", "description": "Meaning of conservation; methods; importance of conserving soil, water, forests and wildlife." },
+            { "week": 4, "topic": "Pests and Diseases of Crops", "description": "Types of crop pests and diseases; effects on crop production; preventive and control measures." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Reproductive Systems in Vertebrates", "description": "Structures and functions of reproductive systems in fish, amphibians, reptiles, birds and mammals." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Reproductive Systems in Plants", "description": "Floral parts and their functions; types of flowers; comparison of monocot and dicot flowers." },
+            { "week": 9, "topic": "Pollination in Plants", "description": "Self- and cross-pollination; agents of pollination; advantages and disadvantages." },
+            { "week": 10, "topic": "Regulation of Internal Environment", "description": "Homeostasis in humans; regulation of temperature, water and salt balance; role of the skin, kidney and hormones." },
+            { "week": 11, "topic": "Revision", "description": "Review of second term’s work." },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Nervous Coordination", "description": "Organization of the nervous system; structure and functions of neurones; transmission of impulses." },
+            { "week": 2, "topic": "Sense Organs", "description": "Structure and functions of the eye, ear, nose, tongue and skin; common defects and corrections." },
+            { "week": 3, "topic": "Ecology of Population", "description": "Definition; population characteristics (size, density, birth rate, death rate, age distribution); population growth curve." },
+            { "week": 4, "topic": "Balance in Nature", "description": "Concept of ecological balance; food chains, food webs and energy flow in ecosystems." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Reproductive System and Reproduction in Humans", "description": "Structures and functions of male and female reproductive systems; fertilization; development of embryo." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Development of New Seeds", "description": "Fertilization in plants; development of seeds; structure and functions of seed parts." },
+            { "week": 9, "topic": "Fruits", "description": "Types of fruits (simple, aggregate, multiple); features of wind- and animal-dispersed fruits." },
+            { "week": 10, "topic": "Reproductive Behaviours", "description": "Courtship behaviour in animals; parental care; importance of reproductive behaviour to species continuity." },
+            { "week": 11, "topic": "Revision", "description": "Review of third term’s work." },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Reproductive Behaviours in Animals", "description": "Meaning of reproductive behaviour; courtship behaviour; mating systems (monogamy, polygamy, promiscuity); parental care in fishes, amphibians, birds and mammals; importance of reproductive behaviours in survival of species." },
+            { "week": 2, "topic": "Biology of Heredity (Genetics I)", "description": "Concept of heredity; brief history of genetics (Gregor Mendel’s experiments); terminologies—gene, allele, chromosome, genotype, phenotype, homozygous, heterozygous; Mendel’s laws of inheritance with examples." },
+            { "week": 3, "topic": "Genetics II", "description": "Monohybrid and dihybrid crosses; Punnett square applications; sex determination in humans; sex-linked traits (haemophilia, colour blindness); importance of genetics in agriculture and medicine." },
+            { "week": 4, "topic": "Variation and Evolution I", "description": "Concept of variation; types of variation—morphological, physiological, discontinuous and continuous; causes of variation (mutation, meiosis, fertilization, environment); adaptive colouration, mimicry, and camouflage in animals." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Evolution II", "description": "Meaning of evolution; theories of evolution—Lamarckism and Darwinism; modern synthetic theory of evolution; evidence of evolution (fossil records, comparative anatomy, embryology, vestigial structures); natural selection and adaptation." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Human Evolution", "description": "Origin of man; fossil evidence of human evolution (Australopithecus, Homo habilis, Homo erectus, Homo sapiens); similarities between humans and apes; cultural and biological evolution of humans." },
+            { "week": 9, "topic": "Application of Genetics and Evolution", "description": "Application in agriculture (selective breeding, hybridization, genetic engineering, GMOs); application in medicine (blood transfusion, sickle cell study, genetic counselling, cloning, IVF); role of evolution in biodiversity and conservation." },
+            { "week": 10, "topic": "Ethical, Social and Economic Implications of Genetics and Evolution", "description": "Ethical debates on cloning, stem cell research, GMOs; advantages and disadvantages; importance of conservation of genetic resources; relevance to Nigeria’s development." },
+            { "week": 11, "topic": "Revision", "description": "General revision of all topics taught in the term, with practice questions and past exam applications." },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        }
+      ]
+    }
+  ]
+}

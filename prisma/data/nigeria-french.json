@@ -1,0 +1,164 @@
+{
+    "subject": "French",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Words used in the classroom" },
+              { "week": 2, "topic": "Saluer (Greeting)" },
+              { "week": 3, "topic": "Se présenter (Introducing oneself)" },
+              { "week": 4, "topic": "Épeler un mot / Écrire un mot épelé" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Présenter quelqu'un" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Décrire quelqu'un" },
+              { "week": 9, "topic": "Parler de ses loisirs" },
+              { "week": 10, "topic": "Exprimer ses goûts et préférences" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Exprimer les propriétés des objets" },
+              { "week": 2, "topic": "Demander quelque chose à quelqu'un" },
+              { "week": 3, "topic": "Décrire les professions" },
+              { "week": 4, "topic": "Demander et donner l'heure" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Expliquer ce que l'on fait à certaines heures de la journée" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Dire les dates" },
+              { "week": 9, "topic": "Situer un événement par rapport à un autre" },
+              { "week": 10, "topic": "Demander et expliquer ce que l'on fait tous les jours de la semaine" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Demander et indiquer le temps qu'il fait" },
+              { "week": 2, "topic": "Exprimer la fréquence d'une activité" },
+              { "week": 3, "topic": "Inviter quelqu'un" },
+              { "week": 4, "topic": "Donner un ordre, interdire, autoriser" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Demander la permission, conseiller" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Expliquer une démarche à quelqu'un" },
+              { "week": 9, "topic": "Revision of Communicative Functions" },
+              { "week": 10, "topic": "Practice of Written/Oral French" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Unité 1: Demander et expliquer la position" },
+              { "week": 2, "topic": "Unité 2: Situer les lieux" },
+              { "week": 3, "topic": "Unité 3: Accueillir et guider quelqu'un" },
+              { "week": 4, "topic": "Unité 4: Demander/indiquer le chemin" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Unité 5: Les moyens de transport" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Unité 6: Expliquer un trajet" },
+              { "week": 9, "topic": "Unité 7: Demander/indiquer des horaires" },
+              { "week": 10, "topic": "Unité 8: Réagir à un problème de transport" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Unité 9: Établir des listes/inventaires" },
+              { "week": 2, "topic": "Unité 10: Les commerçants et marchandises" },
+              { "week": 3, "topic": "Unité 11: Acheter et marchander" },
+              { "week": 4, "topic": "Unité 12: Exprimer un besoin et son utilité" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Unité 13: À la pharmacie" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Unité 14: Les vêtements, chaussures et accessoires" },
+              { "week": 9, "topic": "Unité 15: Apprécier, comparer, choisir" },
+              { "week": 10, "topic": "Unité 16: Quantité et qualité des produits" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Unité 17: Opérations de calcul simple" },
+              { "week": 2, "topic": "Unité 18: Nourriture et boissons" },
+              { "week": 3, "topic": "Unité 19: Recettes de cuisine" },
+              { "week": 4, "topic": "Unité 20: Au restaurant/café" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Projet oral et écrit" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Révision générale des unités 17–20" },
+              { "week": 9, "topic": "Évaluation orale/pratique" },
+              { "week": 10, "topic": "Préparation aux examens" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Décrire plus précisément une personne" },
+              { "week": 2, "topic": "Décrire un paysage et des lieux touristiques" },
+              { "week": 3, "topic": "Expliquer ses habitudes" },
+              { "week": 4, "topic": "Parler d’un événement passé (les souvenirs)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Décrire un objet" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Comparer" },
+              { "week": 9, "topic": "Dater et mesurer le temps" },
+              { "week": 10, "topic": "Raconter sa journée" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Relater un événement passé" },
+              { "week": 2, "topic": "Rapporter un fait récent" },
+              { "week": 3, "topic": "Comprendre un récit / Écrire son journal" },
+              { "week": 4, "topic": "Dire ce que l’on va faire" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Faire des projets" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Consolidation orale et écrite" },
+              { "week": 9, "topic": "Préparation au BECE (Partie I)" },
+              { "week": 10, "topic": "Préparation au BECE (Partie II)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

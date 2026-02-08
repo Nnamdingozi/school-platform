@@ -1,0 +1,177 @@
+{
+    "subject": "Marketing",
+    "curriculum": [
+      {
+        "grade": "JSS 1 - JSS 3",
+        "note": "Marketing is embedded within the Business Studies curriculum for Junior Secondary classes.",
+        "terms": [
+          {
+            "term": "Relevant Topics from Business Studies",
+            "weeks": [
+              { "grade": "JSS 1", "week": 10, "topic": "Consumer, Market and Society" },
+              { "grade": "JSS 2", "week": 6, "topic": "The Market (Features, Commodity, Money and Capital markets)" },
+              { "grade": "JSS 2", "week": 9, "topic": "Buying and Selling" },
+              { "grade": "JSS 2", "week": 9, "topic": "Consumer Rights & Responsibilities" },
+              { "grade": "JSS 3", "week": "1-3", "topic": "Advertising (Meaning, Types, Functions, Media, Ethics)" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Marketing I (Meaning, nature, and scope)" },
+              { "week": 2, "topic": "Introduction to Marketing II (Importance in business and society)" },
+              { "week": 3, "topic": "Marketing Concepts (Production, product, selling, etc.)" },
+              { "week": 4, "topic": "Classification of Products I (Consumer and industrial goods)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Classification of Products II (Durable, non-durable, services)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Marketing Mix (4Ps: product, price, place, promotion)" },
+              { "week": 9, "topic": "Marketing Environment (Internal and external)" },
+              { "week": 10, "topic": "What Do Markets Do (Functions and roles)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Consumer Behaviour (Meaning and factors)" },
+              { "week": 2, "topic": "Organizational Buying Behaviour" },
+              { "week": 3, "topic": "Marketing Plan (Meaning, components, importance)" },
+              { "week": 4, "topic": "Advertising I (Meaning, types, importance)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Advertising II (Media, advantages and disadvantages)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Pricing Strategies and Determinants" },
+              { "week": 9, "topic": "Promotion (Meaning, types, and tools)" },
+              { "week": 10, "topic": "Merchandising (Meaning, importance, and techniques)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Advertising II (Media of advertising)" },
+              { "week": 2, "topic": "Pricing Strategies and Determinants" },
+              { "week": 3, "topic": "Promotion I (Meaning, tools, and importance)" },
+              { "week": 4, "topic": "Promotion II (Methods of sales promotion)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Merchandising I (Meaning, importance, and techniques)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Merchandising II (Methods and applications)" },
+              { "week": 9, "topic": "Merchandising III (Modern trends)" },
+              { "week": 10, "topic": "Distribution (Meaning, channels, and importance)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Transportation (Meaning, types, importance)" },
+              { "week": 2, "topic": "Warehousing (Types, functions, and importance)" },
+              { "week": 3, "topic": "Structure and Market Unions for Sales of Goods" },
+              { "week": 4, "topic": "Meaning and Roles of Facilitators (Agents, brokers, etc.)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Marketing of Mineral Products" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "International Marketing (Meaning and scope)" },
+              { "week": 9, "topic": "Organizing for International Marketing" },
+              { "week": 10, "topic": "Application of ICT in International Marketing" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Planning for Personal Marketing Outlet" },
+              { "week": 2, "topic": "Purchasing, Supplying and Merchandising of Goods and Services" },
+              { "week": 3, "topic": "Marketing of Services" },
+              { "week": 4, "topic": "Consumer Behavior (Factors and decision making)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Product Life Cycle (Stages and strategies)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Branding and Packaging" },
+              { "week": 9, "topic": "Pricing Policies and Strategies" },
+              { "week": 10, "topic": "Channels of Distribution" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Sales Promotion (Meaning and methods)" },
+              { "week": 2, "topic": "Advertising (Importance and limitations)" },
+              { "week": 3, "topic": "Personal Selling (Qualities and challenges)" },
+              { "week": 4, "topic": "Public Relations in Marketing" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Consumer Protection (Rights and agencies)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Contemporary Issues in Marketing (Digital, E-commerce)" },
+              { "week": 9, "topic": "Careers in Marketing" },
+              { "week": 10, "topic": "Revision" },
+              { "week": 11, "topic": "Examination" },
+              { "week": 12, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "International Marketing (Meaning and reasons)" },
+              { "week": 2, "topic": "Importance of International Market" },
+              { "week": 3, "topic": "International Trade System – Import and Export Trade" },
+              { "week": 4, "topic": "Market Decision and Reasons – Wider Market Escape from Competition" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Features of International Market" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Legal, Social, Cultural and Demographic Features of International Market" },
+              { "week": 9, "topic": "Approaches to International Market (Entry and adaptation)" },
+              { "week": 10, "topic": "Regulations Guiding International Marketing" },
+              { "week": 11, "topic": "Information and Communication Technology (ICT) in International Marketing" },
+              { "week": 12, "topic": "Revision" },
+              { "week": 13, "topic": "Examination" },
+              { "week": 14, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Internet Browsing and Electronic Marketing" },
+              { "week": 2, "topic": "Planning for a Personal Marketing Outlet" },
+              { "week": 3, "topic": "Identifying a Good Marketing Location and Setting up/Operating a Marketing Outlet" },
+              { "week": 4, "topic": "Purchase and Supply of Goods" },
+              { "week": 5, "topic": "Selling and Bargaining Skills" },
+              { "week": 6, "topic": "Fund Management" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": "8-11", "topic": "Comprehensive revision of the term’s work" },
+              { "week": "12-13", "topic": "Examination" },
+              { "week": 14, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

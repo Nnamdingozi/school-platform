@@ -1,0 +1,357 @@
+{
+    "subject": "Nigerian History",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to History" },
+              { "week": 2, "topic": "Nigerian Peoples and Languages" },
+              { "week": 3, "topic": "Early Settlements in Nigeria" },
+              { "week": 4, "topic": "Origins of Nigerian Societies" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Traditional Political Systems I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Traditional Political Systems II" },
+              { "week": 9, "topic": "Nigerian Art and Culture" },
+              { "week": 10, "topic": "Early Trade and Exchange" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Islam in Nigeria" },
+              { "week": 2, "topic": "Christianity in Nigeria" },
+              { "week": 3, "topic": "European Contact with Nigeria" },
+              { "week": 4, "topic": "Trans-Atlantic Slave Trade" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Abolition of Slave Trade" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Legitimate Trade" },
+              { "week": 9, "topic": "British Conquest of Nigerian Territories" },
+              { "week": 10, "topic": "Amalgamation of 1914" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Colonial Administration" },
+              { "week": 2, "topic": "Reactions to Colonialism I" },
+              { "week": 3, "topic": "Reactions to Colonialism II" },
+              { "week": 4, "topic": "Education in Colonial Nigeria" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Nationalism in Nigeria I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Nationalism in Nigeria II" },
+              { "week": 9, "topic": "Nigerian Newspapers and Nationalism" },
+              { "week": 10, "topic": "Road to Independence" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Independence of Nigeria" },
+              { "week": 2, "topic": "First Republic (1963–1966)" },
+              { "week": 3, "topic": "Military Rule in Nigeria I" },
+              { "week": 4, "topic": "Military Rule in Nigeria II" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Nigerian Civil War I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Nigerian Civil War II" },
+              { "week": 9, "topic": "Post-Civil War Nigeria" },
+              { "week": 10, "topic": "Oil Boom of the 1970s" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Second Republic (1979–1983)" },
+              { "week": 2, "topic": "Military Rule in the 1980s" },
+              { "week": 3, "topic": "Military Rule in the 1990s" },
+              { "week": 4, "topic": "Return to Democracy" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Democratic Governance" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Challenges of Democracy" },
+              { "week": 9, "topic": "Human Rights in Nigeria" },
+              { "week": 10, "topic": "Nigerian Foreign Policy" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Women in Nigerian History" },
+              { "week": 2, "topic": "Youths in Nigerian History" },
+              { "week": 3, "topic": "Workers in Nigerian History" },
+              { "week": 4, "topic": "Education and Development" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Nigerian Economy" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Science and Technology in Nigeria" },
+              { "week": 9, "topic": "Sports and National Unity" },
+              { "week": 10, "topic": "Culture and Tourism" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Nigeria in the 21st Century" },
+              { "week": 2, "topic": "Leadership in Contemporary Nigeria" },
+              { "week": 3, "topic": "Federalism in Nigeria" },
+              { "week": 4, "topic": "Constitution of Nigeria" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Elections and Electoral Bodies" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "National Security Issues" },
+              { "week": 9, "topic": "Anti-Corruption Struggles" },
+              { "week": 10, "topic": "Role of Nigeria in Africa" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Nigeria and Globalization" },
+              { "week": 2, "topic": "Nigeria in International Organisations" },
+              { "week": 3, "topic": "Nigeria and Global Peace" },
+              { "week": 4, "topic": "Human Rights Development in Nigeria" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Political Developments (2011–Present)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Nigerian Youth and Politics" },
+              { "week": 9, "topic": "Nigerian Women and Leadership" },
+              { "week": 10, "topic": "Challenges Facing Nigeria" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "National Development Plans" },
+              { "week": 2, "topic": "Sustainable Development in Nigeria" },
+              { "week": 3, "topic": "Corruption and Accountability" },
+              { "week": 4, "topic": "Nigerian Democracy and the Future" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Nigeria and African Unity" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Preparation for BECE" },
+              { "week": 9, "topic": "Mock Examination" },
+              { "week": 10, "topic": "BECE Examination" },
+              { "week": 11, "topic": "Closing (End of JSS cycle)" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to History" },
+              { "week": 2, "topic": "Why We Teach History" },
+              { "week": 3, "topic": "Sources of History I" },
+              { "week": 4, "topic": "Sources of History II and Dating" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Historical Skills" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Prospects of ICT in Historical Studies" },
+              { "week": 9, "topic": "Land and Peoples of Nigeria" },
+              { "week": 10, "topic": "Traditions of Origin and Historical Links" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Early Centres of Civilization in Nigeria" },
+              { "week": 2, "topic": "State Formation Process I" },
+              { "week": 3, "topic": "Centralized States I (Kanem and Bornu)" },
+              { "week": 4, "topic": "Centralized States II (Hausa States)" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Centralized States III (Nupe, Jukun, Ife, Oyo, Benin, Efik)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Non-Centralized States I (Tiv, Idoma, Igbo, Ibibio, Ijaw)" },
+              { "week": 9, "topic": "Non-Centralized States II" },
+              { "week": 10, "topic": "Inter-group Relations I" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Inter-group Relations II" },
+              { "week": 2, "topic": "Indigenous Technology and Industries" },
+              { "week": 3, "topic": "Early External Influences" },
+              { "week": 4, "topic": "The Trans-Saharan Trade" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Islam in Kanem-Bornu and Hausa Land" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Early European Contacts" },
+              { "week": 9, "topic": "Trans-Atlantic Slave Trade I" },
+              { "week": 10, "topic": "Trans-Atlantic Slave Trade II" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "The Sokoto Caliphate" },
+              { "week": 2, "topic": "The Administration of the Caliphate" },
+              { "week": 3, "topic": "The Impact of the Jihad" },
+              { "week": 4, "topic": "Bornu under the Shehus: The Emergence of El-Kanemi" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Developments under El-Kanemi and the Shehus" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Yoruba Land in the 19th Century: Oyo Empire" },
+              { "week": 9, "topic": "The Era of Ibadan Imperialism" },
+              { "week": 10, "topic": "The Peace Treaty of 1886 and its Aftermath" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Benin in the 19th Century" },
+              { "week": 2, "topic": "The First Phase of British Conquest (1851–1900)" },
+              { "week": 3, "topic": "The Second Phase of British Conquest (1900–1914)" },
+              { "week": 4, "topic": "Early Phase of British Rule (1900–1914)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "The Amalgamation of Nigeria (1914) and its Significance" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Colonial Rule and Its Impact" },
+              { "week": 9, "topic": "The Colonial Economy" },
+              { "week": 10, "topic": "Social Development and Inter-Group Relations" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Origins of Nationalism in Nigeria" },
+              { "week": 2, "topic": "Nationalist Movements after World War II" },
+              { "week": 3, "topic": "The Road to Independence" },
+              { "week": 4, "topic": "The Attainment of Independence (1960)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "The First Republic (1960–1966)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "The First Republic: Social and Economic Developments" },
+              { "week": 9, "topic": "Military Intervention and the 1966 Coup" },
+              { "week": 10, "topic": "Post-Civil War Nigeria" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Islamic Movements in West Africa" },
+              { "week": 2, "topic": "The Jihads of Ahmadu Seku and Alhaji Umar" },
+              { "week": 3, "topic": "The Activities of Samori Toure" },
+              { "week": 4, "topic": "Muslim States and European Colonization" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Christian Missionary Activities in West Africa" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Impact of Christian Missionary Activities" },
+              { "week": 9, "topic": "Empires in Western Sudan (Ghana, Mali, Songhai)" },
+              { "week": 10, "topic": "Industrial Revolution and New Imperialism" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "The Berlin Conference and Partition of Africa" },
+              { "week": 2, "topic": "Colonial Subjugation and African Reaction" },
+              { "week": 3, "topic": "Colonial Rule in Africa" },
+              { "week": 4, "topic": "Colonial Economy and Underdevelopment" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Colonial Africa and the World Wars" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Origins of Nationalism in Africa" },
+              { "week": 9, "topic": "Patterns of Nationalist Movements and Independence" },
+              { "week": 10, "topic": "External Influences on African Nationalism" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Prelude to Apartheid" },
+              { "week": 2, "topic": "Apartheid Legislation and Suppression" },
+              { "week": 3, "topic": "The OAU (AU) and the Fight Against Apartheid" },
+              { "week": 4, "topic": "Neo-Colonialism in Africa" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Political and Economic Problems of Independent African States" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "The Military Intervention in African Politics" },
+              { "week": 9, "topic": "Boundary Disputes and African Unity" },
+              { "week": 10, "topic": "Global Institutions and Africa" },
+              { "week": 11, "topic": "Africans in the Diaspora and Global Contributions" },
+              { "week": 12, "topic": "Revision & Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

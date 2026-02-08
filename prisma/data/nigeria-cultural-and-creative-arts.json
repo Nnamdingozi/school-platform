@@ -1,0 +1,328 @@
+{
+    "subject": "Cultural and Creative Arts (Visual Arts for SSS)",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Arts (Meaning and Definitions, History and Origin)" },
+              { "week": 2, "topic": "Introduction to Arts (cont’d) (How Arts Started in Nigeria, Branches/Types, Uses)" },
+              { "week": 3, "topic": "Crafts (Meaning, Types, Materials, Tools, Locations)" },
+              { "week": 4, "topic": "Crafts (cont’d) (Uses of Crafts in Nigeria)" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Tie and Dye (Meaning, Methods of Tying)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Paper Craft (Meaning, Methods of Folding Paper)" },
+              { "week": 9, "topic": "Paper Craft (cont’d) (Paper Craft Production, Uses)" },
+              { "week": 10, "topic": "Revision" },
+              { "week": "11-13", "topic": "Revision, Examination & Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Collage (Meaning, Materials/Tools)" },
+              { "week": 2, "topic": "Collage (cont’d) (Production, Uses)" },
+              { "week": 3, "topic": "Mosaic (Meaning, Materials, Production, Uses)" },
+              { "week": 4, "topic": "Modelling with Papier mâché (Meaning, Materials/Tools)" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Modelling with Papier mâché (cont’d) (Preparation, Making, Techniques, Safety)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Bead Work (Meaning, Production of Beads in Jewellery)" },
+              { "week": 9, "topic": "Bead Work (cont’d) (Uses of Beads as Creative Objects)" },
+              { "week": 10, "topic": "Revision" },
+              { "week": "11-13", "topic": "Revision, Examination & Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Music Theory (Fundamentals of Music, Notes on the Keyboard)" },
+              { "week": 2, "topic": "Ear Training and Harmony (Rudiments of Harmony, Uses)" },
+              { "week": 3, "topic": "Ear Training and Harmony (cont’d) (Benefits of Ear Training)" },
+              { "week": 4, "topic": "Rudiments of Music & Playing Instruments (Musical Alphabets, Clef and Staves, Relative Values)" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Recorder & Uses of Music (Major Scales, Playing Recorder, Impact of Music)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Drama & Theatre (Definition, Origin, People in Drama, Functions)" },
+              { "week": 9, "topic": "Elements & Playwriting (Elements and Forms, Playwriting and Dramatists)" },
+              { "week": 10, "topic": "The Director (Meaning, Duties, and Functions)" },
+              { "week": "11-13", "topic": "Revision, Examination & Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Elements of Design/Art (Meaning and Applications)" },
+              { "week": 2, "topic": "Principles of Design/Art (Balance, Contrast, Harmony, etc.)" },
+              { "week": 3, "topic": "Crafts: Materials, Tools and Equipment" },
+              { "week": 4, "topic": "The Study of Colours (Part 1) (Meaning, Classification, Mixing)" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "The Study of Colours (Part 2) (Local colors, attributes, uses)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "The Study of Colours (Part 3) (Making a colour wheel)" },
+              { "week": 9, "topic": "Colour Application in Crafts" },
+              { "week": 10, "topic": "Drawing (Meaning, Types, Materials, Shading techniques)" },
+              { "week": 11, "topic": "Revision of all topics" },
+              { "week": 12, "topic": "First Term Exam" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Painting (Part 1) (Meaning, steps from observation)" },
+              { "week": 2, "topic": "Painting (Part 2) (Using colours, Types of paint)" },
+              { "week": 3, "topic": "Production of Patterns/Design (Part 1) (Processes involved)" },
+              { "week": 4, "topic": "Production of Patterns/Design (Part 2) (Sources of motifs, types of patterns)" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Bead Work (Production in different media, uses)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "History of Music (Origin, early forms around the world)" },
+              { "week": 9, "topic": "Musical Practices: Listening (Part 1) (Popular music in Nigeria)" },
+              { "week": 10, "topic": "Musical Practices: Listening (Part 2) (Music styles, instruments)" },
+              { "week": 11, "topic": "Revision of all topics" },
+              { "week": 12, "topic": "Second Term Exam" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Singing (Part 1) (Meaning, scale, pitch identification)" },
+              { "week": 2, "topic": "Singing (Part 2) (Types of voices, breathing exercises)" },
+              { "week": 3, "topic": "Singing (Part 3) (Solfa notes of the National Anthem)" },
+              { "week": 4, "topic": "Design in the Theatre (Areas, elements, importance)" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Rehearsal (Meaning, activities, stages)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Types of Dance (Traditional, modern, creative)" },
+              { "week": 9, "topic": "Dance as a Career (Meaning, prospects, dance artists)" },
+              { "week": 10, "topic": "Self-Control (Meaning, exercise, benefits)" },
+              { "week": 11, "topic": "Revision of all topics" },
+              { "week": 12, "topic": "Third Term Exam" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Types and Features of Nigerian Traditional Arts" },
+              { "week": 2, "topic": "Contemporary Nigerian Arts and Artists" },
+              { "week": 3, "topic": "Meaning and Use of Motifs (Part 1) (Motif and Pattern)" },
+              { "week": 4, "topic": "Meaning and Use of Motifs (Part 2) (Creation from nature, Repeat patterns)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Exhibition and Display Techniques" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Lettering (Meaning, types, construction stages)" },
+              { "week": 9, "topic": "Construction and Design (Package design, functions, processes)" },
+              { "week": 10, "topic": "Marketing of Artworks (Funding, outlets, pricing)" },
+              { "week": 11, "topic": "Revision of Weeks 1–10" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Embroidery (Part 1) (Meaning, types, materials)" },
+              { "week": 2, "topic": "Introduction to Embroidery (Part 2) (Sources of designs, motifs, stitches)" },
+              { "week": 3, "topic": "Knitting (Meaning, types, materials, stitches)" },
+              { "week": 4, "topic": "Crocheting (Meaning, materials, tools)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Batik Work (Meaning, materials, projects)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Uses of Music (Music and its impacts)" },
+              { "week": 9, "topic": "Creating Music / Solfa Notation Values" },
+              { "week": 10, "topic": "Drama and the Development of Rural Communities" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Opportunities for Career Dramatists" },
+              { "week": 2, "topic": "Processes of Choreography" },
+              { "week": 3, "topic": "Prospects of Studying Dance in Nigeria" },
+              { "week": 4, "topic": "Unity (Meaning, causes of disunity, maintenance)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": "6-13", "topic": "Revision & Examination" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 1 (Visual Arts)",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Visual Arts I (Meaning, classifications)" },
+              { "week": 2, "topic": "Introduction to Visual Arts II (Utilitarian, Aesthetic, Religious functions)" },
+              { "week": 3, "topic": "Visual Sense (Dynamics of shapes, color reflections, texture)" },
+              { "week": 4, "topic": "Professions and Job Opportunities in Visual Arts" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Drawing Lines (Concept, types, qualities, patterns)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Drawing Nature and Man-Made Objects" },
+              { "week": 9, "topic": "Drawing and Shading (Coordination, techniques)" },
+              { "week": 10, "topic": "Drawing Still Life Objects (Composition, perspective, tone)" },
+              { "week": 11, "topic": "Drawing the Human Figure (Composition, proportion, tonality)" },
+              { "week": 12, "topic": "Introduction to Art Appreciation (Analysis, evaluation, terminology)" },
+              { "week": 13, "topic": "Revision, Examination & Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Graphics I (Lettering types, spacing, formation)" },
+              { "week": 2, "topic": "Introduction to Graphics II (Elements and Principles of design)" },
+              { "week": 3, "topic": "Forms of Graphic Advertisement I (Newspapers, posters, handbills)" },
+              { "week": 4, "topic": "Forms of Graphic Advertisement II (CD jackets, banners)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Introduction to Computer Graphics (Hardware and Software basics)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Computer Graphics II (Mouse techniques)" },
+              { "week": 9, "topic": "Textile Designs I (Motif, repeat patterns)" },
+              { "week": 10, "topic": "Textile Designs II (Printed textile design, printing techniques)" },
+              { "week": 11, "topic": "Terminologies in 2-Dimensional Art" },
+              { "week": 12, "topic": "Terminologies in 3-Dimensional Art" },
+              { "week": 13, "topic": "Revision, Examination & Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Modelling I (Meaning, basic concepts, clay)" },
+              { "week": 2, "topic": "Introduction to Modelling II (Types and properties of clay)" },
+              { "week": 3, "topic": "Introduction to Modelling III (Tools and methods of moulding)" },
+              { "week": 4, "topic": "Introduction to Modelling IV (Drying, firing, finishing)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Historical Foundation of Nigerian Arts I (Nok Art)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Historical Foundation of Nigerian Arts II (Igbo-Ukwu, Ife)" },
+              { "week": 9, "topic": "Historical Foundation of Nigerian Arts III (Benin, Owo, Tsoede)" },
+              { "week": 10, "topic": "Historical Foundation of Nigerian Arts IV (Esie, Ekpo mask, Monoliths)" },
+              { "week": 11, "topic": "Museums and Art I (Definition and functions)" },
+              { "week": 12, "topic": "Museums and Art II (History and types of museums in Nigeria)" },
+              { "week": 13, "topic": "Revision, Examination & Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2 (Visual Arts)",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Drawing (Still life, nature, shading techniques)" },
+              { "week": 2, "topic": "Painting (Styles, objects, figure drawing, colour mixing)" },
+              { "week": 3, "topic": "Nigerian Cultural Festivals (Origin, types, functions)" },
+              { "week": 4, "topic": "History of Art (African Traditional Art and Culture)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Graphic Design (Definition, tools, calligraphy, practical designs)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Textile Design on Paper (Creative forms, motifs, repeating formats)" },
+              { "week": 9, "topic": "Embroidery (Identification, stitches, transfer, practical application)" },
+              { "week": 10, "topic": "Furniture Making (Functions, processes, wood sourcing)" },
+              { "week": 11, "topic": "Puppetry (Meaning, construction, Nigerian forms)" },
+              { "week": 12, "topic": "Revision of all major topics" },
+              { "week": 13, "topic": "Examination and Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Imaginative Composition I (Meaning, components, application)" },
+              { "week": 2, "topic": "Imaginative Composition II (Drawing from imagination, memory)" },
+              { "week": 3, "topic": "Nature Painting (Characteristics, objects, techniques)" },
+              { "week": 4, "topic": "Modern and Traditional Art Institutions in Nigeria" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Pottery (Meaning, tools, ceramics, modelling)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Book Cover and Jacket Design (Meaning, features, design practical)" },
+              { "week": 9, "topic": "Construction (Meaning, processes, art object creation)" },
+              { "week": 10, "topic": "Computer in Visual Arts (Types, CorelDraw, digital tools)" },
+              { "week": 11, "topic": "Revision of term topics" },
+              { "week": 12, "topic": "End of term examinations" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Basic Shapes and Designs (Geometrical shapes, practical approach)" },
+              { "week": 2, "topic": "Indigenous Decorative Motifs (Meaning, formats, pattern creation)" },
+              { "week": 3, "topic": "Calabash Decoration I (Meaning, types, uses, marketing)" },
+              { "week": 4, "topic": "Calabash Decoration II (Practical methods, influence, relevance)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Indigenous Motifs (Body Decoration – Tattoos)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Indigenous Motifs (Mural Designs) (Origin, examples, creation)" },
+              { "week": 9, "topic": "Indigenous Craft Making (Baskets and Mats)" },
+              { "week": 10, "topic": "Indigenous Craft (Cloth Weaving) & Modern Nigerian Art" },
+              { "week": 11, "topic": "Revision of all topics" },
+              { "week": 12, "topic": "End of term examinations" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3 (Visual Arts)",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Drawing and Painting (Materials, tools, nature composition)" },
+              { "week": 2, "topic": "History of Art (Western Art: Early Christian, Byzantine, Islamic, Renaissance)" },
+              { "week": 3, "topic": "Impressionism Art Movement (19th century, artists, styles)" },
+              { "week": 4, "topic": "Nigerian Contemporary Artists (History, contribution, specialisation)" },
+              { "week": 5, "topic": "Cubism (Art Movement, African influence, modern application)" },
+              { "week": 6, "topic": "Furniture (Function, marketing, construction practical)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Oriental and Oceanic Art (Chinese, Japanese, Indian, Polynesian, etc.)" },
+              { "week": 9, "topic": "Sculpture (Relief sculpture, materials, crafting, finishing)" },
+              { "week": 10, "topic": "Photography (Meaning, camera operation, relevance to Visual Arts)" },
+              { "week": 11, "topic": "Revision of all topics covered" },
+              { "week": 12, "topic": "First Term Examinations" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Cultural and Creative Arts (Value, components, society functions)" },
+              { "week": 2, "topic": "Imaginative Composition (Grounds, materials, painting organisation)" },
+              { "week": 3, "topic": "Craft in Nigeria (Meaning, tools, origin, characteristics)" },
+              { "week": 4, "topic": "Art Terminologies (Explanation and application)" },
+              { "week": 5, "topic": "General Terminologies in Two and Three Dimensional Arts" },
+              { "week": 6, "topic": "Midterm Examination" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Continuation of Two and Three Dimensional Arts (Analysis, practical design)" },
+              { "week": 9, "topic": "Practical Project Work (Supervised project, creativity defense)" },
+              { "week": 10, "topic": "Appreciation of Nigerian Crafts and Arts (Value, preservation, influence)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Second Term Examinations" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

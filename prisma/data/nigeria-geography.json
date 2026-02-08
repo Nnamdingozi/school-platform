@@ -1,0 +1,143 @@
+{
+    "subject": "Geography",
+    "curriculum": [
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Geography" },
+              { "week": 2, "topic": "The Earth and Other Planets" },
+              { "week": 3, "topic": "Earth’s Rotation and Revolution" },
+              { "week": 4, "topic": "Latitudes and Longitudes" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "The Earth’s Structure" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Rocks" },
+              { "week": 9, "topic": "Town/Village" },
+              { "week": 10, "topic": "The Local Government Area (LGA)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Mountains" },
+              { "week": 2, "topic": "Lowlands" },
+              { "week": 3, "topic": "The Environment" },
+              { "week": 4, "topic": "Weather" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Climate I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Nigeria: Location and Position" },
+              { "week": 9, "topic": "Physical Setting of Nigeria" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Population of Nigeria" },
+              { "week": 2, "topic": "Resources of Nigeria" },
+              { "week": 3, "topic": "Basic Concepts in Map Reading" },
+              { "week": 4, "topic": "Map Distances" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Map Reduction and Enlargement" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Interpretation of Physical and Cultural Features" },
+              { "week": 9, "topic": "Transportation" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Industry" },
+              { "week": 2, "topic": "Basic Concepts of GIS" },
+              { "week": 3, "topic": "Components of GIS" },
+              { "week": 4, "topic": "Earth’s External Processes and Landform Development" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Climate II" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Climatic Classification" },
+              { "week": 9, "topic": "Environmental Resources" },
+              { "week": 10, "topic": "Revision" },
+              { "week": 11, "topic": "Examination" },
+              { "week": 12, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Renewable and Non-Renewable Resources" },
+              { "week": 2, "topic": "Environmental Problems" },
+              { "week": 3, "topic": "Environmental Conservation" },
+              { "week": 4, "topic": "Agriculture" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Transport and Communication in Nigeria" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Manufacturing Industries in Nigeria" },
+              { "week": 9, "topic": "Commercial Activities in Nigeria" },
+              { "week": 10, "topic": "Revision" },
+              { "week": 11, "topic": "Examination" },
+              { "week": 12, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Direction and Bearing" },
+              { "week": 2, "topic": "Representation of Relief Forms" },
+              { "week": 3, "topic": "Population" },
+              { "week": 4, "topic": "Settlements" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Settlement Interactions" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Geo-political Issues" },
+              { "week": 9, "topic": "GIS Data" },
+              { "week": 10, "topic": "Earth’s Internal Processes" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Denudation Processes" },
+              { "week": 2, "topic": "Weathering" },
+              { "week": 3, "topic": "Mass Movements" },
+              { "week": 4, "topic": "Climatic Change" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "ECOWAS" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Trade" },
+              { "week": 9, "topic": "Tourism" },
+              { "week": 10, "topic": "Satellite Remote Sensing" },
+              { "week": 11, "topic": "GIS Application" },
+              { "week": 12, "topic": "Revision" },
+              { "week": 13, "topic": "Examination" },
+              { "week": 14, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

@@ -181,6 +181,9 @@ model Topic {
   id    String @id @default(uuid())
   title String
 
+  description  String? 
+  weekNumber   Int?
+   
   gradeSubjectId String
   gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
 

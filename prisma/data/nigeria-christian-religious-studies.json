@@ -1,0 +1,293 @@
+{
+  "subject": "Christian Religious Studies",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "God and His Creation", "description": "Who is God? (Gen. 1:1; Jer. 10:12)" },
+            { "week": 2, "topic": "The Creation Story", "description": "Biblical account of creation in Genesis 1" },
+            { "week": 3, "topic": "The Creation of Man and Woman", "description": "Genesis 2:4–24" },
+            { "week": 4, "topic": "Purpose of Creation", "description": "Reasons why God created human beings; Songs about creation" },
+            { "week": 5, "topic": "Midterm Examinations", "description": "—" },
+            { "week": 6, "topic": "Marriage", "description": "Meaning of marriage (Gen. 2:22-25); Functions of marriage (Eph. 5:21-31)" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Marriage II", "description": "Types of marriage; Importance of marriage" },
+            { "week": 9, "topic": "Disobedience I", "description": "Meaning of disobedience; Adam & Eve’s disobedience (Gen. 3:1-19)" },
+            { "week": 10, "topic": "Disobedience II", "description": "Consequences of Adam & Eve’s disobedience; Human disobedience and national disobedience" },
+            { "week": "11-13", "topic": "Revision, Examinations & Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Call to Repentance I", "description": "Meaning of repentance; King David’s repentance (2 Sam. 12:7–13; Psalm 51)" },
+            { "week": 2, "topic": "Call to Repentance II", "description": "The people of Nineveh repent (Jonah 3:1-10)" },
+            { "week": 3, "topic": "Call to Repentance III", "description": "John the Baptist calls for repentance (Luke 3:1-14)" },
+            { "week": 4, "topic": "Call to Repentance IV", "description": "Jesus commends Zacchaeus (Luke 19:8); Consequences of lack of repentance (1 Sam. 3:18; 4:10-21)" },
+            { "week": 5, "topic": "Midterm Examinations", "description": "—" },
+            { "week": 6, "topic": "Call to Obedience I", "description": "Meaning of obedience; Abraham obeys God’s call (Gen. 12:1-9)" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Call to Obedience II", "description": "Abraham’s blessings (Gen. 17:1-21); Abraham’s sacrifice of Isaac (Gen. 21:1-8; 22:1-19)" },
+            { "week": 9, "topic": "Call to Service I", "description": "Meaning of service; Joseph’s and Ruth’s examples (Gen. 37:12-36; 41:37-57; Ruth 1:15; 2:7-18)" },
+            { "week": 10, "topic": "Call to Service II", "description": "Lessons from Joseph & Ruth; Life in God’s service (1 Pet. 2:18-25); Problems in service; Call to service" },
+            { "week": "11-13", "topic": "Revision, Examinations & Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Relationship in the Family I", "description": "Meaning and types of family; Recognition of family members" },
+            { "week": 2, "topic": "Relationship in the Family II", "description": "Roles of family members (Eph. 6:1-9; Col. 3:18-21; 1 Pet. 3:1-7)" },
+            { "week": 3, "topic": "Relationship in the Family III", "description": "Concept of a good family name (Prov. 22:1; Ecc. 7:1)" },
+            { "week": 4, "topic": "Relationship in the School I", "description": "Names of members of the school; Choosing friends in school" },
+            { "week": 5, "topic": "Midterm Examinations", "description": "—" },
+            { "week": 6, "topic": "Relationship in the School II", "description": "Biblical examples of friendship (1 Sam. 18:1-5; Luke 11:5-13)" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Relationship in the School III", "description": "Importance of good friends; Consequences of bad friends (Prov. 1:10-12; 2 Thess. 3:6-13)" },
+            { "week": 9, "topic": "Relationship in the Community I", "description": "Community leaders; Ways of sustaining relationships in the community" },
+            { "week": 10, "topic": "Relationship in the Church", "description": "Relationship in the church; Importance of fellowship and unity" },
+            { "week": "11-13", "topic": "Revision, Examinations & Closing", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "The Annunciation", "description": "Isa. 9:6-7; Matt 1:22-23; Luke 1:30-33" },
+            { "week": 2, "topic": "The Birth of Jesus", "description": "Matt 1:18-25; Luke 2:1-7" },
+            { "week": 3, "topic": "The Visit of the Wise Men", "description": "Matt 2:1-12" },
+            { "week": 4, "topic": "The Visit of the Shepherds", "description": "Luke 2:8-20" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "The Value of Virginity and Faithfulness after Marriage", "description": "Christian moral lessons" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Meaning & Significance of The Virgin Birth of Jesus", "description": "Doctrinal and faith implications" },
+            { "week": 9, "topic": "Jesus and His Family", "description": "Jesus’ siblings (Matt 13:53-56; Mk 6:1-3); Obedience to parents (Lk 2:51-52)" },
+            { "week": 10, "topic": "Jesus’ Understanding of Family & Baptism of Jesus", "description": "Matt 12:46-50; Mk 3:31-35; John the Baptist as forerunner (Mk 1:1-8; Lk 3:1-20); Baptism of Jesus (Matt 3:13-17)" },
+            { "week": "11-13", "topic": "Revision, Examination & Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Call of the First Disciples", "description": "Matt 4:18-22; Mk 1:14-20; Lk 5:1-11" },
+            { "week": 2, "topic": "Call of the Twelve Disciples", "description": "Mk 3:13-19" },
+            { "week": 3, "topic": "Demands of Discipleship", "description": "Matt 8:18-22; Lk 9:57-62; Lk 14:25-34" },
+            { "week": 4, "topic": "The Beatitudes", "description": "Matthew 5:1-12" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Christians as Salt & Light", "description": "Matt 5:13-16" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Jesus’ Teaching on Revenge", "description": "Matt 5:38-42" },
+            { "week": 9, "topic": "Jesus’ Teaching on Prayer, Fasting & Forgiveness", "description": "Matt 6:5-18; Matt 6:14-15" },
+            { "week": 10, "topic": "Jesus’ Teaching on Love of Money & Anxiety", "description": "Matt 6:19-34; Matt 6:25-34" },
+            { "week": "11-13", "topic": "Revision, Examination & Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "The Triumphal Entry", "description": "Matt 21:1-11; Mk 11:1-11; Lk 19:28-44" },
+            { "week": 2, "topic": "The Last Supper", "description": "Matt 26:17-30" },
+            { "week": 3, "topic": "Betrayal & Arrest of Jesus", "description": "Mk 14:43-52; Matt 26:47-56" },
+            { "week": 4, "topic": "Trial & Peter’s Denial", "description": "Matt 26:57-75; Situations leading to denial of Christ" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Crucifixion of Jesus", "description": "Matt 27:32-44" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Death and Burial of Jesus", "description": "Matt 27:45-61" },
+            { "week": 9, "topic": "Resurrection of Jesus", "description": "Matt 28:1-10; Mk 16:1-8; Lk 24:1-12" },
+            { "week": 10, "topic": "Appearances, Significance & Role of Women", "description": "Post-resurrection appearances; Meaning for Christians today; Women in the resurrection" },
+            { "week": "11-13", "topic": "Revision, Examination & Closing", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "The Promise of the Holy Spirit (Part 1)", "description": "John 14:16-17, 26; John 16:5-16 – Jesus promises the coming of the Holy Spirit; Acts 1:3-5 – waiting for the promise." },
+            { "week": 2, "topic": "The Coming of the Holy Spirit", "description": "Acts 2:1-13 – The Day of Pentecost, speaking in tongues, reactions of the people." },
+            { "week": 3, "topic": "Peter’s First Speech and its Effects", "description": "Acts 2:14-41 – Peter’s boldness, message of repentance, conversion of about 3,000 souls." },
+            { "week": 4, "topic": "Fellowship in the Early Church (Part 1)", "description": "Acts 2:41-47 – Unity, sharing, prayers, breaking of bread." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Fellowship in the Early Church (Part 2)", "description": "Acts 5:1-11 – Fraud in the church (Ananias and Sapphira). Acts 6:1-2 – Murmuring and complaints." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Selection of Deacons", "description": "Acts 6:1-7 – Appointment of Stephen and six others; responsibilities of deacons." },
+            { "week": 9, "topic": "Persecution of Early Believers (Part 1)", "description": "Acts 3:1-11, 4:1-22 – Arrest of Peter and John; Acts 6:8-15, 7:1-60 – Arrest and martyrdom of Stephen." },
+            { "week": 10, "topic": "Persecution of Early Believers (Part 2)", "description": "Acts 8:1-3; 9:1-2 – Saul’s persecution; Acts 12:1-4 – Martyrdom of James." },
+            { "week": 11, "topic": "Revision", "description": "All topics from Weeks 1–10." },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "The Ministry of Peter (Part 1)", "description": "Acts 8:4-25 – Peter and Simon the Magician." },
+            { "week": 2, "topic": "The Ministry of Peter (Part 2)", "description": "Acts 9:32-42 – Healing miracles of Peter (Aeneas and Dorcas)." },
+            { "week": 3, "topic": "The Ministry of Peter (Part 3)", "description": "Acts 10:1-48 – Conversion of Cornelius. Acts 11:1-18 – Peter defends his action in Cornelius’ house." },
+            { "week": 4, "topic": "The Ministry of Peter (Part 4)", "description": "Acts 12:5-24 – Peter’s release from prison and the death of Herod." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "The Ministry of Apostle Paul (Part 1)", "description": "Acts 22:1-5, 26-30 – Paul’s nativity and education; Acts 7:57-58; 8:1-3; 9:1-3 – Paul’s persecution of the Church." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "The Ministry of Apostle Paul (Part 2)", "description": "Acts 9:1-19; 22:6-21 – The conversion of Paul; Acts 13–14 – Paul’s first missionary journey." },
+            { "week": 9, "topic": "The Ministry of Apostle Paul (Part 3)", "description": "Acts 15:1-35 – The Council at Jerusalem; Wrong and right ways of resolving conflicts." },
+            { "week": 10, "topic": "Christian Unity and Living Among Non-Christians", "description": "Christian organisations in Nigeria; interdenominational cooperation; Christian giving (Phil. 4:14-20; 2 Cor. 8:3-5; 9:6-15); teachings that foster unity; Christians living in the community; Christian attitude to persecution." },
+            { "week": 11, "topic": "Revision", "description": "All topics from Weeks 1–10." },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Jesus as the Lamb, the Door, and the Good Shepherd I", "description": "Jesus as the Lamb (John 1:29, 36), the Door (John 10:7–9), the Good Shepherd (John 10:11–15)" },
+            { "week": 2, "topic": "Jesus as the Lamb, the Door, and the Good Shepherd II", "description": "Further teachings and applications of Jesus as Lamb, Door, Shepherd" },
+            { "week": 3, "topic": "Jesus the Light of the World", "description": "John 8:12, 9:5 – meaning and significance" },
+            { "week": 4, "topic": "Jesus as the True Vine", "description": "John 15:1–11 – importance of abiding in Christ" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Jesus as the Living Bread and Water", "description": "John 6:25–40; 4:7–15 – Christ as sustainer of life" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "God’s Love for Man", "description": "John 3:16, Romans 5:8" },
+            { "week": 9, "topic": "God’s Love for One Another", "description": "1 John 4:7–12" },
+            { "week": 10, "topic": "Justification by Faith", "description": "Romans 5:1–5; Galatians 2:16" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "New Life in Christ", "description": "2 Corinthians 5:17; Romans 6:1–11" },
+            { "week": 2, "topic": "Sonship", "description": "John 1:12, Romans 8:14–17" },
+            { "week": 3, "topic": "Faith and Work", "description": "James 2:14–26" },
+            { "week": 4, "topic": "The Fruit of the Spirit", "description": "Galatians 5:22–23" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Spiritual Gifts", "description": "1 Corinthians 12:4–11" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Forgiveness", "description": "Matthew 6:14–15; Luke 17:3–4" },
+            { "week": 9, "topic": "Humility", "description": "Philippians 2:3–8" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Effective Prayer", "description": "Matthew 6:5–15, Luke 18:1–8" },
+            { "week": 2, "topic": "Living a Life of Witnessing to Christ I", "description": "Acts 1:8, Matthew 28:18–20" },
+            { "week": 3, "topic": "Living a Life of Witnessing to Christ II", "description": "Practical examples of witnessing through lifestyle" },
+            { "week": 4, "topic": "Christians’ Attitudes Towards Persecution", "description": "Matthew 5:10–12; Acts 7:54–60" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Impartiality", "description": "James 2:1–9" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Resurrection and the Second Coming of Jesus Christ I", "description": "1 Corinthians 15:12–23; 1 Thessalonians 4:13–18" },
+            { "week": 9, "topic": "Resurrection and the Second Coming of Jesus Christ II", "description": "Revelation 21:1–8; Matthew 24" },
+            { "week": 10, "topic": "The Sovereignty of God", "description": "Romans 9:14–24, Psalm 115:3" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Leadership of Joseph, Moses, Joshua and Deborah I", "description": "Early life and call of Joseph, Moses, Joshua, and Deborah; qualities of godly leadership." },
+            { "week": 2, "topic": "Leadership of Joseph, Moses, Joshua and Deborah II", "description": "Achievements, challenges and lessons from their leadership experiences." },
+            { "week": 3, "topic": "Leadership of Joseph, Moses, Joshua and Deborah III", "description": "Relevance of their leadership examples to contemporary Christian life." },
+            { "week": 4, "topic": "God Cares for His People – Protection", "description": "God’s protection of Israel in the wilderness; meaning of divine care and protection today." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Parental Responsibility (Eli and His Sons)", "description": "Duties of parents to children; Eli’s failure; consequences of neglect of parental responsibility." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Consequences of Obedience and Disobedience", "description": "Biblical examples of obedience and disobedience; blessings and punishments." },
+            { "week": 9, "topic": "Friendship", "description": "David and Jonathan as a model of true friendship; Christian perspective on loyalty and sacrifice." },
+            { "week": 10, "topic": "Trust in God (Submission to the Will of God)", "description": "Biblical characters who trusted God (Abraham, Job, Jesus); importance of submission to God’s will." },
+            { "week": 11, "topic": "Revision", "description": "Review of first term’s work." },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Making Decisions as a Christian", "description": "Factors influencing decision-making; biblical guidelines for making right decisions." },
+            { "week": 2, "topic": "Greed and its Effect", "description": "Meaning of greed; examples from the Bible (Achan, Gehazi, Judas); consequences of greed." },
+            { "week": 3, "topic": "The Supremacy of God", "description": "God’s power over nations, rulers, and creation; lessons for Christians." },
+            { "week": 4, "topic": "Religious Reforms", "description": "Biblical examples (Josiah, Nehemiah); importance of true worship and reform in Christian life." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Concern for One’s Nation", "description": "Nehemiah and patriotism; responsibilities of Christians toward their nation." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Faith in God", "description": "Examples of men of faith (Hebrews 11); benefits of faith in Christian living." },
+            { "week": 9, "topic": "True Religion and Social Justice", "description": "Amos, Micah, and Isaiah on justice and righteousness; implications for Christians today." },
+            { "week": 10, "topic": "The Baptism and Temptation of Jesus Christ", "description": "The baptism of Jesus and its significance; temptation of Jesus and lessons for Christians." },
+            { "week": 11, "topic": "Revision", "description": "Review of second term’s work." },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Call of the Disciples", "description": "Jesus’ call of the twelve; reasons for their call; lessons for Christians." },
+            { "week": 2, "topic": "The Mission of the Disciples (Luke 10:1-24)", "description": "Jesus sending out the seventy; the disciples’ experiences and lessons." },
+            { "week": 3, "topic": "The Trial of Jesus Christ and His Death", "description": "The arrest, trial, crucifixion of Jesus; significance of His sacrifice." },
+            { "week": 4, "topic": "Resurrection and Second Coming of Jesus Christ", "description": "The resurrection and its implications; Christian hope in the second coming." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Fellowship in the Early Church", "description": "Characteristics of fellowship; sharing, love, and unity in the early church." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "The Holy Spirit and the Mission of the Gentiles", "description": "Coming of the Holy Spirit; role in spreading the gospel to the Gentiles." },
+            { "week": 9, "topic": "Opposition to the Gospel Message I", "description": "Causes of opposition; persecution in the early church (Stephen, Peter, Paul)." },
+            { "week": 10, "topic": "Opposition to the Gospel Message II", "description": "Continuation of opposition; relevance of persecution to Christians today." },
+            { "week": 11, "topic": "Revision", "description": "Review of third term’s work." },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Civic Responsibilities", "description": "Meaning of civic responsibilities; examples (obedience to laws, payment of taxes, voting, community service); importance of civic responsibilities in nation building; biblical teachings on civic duties (Romans 13:1–7)." },
+            { "week": 2, "topic": "HIV/AIDS I", "description": "Meaning of HIV and AIDS; causes and modes of transmission; biblical perspectives on sexual purity; consequences of immoral living; preventive measures." },
+            { "week": 3, "topic": "HIV/AIDS II", "description": "Myths and misconceptions about HIV/AIDS; effects on individuals, families, and society; role of Christians in showing care and compassion; biblical support for healthy living." },
+            { "week": 4, "topic": "Independence and Self-Actualization", "description": "Meaning of independence; self-reliance and personal responsibility; ways of achieving self-actualization; biblical examples of self-reliant individuals; importance of depending on God." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Dignity of Labour", "description": "Meaning of labour; biblical view on work (Genesis 2:15, Proverbs 22:29); importance of dignity in labour; consequences of idleness; relevance of honest work in contemporary society." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Christian Attitude to Corruption", "description": "Meaning of corruption; forms of corruption (bribery, fraud, nepotism, dishonesty); effects of corruption on individuals and society; biblical condemnation of corruption (Amos 5:12, Micah 6:11, Proverbs 17:23); Christian response to corruption." },
+            { "week": 9, "topic": "Forgiveness", "description": "Meaning of forgiveness; biblical teachings on forgiveness (Matthew 18:21–22, Luke 15:11–32, Colossians 3:13); importance of forgiveness in Christian living; benefits of forgiveness to individuals and communities." },
+            { "week": 10, "topic": "Perseverance, Wealth and Poverty", "description": "Meaning of perseverance; biblical examples (Job, Paul, Joseph); wealth—meaning, acquisition, and biblical guidelines (1 Timothy 6:6–10); poverty—causes and biblical response (Acts 4:32–35, Proverbs 19:17)." },
+            { "week": 11, "topic": "Revision", "description": "General revision of all topics covered." },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        }
+      ]
+    }
+  ]
+}
