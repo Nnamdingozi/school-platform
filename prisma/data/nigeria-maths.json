@@ -1,326 +1,327 @@
 {
-    "subject": "Mathematics",
-    "curriculum": [
-      {
-        "grade": "JSS 1",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Whole Numbers" },
-              { "week": 2, "topic": "LCM (Least Common Multiple)" },
-              { "week": 3, "topic": "HCF (Highest Common Factor)" },
-              { "week": 4, "topic": "Counting in Base 2" },
-              { "week": 5, "topic": "Midterm Exams" },
-              { "week": 6, "topic": "Conversion of Numbers" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Fractions I" },
-              { "week": 9, "topic": "Fractions II" },
-              { "week": 10, "topic": "Basic Operations on Whole Numbers" },
-              { "week": "11-13", "topic": "Revision & Exams" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Addition & Subtraction of Fractions" },
-              { "week": 2, "topic": "Multiplication & Division of Fractions" },
-              { "week": 3, "topic": "Estimation & Approximation" },
-              { "week": 4, "topic": "Numbers in Base 2 – Addition" },
-              { "week": 5, "topic": "Midterm Exams" },
-              { "week": 6, "topic": "Numbers in Base 2 – Subtraction" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Numbers in Base 2 – Multiplication" },
-              { "week": 9, "topic": "Algebraic Processes I" },
-              { "week": 10, "topic": "Simplification of Algebraic Expressions" },
-              { "week": "11-13", "topic": "Revision & Exams" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Simple Equations" },
-              { "week": 2, "topic": "Plane Shapes" },
-              { "week": 3, "topic": "Three-Dimensional Figures" },
-              { "week": 4, "topic": "Constructions" },
-              { "week": 5, "topic": "Midterm Exams" },
-              { "week": 6, "topic": "Angles" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Everyday Statistics I" },
-              { "week": 9, "topic": "Everyday Statistics II" },
-              { "week": 10, "topic": "Everyday Statistics III" },
-              { "week": "11-13", "topic": "Revision & Exams" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "JSS 2",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Basic Operation of Integers / Whole Numbers I" },
-              { "week": 2, "topic": "Basic Operation of Integers / Whole Numbers II" },
-              { "week": 3, "topic": "LCM & HCF" },
-              { "week": 4, "topic": "Fractions – Transactions in Homes and Offices" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Approximation" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Directed and Non-Directed Numbers" },
-              { "week": 9, "topic": "Multiplication and Division of Directed Numbers" },
-              { "week": 10, "topic": "Algebraic Expressions I" },
-              { "week": 11, "topic": "Algebraic Expressions II" },
-              { "week": 12, "topic": "Revision and Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Review of First Term’s Work" },
-              { "week": 2, "topic": "Simple Equations" },
-              { "week": 3, "topic": "Linear Inequalities I" },
-              { "week": 4, "topic": "Linear Inequalities II" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Graphs I" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Graphs II" },
-              { "week": 9, "topic": "Plane Figures/Shapes" },
-              { "week": 10, "topic": "Scale Drawing of Length and Distances" },
-              { "week": 11, "topic": "Quantitative Aptitude" },
-              { "week": 12, "topic": "Revision and Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Revision of Second Term’s Examination" },
-              { "week": 2, "topic": "Angles and Polygons" },
-              { "week": 3, "topic": "Angles of Elevation and Depression" },
-              { "week": 4, "topic": "Bearings and Distances I" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Bearings and Distances II" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Statistics I – Data Presentation" },
-              { "week": 9, "topic": "Statistics II – Graphical Representation" },
-              { "week": 10, "topic": "Probability" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Vacation" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "JSS 3",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Whole Numbers I" },
-              { "week": 2, "topic": "Whole Numbers II" },
-              { "week": 3, "topic": "Addition and Subtraction of Numbers in Base 2" },
-              { "week": 4, "topic": "Multiplication and Division of Numbers in Base 2" },
-              { "week": 5, "topic": "Mid-Term Examination" },
-              { "week": 6, "topic": "Rational and Non-Rational Numbers" },
-              { "week": 7, "topic": "Mid-Term Break" },
-              { "week": 8, "topic": "Variations" },
-              { "week": 9, "topic": "Factorization" },
-              { "week": 10, "topic": "Simple Equations Involving Fractions" },
-              { "week": 11, "topic": "Change of Subject of Formulae" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Simultaneous Linear Equations (I) – In One or Two Variables" },
-              { "week": 2, "topic": "Simultaneous Linear Equations (II)" },
-              { "week": 3, "topic": "Geometry I – Similar Shapes" },
-              { "week": 4, "topic": "Geometry II" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Area Of Plane Figures I" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Area of Plane Figures II" },
-              { "week": 9, "topic": "Trigonometry" },
-              { "week": 10, "topic": "Angles of Elevation and Depression / Study of Measurement Using Clinometers" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Vacation" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Construction" },
-              { "week": 2, "topic": "Measures of Central Tendency" },
-              { "week": 3, "topic": "Application of Measures of Central Tendency To Analyze any Given Information" },
-              { "week": 4, "topic": "Data Presentation – Pie Charts" },
-              { "week": 5, "topic": "Revision" },
-              { "week": 6, "topic": "Revision of JSS 3 Work" },
-              { "week": "7-8", "topic": "Mock Examination" },
-              { "week": 9, "topic": "JSSC Examination" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 1",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Number Base System" },
-              { "week": 2, "topic": "Modular Arithmetic" },
-              { "week": 3, "topic": "Indices" },
-              { "week": 4, "topic": "Logarithms" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Effective Use of Logarithm Tables" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Simple Equations and Variations" },
-              { "week": 9, "topic": "Quadratic Equations I" },
-              { "week": 10, "topic": "Quadratic Equations II" },
-              { "week": 11, "topic": "Logical Reasoning I" },
-              { "week": 12, "topic": "Logical Reasoning II" },
-              { "week": 13, "topic": "Revision, Examination & Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Constructions I" },
-              { "week": 2, "topic": "Constructions II" },
-              { "week": 3, "topic": "Proofs of Theorems I" },
-              { "week": 4, "topic": "Proofs of Theorems II (Riders)" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Trigonometric Ratios" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Trigonometric Ratios of Special Angles" },
-              { "week": 9, "topic": "Application of Trigonometric Ratios" },
-              { "week": 10, "topic": "Trigonometric Ratios & Graphs" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Mensuration I" },
-              { "week": 2, "topic": "Mensuration II" },
-              { "week": 3, "topic": "Surface Area of Solids" },
-              { "week": 4, "topic": "Volume of Solids" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Area and Volume of Frustum" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Statistics I" },
-              { "week": 9, "topic": "Statistics II" },
-              { "week": 10, "topic": "Statistics III" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 2",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Revision of Previous Work" },
-              { "week": 2, "topic": "Numbers and Approximation" },
-              { "week": 3, "topic": "Use of Logarithm Tables and Calculators" },
-              { "week": 4, "topic": "Sequences and Series" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Quadratic Equations I" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Quadratic Equations II" },
-              { "week": 9, "topic": "Simultaneous Equations" },
-              { "week": 10, "topic": "Graphical Solutions" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Straight Line Graphs" },
-              { "week": 2, "topic": "Circle Geometry I" },
-              { "week": 3, "topic": "Circle Geometry II" },
-              { "week": 4, "topic": "Circle Geometry III" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Trigonometry I" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Trigonometry II" },
-              { "week": 9, "topic": "Fractions" },
-              { "week": 10, "topic": "Further Application of Trigonometry" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Linear Programming" },
-              { "week": 2, "topic": "Linear Programming Graphical Solutions" },
-              { "week": 3, "topic": "Bearings" },
-              { "week": 4, "topic": "Angles of Elevation and Depression" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Frequency Distribution" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Graphical Representation of Frequency" },
-              { "week": 9, "topic": "Measures from Frequency" },
-              { "week": 10, "topic": "Probability" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 3",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Welcome Test and Review of Difficult SS2 Topics" },
-              { "week": 2, "topic": "Logic" },
-              { "week": 3, "topic": "Application of Surds to Trigonometry" },
-              { "week": 4, "topic": "Matrices and Determinants" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Linear and Quadratic Equations" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Surface Area and Volume of Spheres and Hemispheres" },
-              { "week": 9, "topic": "Longitude and Latitude I" },
-              { "week": 10, "topic": "Longitude and Latitude II" },
-              { "week": 11, "topic": "Binary Operations" },
-              { "week": 12, "topic": "Arithmetic of Finance" },
-              { "week": 13, "topic": "Revision / Examination / Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Review of First Term Work & Financial Mathematics" },
-              { "week": 2, "topic": "Coordinate Geometry of a Straight Line" },
-              { "week": 3, "topic": "Construction I" },
-              { "week": 4, "topic": "Differentiation of Algebraic Functions I" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Differentiation of Algebraic Functions II" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Integration of Algebraic Functions" },
-              { "week": 9, "topic": "Functions and Mapping" },
-              { "week": 10, "topic": "General Review of Calculus" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+  "subject": "Mathematics",
+  "curriculum": "Nigeria Curriculum",
+  "grades": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Whole Numbers", "description": "Place value, ordering, and properties of whole numbers." },
+            { "week": 2, "topic": "LCM (Least Common Multiple)", "description": "Finding LCM using multiples and prime factorization." },
+            { "week": 3, "topic": "HCF (Highest Common Factor)", "description": "Finding HCF using factorization methods." },
+            { "week": 4, "topic": "Counting in Base 2", "description": "Introduction to the binary number system." },
+            { "week": 5, "topic": "Midterm Exams", "description": "Assessment of topics covered in weeks 1-4." },
+            { "week": 6, "topic": "Conversion of Numbers", "description": "Conversion of Base 10 numerals to binary numbers (step-by-step)." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Fractions I", "description": "Types of fractions (proper, improper, mixed), simplification." },
+            { "week": 9, "topic": "Fractions II", "description": "Equivalent fractions, comparison of fractions." },
+            { "week": 10, "topic": "Basic Operations on Whole Numbers", "description": "Addition, subtraction, multiplication, and division." },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "Review and end of term assessment." }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Addition & Subtraction of Fractions", "description": "With the same and different denominators." },
+            { "week": 2, "topic": "Multiplication & Division of Fractions", "description": "Solving real-life problems with fractions." },
+            { "week": 3, "topic": "Estimation & Approximation", "description": "Rounding off numbers, significant figures." },
+            { "week": 4, "topic": "Numbers in Base 2 – Addition", "description": "Binary addition rules." },
+            { "week": 5, "topic": "Midterm Exams", "description": "Assessment of topics covered in weeks 1-4." },
+            { "week": 6, "topic": "Numbers in Base 2 – Subtraction", "description": "Binary subtraction rules." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Numbers in Base 2 – Multiplication", "description": "Binary multiplication rules." },
+            { "week": 9, "topic": "Algebraic Processes I", "description": "Use of symbols, coefficients, and algebraic expressions." },
+            { "week": 10, "topic": "Simplification of Algebraic Expressions", "description": "Expanding brackets, collecting like terms." },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "Review and end of term assessment." }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Simple Equations", "description": "Solving one-variable linear equations." },
+            { "week": 2, "topic": "Plane Shapes", "description": "Properties of triangles, quadrilaterals, and circles." },
+            { "week": 3, "topic": "Three-Dimensional Figures", "description": "Cubes, cuboids, cylinders, spheres, and cones." },
+            { "week": 4, "topic": "Constructions", "description": "Basic geometric constructions using ruler and compass." },
+            { "week": 5, "topic": "Midterm Exams", "description": "Assessment of topics covered in weeks 1-4." },
+            { "week": 6, "topic": "Angles", "description": "Types of angles, angle sum properties of triangles & quadrilaterals." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Everyday Statistics I", "description": "Need for statistics, importance in daily life." },
+            { "week": 9, "topic": "Everyday Statistics II", "description": "Methods of data collection." },
+            { "week": 10, "topic": "Everyday Statistics III", "description": "Data presentation: tables, bar charts, pie charts." },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "Review and end of term assessment." }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Basic Operation of Integers / Whole Numbers I", "description": "Whole numbers in standard forms; decimal numbers in standard forms." },
+            { "week": 2, "topic": "Basic Operation of Integers / Whole Numbers II", "description": "Prime factors and applications in solving problems; continuation of operations on whole numbers." },
+            { "week": 3, "topic": "LCM & HCF", "description": "Lowest Common Multiple (LCM); Highest Common Factor (HCF); square and square roots." },
+            { "week": 4, "topic": "Fractions – Transactions in Homes and Offices", "description": "Expressing fractions as ratios, decimals, and percentages; application in daily transactions." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Approximation", "description": "Approximation to decimal places, significant figures, and nearest units/tens." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Directed and Non-Directed Numbers", "description": "Definition and examples; use of square and square root tables." },
+            { "week": 9, "topic": "Multiplication and Division of Directed Numbers", "description": "Operations on directed and non-directed numbers with practical exercises." },
+            { "week": 10, "topic": "Algebraic Expressions I", "description": "Definition; expression of algebraic forms; factorization of simple expressions." },
+            { "week": 11, "topic": "Algebraic Expressions II", "description": "Expansion and factorization of quadratic expressions; algebraic fractions." },
+            { "week": 12, "topic": "Revision and Examination", "description": "General revision and end-of-term examination." },
+            { "week": 13, "topic": "Closing", "description": "Term ends." }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Review of First Term’s Work", "description": "Emphasis on algebraic expressions, solving quadratic equations, and transactions." },
+            { "week": 2, "topic": "Simple Equations", "description": "Meaning of algebraic equations; differences between expressions and equations; solving simple equations." },
+            { "week": 3, "topic": "Linear Inequalities I", "description": "Definition of linear inequalities; introduction to symbols and basic properties." },
+            { "week": 4, "topic": "Linear Inequalities II", "description": "Word problems leading to simple inequalities in one variable; solving and interpreting results." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of weeks 1-4." },
+            { "week": 6, "topic": "Graphs I", "description": "Graphical representation; graphs of Cartesian plane; introduction to linear equations in two variables." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Graphs II", "description": "Plotting linear graphs from real-life situations; solving quantitative reasoning." },
+            { "week": 9, "topic": "Plane Figures/Shapes", "description": "Properties of triangles and quadrilaterals; introduction to circles." },
+            { "week": 10, "topic": "Scale Drawing of Length and Distances", "description": "Interpreting scales; scale drawing and measurement of distances." },
+            { "week": 11, "topic": "Quantitative Aptitude", "description": "Solving mathematical logic and pattern-based problems." },
+            { "week": 12, "topic": "Revision and Examination", "description": "General revision and final term assessment." },
+            { "week": 13, "topic": "Closing", "description": "Term ends." }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Revision of Second Term’s Examination", "description": "Correction and review of previous term's work." },
+            { "week": 2, "topic": "Angles and Polygons", "description": "Sum of angles in polygons; interior and exterior angles." },
+            { "week": 3, "topic": "Angles of Elevation and Depression", "description": "Definitions and practical applications in measuring heights and distances." },
+            { "week": 4, "topic": "Bearings and Distances I", "description": "Definition of bearings; compass directions; solving simple problems." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Bearings and Distances II", "description": "Continuation of bearings; three-figure bearings and distance calculations." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Statistics I – Data Presentation", "description": "Frequency tables; pie charts; bar charts for discrete and continuous data." },
+            { "week": 9, "topic": "Statistics II – Graphical Representation", "description": "Histograms and frequency polygons." },
+            { "week": 10, "topic": "Probability", "description": "Definition; experimental and theoretical probability; tossing coins and rolling dice." },
+            { "week": 11, "topic": "Revision", "description": "General review of Third Term topics." },
+            { "week": 12, "topic": "Examination", "description": "Final assessment for JSS 2." },
+            { "week": 13, "topic": "Vacation", "description": "School closes." }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Whole Numbers I", "description": "Standard forms; decimals; and significant figures." },
+            { "week": 2, "topic": "Whole Numbers II", "description": "Direct and inverse variation; joint and partial variation concepts." },
+            { "week": 3, "topic": "Addition and Subtraction of Numbers in Base 2", "description": "Arithmetic operations in binary system." },
+            { "week": 4, "topic": "Multiplication and Division of Numbers in Base 2", "description": "Advanced binary arithmetic." },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Rational and Non-Rational Numbers", "description": "Definitions and identification of rational and irrational numbers." },
+            { "week": 7, "topic": "Mid-Term Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Variations", "description": "Solving problems on direct, inverse, joint, and partial variation." },
+            { "week": 9, "topic": "Factorization", "description": "Factorization of quadratic expressions and simple algebraic fractions." },
+            { "week": 10, "topic": "Simple Equations Involving Fractions", "description": "Solving linear equations with fractional coefficients." },
+            { "week": 11, "topic": "Change of Subject of Formulae", "description": "Rules and processes for changing the subject in mathematical formulas." },
+            { "week": 12, "topic": "Examination", "description": "End of term assessment." },
+            { "week": 13, "topic": "Closing", "description": "Term ends." }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Simultaneous Linear Equations (I) – In One or Two Variables", "description": "Methods of solving simultaneous equations (substitution and elimination)." },
+            { "week": 2, "topic": "Simultaneous Linear Equations (II)", "description": "Word problems leading to simultaneous equations." },
+            { "week": 3, "topic": "Geometry I – Similar Shapes", "description": "Properties of similar triangles and other shapes." },
+            { "week": 4, "topic": "Geometry II", "description": "Pythagoras' Theorem and its applications." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Area Of Plane Figures I", "description": "Area of triangles, parallelograms, and rhombuses." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Area of Plane Figures II", "description": "Area of trapeziums and circles." },
+            { "week": 9, "topic": "Trigonometry", "description": "Sine, cosine, and tangent of angles." },
+            { "week": 10, "topic": "Angles of Elevation and Depression / Study of Measurement Using Clinometers", "description": "Practical use of clinometers and solving trigonometric problems." },
+            { "week": 11, "topic": "Revision", "description": "Review of all term 2 work." },
+            { "week": 12, "topic": "Examination", "description": "End of term assessment." },
+            { "week": 13, "topic": "Vacation", "description": "School closes." }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Construction", "description": "Bisection of lines and angles; construction of specific angles (60, 90, 45)." },
+            { "week": 2, "topic": "Measures of Central Tendency", "description": "Mean, median, and mode for ungrouped data." },
+            { "week": 3, "topic": "Application of Measures of Central Tendency To Analyze any Given Information", "description": "Interpreting data using mean, median, and mode." },
+            { "week": 4, "topic": "Data Presentation – Pie Charts", "description": "Drawing and interpreting pie charts." },
+            { "week": 5, "topic": "Revision", "description": "General review for external exams." },
+            { "week": 6, "topic": "Revision of JSS 3 Work", "description": "Recap of core JSS curriculum." },
+            { "week": "7-8", "topic": "Mock Examination", "description": "Preparatory exams for BECE." },
+            { "week": 9, "topic": "JSSC Examination", "description": "Final Junior Secondary Certificate Examination." }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Number Base System", "description": "Conversion from one base to base 10; arithmetic operations in number bases." },
+            { "week": 2, "topic": "Modular Arithmetic", "description": "Concept of modular arithmetic and simple operations applied to daily life." },
+            { "week": 3, "topic": "Indices", "description": "Revision of standard form and laws of indices with examples." },
+            { "week": 4, "topic": "Logarithms", "description": "Definition; relationship between logarithms, indices, and standard form; graph of 10^x." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Effective Use of Logarithm Tables", "description": "Calculations involving division, multiplication, powers, and roots using tables." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Simple Equations and Variations", "description": "Change of subject of formula; substitution; direct, inverse, and joint variation." },
+            { "week": 9, "topic": "Quadratic Equations I", "description": "Revision of factorization of integers and quadratic expressions." },
+            { "week": 10, "topic": "Quadratic Equations II", "description": "Formation of quadratic equations with given roots; drawing quadratic graphs." },
+            { "week": 11, "topic": "Logical Reasoning I", "description": "Simple statements; true/false statements; negation of simple statements." },
+            { "week": 12, "topic": "Logical Reasoning II", "description": "Compound statements; logical operators and symbols; conjunction, disjunction, conditional." },
+            { "week": 13, "topic": "Revision, Examination & Closing", "description": "Review and final assessment." }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Constructions I", "description": "Construction of angles and triangles; bisection of angles (30, 45, 60, 90)." },
+            { "week": 2, "topic": "Constructions II", "description": "Construction of quadrilaterals; locus of points." },
+            { "week": 3, "topic": "Proofs of Theorems I", "description": "Theorems related to angles at a point and on a straight line." },
+            { "week": 4, "topic": "Proofs of Theorems II (Riders)", "description": "Theorems involving parallel lines and triangles; solving riders." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Trigonometric Ratios", "description": "Sine, cosine, and tangent ratios for acute angles." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Trigonometric Ratios of Special Angles", "description": "Values of sin, cos, tan for 30, 45, and 60 degrees." },
+            { "week": 9, "topic": "Application of Trigonometric Ratios", "description": "Solving problems on heights and distances." },
+            { "week": 10, "topic": "Trigonometric Ratios & Graphs", "description": "Drawing and interpreting graphs of sine and cosine." },
+            { "week": 11, "topic": "Revision", "description": "Review of second term work." },
+            { "week": 12, "topic": "Examination", "description": "End of term assessment." }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Mensuration I", "description": "Length of arc; perimeter and area of sectors and segments of circles." },
+            { "week": 2, "topic": "Mensuration II", "description": "Surface area and volume of cylinders and prisms." },
+            { "week": 3, "topic": "Surface Area of Solids", "description": "Calculating surface areas of cones and spheres." },
+            { "week": 4, "topic": "Volume of Solids", "description": "Calculating volumes of cones, pyramids, and spheres." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Area and Volume of Frustum", "description": "Calculations involving cut-off sections of cones and pyramids." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Statistics I", "description": "Data collection; frequency distribution tables; bar charts and histograms." },
+            { "week": 9, "topic": "Statistics II", "description": "Mean, median, and mode for grouped data." },
+            { "week": 10, "topic": "Statistics III", "description": "Cumulative frequency and ogive; quartiles and percentiles." },
+            { "week": 11, "topic": "Revision", "description": "Review of the year's work." },
+            { "week": 12, "topic": "Examination", "description": "Final SS 1 assessment." },
+            { "week": 13, "topic": "Closing", "description": "Term ends." }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Revision of Previous Work", "description": "Review of key concepts from SS1; solving diagnostic test questions." },
+            { "week": 2, "topic": "Numbers and Approximation", "description": "Standard form; significant figures; percentage error and its applications." },
+            { "week": 3, "topic": "Use of Logarithm Tables and Calculators", "description": "Evaluation of numbers using tables; solving problems on powers and roots." },
+            { "week": 4, "topic": "Sequences and Series", "description": "Arithmetic Progression (AP); formula for nth term and sum of first n terms." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Quadratic Equations I", "description": "Solving quadratic equations by completing the square and by formula." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Quadratic Equations II", "description": "Formation of quadratic equations from roots; sum and product of roots." },
+            { "week": 9, "topic": "Simultaneous Equations", "description": "Solving equations in two variables by elimination and substitution." },
+            { "week": 10, "topic": "Graphical Solutions", "description": "Drawing graphs of quadratic and linear equations; solution by graphical method." },
+            { "week": 11, "topic": "Revision", "description": "Review of all term 1 work." },
+            { "week": 12, "topic": "Examination", "description": "End of term assessment." }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Straight Line Graphs", "description": "Equation of a straight line; intercepts and gradient; drawing tangents." },
+            { "week": 2, "topic": "Circle Geometry I", "description": "Theorems related to angles subtended by chords and arcs." },
+            { "week": 3, "topic": "Circle Geometry II", "description": "Theorems on cyclic quadrilaterals." },
+            { "week": 4, "topic": "Circle Geometry III", "description": "Theorems on tangents to a circle from an external point." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Trigonometry I", "description": "Graphs of sine and cosine functions; solving trigonometric equations." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Trigonometry II", "description": "Sine and Cosine rules and their applications." },
+            { "week": 9, "topic": "Fractions", "description": "Simplification of complex algebraic fractions." },
+            { "week": 10, "topic": "Further Application of Trigonometry", "description": "Solving problems in 3D using trigonometry." },
+            { "week": 11, "topic": "Revision", "description": "Review of second term work." },
+            { "week": 12, "topic": "Examination", "description": "End of term assessment." }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Linear Programming", "description": "Inequalities in two variables and their graphical representation." },
+            { "week": 2, "topic": "Linear Programming Graphical Solutions", "description": "Optimization problems using feasible regions." },
+            { "week": 3, "topic": "Bearings", "description": "Advanced bearing problems involving three-figure bearings and distances." },
+            { "week": 4, "topic": "Angles of Elevation and Depression", "description": "Solving complex word problems involving heights and distances." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Frequency Distribution", "description": "Mean, median, and mode for grouped data; mean deviation." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Graphical Representation of Frequency", "description": "Drawing cumulative frequency curves (ogives)." },
+            { "week": 9, "topic": "Measures from Frequency", "description": "Interquartile range and semi-interquartile range." },
+            { "week": 10, "topic": "Probability", "description": "Addition and multiplication laws of probability; tree diagrams." },
+            { "week": 11, "topic": "Revision", "description": "Review of the year's work." },
+            { "week": 12, "topic": "Examination", "description": "Final SS 2 assessment." }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Welcome Test and Review of Difficult SS2 Topics", "description": "Review of logarithm laws and complex calculations; diagnostic testing." },
+            { "week": 2, "topic": "Logic", "description": "Simple and compound statements; truth tables; conditional and indirect proof." },
+            { "week": 3, "topic": "Application of Surds to Trigonometry", "description": "Using surds in trigonometric ratios and identities." },
+            { "week": 4, "topic": "Matrices and Determinants", "description": "Introduction to matrices (2x2); addition, subtraction, and multiplication." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Linear and Quadratic Equations", "description": "Solving simultaneous linear and quadratic equations." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Surface Area and Volume of Spheres and Hemispheres", "description": "Formulae and applications for spherical shapes." },
+            { "week": 9, "topic": "Longitude and Latitude I", "description": "Distance along great circles and parallels of latitude." },
+            { "week": 10, "topic": "Longitude and Latitude II", "description": "Time zones and speed in relation to longitude and latitude." },
+            { "week": 11, "topic": "Binary Operations", "description": "Definition; closure, commutative, associative properties; identity and inverse." },
+            { "week": 12, "topic": "Arithmetic of Finance", "description": "Simple and compound interest; annuities and depreciation." },
+            { "week": 13, "topic": "Revision / Examination / Closing", "description": "Final term review and assessment." }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Review of First Term Work & Financial Mathematics", "description": "Review of finance concepts and term 1 topics." },
+            { "week": 2, "topic": "Coordinate Geometry of a Straight Line", "description": "Gradient, midpoint, and distance between two points." },
+            { "week": 3, "topic": "Construction I", "description": "Locus of points; intersections of loci." },
+            { "week": 4, "topic": "Differentiation of Algebraic Functions I", "description": "Meaning of derivative; differentiation from first principles." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first half term." },
+            { "week": 6, "topic": "Differentiation of Algebraic Functions II", "description": "Rules of differentiation; application to gradients of curves." },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest." },
+            { "week": 8, "topic": "Integration of Algebraic Functions", "description": "Basic integration rules; indefinite and definite integrals." },
+            { "week": 9, "topic": "Functions and Mapping", "description": "Types of mapping (one-to-one, onto); inverse functions." },
+            { "week": 10, "topic": "General Review of Calculus", "description": "Revision of differentiation and integration." },
+            { "week": 11, "topic": "Revision", "description": "General revision for external examinations (WASSCE/NECO)." },
+            { "week": 12, "topic": "Examination", "description": "Final school-based assessment." },
+            { "week": 13, "topic": "Closing", "description": "Term ends." }
+          ]
+        }
+      ]
+    }
+  ]
+}
