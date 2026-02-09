@@ -1,144 +1,501 @@
 {
-    "subject": "Physics",
-    "curriculum": [
-      {
-        "grade": "SS 1",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Fundamentals and Derived Quantities and Units" },
-              { "week": 2, "topic": "Measurements of Mass, Weight, Length and Time" },
-              { "week": 3, "topic": "Position, Distance and Displacement" },
-              { "week": 4, "topic": "Scalars and Vectors" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Speed, Velocity and Acceleration" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Motion" },
-              { "week": 9, "topic": "Motion (Continued)" },
-              { "week": 10, "topic": "Motion (Continued)" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Linear Momentum: Newton’s Laws of Motion" },
-              { "week": 2, "topic": "Work, Energy and Power" },
-              { "week": 3, "topic": "Mechanical Energy: Machines" },
-              { "week": 4, "topic": "Heat Energy I: Temperature and Its Measurement" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Heat Energy II: Heat Measurement" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Particulate Nature of Matter" },
-              { "week": 9, "topic": "Particulate Nature of Matter (Continued)" },
-              { "week": 10, "topic": "Particulate Nature of Matter (Continued)" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Fluids at Rest and in Motion" },
-              { "week": 2, "topic": "Gas Laws" },
-              { "week": 3, "topic": "Simple Harmonic Motion" },
-              { "week": 4, "topic": "Projectile" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Types of Waves" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Properties of Waves" },
-              { "week": 9, "topic": "Properties of Waves (Continued)" },
-              { "week": 10, "topic": "Properties of Waves (Continued)" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 2",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Light Waves I" },
-              { "week": 2, "topic": "Light Waves II" },
-              { "week": 3, "topic": "Sound Waves" },
-              { "week": 4, "topic": "Human Eye" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Application of Sound Waves" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Electric Charges" },
-              { "week": 9, "topic": "Description and Properties of Fields" },
-              { "week": 10, "topic": "Gravitational Field" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Electric Field" },
-              { "week": 2, "topic": "Magnetic Fields" },
-              { "week": 3, "topic": "Electro-Magnetic Field" },
-              { "week": 4, "topic": "Simple A.C. Circuits" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Battery" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Solar Collector" },
-              { "week": 9, "topic": "Revision" },
-              { "week": 10, "topic": "Examination" },
-              { "week": 11, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Electrical Continuity Testing" },
-              { "week": 2, "topic": "Electroplating" },
-              { "week": 3, "topic": "Application of Electromagnetic Field" },
-              { "week": 4, "topic": "Models of the Atom" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Nucleus" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Energy Quantization" },
-              { "week": 9, "topic": "Duality of Matter" },
-              { "week": 10, "topic": "Energy and Society" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 3",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Conversion of Energy" },
-              { "week": 2, "topic": "Transmission System" },
-              { "week": 3, "topic": "Uses of Machines" },
-              { "week": 4, "topic": "Repair and Maintenance of Machines" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Dams and Energy Production" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Rockets and Satellites" },
-              { "week": 9, "topic": "Niger-SAT 1" },
-              { "week": 10, "topic": "NICOM-SAT 1" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+  "subject": "Physics",
+  "curriculum": "Nigeria Curriculum",
+  "grades": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Fundamentals and Derived Quantities and Units",
+              "description": "Fundamental and derived quantities; Units of measurement; S.I. Units; Dimensions of physical quantities[cite: 19, 26]."
+            },
+            {
+              "week": 2,
+              "topic": "Measurements of Mass, Weight, Length and Time",
+              "description": "Instruments for measuring length (vernier calipers, micrometer screw gauge); Measurement of mass and weight; Measurement of time[cite: 19, 26]."
+            },
+            {
+              "week": 3,
+              "topic": "Position, Distance and Displacement",
+              "description": "Concept of position; Distance and displacement as scalar and vector quantities; Rectangular Cartesian coordinates[cite: 19, 26]."
+            },
+            {
+              "week": 4,
+              "topic": "Scalars and Vectors",
+              "description": "Definitions; Examples; Addition and resolution of vectors; Resultant of vectors[cite: 19, 26]."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment of topics covered in weeks 1 to 4[cite: 19, 26]."
+            },
+            {
+              "week": 6,
+              "topic": "Speed, Velocity and Acceleration",
+              "description": "Concepts of speed, velocity, and acceleration; Uniform and non-uniform motion; Velocity-time graphs[cite: 19, 26]."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm break[cite: 19, 26]."
+            },
+            {
+              "week": 8,
+              "topic": "Motion",
+              "description": "Types of motion (random, oscillatory, translational, rotational); Relative motion; Causes of motion[cite: 19, 26]."
+            },
+            {
+              "week": 9,
+              "topic": "Motion (Continued)",
+              "description": "Equations of uniformly accelerated motion; Vertical motion under gravity[cite: 19, 26]."
+            },
+            {
+              "week": 10,
+              "topic": "Motion (Continued)",
+              "description": "Practical applications and problem solving related to linear and vertical motion[cite: 19, 26]."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "General revision of first term work[cite: 19, 26]."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "First term examination[cite: 19, 26]."
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities[cite: 19, 26]."
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Linear Momentum: Newton’s Laws of Motion",
+              "description": "Concept of inertia; Newton’s laws of motion; Impulse and momentum; Conservation of linear momentum[cite: 19, 26]."
+            },
+            {
+              "week": 2,
+              "topic": "Work, Energy and Power",
+              "description": "Definitions and units; Potential and kinetic energy; Conservation of mechanical energy[cite: 19, 26]."
+            },
+            {
+              "week": 3,
+              "topic": "Mechanical Energy: Machines",
+              "description": "Simple machines; Mechanical advantage, velocity ratio, and efficiency of machines[cite: 19, 26]."
+            },
+            {
+              "week": 4,
+              "topic": "Heat Energy I: Temperature and Its Measurement",
+              "description": "Concept of temperature; Thermometers and scales of temperature[cite: 19, 26]."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment of topics covered in weeks 1 to 4[cite: 19, 26]."
+            },
+            {
+              "week": 6,
+              "topic": "Heat Energy II: Heat Measurement",
+              "description": "Heat capacity and specific heat capacity; Latent heat; Evaporation and boiling[cite: 19, 26]."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm break[cite: 19, 26]."
+            },
+            {
+              "week": 8,
+              "topic": "Particulate Nature of Matter",
+              "description": "Evidence of the particulate nature of matter; Kinetic theory of gases; States of matter[cite: 19, 26]."
+            },
+            {
+              "week": 9,
+              "topic": "Particulate Nature of Matter (Continued)",
+              "description": "Molecular theory of matter; Cohesion and adhesion; Surface tension[cite: 19, 26]."
+            },
+            {
+              "week": 10,
+              "topic": "Particulate Nature of Matter (Continued)",
+              "description": "Capillarity; Viscosity; Elasticity of solids[cite: 19, 26]."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "General revision of second term work[cite: 19, 26]."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "Second term examination[cite: 19, 26]."
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities[cite: 19, 26]."
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Fluids at Rest and in Motion",
+              "description": "Pressure in fluids; Pascal's principle; Archimedes' principle; Upthrust and floatation[cite: 19, 26]."
+            },
+            {
+              "week": 2,
+              "topic": "Gas Laws",
+              "description": "Boyle’s law; Charles’ law; Pressure law; General gas equation[cite: 19, 26]."
+            },
+            {
+              "week": 3,
+              "topic": "Simple Harmonic Motion",
+              "description": "Definition; Period, frequency, and amplitude; Energy in SHM; Simple pendulum[cite: 19, 26]."
+            },
+            {
+              "week": 4,
+              "topic": "Projectile",
+              "description": "Concept of projectiles; Motion of projectiles; Time of flight, range, and maximum height[cite: 19, 26]."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment of topics covered in weeks 1 to 4[cite: 19, 26]."
+            },
+            {
+              "week": 6,
+              "topic": "Types of Waves",
+              "description": "Classification of waves (mechanical and electromagnetic); Longitudinal and transverse waves[cite: 19, 26]."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm break[cite: 19, 26]."
+            },
+            {
+              "week": 8,
+              "topic": "Properties of Waves",
+              "description": "Reflection, refraction, and diffraction of waves[cite: 19, 26]."
+            },
+            {
+              "week": 9,
+              "topic": "Properties of Waves (Continued)",
+              "description": "Interference and polarization of waves[cite: 19, 26]."
+            },
+            {
+              "week": 10,
+              "topic": "Properties of Waves (Continued)",
+              "description": "Wave equations and practical applications of wave properties[cite: 19, 26]."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "General revision of third term work[cite: 19, 26]."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "Third term examination[cite: 19, 26]."
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities[cite: 19, 26]."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Light Waves I",
+              "description": "Reflection of light at plane surfaces; Reflection at curved surfaces (mirrors)[cite: 19, 26]."
+            },
+            {
+              "week": 2,
+              "topic": "Light Waves II",
+              "description": "Refraction of light through rectangular blocks and prisms; Total internal reflection[cite: 19, 26]."
+            },
+            {
+              "week": 3,
+              "topic": "Sound Waves",
+              "description": "Production and transmission of sound; Characteristics of sound; Speed of sound; Echoes and their applications[cite: 19, 26]."
+            },
+            {
+              "week": 4,
+              "topic": "Human Eye",
+              "description": "Structure and functions of the eye; Defects of vision and their corrections; Comparison with the camera[cite: 19, 26]."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment of weeks 1 to 4[cite: 19, 26]."
+            },
+            {
+              "week": 6,
+              "topic": "Application of Sound Waves",
+              "description": "Vibrations in strings and air columns; Musical instruments; Resonance and harmonics[cite: 19, 26]."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm break[cite: 19, 26]."
+            },
+            {
+              "week": 8,
+              "topic": "Electric Charges",
+              "description": "Production of charges; Electrostatic induction; Gold leaf electroscope; Lighting and lightning conductors[cite: 19, 26]."
+            },
+            {
+              "week": 9,
+              "topic": "Description and Properties of Fields",
+              "description": "Concept of fields (scalar and vector fields); Gravitational, electric, and magnetic fields[cite: 19, 26]."
+            },
+            {
+              "week": 10,
+              "topic": "Gravitational Field",
+              "description": "Newton's law of universal gravitation; Gravitational potential; Acceleration due to gravity[cite: 19, 26]."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Revision of first term work[cite: 19, 26]."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "First term examination[cite: 19, 26]."
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities[cite: 19, 26]."
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Electric Field",
+              "description": "Coulomb's law; Electric field intensity; Electric potential; Capacitors and capacitance[cite: 19, 26]."
+            },
+            {
+              "week": 2,
+              "topic": "Magnetic Fields",
+              "description": "Properties of magnets; Magnetic field around a bar magnet; The Earth's magnetic field[cite: 19, 26]."
+            },
+            {
+              "week": 3,
+              "topic": "Electro-Magnetic Field",
+              "description": "Magnetic field around a current-carrying conductor; Force on a charge in a magnetic field; Fleming's left-hand rule[cite: 19, 26]."
+            },
+            {
+              "week": 4,
+              "topic": "Simple A.C. Circuits",
+              "description": "Alternating currents; Root mean square values; Peak values; Resistance, reactance, and impedance[cite: 19, 26]."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment of weeks 1 to 4[cite: 19, 26]."
+            },
+            {
+              "week": 6,
+              "topic": "Battery",
+              "description": "Primary and secondary cells; Construction and maintenance of lead-acid accumulators[cite: 19, 26]."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm break[cite: 19, 26]."
+            },
+            {
+              "week": 8,
+              "topic": "Solar Collector",
+              "description": "Types and principles of solar collectors; Applications in water heating and drying[cite: 19, 26]."
+            },
+            {
+              "week": 9,
+              "topic": "Revision",
+              "description": "Revision of second term work[cite: 19, 26]."
+            },
+            {
+              "week": 10,
+              "topic": "Examination",
+              "description": "Second term examination[cite: 19, 26]."
+            },
+            {
+              "week": 11,
+              "topic": "Closing",
+              "description": "End of term activities[cite: 19, 26]."
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Electrical Continuity Testing",
+              "description": "Use of multimeter; Testing for open and short circuits; Domestic wiring precautions[cite: 19, 26]."
+            },
+            {
+              "week": 2,
+              "topic": "Electroplating",
+              "description": "Principles of electrolysis; Chemical equivalent; Practical applications in electroplating[cite: 19, 26]."
+            },
+            {
+              "week": 3,
+              "topic": "Application of Electromagnetic Field",
+              "description": "The electric motor; The generator; The transformer and power transmission[cite: 19, 26]."
+            },
+            {
+              "week": 4,
+              "topic": "Models of the Atom",
+              "description": "History of atomic models (Dalton, Thomson, Rutherford, Bohr); Atomic structure and energy levels[cite: 19, 26]."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment of weeks 1 to 4[cite: 19, 26]."
+            },
+            {
+              "week": 6,
+              "topic": "Nucleus",
+              "description": "Radioactivity; Nuclear structure; Alpha, beta, and gamma radiation; Half-life; Nuclear fusion and fission[cite: 19, 26]."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm break[cite: 19, 26]."
+            },
+            {
+              "week": 8,
+              "topic": "Energy Quantization",
+              "description": "Planck's constant; Photoelectric effect; Einstein's equation; X-rays and their applications[cite: 19, 26]."
+            },
+            {
+              "week": 9,
+              "topic": "Duality of Matter",
+              "description": "Wave-particle duality; De Broglie's wavelength; Electron diffraction[cite: 19, 26]."
+            },
+            {
+              "week": 10,
+              "topic": "Energy and Society",
+              "description": "Energy sources and their uses; Environmental impact of energy consumption; Global warming[cite: 19, 26]."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Revision of third term work[cite: 19, 26]."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "Third term examination[cite: 19, 26]."
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities[cite: 19, 26]."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Conversion of Energy",
+              "description": "Energy transformation in everyday devices; Efficiency in energy conversion[cite: 19, 26]."
+            },
+            {
+              "week": 2,
+              "topic": "Transmission System",
+              "description": "Mechanical transmission (gears, belts); Electrical transmission (grid system)[cite: 19, 26]."
+            },
+            {
+              "week": 3,
+              "topic": "Uses of Machines",
+              "description": "Industrial and domestic uses of complex machines[cite: 19, 26]."
+            },
+            {
+              "week": 4,
+              "topic": "Repair and Maintenance of Machines",
+              "description": "General principles of maintenance; Lubrication and care of equipment[cite: 19, 26]."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment of topics covered in weeks 1 to 4[cite: 19, 26]."
+            },
+            {
+              "week": 6,
+              "topic": "Dams and Energy Production",
+              "description": "Hydroelectric power generation; Role of dams in energy and agriculture[cite: 19, 26]."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm break[cite: 19, 26]."
+            },
+            {
+              "week": 8,
+              "topic": "Rockets and Satellites",
+              "description": "Principles of rocket propulsion; Satellite orbits and communication[cite: 19, 26]."
+            },
+            {
+              "week": 9,
+              "topic": "Niger-SAT 1",
+              "description": "Features and functions of Niger-SAT 1; Role in Nigeria's development[cite: 19, 26]."
+            },
+            {
+              "week": 10,
+              "topic": "NICOM-SAT 1",
+              "description": "Features and functions of NICOM-SAT 1; Applications in telecommunications[cite: 19, 26]."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "General revision of first term work and WAEC/NECO preparation[cite: 19, 26]."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "First term examination/Mock examination[cite: 19, 26]."
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities[cite: 19, 26]."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
