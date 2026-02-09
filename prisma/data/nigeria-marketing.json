@@ -1,0 +1,162 @@
+{
+  "subject": "Marketing",
+  "curriculum": "Nigeria Curriculum",
+  "data": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Marketing I (Meaning, nature, and scope)", "description": "Meaning and scope of marketing; Historical development [cite: 14]" },
+            { "week": 2, "topic": "Introduction to Marketing II (Importance in business and society)", "description": "Importance of marketing to individuals, businesses, and the society [cite: 14]" },
+            { "week": 3, "topic": "Marketing Concepts (Production, product, selling, etc.)", "description": "Core marketing concepts: production, product, selling, marketing, and societal marketing concepts [cite: 14]" },
+            { "week": 4, "topic": "Classification of Products I (Consumer and industrial goods)", "description": "Meaning and classification of products: consumer goods and industrial goods [cite: 14]" },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first term's work [cite: 14]" },
+            { "week": 6, "topic": "Classification of Products II (Durable, non-durable, services)", "description": "Classification based on durability: durable goods, non-durable goods, and services [cite: 14]" },
+            { "week": 7, "topic": "Midterm Break", "description": "Midterm rest period [cite: 14]" },
+            { "week": 8, "topic": "Marketing Mix (4Ps: product, price, place, promotion)", "description": "Meaning and elements of marketing mix (4Ps) [cite: 14]" },
+            { "week": 9, "topic": "Marketing Environment (Internal and external)", "description": "Meaning and types: micro (internal) and macro (external) environments [cite: 14]" },
+            { "week": 10, "topic": "What Do Markets Do (Functions and roles)", "description": "Functions of marketing: exchange, physical distribution, and facilitating functions [cite: 14]" },
+            { "week": 11, "topic": "Revision", "description": "Review of the term's work [cite: 14]" },
+            { "week": 12, "topic": "Examination", "description": "End of term assessment [cite: 14]" },
+            { "week": 13, "topic": "Closing", "description": "Term ends [cite: 14]" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Consumer Behaviour (Meaning and factors)", "description": "Meaning and importance of consumer behaviour; factors influencing consumer behaviour [cite: 14]" },
+            { "week": 2, "topic": "Organizational Buying Behaviour", "description": "Meaning and features of organizational buying; differences between consumer and organizational buying [cite: 14]" },
+            { "week": 3, "topic": "Marketing Plan (Meaning, components, importance)", "description": "Meaning, importance, and components of a marketing plan [cite: 14]" },
+            { "week": 4, "topic": "Advertising I (Meaning, types, importance)", "description": "Meaning and importance of advertising; types of advertising [cite: 14]" },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of weeks 1-4 [cite: 14]" },
+            { "week": 6, "topic": "Advertising II (Media, advantages and disadvantages)", "description": "Media of advertising (print, electronic, outdoor); advantages and disadvantages [cite: 14]" },
+            { "week": 7, "topic": "Midterm Break", "description": "Midterm rest [cite: 14]" },
+            { "week": 8, "topic": "Pricing Strategies and Determinants", "description": "Meaning and importance of pricing; factors affecting pricing [cite: 14]" },
+            { "week": 9, "topic": "Promotion (Meaning, types, and tools)", "description": "Meaning and tools of promotion: sales promotion, personal selling, and public relations [cite: 14]" },
+            { "week": 10, "topic": "Merchandising (Meaning, importance, and techniques)", "description": "Meaning and importance of merchandising; merchandising techniques [cite: 14]" },
+            { "week": 11, "topic": "Revision", "description": "Review of term's work [cite: 14]" },
+            { "week": 12, "topic": "Examination", "description": "End of term assessment [cite: 14]" },
+            { "week": 13, "topic": "Closing", "description": "Term ends [cite: 14]" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Advertising II (Media of advertising)", "description": "Different media of advertising: television, radio, newspapers, social media [cite: 14]" },
+            { "week": 2, "topic": "Pricing Strategies and Determinants", "description": "Price determination and various pricing strategies in marketing [cite: 14]" },
+            { "week": 3, "topic": "Promotion I (Meaning, tools, and importance)", "description": "Meaning, tools, and importance of sales promotion [cite: 14]" },
+            { "week": 4, "topic": "Promotion II (Methods of sales promotion)", "description": "Methods of sales promotion: coupons, samples, discounts, premiums [cite: 14]" },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of work covered [cite: 14]" },
+            { "week": 6, "topic": "Merchandising I (Meaning, importance, and techniques)", "description": "Introduction to merchandising; Importance and techniques [cite: 14]" },
+            { "week": 7, "topic": "Midterm Break", "description": "Midterm holiday [cite: 14]" },
+            { "week": 8, "topic": "Merchandising II (Methods and applications)", "description": "Methods of merchandising in retail and wholesale [cite: 14]" },
+            { "week": 9, "topic": "Merchandising III (Modern trends)", "description": "Modern trends in merchandising: visual merchandising and digital display [cite: 14]" },
+            { "week": 10, "topic": "Distribution (Meaning, channels, and importance)", "description": "Meaning and importance of distribution; Channels of distribution [cite: 14]" },
+            { "week": 11, "topic": "Revision", "description": "Review of the term's work [cite: 14]" },
+            { "week": 12, "topic": "Examination", "description": "End of term assessment [cite: 14]" },
+            { "week": 13, "topic": "Closing", "description": "Term ends [cite: 14]" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Transportation (Meaning, types, importance)", "description": "Meaning and importance of transportation; types: road, rail, air, and water [cite: 11]" },
+            { "week": 2, "topic": "Warehousing (Types, functions, and importance)", "description": "Meaning and importance of warehousing; types of warehouses; functions in commerce [cite: 14]" },
+            { "week": 3, "topic": "Structure and Market Unions for Sales of Goods", "description": "Meaning and structure of market unions; roles in the sale of goods [cite: 14]" },
+            { "week": 4, "topic": "Meaning and Roles of Facilitators (Agents, brokers, etc.)", "description": "Meaning and roles of marketing facilitators: agents, brokers, and factors [cite: 14]" },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first term's work [cite: 14]" },
+            { "week": 6, "topic": "Marketing of Mineral Products", "description": "Meaning and importance; types of mineral products; marketing channels for minerals [cite: 14]" },
+            { "week": 7, "topic": "Midterm Break", "description": "Midterm rest [cite: 14]" },
+            { "week": 8, "topic": "International Marketing (Meaning and scope)", "description": "Meaning and scope of international marketing; reasons for international marketing " },
+            { "week": 9, "topic": "Organizing for International Marketing", "description": "Different organizational structures for entering international markets " },
+            { "week": 10, "topic": "Application of ICT in International Marketing", "description": "Meaning and importance of ICT; roles of internet facilities in international marketing " },
+            { "week": 11, "topic": "Revision", "description": "General revision of the term's work [cite: 14]" },
+            { "week": 12, "topic": "Examination", "description": "End of term assessment [cite: 14]" },
+            { "week": 13, "topic": "Closing", "description": "Term ends [cite: 14]" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Planning for Personal Marketing Outlet", "description": "Steps in planning for a personal marketing outlet; situational analysis [cite: 14]" },
+            { "week": 2, "topic": "Purchasing, Supplying and Merchandising of Goods and Services", "description": "Procedures for purchasing and supplying; merchandising techniques [cite: 14]" },
+            { "week": 3, "topic": "Marketing of Services", "description": "Meaning and characteristics of services; importance of service marketing [cite: 14]" },
+            { "week": 4, "topic": "Consumer Behavior (Factors and decision making)", "description": "Factors influencing consumer decision making; stages in the buying process [cite: 14]" },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of weeks 1-4 [cite: 14]" },
+            { "week": 6, "topic": "Product Life Cycle (Stages and strategies)", "description": "Meaning and stages of product life cycle; marketing strategies for each stage [cite: 14]" },
+            { "week": 7, "topic": "Midterm Break", "description": "Midterm rest [cite: 14]" },
+            { "week": 8, "topic": "Branding and Packaging", "description": "Meaning and importance of branding and packaging; functions of packaging [cite: 14]" },
+            { "week": 9, "topic": "Pricing Policies and Strategies", "description": "Factors affecting pricing; different pricing policies and strategies [cite: 14]" },
+            { "week": 10, "topic": "Channels of Distribution", "description": "Types and functions of distribution channels; selecting a channel [cite: 14]" },
+            { "week": 11, "topic": "Revision", "description": "Review of term's work [cite: 14]" },
+            { "week": 12, "topic": "Examination", "description": "End of term assessment [cite: 14]" },
+            { "week": 13, "topic": "Closing", "description": "Term ends [cite: 14]" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Sales Promotion (Meaning and methods)", "description": "Meaning and methods of sales promotion: samples, discounts, contests [cite: 14]" },
+            { "week": 2, "topic": "Advertising (Importance and limitations)", "description": "Importance of advertising to manufacturers and consumers; limitations of advertising [cite: 14]" },
+            { "week": 3, "topic": "Personal Selling (Qualities and challenges)", "description": "Meaning of personal selling; qualities of a good salesman; challenges [cite: 14]" },
+            { "week": 4, "topic": "Public Relations in Marketing", "description": "Meaning and importance of public relations; tools for public relations [cite: 14]" },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of work covered [cite: 14]" },
+            { "week": 6, "topic": "Consumer Protection (Rights and agencies)", "description": "Meaning and importance of consumer protection; roles of agencies like NAFDAC, SON [cite: 14]" },
+            { "week": 7, "topic": "Midterm Break", "description": "Midterm rest [cite: 14]" },
+            { "week": 8, "topic": "Contemporary Issues in Marketing (Digital, E-commerce)", "description": "Introduction to E-marketing and E-commerce; benefits and challenges [cite: 14]" },
+            { "week": 9, "topic": "Careers in Marketing", "description": "Various career opportunities in marketing: research, advertising, sales [cite: 14]" },
+            { "week": 10, "topic": "Revision", "description": "Review of the term's work [cite: 14]" },
+            { "week": 11, "topic": "Examination", "description": "End of term assessment [cite: 14]" },
+            { "week": 12, "topic": "Closing", "description": "Term ends [cite: 14]" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "International Marketing (Meaning and reasons)", "description": "Meaning of international marketing; reasons for international marketing " },
+            { "week": 2, "topic": "Importance of International Market", "description": "Importance of international market; difference between domestic and international marketing " },
+            { "week": 3, "topic": "International Trade System – Import and Export Trade", "description": "Meaning of international trade; comparison of import and export trade " },
+            { "week": 4, "topic": "Market Decision and Reasons – Wider Market Escape from Competition", "description": "Evaluation of reasons why businesses seek wider markets; escape from competition " },
+            { "week": 5, "topic": "Midterm Examination", "description": "Assessment of first term's work " },
+            { "week": 6, "topic": "Features of International Market", "description": "Advantages and disadvantages of international market " },
+            { "week": 7, "topic": "Midterm Break", "description": "Midterm rest " },
+            { "week": 8, "topic": "Legal, Social, Cultural and Demographic Features of International Market", "description": "Highlighting the legal, social, cultural, and demographic features influencing international marketing " },
+            { "week": 9, "topic": "Approaches to International Market (Entry and adaptation)", "description": "Approaches to entering international marketing; adaptations in international markets " },
+            { "week": 10, "topic": "Regulations Guiding International Marketing", "description": "Rules and regulations guiding international marketing " },
+            { "week": 11, "topic": "Information and Communication Technology (ICT) in International Marketing", "description": "Meaning of ICT; advantages of ICT in international marketing; practice of internet facilities " },
+            { "week": 12, "topic": "Revision", "description": "General revision of the term’s work " },
+            { "week": 13, "topic": "Examination", "description": "End of term assessment " },
+            { "week": 14, "topic": "Closing", "description": "Term ends " }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Internet Browsing and Electronic Marketing", "description": "Introduction to internet browsing for marketing; benefits of e-marketing " },
+            { "week": 2, "topic": "Planning for a Personal Marketing Outlet", "description": "Detailed steps in setting up a retail or wholesale marketing outlet [cite: 14]" },
+            { "week": 3, "topic": "Identifying a Good Marketing Location and Setting up/Operating a Marketing Outlet", "description": "Factors for selecting a site; operational requirements for a marketing outlet [cite: 14]" },
+            { "week": 4, "topic": "Purchase and Supply of Goods", "description": "Sourcing for goods; documentation and inventory management [cite: 14]" },
+            { "week": 5, "topic": "Selling and Bargaining Skills", "description": "Techniques for effective selling and negotiation with customers [cite: 14]" },
+            { "week": 6, "topic": "Fund Management", "description": "Basics of managing business funds; budgeting and record keeping [cite: 14]" },
+            { "week": 7, "topic": "Midterm Break", "description": "Midterm rest [cite: 14]" },
+            { "week": "8-11", "topic": "Comprehensive revision of the term’s work", "description": "Final review of all SS1-SS3 topics in preparation for final exams " },
+            { "week": "12-13", "topic": "Examination", "description": "Mock and final certificate examinations " },
+            { "week": 14, "topic": "Closing", "description": "Term ends and graduation " }
+          ]
+        }
+      ]
+    }
+  ]
+}

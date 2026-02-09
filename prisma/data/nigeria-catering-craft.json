@@ -1,0 +1,162 @@
+{
+  "subject": "Catering and Craft Practice",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Catering Craft", "description": "Origin of catering craft; Careers in catering craft." },
+            { "week": 2, "topic": "Hospitality Industry in Catering", "description": "Definition of hospitality industry; Relationship between hospitality industry and catering trade; Classification and components of hospitality industry." },
+            { "week": 3, "topic": "Importance and Characteristics of Hospitality Industry", "description": "Importance of hospitality industry; Characteristics of hospitality industry." },
+            { "week": 4, "topic": "Catering Establishments I", "description": "Classification of catering establishments; Types of catering establishments." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Catering Establishments II", "description": "Functions of catering establishments; Hotel rating." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Culinary Terms", "description": "Commonly used culinary terms; Glossary of culinary terms; Compilation of menu in French." },
+            { "week": 9, "topic": "Safety Precautions in the Kitchen", "description": "Meaning of safety; Types and causes of accidents; Prevention and management of accidents in the kitchen." },
+            { "week": 10, "topic": "First Aid in Catering", "description": "Meaning of first aid, first aider, and first aid box; Contents of first aid box; Fire control and fire equipment." },
+            { "week": 11, "topic": "Sanitation and Hygiene", "description": "Meaning of sanitation; Aims and types of sanitation; Meaning and types of hygiene; Food contamination and food poisoning; Practices of personal hygiene." },
+            { "week": 12, "topic": "Revision", "description": "—" },
+            { "week": 13, "topic": "Examination", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Revision of First Term Work / Pre-Resumption Test", "description": "General recall of first term topics; Food commodities." },
+            { "week": 2, "topic": "Food Commodities I", "description": "Poultry: definition, nutritive value, preparation and uses; Meat/Game: classification, nutritive value, cuts of meat, meat dishes." },
+            { "week": 3, "topic": "Food Commodities II", "description": "Fish: identification, classification, selection factors; Dairy products: types, examples, nutritive value, uses." },
+            { "week": 4, "topic": "Food Commodities III", "description": "Eggs: structure, composition, nutritive value, uses in cookery, factors to consider when buying, planning and preparing egg dishes." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Food Commodities IV", "description": "Fruits and Vegetables: classification, examples, cooking factors, importance in diets." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Food Commodities V", "description": "Cereals and pulses: types, factors to consider, storage. Spices and herbs: definitions, uses, factors to consider when using." },
+            { "week": 9, "topic": "Principles of Cooking Methods", "description": "Principles of cooking; Types of heat transfer; Effects of heat on food nutrients; Classification of cooking methods." },
+            { "week": 10, "topic": "Methods of Cooking I", "description": "Boiling, poaching, steaming, stewing: advantages and disadvantages." },
+            { "week": 11, "topic": "Methods of Cooking II", "description": "Frying, baking, roasting, grilling: advantages and disadvantages." },
+            { "week": 12, "topic": "Revision", "description": "—" },
+            { "week": 13, "topic": "Examination", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Welcome Test / Revision of Last Term's Work", "description": "Answering test questions; Recall of previous topics taught in the last term." },
+            { "week": 2, "topic": "Food and Beverage Service I", "description": "Functions of food and beverage manager; Duties of restaurant manager; Responsibilities of head waiter; Functions of banquet hall waiter." },
+            { "week": 3, "topic": "Personnel in Food and Beverage Area", "description": "Station waiter; Wine stewards; Junior waiter; Barman, bartender, mixologist, bar keeper; Responsibilities of each personnel." },
+            { "week": 4, "topic": "Types of Food Services I", "description": "Plate service; Family service; Cafeteria service; Differences between the methods." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Types of Food Services II", "description": "Self-service; Guéridon service; Silver service; Distinctions and applications." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Demonstration on Types of Food Service", "description": "Practical demonstration of plate, family, cafeteria, self, guéridon, and silver services." },
+            { "week": 9, "topic": "Table Cover", "description": "Meaning of cover; Types of cover; Laying the table; Table wares required for different covers." },
+            { "week": 10, "topic": "Napkin Folding", "description": "Meaning of napkin folding; Types and styles of napkin folds; Methods of folding napkins." },
+            { "week": 11, "topic": "Demonstration of Napkin Folds and Placement of Table Wares", "description": "Practical demonstration of napkin folding; Placement of table wares alongside folded napkins." },
+            { "week": 12, "topic": "Revision", "description": "General review of the third term’s topics." },
+            { "week": 13, "topic": "Examination", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Welcome Test / Revision", "description": "Review of last term’s work and recall of previous topics" },
+            { "week": 2, "topic": "Introduction to Bar", "description": "Meaning of bar, types of bar, functions of bar, factors to consider when planning a bar" },
+            { "week": 3, "topic": "Bar Equipment and Functions", "description": "Identification and uses of different bar equipment" },
+            { "week": 4, "topic": "Introduction to Beverages", "description": "Meaning and types of beverages (alcoholic and non-alcoholic)" },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of weeks 1–4" },
+            { "week": 6, "topic": "Beverages in Relation to Still Room", "description": "Meaning, functions, food items and equipment in a still room" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "The Service Area / Ancillary Service Area", "description": "Description, rooms in ancillary service area" },
+            { "week": 9, "topic": "Dispense Bar Equipment and Arrangement", "description": "Types of dispense bar equipment and arrangement" },
+            { "week": 10, "topic": "Demonstration on Preparation and Serving of Beverages", "description": "Practical preparation and serving of different beverages" },
+            { "week": 11, "topic": "Revision", "description": "General revision of the term’s work" },
+            { "week": 12, "topic": "Examination", "description": "End of term exams" },
+            { "week": 13, "topic": "Closing", "description": "Vacation" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Welcome Test / Revision", "description": "Review of last term’s work" },
+            { "week": 2, "topic": "Introduction to Kitchen Equipment", "description": "Classification, uses, care and maintenance" },
+            { "week": 3, "topic": "Standing and Local Measuring Equipment", "description": "Identification and use of local and standard measuring tools" },
+            { "week": 4, "topic": "Cleaning Agents", "description": "Meaning, classification, importance, and local cleaning agents" },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of weeks 1–4" },
+            { "week": 6, "topic": "Methods of Cooking I", "description": "Boiling (stocks, soups, sauces), preparation and demonstration" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Methods of Cooking II", "description": "Roasting, grilling, barbecue (with demonstration)" },
+            { "week": 9, "topic": "Methods of Cooking III", "description": "Baking (cakes, pastries, biscuits, cookies, scones)" },
+            { "week": 10, "topic": "Cake Decoration", "description": "Royal icing, fondant, butter icing" },
+            { "week": 11, "topic": "Revision", "description": "General revision of the term’s work" },
+            { "week": 12, "topic": "Examination", "description": "End of term exams" },
+            { "week": 13, "topic": "Closing", "description": "Vacation" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Welcome Test", "description": "Review of last term’s work" },
+            { "week": 2, "topic": "Costume and Fashion Designing", "description": "Meaning, style development, sketching and pattern making" },
+            { "week": 3, "topic": "Adaptation of Basic Block for Costume Design", "description": "Drafting, construction, use of different style features" },
+            { "week": 4, "topic": "Decorative Design: Embroidery Work I", "description": "Satin, stem, chain stitches; planning embroidery" },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of weeks 1–4" },
+            { "week": 6, "topic": "Decorative Design: Embroidery Work II", "description": "Types of embroidery work; transferring designs to fabrics" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Decorative Design: Traditional Design & Needlecraft", "description": "Beads, sequins, traditional designs, needlecraft and toy-making" },
+            { "week": 9, "topic": "Basic Concepts of Marketing", "description": "Meaning, methods, importance, distribution channels" },
+            { "week": 10, "topic": "Marketing (Continued)", "description": "Branding, packaging, costing, pricing, feasibility study, product packaging" },
+            { "week": 11, "topic": "Revision", "description": "General revision of the term’s work" },
+            { "week": 12, "topic": "Examination", "description": "End of term exams" },
+            { "week": 13, "topic": "Closing", "description": "Vacation" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Resumption Test / Revision of Last Session Work", "description": "General review of previous term’s work; answering resumption test questions." },
+            { "week": 2, "topic": "Meal Planning", "description": "Meaning of meal planning; Importance of meal planning; Factors affecting meal planning." },
+            { "week": 3, "topic": "Special Menu – Vegetarians", "description": "Types of vegetarians; Reasons for vegetarianism; Planning meals for vegetarians." },
+            { "week": 4, "topic": "Special Menu – Pregnant and Lactating Women", "description": "Nutritional needs of pregnant women; Nutritional needs of lactating mothers; Guidelines for planning meals." },
+            { "week": 5, "topic": "Special Menu – Infants and Toddlers", "description": "Characteristics affecting their nutritional needs; Guidelines for planning meals for infants and toddlers." },
+            { "week": 6, "topic": "Special Menu – Adolescents", "description": "Characteristics of adolescents; Nutritional requirements of adolescents; Planning a day’s menu for adolescents." },
+            { "week": 7, "topic": "Mid-Term Test / Open Day / Mid-Term Break", "description": "---" },
+            { "week": 8, "topic": "Special Menu – Aged / Elderly", "description": "Nutritional requirements of aged and elderly; Factors influencing appetite and eating habits." },
+            { "week": 9, "topic": "Special Menu – Manual and Sedentary Workers", "description": "Differences between manual and sedentary workers; Suitable dishes for each group." },
+            { "week": 10, "topic": "Special Menu – Diabetic and Hypertensive Patients", "description": "Explanation of diabetic and hypertensive conditions; Guidelines for planning suitable meals." },
+            { "week": 11, "topic": "Special Menu – Invalid and Convalescent", "description": "Meaning of invalid and convalescent; Guidelines for planning meals; Sample menus." },
+            { "week": 12, "topic": "Revision", "description": "General revision of the term’s work." },
+            { "week": 13, "topic": "Examination / Closing", "description": "End of term examination." }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Resumption Test / Revision", "description": "Answering test questions; recalling previous knowledge relevant to new term’s work." },
+            { "week": 2, "topic": "Housekeeping Department", "description": "Meaning of housekeeping; Areas of housekeeping; Duties and responsibilities of housekeeping personnel." },
+            { "week": 3, "topic": "Bed Making", "description": "Meaning of bed; Types of bed; Bed linen; Procedures for bed making." },
+            { "week": 4, "topic": "Practical / Project on Bed Making", "description": "Demonstration and practice of bed making." },
+            { "week": 5, "topic": "Hotel Receptionist", "description": "Meaning of receptionist; Qualities of a good receptionist; Responsibilities of a receptionist." },
+            { "week": 6, "topic": "Front Office", "description": "Meaning of front office; Personnel in front office and their duties; Attributes of front office personnel; Front office activities." },
+            { "week": 7, "topic": "Mid-Term Break", "description": "---" },
+            { "week": "8-11", "topic": "Revision of Past Questions (WAEC & NECO Focus)", "description": "Practice with past examination questions; intensive revision of key topics." },
+            { "week": 12, "topic": "Revision", "description": "Final overall revision of the term’s work." },
+            { "week": 13, "topic": "Examination / Closing", "description": "End of term examination." }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,340 @@
+{
+  "subject": "Fashion Design and Garment Making",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Garment Making", "description": "Meaning and importance of garment making; Career opportunities in garment making" },
+            { "week": 2, "topic": "Sewing Tools and Equipment", "description": "Types of sewing tools and equipment; Uses and identification; Care and arrangement of tools" },
+            { "week": 3, "topic": "Sewing Machine", "description": "Meaning and types of sewing machines; Simple parts of the sewing machine" },
+            { "week": 4, "topic": "Parts of the Sewing Machine and Their Functions", "description": "Main parts and their functions; Operating the machine correctly" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "---" },
+            { "week": 6, "topic": "Handling and Maintenance of Sewing Tools and Equipment", "description": "Cleaning and oiling the sewing machine; Proper storage and safety practices" },
+            { "week": 7, "topic": "Midterm break", "description": "-" },
+            { "week": 8, "topic": "Basic Sewing Techniques", "description": "Running, tacking, hemming, overcasting, and back stitches" },
+            { "week": 9, "topic": "Fibres and Fabrics", "description": "Meaning and classification of fibres (natural and synthetic); Examples of fabrics" },
+            { "week": 10, "topic": "Fabric Identification", "description": "Methods of identifying fabrics (touch, sight, and burn test); Uses of fabrics" },
+            { "week": 11, "topic": "Simple Garment Sketching", "description": "Introduction to freehand sketching; Basic shapes in garment sketching" },
+            { "week": 12, "topic": "Revision & Examination", "description": "Review of term’s work" },
+            { "week": 13, "topic": "Closing", "description": "---" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Taking Body Measurements", "description": "Body parts for measurement; Tools for measurement; Accurate measuring methods" },
+            { "week": 2, "topic": "Pattern Drafting", "description": "Meaning and importance of pattern drafting; Basic pattern symbols" },
+            { "week": 3, "topic": "Methods of Obtaining Pattern", "description": "Flat pattern, draping, and freehand methods" },
+            { "week": 4, "topic": "Drafting Basic Patterns", "description": "Simple drafting of skirt, blouse, and shorts patterns" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "" },
+            { "week": 6, "topic": "Cutting and Sewing with Drafted Patterns", "description": "Correct laying and cutting of patterns; Seam allowance and joining" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Sewing Simple Garment", "description": "Practical sewing of simple garments such as apron, pillowcase, or skirt" },
+            { "week": 9, "topic": "Finishing Techniques", "description": "Seam finishing, neatening edges, and hemming" },
+            { "week": 10, "topic": "Pressing and Ironing", "description": "Tools used for pressing; Correct ironing of garments" },
+            { "week": 11, "topic": "Digital Sketching Platforms (Introduction)", "description": "Introduction to digital drawing tools (AutoDraw, Canva, Tinkercad, etc.)" },
+            { "week": 12, "topic": "Revision & Examination", "description": "Review of term’s work" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Digitization in Garment Making", "description": "Meaning of digitization; Benefits of technology in fashion" },
+            { "week": 2, "topic": "Digital Sketching Platforms (Practical)", "description": "Digital tools for creating garment sketches; Practice session" },
+            { "week": 3, "topic": "Digital Portfolios", "description": "Meaning and importance of portfolios in fashion; Components of a digital portfolio" },
+            { "week": 4, "topic": "Creating a Digital Portfolio", "description": "Steps in setting up a portfolio; Uploading sketches and photos" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "" },
+            { "week": 6, "topic": "Putting Works in the Digital Portfolio", "description": "Arranging and organizing completed works in digital format" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "-" },
+            { "week": 8, "topic": "Review of Garment Production Process", "description": "Summary of steps from sketching to finishing a garment" },
+            { "week": 9, "topic": "Career Opportunities in Fashion", "description": "Careers in garment making and fashion design" },
+            { "week": 10, "topic": "Project Work", "description": "Simple digital portfolio and sewn garment presentation" },
+            { "week": 11, "topic": "Revision", "description": "—" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of JSS 1 Work", "description": "Revision of tools, machines, and basic stitches" },
+            { "week": 2, "topic": "Advanced Sewing Techniques", "description": "Decorative stitches and seam types" },
+            { "week": 3, "topic": "Fibre Blending and Fabric Finishes", "description": "Types and reasons for blending; Simple finishing processes" },
+            { "week": 4, "topic": "Fabric Selection for Garments", "description": "Factors influencing choice of fabrics" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Pattern Alteration", "description": "Meaning and techniques of altering patterns" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Simple Garment Construction", "description": "Construction of blouse or shirt" },
+            { "week": 9, "topic": "Collars, Sleeves and Necklines", "description": "Types and attachment methods" },
+            { "week": 10, "topic": "Fastenings", "description": "Buttons, zips, hooks, and press studs" },
+            { "week": 11, "topic": "Finishing and Pressing", "description": "Edge finishing and final presentation" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Freehand Cutting", "description": "Meaning, advantages and disadvantages; Techniques" },
+            { "week": 2, "topic": "Pattern Layout", "description": "Methods of laying patterns on fabrics; Grain lines" },
+            { "week": 3, "topic": "Garment Assembly", "description": "Joining seams, attaching parts, fitting garments" },
+            { "week": 4, "topic": "Fitting and Adjustments", "description": "Correction of fitting faults" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Finishing Operations", "description": "Hemming, labeling, packaging" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Traditional Attires", "description": "Meaning and examples (buba, wrapper, agbada, etc.)" },
+            { "week": 9, "topic": "Modern Styles", "description": "Contemporary fashion designs and trends" },
+            { "week": 10, "topic": "Introduction to Digital Design", "description": "Overview of CAD in fashion" },
+            { "week": 11, "topic": "Fashion Illustration", "description": "Use of lines, colours, and shapes in fashion sketches" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Garment Production Process", "description": "From sketching to finishing; steps in garment making" },
+            { "week": 2, "topic": "Quality Control in Garment Making", "description": "Meaning, importance, and quality checks" },
+            { "week": 3, "topic": "Entrepreneurship in Garment Making", "description": "Meaning and importance of entrepreneurship" },
+            { "week": 4, "topic": "Pricing and Marketing of Garments", "description": "Pricing methods; promotion and sales strategies" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Customer Service in Fashion", "description": "Customer satisfaction and business reputation" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Branding in Fashion", "description": "Logos, labels, and packaging designs" },
+            { "week": 9, "topic": "Fashion Exhibition", "description": "Preparing garments for exhibition" },
+            { "week": 10, "topic": "Project Work", "description": "Fashion show or class exhibition" },
+            { "week": 11, "topic": "Revision", "description": "Review of term’s work" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing / Vacation", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of JSS 2 Work", "description": "Overview of tools, patterns, and garment production" },
+            { "week": 2, "topic": "Advanced Pattern Drafting", "description": "Drafting complex patterns for dresses and trousers" },
+            { "week": 3, "topic": "Garment Assembly Techniques", "description": "Sewing, lining, and interfacing" },
+            { "week": 4, "topic": "Finishing High-Quality Garments", "description": "Edge finishes and professional pressing" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Fashion Accessories", "description": "Designing and making simple accessories (belts, bags)" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Fabric Decoration", "description": "Tie and dye, appliqué, embroidery, and beadwork" },
+            { "week": 9, "topic": "Digital Fashion Design", "description": "Advanced use of digital platforms for sketching" },
+            { "week": 10, "topic": "Creating Digital Collections", "description": "Combining designs to create themed collections" },
+            { "week": 11, "topic": "Revision", "description": "Review of term’s topics" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing / Vacation", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Entrepreneurship in Fashion", "description": "Starting a small fashion business" },
+            { "week": 2, "topic": "Record Keeping and Bookkeeping", "description": "Business records and accounts" },
+            { "week": 3, "topic": "Costing and Pricing of Garments", "description": "Cost elements and pricing strategies" },
+            { "week": 4, "topic": "Branding and Marketing", "description": "Developing a fashion brand; advertising methods" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Digital Marketing", "description": "Using social media for fashion marketing" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "Customer Relationship", "description": "Handling clients and feedback" },
+            { "week": 9, "topic": "Fashion Business Ethics", "description": "Integrity, creativity, and sustainability" },
+            { "week": 10, "topic": "Project: Mini Fashion Business Plan", "description": "Practical project on fashion business planning" },
+            { "week": 11, "topic": "Revision", "description": "—" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing / Vacation", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Fashion Portfolio Development", "description": "Compiling digital and physical portfolios" },
+            { "week": 2, "topic": "Presentation Skills", "description": "Communicating fashion ideas effectively" },
+            { "week": 3, "topic": "Fashion Exhibition Preparation", "description": "Display and arrangement techniques" },
+            { "week": 4, "topic": "Fashion Show Project", "description": "Planning and coordinating a mini fashion show" },
+            { "week": 5, "topic": "Mid-Term Examination", "description": "—" },
+            { "week": 6, "topic": "Portfolio Evaluation", "description": "Reviewing and improving portfolio works" },
+            { "week": 7, "topic": "Mid-Term Break", "description": "—" },
+            { "week": 8, "topic": "BECE Preparation", "description": "Review of JSS1–JSS3 concepts and practicals" },
+            { "week": 9, "topic": "BECE Preparation (continued)", "description": "Mock assessment and project defense" },
+            { "week": 10, "topic": "BECE Examination", "description": "Practical and written exam" },
+            { "week": 11, "topic": "Revision", "description": "Review and reflection on fashion skills learned" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing / Vacation", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Fashion & Garment Making", "description": "Meaning, importance, career opportunities" },
+            { "week": 2, "topic": "History of Fashion", "description": "Evolution of clothing, Nigerian traditional attire" },
+            { "week": 3, "topic": "Basic Sewing Tools & Equipment I", "description": "Cutting tools, measuring tools, pressing tools" },
+            { "week": 4, "topic": "Basic Sewing Tools & Equipment II", "description": "Sewing machine – parts, functions, maintenance" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Safety in the Sewing Workshop", "description": "Rules, accident prevention, first aid" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Fibres & Fabrics I", "description": "Natural & synthetic fibres, characteristics" },
+            { "week": 9, "topic": "Fibres & Fabrics II", "description": "Fabric selection for different garments" },
+            { "week": 10, "topic": "Textile Care & Finishes", "description": "Washing, bleaching, dyeing, printing" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Basic Sewing Stitches I", "description": "Temporary stitches (tacking, basting)" },
+            { "week": 2, "topic": "Basic Sewing Stitches II", "description": "Permanent stitches (running, hemming, backstitch)" },
+            { "week": 3, "topic": "Machine Stitches", "description": "Straight stitch, zigzag stitch, decorative stitches" },
+            { "week": 4, "topic": "Seams & Seam Finishes", "description": "Types (plain, French, open, overlocked)" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Fullness Techniques I", "description": "Darts, tucks, gathers" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Fullness Techniques II", "description": "Pleats, smocking, shirring" },
+            { "week": 9, "topic": "Pressing Techniques", "description": "Use of iron, pressing ham, pressing cloth" },
+            { "week": 10, "topic": "Practical: Sewing Simple Articles", "description": "Handkerchief, apron, pillowcase" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Body Measurements", "description": "Taking accurate measurements" },
+            { "week": 2, "topic": "Pattern Drafting I", "description": "Basic bodice, skirt, sleeve" },
+            { "week": 3, "topic": "Pattern Drafting II", "description": "Simple dress patterns" },
+            { "week": 4, "topic": "Pattern Alteration", "description": "Adjusting for size, figure variations" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Fabric Layout & Cutting", "description": "Grain, nap, layout methods" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Garment Construction I", "description": "Skirt (straight, gathered, flared)" },
+            { "week": 9, "topic": "Garment Construction II", "description": "Blouse/shirt" },
+            { "week": 10, "topic": "Practical: Sewing a Simple Garment", "description": "—" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of SS1 Work", "description": "Core concepts recap" },
+            { "week": 2, "topic": "Advanced Pattern Drafting", "description": "Combination styles" },
+            { "week": 3, "topic": "Advanced Garment Construction I", "description": "Children’s wear" },
+            { "week": 4, "topic": "Advanced Garment Construction II", "description": "Men’s shirt & trousers" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Advanced Garment Construction III", "description": "Women’s blouse & skirt" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Collars & Necklines", "description": "Types & sewing methods" },
+            { "week": 9, "topic": "Sleeves & Cuffs", "description": "Types & sewing methods" },
+            { "week": 10, "topic": "Practical: Constructing a 2-piece Outfit", "description": "—" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Fastenings & Openings I", "description": "Zippers, buttons, buttonholes" },
+            { "week": 2, "topic": "Fastenings & Openings II", "description": "Hooks, snaps, Velcro" },
+            { "week": 3, "topic": "Pockets", "description": "Types (patch, side, welt)" },
+            { "week": 4, "topic": "Waistbands & Facings", "description": "Types & applications" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Lining & Interlining", "description": "Types, uses, application" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Trimmings & Decorative Features", "description": "Lace, braids, appliqué" },
+            { "week": 9, "topic": "Fashion Accessories", "description": "Belts, hats, scarves, bags" },
+            { "week": 10, "topic": "Practical: Constructing a Complete Outfit", "description": "—" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Fashion Illustration I", "description": "Tools & basic sketches" },
+            { "week": 2, "topic": "Fashion Illustration II", "description": "Figure drawing, garment detailing" },
+            { "week": 3, "topic": "Colour & Design Principles", "description": "Colour wheel, harmony, balance" },
+            { "week": 4, "topic": "Textile Design", "description": "Tie & dye, batik" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Nigerian Traditional Clothing", "description": "Styles from Hausa, Igbo, Yoruba, others" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Contemporary African Fashion", "description": "Modern trends" },
+            { "week": 9, "topic": "Fashion Shows & Exhibitions", "description": "Organization, models, presentation" },
+            { "week": 10, "topic": "Practical: Mini Fashion Show", "description": "—" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of SS1 & SS2 Work", "description": "Core concepts recap" },
+            { "week": 2, "topic": "Tailoring Business I", "description": "Setting up a fashion workshop" },
+            { "week": 3, "topic": "Tailoring Business II", "description": "Costing & pricing garments" },
+            { "week": 4, "topic": "Customer Relations", "description": "Communication, taking orders, handling complaints" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Entrepreneurship in Fashion", "description": "Branding, marketing, sales" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "ICT in Fashion", "description": "Online marketing, fashion software" },
+            { "week": 9, "topic": "Fashion Trends & Globalization", "description": "Influences of global fashion" },
+            { "week": 10, "topic": "Practical: Business Proposal for a Fashion Line", "description": "—" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Revision of Major Skills", "description": "Garment construction techniques" },
+            { "week": 2, "topic": "SSCE Past Questions – Theory", "description": "Worked solutions" },
+            { "week": 3, "topic": "SSCE Past Questions – Practical", "description": "Garment making practice" },
+            { "week": 4, "topic": "Mock Project I", "description": "Designing & cutting" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Mock Project II", "description": "Sewing & finishing" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Mock Project III", "description": "Final fitting & presentation" },
+            { "week": 9, "topic": "Mock SSCE", "description": "Internal exams" },
+            { "week": 10, "topic": "Exam Prep & Coaching", "description": "—" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Comprehensive Revision I", "description": "Theory" },
+            { "week": 2, "topic": "Comprehensive Revision II", "description": "Practical" },
+            { "week": 3, "topic": "Final Project Presentation", "description": "Individual/group garment collection" },
+            { "week": 4, "topic": "Mock Exams", "description": "—" },
+            { "week": 5, "topic": "Midterm Test", "description": "—" },
+            { "week": 6, "topic": "Final SSCE Preparation", "description": "—" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": "8-10", "topic": "WAEC/NECO Practical & Theory Exams", "description": "—" },
+            { "week": "11-13", "topic": "Closing & Graduation", "description": "—" }
+          ]
+        }
+      ]
+    }
+  ]
+}

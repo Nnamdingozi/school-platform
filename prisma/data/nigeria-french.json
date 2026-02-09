@@ -1,0 +1,582 @@
+{
+  "subject": "French",
+  "curriculum_name": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Words used in the classroom",
+              "description": "Classroom instructions and expressions (sit down, stand up, open/close your book, etc.)"
+            },
+            {
+              "week": 2,
+              "topic": "Saluer (Greeting)",
+              "description": "Forms of greetings (formal and informal), responses to greetings, polite expressions"
+            },
+            {
+              "week": 3,
+              "topic": "Se présenter (Introducing oneself)",
+              "description": "Giving personal information: name, age, nationality, origin"
+            },
+            {
+              "week": 4,
+              "topic": "Épeler un mot / Écrire un mot épelé",
+              "description": "Alphabet, spelling names and common words, writing dictated words"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment on weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "Présenter quelqu'un",
+              "description": "Introducing someone else: “Voici…”, “Il/Elle s’appelle…”, polite forms"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Décrire quelqu'un",
+              "description": "Physical description (height, color, appearance) and character traits"
+            },
+            {
+              "week": 9,
+              "topic": "Parler de ses loisirs",
+              "description": "Talking about hobbies, leisure activities, likes and dislikes"
+            },
+            {
+              "week": 10,
+              "topic": "Exprimer ses goûts et préférences",
+              "description": "Expressing likes/dislikes: “J’aime…”, “Je n’aime pas…”, “Je préfère…”"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Revision of all topics taught in the term"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term exam"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Result processing and holiday"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Exprimer les propriétés des objets",
+              "description": "Describing objects: size, color, shape, texture"
+            },
+            {
+              "week": 2,
+              "topic": "Demander quelque chose à quelqu'un",
+              "description": "Making polite requests, asking to see someone"
+            },
+            {
+              "week": 3,
+              "topic": "Décrire les professions",
+              "description": "Common professions, names of jobs, describing what people do"
+            },
+            {
+              "week": 4,
+              "topic": "Demander et donner l'heure",
+              "description": "Telling time, asking for time, daily activities linked to time"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment on weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "Expliquer ce que l'on fait à certaines heures de la journée",
+              "description": "Daily routines and schedules at different times of the day"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Dire les dates",
+              "description": "Days, months, giving dates"
+            },
+            {
+              "week": 9,
+              "topic": "Situer un événement par rapport à un autre",
+              "description": "Sequencing events, using “avant”, “après”, “pendant”"
+            },
+            {
+              "week": 10,
+              "topic": "Demander et expliquer ce que l'on fait tous les jours de la semaine",
+              "description": "Talking about weekly routines"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Revision of all topics taught in the term"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term exam"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Result processing and holiday"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Demander et indiquer le temps qu'il fait",
+              "description": "Weather expressions, seasons, asking/telling about the weather"
+            },
+            {
+              "week": 2,
+              "topic": "Exprimer la fréquence d'une activité",
+              "description": "Using adverbs of frequency (souvent, parfois, toujours, jamais)"
+            },
+            {
+              "week": 3,
+              "topic": "Inviter quelqu'un",
+              "description": "Inviting, accepting and refusing invitations"
+            },
+            {
+              "week": 4,
+              "topic": "Donner un ordre, interdire, autoriser",
+              "description": "Commands, prohibition, giving authorization"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment on weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "Demander la permission, conseiller",
+              "description": "Asking for permission, giving advice"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Expliquer une démarche à quelqu'un",
+              "description": "Giving directions or explaining a procedure"
+            },
+            {
+              "week": 9,
+              "topic": "Revision of Communicative Functions",
+              "description": "Integrating learned topics in dialogues and role plays"
+            },
+            {
+              "week": 10,
+              "topic": "Practice of Written/Oral French",
+              "description": "Guided writing, comprehension, conversation"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Revision of all topics taught in the term"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term exam"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Result processing and holiday"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Unité 1: Demander et expliquer la position",
+              "description": "Savoir demander et expliquer la position des personnes ou des choses les unes par rapport aux autres"
+            },
+            {
+              "week": 2,
+              "topic": "Unité 2: Situer les lieux",
+              "description": "Situer les lieux les uns par rapport aux autres"
+            },
+            {
+              "week": 3,
+              "topic": "Unité 3: Accueillir et guider quelqu'un",
+              "description": "Accueillir, pouvoir guider quelqu’un dans un espace intérieur"
+            },
+            {
+              "week": 4,
+              "topic": "Unité 4: Demander/indiquer le chemin",
+              "description": "Savoir demander/indiquer le chemin pour aller quelque part"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Unité 5: Les moyens de transport",
+              "description": "Parler des différents moyens de transport"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Unité 6: Expliquer un trajet",
+              "description": "Savoir expliquer un trajet en transport public"
+            },
+            {
+              "week": 9,
+              "topic": "Unité 7: Demander/indiquer des horaires",
+              "description": "Demander/indiquer des horaires"
+            },
+            {
+              "week": 10,
+              "topic": "Unité 8: Réagir à un problème de transport",
+              "description": "Savoir réagir à un problème de transport"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "—"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "—"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Unité 9: Établir des listes/inventaires",
+              "description": "Établir des listes, établir des inventaires"
+            },
+            {
+              "week": 2,
+              "topic": "Unité 10: Les commerçants et marchandises",
+              "description": "Savoir nommer les commerçants, les marchandises et leur mode de présentation"
+            },
+            {
+              "week": 3,
+              "topic": "Unité 11: Acheter et marchander",
+              "description": "Dire ce que l’on veut acheter, demander le prix, marchander et payer"
+            },
+            {
+              "week": 4,
+              "topic": "Unité 12: Exprimer un besoin et son utilité",
+              "description": "Savoir dire de quoi on a besoin, à quoi ça sert"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Unité 13: À la pharmacie",
+              "description": "Demander un remède, expliquer une maladie"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Unité 14: Les vêtements, chaussures et accessoires",
+              "description": "Parler des caractéristiques des vêtements, chaussures et accessoires"
+            },
+            {
+              "week": 9,
+              "topic": "Unité 15: Apprécier, comparer, choisir",
+              "description": "Apprécier quelque chose, comparer, exprimer une hésitation et exprimer un choix"
+            },
+            {
+              "week": 10,
+              "topic": "Unité 16: Quantité et qualité des produits",
+              "description": "Savoir préciser la quantité et la qualité des produits"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "—"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "—"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Unité 17: Opérations de calcul simple",
+              "description": "Savoir utiliser les opérations de calcul simple"
+            },
+            {
+              "week": 2,
+              "topic": "Unité 18: Nourriture et boissons",
+              "description": "Savoir dire ce qu’on mange et ce qu’on boit"
+            },
+            {
+              "week": 3,
+              "topic": "Unité 19: Recettes de cuisine",
+              "description": "Comprendre des recettes de cuisine et expliquer comment réaliser des plats"
+            },
+            {
+              "week": 4,
+              "topic": "Unité 20: Au restaurant/café",
+              "description": "Faire une réservation, passer une commande, demander l’addition dans un restaurant ou café"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Projet oral et écrit",
+              "description": "Jeux de rôle: transport, marché, pharmacie, restaurant (révision intégrée)"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Révision générale des unités 17–20",
+              "description": "Exercices de consolidation"
+            },
+            {
+              "week": 9,
+              "topic": "Évaluation orale/pratique",
+              "description": "Conversations guidées (dialogues sur transport, achats, nourriture, restaurant)"
+            },
+            {
+              "week": 10,
+              "topic": "Préparation aux examens",
+              "description": "Exercices d’expression écrite et orale"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "—"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "—"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Décrire plus précisément une personne",
+              "description": "Vocabulaire pour la description physique et morale; utilisation des adjectifs qualificatifs."
+            },
+            {
+              "week": 2,
+              "topic": "Décrire un paysage et des lieux touristiques",
+              "description": "Identifier les paysages naturels, monuments, sites touristiques et utiliser des adjectifs appropriés."
+            },
+            {
+              "week": 3,
+              "topic": "Expliquer ses habitudes",
+              "description": "Expressions pour parler de la routine quotidienne et des activités régulières."
+            },
+            {
+              "week": 4,
+              "topic": "Parler d’un événement passé (les souvenirs)",
+              "description": "Utilisation du passé composé et de l’imparfait; raconter un souvenir."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Décrire un objet",
+              "description": "Vocabulaire des formes, couleurs, matières; parler de l’usage d’un objet."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Comparer",
+              "description": "Employer les comparatifs et superlatifs pour comparer personnes, objets et situations."
+            },
+            {
+              "week": 9,
+              "topic": "Dater et mesurer le temps",
+              "description": "Savoir donner la date, l’heure; employer les expressions temporelles."
+            },
+            {
+              "week": 10,
+              "topic": "Raconter sa journée",
+              "description": "Organisation d’un récit chronologique au présent et au passé."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Révision des unités 1–8 avec exercices pratiques (dialogues et rédaction)."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "—"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Relater un événement passé",
+              "description": "Employer le passé composé, l’imparfait et les adverbes temporels pour situer les actions."
+            },
+            {
+              "week": 2,
+              "topic": "Rapporter un fait récent",
+              "description": "Utilisation du passé composé avec \"venir de\" et autres structures pour exprimer l’actualité immédiate."
+            },
+            {
+              "week": 3,
+              "topic": "Comprendre un récit / Écrire son journal",
+              "description": "Lecture et compréhension de récits simples; rédaction de son journal intime."
+            },
+            {
+              "week": 4,
+              "topic": "Dire ce que l’on va faire",
+              "description": "Utilisation du futur proche et du futur simple; parler de ses intentions."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Faire des projets",
+              "description": "Exprimer ses projets personnels et scolaires; vocabulaire de planification et futur simple."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Consolidation orale et écrite",
+              "description": "Exercices de dialogues, jeux de rôles et production écrite sur les unités 9–13."
+            },
+            {
+              "week": 9,
+              "topic": "Préparation au BECE (Partie I)",
+              "description": "Révision ciblée: grammaire (temps du passé, futur, comparatifs)."
+            },
+            {
+              "week": 10,
+              "topic": "Préparation au BECE (Partie II)",
+              "description": "Révision ciblée: vocabulaire (description, transport, achats, temps, projets)."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "—"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "—"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+
+}

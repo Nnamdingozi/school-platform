@@ -1,0 +1,581 @@
+{
+  "subject": "Economics",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Meaning of Economics and Related Concepts",
+              "description": "Definition of economics; Basic concepts (scarcity, choice, scale of preference, opportunity cost)"
+            },
+            {
+              "week": 2,
+              "topic": "Basic Tools of Economic Analysis",
+              "description": "Tables, graphs, charts, simple equations"
+            },
+            {
+              "week": 3,
+              "topic": "Concept of Demand and Supply",
+              "description": "Law of demand, demand schedule/curve; Law of supply, supply schedule/curve"
+            },
+            {
+              "week": 4,
+              "topic": "Theory of Production",
+              "description": "Meaning; Types of production; Factors of production"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Basic Economic Problems of Society",
+              "description": "What to produce, how to produce, for whom to produce"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Firms and Industry",
+              "description": "Meaning of firms and industry; Types of industry"
+            },
+            {
+              "week": 9,
+              "topic": "Population",
+              "description": "Meaning; Types; Importance and problems of population"
+            },
+            {
+              "week": 10,
+              "topic": "Labour Market",
+              "description": "Meaning; Demand and supply of labour; Wage determination"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "The Nature of the Nigerian Economy",
+              "description": "Features, structure, and sectors of the Nigerian economy"
+            },
+            {
+              "week": 2,
+              "topic": "Agriculture",
+              "description": "Meaning; Types of agriculture; Importance and problems"
+            },
+            {
+              "week": 3,
+              "topic": "Mining",
+              "description": "Meaning; Methods of mining; Contributions to the economy"
+            },
+            {
+              "week": 4,
+              "topic": "Meaning of Financial Institutions",
+              "description": "Types: formal and informal; Roles in the economy"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Money: Meaning, Characteristics, and Functions",
+              "description": "Evolution of money; Features; Functions of money"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Channels of Distribution",
+              "description": "Meaning; Middlemen; Importance and limitations"
+            },
+            {
+              "week": 9,
+              "topic": "Instruments of Business Finance",
+              "description": "Shares, debentures, loans, bonds"
+            },
+            {
+              "week": 10,
+              "topic": "Tools of Economic Analysis (Revision)",
+              "description": "Revision of graphs, charts, tables, equations"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Cost Concepts",
+              "description": "Meaning; Types of costs: fixed, variable, total, marginal, average"
+            },
+            {
+              "week": 2,
+              "topic": "Revenue Concepts",
+              "description": "Meaning; Types of revenue: total, average, marginal"
+            },
+            {
+              "week": 3,
+              "topic": "Types and Features of Economic Systems",
+              "description": "Capitalism, socialism, mixed economy, communalism"
+            },
+            {
+              "week": 4,
+              "topic": "Labour Market",
+              "description": "Supply and demand of labour; Wage determination"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Elementary Treatment of Utility Theory",
+              "description": "Meaning; Types of utility; Law of diminishing marginal utility"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Price Determination",
+              "description": "Interaction of demand and supply; Equilibrium price"
+            },
+            {
+              "week": 9,
+              "topic": "Market Structures",
+              "description": "Perfect competition, monopoly, monopolistic, oligopoly"
+            },
+            {
+              "week": 10,
+              "topic": "Industries in Nigeria",
+              "description": "Types: primary, secondary, tertiary; Importance; Problems"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Elementary Treatment of Fiscal Policy",
+              "description": "Meaning of fiscal policy; tools of fiscal policy (taxation, government expenditure); objectives and limitations."
+            },
+            {
+              "week": 2,
+              "topic": "Balanced and Unbalanced Budget",
+              "description": "Meaning and differences; effects on the economy; advantages and disadvantages of each."
+            },
+            {
+              "week": 3,
+              "topic": "Elements of National Income Accounting",
+              "description": "Meaning and concepts: GDP, GNP, NNP, NI, PI, DI; methods of measuring national income; uses and limitations of national income data."
+            },
+            {
+              "week": 4,
+              "topic": "Money: Demand for and Supply of Money",
+              "description": "Definition of money; demand for money (transactionary, precautionary, speculative motives); supply of money and determinants."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Money: Inflation and Deflation",
+              "description": "Meaning, types, causes and effects of inflation and deflation; control measures."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Economic Lessons from Asian Tigers, Japan, Europe, and America",
+              "description": "Overview of economic growth in Asian Tigers; lessons Nigeria can learn from Japan, Europe, and America."
+            },
+            {
+              "week": 9,
+              "topic": "Human Capital Development",
+              "description": "Meaning, importance, problems and solutions to human capital development in Nigeria."
+            },
+            {
+              "week": 10,
+              "topic": "Petroleum and the Nigerian Economy",
+              "description": "History of petroleum in Nigeria; contributions to GDP; problems associated with dependence on oil; diversification strategies."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of first term’s work."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Manufacturing and Construction Service Industries",
+              "description": "Meaning, features, importance and problems of manufacturing and construction industries in Nigeria."
+            },
+            {
+              "week": 2,
+              "topic": "Agencies that Regulate the Financial Markets",
+              "description": "Overview of financial markets; types of regulatory agencies."
+            },
+            {
+              "week": 3,
+              "topic": "Functions and Role of Regulatory Agencies (I)",
+              "description": "CBN, NDIC, SEC – functions, importance and challenges."
+            },
+            {
+              "week": 4,
+              "topic": "Functions and Role of Regulatory Agencies (II)",
+              "description": "NSE, Insurance Commission, Ministry of Finance – functions and roles."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "International Trade",
+              "description": "Meaning, types, importance and problems; theories of absolute and comparative advantage."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Economic Growth and Development",
+              "description": "Meaning and distinction between growth and development; indicators; problems and strategies for promoting growth."
+            },
+            {
+              "week": 9,
+              "topic": "Balance of Payments (BOP)",
+              "description": "Meaning, components, causes of disequilibrium, measures for correcting BOP problems."
+            },
+            {
+              "week": 10,
+              "topic": "Revision",
+              "description": "Review of term’s work."
+            },
+            {
+              "week": 11,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Economic Development Planning",
+              "description": "Meaning and objectives of planning; types of plans; problems of planning in Nigeria."
+            },
+            {
+              "week": 2,
+              "topic": "International Economic Organization (I)",
+              "description": "IMF, World Bank – objectives, roles, benefits and criticisms."
+            },
+            {
+              "week": 3,
+              "topic": "International Economic Organization (II)",
+              "description": "ECOWAS, AU, WTO – aims, achievements and challenges."
+            },
+            {
+              "week": 4,
+              "topic": "Current Economic Plans: MDGs, NEEDS, Vision 2020",
+              "description": "Meaning, objectives, achievements, challenges and evaluation of MDGs, NEEDS, and Vision 2020."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Economic Development Challenges",
+              "description": "Corruption, unemployment, poverty, poor infrastructure; effects on Nigeria’s development."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Economic Reform Programs",
+              "description": "SAP, deregulation, privatization, commercialization – objectives, benefits and problems."
+            },
+            {
+              "week": 9,
+              "topic": "Past Question Drilling (I)",
+              "description": "Practice of WAEC/NECO past questions on SS2 topics."
+            },
+            {
+              "week": 10,
+              "topic": "Past Question Drilling (II)",
+              "description": "More past question practice and test drills."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "General review of the year’s work."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Economics Lessons from Asian Tigers, Japan, Europe, and America (1)",
+              "description": "• Economic history of the Asian Tigers and Japan (1960–2000)"
+            },
+            {
+              "week": 2,
+              "topic": "Economics Lessons from Asian Tigers, Japan, Europe, and America (2)",
+              "description": "• Review of the development strategies employed by the Asian Tigers, Japan, Europe, and America. • Lessons for the Nigerian economy."
+            },
+            {
+              "week": 3,
+              "topic": "Human Capital Development",
+              "description": "• Definition and characteristics of human capital. • Factors affecting efficiency of human capital. • Distinction between human and physical capital. • Brain drain and its effect on the Nigerian economy. • Strategies for arresting brain drain."
+            },
+            {
+              "week": 4,
+              "topic": "Petroleum and the Nigerian Economy",
+              "description": "• Development of the petroleum industry. • Contributions of petroleum to the Nigerian economy (positive and negative). • Roles of NNPC and OPEC in exploration, production, refining, marketing, and distribution of petroleum products."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Manufacturing and Construction",
+              "description": "• Meaning and types of manufacturing (crafts, food processing, etc.). • Meaning of construction. • Contributions of manufacturing and construction to Nigeria’s GDP. • Roles of manufacturing and construction in economic development."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Service Industries",
+              "description": "• Meaning of services. • Types of service industries (tourism, transport, banking, insurance, warehousing, advertisement). • Contributions of service industries to national development."
+            },
+            {
+              "week": 9,
+              "topic": "Agencies that Regulate Financial Markets",
+              "description": "• Regulation of the money market: agencies and their roles. • Regulation of the capital market: agencies, objectives, and tools. • Functions and significance of the regulatory agencies in the economy."
+            },
+            {
+              "week": 10,
+              "topic": "International Trade (1)",
+              "description": "• Meaning of international trade. • Distinction between domestic and international trade. • Reasons for international trade. • Theory of comparative cost and its shortcomings."
+            },
+            {
+              "week": 11,
+              "topic": "International Trade (2)",
+              "description": "• Meaning of globalization. • Features and challenges of globalization. • Opportunities globalization presents to the Nigerian economy."
+            },
+            {
+              "week": 12,
+              "topic": "Revision",
+              "description": "• General revision of the term’s work."
+            },
+            {
+              "week": 13,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 14,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Balance of Payments (B.O.P) I",
+              "description": "• Terms of trade and measurements. • Favorable and unfavorable balance of payment and their effects."
+            },
+            {
+              "week": 2,
+              "topic": "Balance of Payments (B.O.P) II",
+              "description": "• Concepts of balance of payment: surplus and deficit. • Methods of correcting balance of payment problems."
+            },
+            {
+              "week": 3,
+              "topic": "Economic Growth and Development",
+              "description": "• Meaning of economic development. • Distinction between economic growth and development. • Problems of economic development in Nigeria."
+            },
+            {
+              "week": 4,
+              "topic": "Economic Development Planning",
+              "description": "• Elements of development planning. • Nigeria’s planning experience. • Objectives of Nigeria’s development plans."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "International Economic Organizations",
+              "description": "• Historical development of organizations: ECOWAS, ECA, IMF, IBRD, ADB, OPEC, WACH, GATT, UNCTAD. • Aims, objectives, and roles of the organizations."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Current Economic Plans: MDGs, NEEDS, Vision 2020",
+              "description": "• Meaning and objectives of MDGs, NEEDS, and Vision 2020."
+            },
+            {
+              "week": 9,
+              "topic": "Economic Development Challenges",
+              "description": "• Meaning and effects of poverty. • Methods of poverty alleviation and eradication. • Agencies for poverty alleviation (e.g., NAPEP, NDE, etc.). • HIV/AIDS and the economy. • Power and energy inadequacy."
+            },
+            {
+              "week": 10,
+              "topic": "Economic Reform Programmes",
+              "description": "• Consolidation of financial institutions. • Privatization and commercialization. • Roles of EFCC, ICPC, NAFDAC, and SON."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "• General revision of the term’s work."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "curriculum_name": "Nigeria Curiculum"
+}

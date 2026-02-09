@@ -1,0 +1,146 @@
+{
+  "subject": "Commerce",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction: Meaning of Commerce", "description": "Definition, scope, and importance of commerce" },
+            { "week": 2, "topic": "History of Commerce", "description": "Origin and development of commerce locally and globally" },
+            { "week": 3, "topic": "Meaning of Occupation", "description": "Types of occupation: industrial, commercial, services" },
+            { "week": 4, "topic": "Production, Division of Labour, Specialization and Exchange I", "description": "Meaning of production, forms of production, concept of division of labour, specialization" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Production, Division of Labour, Specialization and Exchange II", "description": "Advantages and disadvantages of division of labour and specialization; role of exchange" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Trade", "description": "Meaning, types, and importance of trade" },
+            { "week": 9, "topic": "Home Trade", "description": "Meaning, features, advantages, limitations" },
+            { "week": 10, "topic": "Foreign Trade", "description": "Meaning, features, merits and demerits of foreign trade" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Commodity Exchange I", "description": "Meaning, functions, and examples of commodity exchange" },
+            { "week": 2, "topic": "Commodity Exchange II", "description": "Advantages, disadvantages, and importance of commodity exchange" },
+            { "week": 3, "topic": "Sole Proprietorship", "description": "Features, advantages, disadvantages, and sources of capital" },
+            { "week": 4, "topic": "Partnership I", "description": "Definition, features, types of partners" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Partnership II", "description": "Advantages, disadvantages, partnership deed" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Money", "description": "Meaning, evolution, functions, qualities, and importance" },
+            { "week": 9, "topic": "Career Opportunities", "description": "Careers in commerce, qualifications, and prospects" },
+            { "week": 10, "topic": "Cooperative Society", "description": "Meaning, types, advantages, and limitations" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Public Enterprises", "description": "Meaning, types, features, advantages and disadvantages" },
+            { "week": 2, "topic": "Limited Companies I", "description": "Definition, features of private and public limited companies" },
+            { "week": 3, "topic": "Limited Companies II", "description": "Advantages, disadvantages, procedures for formation" },
+            { "week": 4, "topic": "Trade Association I", "description": "Definition, roles, and examples of trade associations" },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Trade Association II", "description": "Advantages, disadvantages, contributions to commerce" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Transportation I", "description": "Meaning, types of transportation, importance" },
+            { "week": 9, "topic": "Transportation II", "description": "Advantages, disadvantages, role in commerce" },
+            { "week": 10, "topic": "Communication", "description": "Meaning, forms, importance, role in business" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Advertising I", "description": "Meaning and importance of advertising; types of advertising (informative, persuasive, competitive)." },
+            { "week": 2, "topic": "Advertising II", "description": "Media of advertising (print, electronic, outdoor); advantages and disadvantages of each medium." },
+            { "week": 3, "topic": "Tourism in Nigeria", "description": "Meaning and importance of tourism; tourist centers in Nigeria; role of tourism in economic development." },
+            { "week": 4, "topic": "Insurance", "description": "Meaning and principles of insurance; types of insurance (life, marine, fire, accident); importance to business and individuals." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Banking I", "description": "Meaning and types of banks; roles of commercial banks in business transactions." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Banking II", "description": "Central Bank of Nigeria: roles, functions, and control of commercial banks." },
+            { "week": 9, "topic": "Banking III", "description": "Development banks, merchant banks, microfinance banks; their contributions to economic growth." },
+            { "week": 10, "topic": "Warehousing", "description": "Meaning and importance of warehousing; types of warehouses; functions in commerce." },
+            { "week": 11, "topic": "Revision", "description": "Review of first term’s work." },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Capital", "description": "Meaning and types of capital (fixed, working, liquid, loan); importance of capital to business." },
+            { "week": 2, "topic": "Credit", "description": "Meaning and importance of credit; types of credit (trade, bank, hire purchase); advantages and disadvantages." },
+            { "week": 3, "topic": "Profit", "description": "Meaning and types of profit; importance of profit to business; factors affecting profit." },
+            { "week": 4, "topic": "Turnover", "description": "Meaning and calculation of turnover; importance in business operations." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Business Law", "description": "Meaning and importance; contracts in business; rights and obligations of parties." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Structure of Business", "description": "Types of business organizations (sole proprietorship, partnership, companies, cooperatives)." },
+            { "week": 9, "topic": "Introduction to Business Management I", "description": "Meaning and importance; functions of management – planning and organizing." },
+            { "week": 10, "topic": "Introduction to Business Management II", "description": "Functions of management – directing, coordinating, controlling." },
+            { "week": 11, "topic": "Revision", "description": "Review of second term’s work." },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Marketing", "description": "Meaning and importance of marketing; difference between marketing and selling." },
+            { "week": 2, "topic": "Consumer Protection I", "description": "Meaning and importance of consumer protection; rights of consumers." },
+            { "week": 3, "topic": "Consumer Protection II", "description": "Agencies for consumer protection in Nigeria; challenges of consumer protection." },
+            { "week": 4, "topic": "Meaning of Payment I", "description": "Meaning and importance; traditional methods of payment (cash, cheque, bank draft)." },
+            { "week": 5, "topic": "Midterm Examination", "description": "–" },
+            { "week": 6, "topic": "Meaning of Payment II", "description": "Modern methods of payment (ATM, POS, electronic transfer, mobile banking)." },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Deregulation, Nationalization, Indigenisation I", "description": "Meaning and features of deregulation, nationalization, and indigenisation." },
+            { "week": 9, "topic": "Deregulation, Nationalization, Indigenisation II", "description": "Advantages, disadvantages, and effects on the Nigerian economy." },
+            { "week": 10, "topic": "Revision", "description": "Review of third term’s work." },
+            { "week": 11, "topic": "Examination", "description": "–" },
+            { "week": 12, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "History of the Nigerian Capital Market", "description": "Origin and development of the Nigerian capital market; establishment of the Lagos Stock Exchange (1961); transformation into the Nigerian Stock Exchange; roles and importance of the Securities and Exchange Commission (SEC)." },
+            { "week": 2, "topic": "Stock Exchange", "description": "Meaning and functions of stock exchange; members of the stock exchange; types of securities traded; importance of stock exchange to investors, companies, and the economy." },
+            { "week": 3, "topic": "Second Tier Securities Market (SSM) I", "description": "Meaning of SSM; objectives of establishing SSM; listing requirements for companies; role of SSM in promoting indigenous enterprises." },
+            { "week": 4, "topic": "Second Tier Securities Market (SSM) II", "description": "Procedures for dealing in SSM securities; advantages and challenges of SSM; comparison between main stock exchange and SSM." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Economic Grouping in West Africa", "description": "Meaning of economic grouping; examples—ECOWAS, WAEC, MRU; objectives of ECOWAS; achievements and challenges of economic groupings in West Africa." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Business Law", "description": "Meaning and sources of business law; importance of business law in commerce; types of laws affecting business (contract law, company law, sale of goods law, agency law)." },
+            { "week": 9, "topic": "Contract of Employment and Government Regulation of Business", "description": "Meaning and features of contract of employment; rights and duties of employer and employee; government regulations of business—taxes, labour laws, environmental protection, consumer protection." },
+            { "week": 10, "topic": "Meaning of Negotiable Instrument", "description": "Definition of negotiable instruments; types—cheques, bills of exchange, promissory notes; features and importance in business transactions." },
+            { "week": 11, "topic": "Revision", "description": "General revision of all topics covered in the term." },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        }
+      ]
+    }
+  ]
+}

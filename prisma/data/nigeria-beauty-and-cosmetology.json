@@ -1,0 +1,358 @@
+{
+  "subject": "Beauty and Cosmetology",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Beauty and Cosmetology", "description": "Meaning, origin, and importance of beauty and cosmetology." },
+            { "week": 2, "topic": "Tools and Equipment", "description": "Identification and uses of comb, brush, mirror, apron, towel, and hair dryer." },
+            { "week": 3, "topic": "Personal Hygiene and Grooming", "description": "Importance of cleanliness and daily grooming routines." },
+            { "week": 4, "topic": "Safety Precautions in the Salon", "description": "Safety measures in handling tools and electrical appliances." },
+            { "week": 5, "topic": "Midterm Examination", "description": "" },
+            { "week": 6, "topic": "Basic Hair Care Practices", "description": "Brushing, washing, and simple styling of natural hair." },
+            { "week": 7, "topic": "Midterm Break", "description": "" },
+            { "week": 8, "topic": "Skin Care and Cleansing", "description": "Steps in facial cleansing and types of skin." },
+            { "week": 9, "topic": "Nail Care", "description": "Simple manicure and pedicure procedures." },
+            { "week": 10, "topic": "Introduction to Makeup", "description": "Meaning and types of makeup; makeup tools." },
+            { "week": 11, "topic": "Simple Makeup Techniques", "description": "Application of facial powder, lip gloss, eyebrow shaping (theory only)." },
+            { "week": 12, "topic": "Revision", "description": "Review of major topics." },
+            { "week": 13, "topic": "Examination / Closing", "description": "" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Review of First Term’s Work", "description": "Recap of basic beauty concepts and hygiene." },
+            { "week": 2, "topic": "Hair Structure and Function", "description": "Parts of the hair and their functions." },
+            { "week": 3, "topic": "Hair Types", "description": "Identification of straight, curly, and kinky hair." },
+            { "week": 4, "topic": "Hair Treatment", "description": "Washing, conditioning, and natural treatment." },
+            { "week": 5, "topic": "Midterm Examination", "description": "" },
+            { "week": 6, "topic": "Simple Hair Styling", "description": "Tools and techniques for plaiting and weaving." },
+            { "week": 7, "topic": "Midterm Break", "description": "" },
+            { "week": 8, "topic": "Introduction to Skin Care Products", "description": "Soaps, creams, and lotions and their proper use." },
+            { "week": 9, "topic": "Facial Treatment", "description": "Steps: cleansing, steaming, exfoliation, and toning." },
+            { "week": 10, "topic": "Nail Care Tools and Safety", "description": "Proper use and cleaning of manicure/pedicure tools." },
+            { "week": 11, "topic": "Customer Care in Beauty Services", "description": "Attitude, communication, and courtesy with clients." },
+            { "week": 12, "topic": "Revision", "description": "" },
+            { "week": 13, "topic": "Examination / Closing", "description": "" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Review of Second Term Work", "description": "Overview of hair and skin care." },
+            { "week": 2, "topic": "Advanced Hair Styling", "description": "Weaving, threading, and cornrow patterns." },
+            { "week": 3, "topic": "Introduction to Beauty Products", "description": "Identifying safe and harmful ingredients." },
+            { "week": 4, "topic": "Daily Skin Care Routine", "description": "Cleansing, toning, and moisturizing." },
+            { "week": 5, "topic": "Midterm Examination", "description": "" },
+            { "week": 6, "topic": "Nail Art", "description": "Simple decoration and color combination." },
+            { "week": 7, "topic": "Midterm Break", "description": "" },
+            { "week": 8, "topic": "Salon Hygiene and Sanitation", "description": "Keeping the salon clean and free of infection." },
+            { "week": 9, "topic": "Professional Conduct", "description": "Courtesy, honesty, and confidentiality with clients." },
+            { "week": 10, "topic": "Entrepreneurship in Beauty Care", "description": "Simple business ideas and record keeping." },
+            { "week": 11, "topic": "Revision Project", "description": "Group or practical revision." },
+            { "week": 12, "topic": "Revision", "description": "" },
+            { "week": 13, "topic": "Examination / Closing", "description": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of JSS 1 Work", "description": "Hygiene, tools, and safety in beauty care." },
+            { "week": 2, "topic": "Hair Structure", "description": "Layers of the hair and their importance." },
+            { "week": 3, "topic": "Hair Treatment", "description": "Natural and chemical treatments." },
+            { "week": 4, "topic": "Hair Styling Techniques", "description": "Tools and methods of simple styling." },
+            { "week": 5, "topic": "Midterm Examination", "description": "" },
+            { "week": 6, "topic": "Types of Hair and Their Care", "description": "Straight, curly, and kinky hair maintenance." },
+            { "week": 7, "topic": "Midterm Break", "description": "" },
+            { "week": 8, "topic": "Skin Types", "description": "Oily, dry, normal, and combination skin." },
+            { "week": 9, "topic": "Facial Treatment Procedures", "description": "Cleansing, exfoliation, and massage." },
+            { "week": 10, "topic": "Introduction to Makeup Products", "description": "Foundation, concealer, and powder." },
+            { "week": 11, "topic": "Safety in Makeup Application", "description": "Hygiene in handling products and brushes." },
+            { "week": 12, "topic": "Revision", "description": "" },
+            { "week": 13, "topic": "Examination / Closing", "description": "" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Review of First Term", "description": "Discussion on hair and facial care." },
+            { "week": 2, "topic": "Hair Coloring", "description": "Meaning, tools, and safety measures." },
+            { "week": 3, "topic": "Hair Relaxing", "description": "Steps and safety precautions." },
+            { "week": 4, "topic": "Hair Plaiting and Weaving", "description": "Patterns and neatness in plaiting." },
+            { "week": 5, "topic": "Midterm Examination", "description": "" },
+            { "week": 6, "topic": "Skin Disorders", "description": "Acne, eczema, rashes, and prevention." },
+            { "week": 7, "topic": "Midterm Break", "description": "" },
+            { "week": 8, "topic": "Skin Treatment Products", "description": "Cleansers, toners, moisturizers." },
+            { "week": 9, "topic": "Makeup Application", "description": "Steps and tools for simple facial makeup." },
+            { "week": 10, "topic": "Nail Art", "description": "Decoration and polish application." },
+            { "week": 11, "topic": "Simple Beauty Business Ideas", "description": "Home-based beauty business opportunities." },
+            { "week": 12, "topic": "Revision", "description": "" },
+            { "week": 13, "topic": "Examination / Closing", "description": "" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Review of Second Term Work", "description": "Hair care and beauty practices recap." },
+            { "week": 2, "topic": "Salon Management", "description": "Organization, cleanliness, and tools arrangement." },
+            { "week": 3, "topic": "Record Keeping", "description": "Customer details, expenses, and sales record." },
+            { "week": 4, "topic": "Customer Service", "description": "Building good customer relationships." },
+            { "week": 5, "topic": "Midterm Examination", "description": "" },
+            { "week": 6, "topic": "Product Knowledge", "description": "Identifying safe and harmful ingredients." },
+            { "week": 7, "topic": "Midterm Break", "description": "" },
+            { "week": 8, "topic": "Professional Ethics", "description": "Punctuality, honesty, and confidentiality." },
+            { "week": 9, "topic": "Introduction to Entrepreneurship", "description": "Concept and importance of self-employment." },
+            { "week": 10, "topic": "Beauty Product Packaging", "description": "Labeling and presentation ideas." },
+            { "week": 11, "topic": "Branding and Marketing", "description": "Promoting a beauty brand." },
+            { "week": 12, "topic": "Revision", "description": "" },
+            { "week": 13, "topic": "Examination / Closing", "description": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of JSS 2 Work", "description": "Hair and makeup recap." },
+            { "week": 2, "topic": "Advanced Hair Styling", "description": "Braiding, fixing, and extensions (theory & demonstration)." },
+            { "week": 3, "topic": "Hair Coloring and Relaxing", "description": "Steps, products, and safety measures." },
+            { "week": 4, "topic": "Hair Treatment", "description": "Deep conditioning and scalp care." },
+            { "week": 5, "topic": "Midterm Examination", "description": "" },
+            { "week": 6, "topic": "Skin Care Routine", "description": "Cleansing, exfoliation, and facial massage." },
+            { "week": 7, "topic": "Midterm Break", "description": "" },
+            { "week": 8, "topic": "Makeup Application Techniques", "description": "Steps for day and evening makeup." },
+            { "week": 9, "topic": "Nail Extension and Maintenance", "description": "Fixing and removing artificial nails safely." },
+            { "week": 10, "topic": "Salon Hygiene", "description": "Disinfection and sanitation of tools." },
+            { "week": 11, "topic": "Revision", "description": "" },
+            { "week": 12, "topic": "Revision", "description": "" },
+            { "week": 13, "topic": "Examination / Closing", "description": "" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Review of First Term", "description": "Recap on advanced styling and skincare." },
+            { "week": 2, "topic": "Advanced Skin Treatment", "description": "Steaming, exfoliation, and herbal masks." },
+            { "week": 3, "topic": "Makeup Products and Their Functions", "description": "Uses of concealer, powder, lipstick, and eyeliner." },
+            { "week": 4, "topic": "Hairdressing Tools", "description": "Care and maintenance of hair equipment." },
+            { "week": 5, "topic": "Midterm Examination", "description": "" },
+            { "week": 6, "topic": "Customer Care", "description": "Communication and handling complaints." },
+            { "week": 7, "topic": "Midterm Break", "description": "" },
+            { "week": 8, "topic": "Professional Ethics", "description": "Honesty, neatness, punctuality, and confidentiality." },
+            { "week": 9, "topic": "Entrepreneurship in Beauty", "description": "Identifying opportunities and managing a small salon." },
+            { "week": 10, "topic": "Record Keeping and Financial Management", "description": "Budgeting and pricing of services." },
+            { "week": 11, "topic": "Revision", "description": "" },
+            { "week": 12, "topic": "Revision", "description": "" },
+            { "week": 13, "topic": "Examination / Closing", "description": "" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Review of Second Term", "description": "Recap of entrepreneurship and customer care." },
+            { "week": 2, "topic": "Product Knowledge", "description": "Safe use and identification of cosmetics." },
+            { "week": 3, "topic": "Branding and Packaging", "description": "Creating a beauty brand identity." },
+            { "week": 4, "topic": "Marketing Strategies", "description": "Social media and customer referrals." },
+            { "week": 5, "topic": "Midterm Examination", "description": "" },
+            { "week": 6, "topic": "Setting Up a Beauty Business", "description": "Steps, capital, and salon layout." },
+            { "week": 7, "topic": "Midterm Break", "description": "" },
+            { "week": 8, "topic": "Health and Safety in the Salon", "description": "First aid and hygiene practices." },
+            { "week": 9, "topic": "Beauty Career Opportunities", "description": "Career paths in cosmetology." },
+            { "week": 10, "topic": "Project Work", "description": "Group salon or beauty product design project." },
+            { "week": 11, "topic": "Revision", "description": "" },
+            { "week": 12, "topic": "Revision", "description": "" },
+            { "week": 13, "topic": "Examination / Closing", "description": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Beauty and Cosmetology", "description": "Meaning, scope and importance; Career opportunities in the beauty industry" },
+            { "week": 2, "topic": "History of Beauty and Cosmetology", "description": "Traditional Nigerian beauty practices; Modern evolution; Global influence" },
+            { "week": 3, "topic": "Personal Hygiene and Grooming", "description": "Cleanliness, neatness, dressing etiquette, skin and hair care" },
+            { "week": 4, "topic": "Tools and Equipment I", "description": "Types, uses, care and storage of basic beauty tools" },
+            { "week": 5, "topic": "Midterm Test", "description": "–" },
+            { "week": 6, "topic": "Tools and Equipment II", "description": "Electrical appliances (hair dryer, straightener, sterilizer); Maintenance" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Safety and First Aid in Beauty Practice", "description": "Safety precautions; Handling sharp tools; Fire and electrical safety" },
+            { "week": 9, "topic": "Skin Care I", "description": "Types of skin; Basic facial treatment; Cleansing, toning, moisturizing" },
+            { "week": 10, "topic": "Skin Care II", "description": "Acne management; Exfoliation; Face masks (natural and synthetic)" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Hair Care I", "description": "Types of hair; Hair structure; Importance of hair care" },
+            { "week": 2, "topic": "Hair Care II", "description": "Shampooing and conditioning; Blow drying; Combing and detangling" },
+            { "week": 3, "topic": "Hair Treatments", "description": "Natural hair care; Hot oil treatment; Deep conditioning" },
+            { "week": 4, "topic": "Hair Styling I", "description": "Simple styles: braids, weaving, cornrows" },
+            { "week": 5, "topic": "Midterm Test", "description": "–" },
+            { "week": 6, "topic": "Hair Styling II", "description": "Use of rollers, straighteners, curling irons" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Nail Care I", "description": "Anatomy of nails; Tools for manicure and pedicure" },
+            { "week": 9, "topic": "Nail Care II", "description": "Steps in manicure and pedicure; Nail art basics" },
+            { "week": 10, "topic": "Cosmetic Products I", "description": "Types of cosmetics; Uses; Identifying safe vs harmful products" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Makeup I", "description": "Types of makeup (day, evening, bridal, stage)" },
+            { "week": 2, "topic": "Introduction to Makeup II", "description": "Tools and products for makeup application" },
+            { "week": 3, "topic": "Makeup Application I", "description": "Foundation, powder, contouring, concealer" },
+            { "week": 4, "topic": "Makeup Application II", "description": "Eye makeup (eyeshadow, liner, lashes); Lip makeup" },
+            { "week": 5, "topic": "Midterm Test", "description": "–" },
+            { "week": 6, "topic": "Corrective Makeup", "description": "Makeup for different face shapes; Highlighting and shading" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Traditional and Cultural Makeup", "description": "Nigerian ethnic beauty styles; Festival makeup" },
+            { "week": 9, "topic": "Cosmetic Chemistry", "description": "Basic ingredients in cosmetics; Natural vs synthetic products" },
+            { "week": 10, "topic": "Skin Disorders and Management", "description": "Common conditions (eczema, rashes, acne); Referral to specialists" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Advanced Hair Styling I", "description": "Wigs and hair extensions" },
+            { "week": 2, "topic": "Advanced Hair Styling II", "description": "Relaxing, perming and rebonding" },
+            { "week": 3, "topic": "Hair Colouring", "description": "Types of dyes; Application methods; Safety precautions" },
+            { "week": 4, "topic": "Hair Cutting", "description": "Basic techniques; Use of clippers and scissors" },
+            { "week": 5, "topic": "Midterm Test", "description": "–" },
+            { "week": 6, "topic": "Advanced Makeup I", "description": "Bridal makeup; Stage and fashion makeup" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Advanced Makeup II", "description": "Special effects makeup; Aging and fantasy looks" },
+            { "week": 9, "topic": "Cosmetic Product Formulation I", "description": "Natural cosmetics (soaps, scrubs, oils)" },
+            { "week": 10, "topic": "Cosmetic Product Formulation II", "description": "Perfume and cream making" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Salon Management I", "description": "Setting up a beauty salon; Layout and equipment" },
+            { "week": 2, "topic": "Salon Management II", "description": "Customer service; Client consultation" },
+            { "week": 3, "topic": "Business Skills I", "description": "Pricing services; Record keeping; Marketing strategies" },
+            { "week": 4, "topic": "Business Skills II", "description": "Branding; Packaging of products" },
+            { "week": 5, "topic": "Midterm Test", "description": "–" },
+            { "week": 6, "topic": "Entrepreneurship in Cosmetology", "description": "Starting small businesses in beauty industry" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Spa and Wellness Therapy I", "description": "Massage techniques; Aromatherapy" },
+            { "week": 9, "topic": "Spa and Wellness Therapy II", "description": "Hydrotherapy; Stress management" },
+            { "week": 10, "topic": "Occupational Hazards in Cosmetology", "description": "Chemical exposure; Posture problems; Safety measures" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Dermatology Basics for Beauticians", "description": "Layers of skin; Skin types; Functions" },
+            { "week": 2, "topic": "Cosmetic Dermatology I", "description": "Anti-aging treatments; Acne treatment methods" },
+            { "week": 3, "topic": "Cosmetic Dermatology II", "description": "Laser and modern technologies in beauty" },
+            { "week": 4, "topic": "Hair Removal Methods", "description": "Shaving, waxing, threading, laser" },
+            { "week": 5, "topic": "Midterm Test", "description": "–" },
+            { "week": 6, "topic": "International Beauty Trends", "description": "Global styles; Modern innovations" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Ethics in Beauty and Cosmetology", "description": "Professional conduct; Confidentiality" },
+            { "week": 9, "topic": "Regulation of Cosmetic Products", "description": "NAFDAC, SON; Safety standards" },
+            { "week": 10, "topic": "Sustainable Beauty Practices", "description": "Eco-friendly products; Green cosmetology" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Revision of SS1 & SS2 Work", "description": "General review of key concepts" },
+            { "week": 2, "topic": "Professional Makeup Artistry I", "description": "Portfolio building; Signature styles" },
+            { "week": 3, "topic": "Professional Makeup Artistry II", "description": "High fashion, photography and editorial makeup" },
+            { "week": 4, "topic": "Bridal and Event Management in Beauty", "description": "Coordinating bridal looks; Event styling" },
+            { "week": 5, "topic": "Midterm Test", "description": "–" },
+            { "week": 6, "topic": "Cosmetology Entrepreneurship Project I", "description": "Proposal writing; Market survey" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Cosmetology Entrepreneurship Project II", "description": "Practical product creation" },
+            { "week": 9, "topic": "Presentation of Projects", "description": "Group and individual presentations" },
+            { "week": 10, "topic": "Client Care and Psychology", "description": "Communication, counselling, client satisfaction" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Advanced Spa Services", "description": "Body scrubs, wraps, holistic therapies" },
+            { "week": 2, "topic": "Global Beauty Standards", "description": "Cultural perceptions of beauty; Diversity" },
+            { "week": 3, "topic": "Cosmetic Chemistry II", "description": "Preservation, fragrance, safety testing" },
+            { "week": 4, "topic": "Health and Safety Regulations", "description": "Salon hygiene; Government regulations" },
+            { "week": 5, "topic": "Midterm Test", "description": "–" },
+            { "week": 6, "topic": "Digital Marketing for Beauty Business", "description": "Social media branding; Online booking systems" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Job Opportunities in Beauty Industry", "description": "Makeup artist, cosmetologist, skincare consultant, nail technician" },
+            { "week": 9, "topic": "Career Preparation", "description": "CV writing; Interview skills; Freelancing" },
+            { "week": 10, "topic": "WAEC/NECO Cosmetology Syllabus Revision", "description": "Intensive preparation" },
+            { "week": 11, "topic": "Revision", "description": "–" },
+            { "week": 12, "topic": "Examination", "description": "–" },
+            { "week": 13, "topic": "Closing", "description": "–" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Practical Sessions", "description": "Makeup, hair, nail and skin care practicals" },
+            { "week": 2, "topic": "Field Work", "description": "Visit to beauty salons, spas, cosmetic industries" },
+            { "week": 3, "topic": "Independent Project Work", "description": "Students run supervised beauty mini-business" },
+            { "week": 4, "topic": "Report Writing", "description": "Documenting project experiences" },
+            { "week": 5, "topic": "Midterm Test", "description": "–" },
+            { "week": 6, "topic": "Mock Examination", "description": "–" },
+            { "week": 7, "topic": "Midterm Break", "description": "–" },
+            { "week": 8, "topic": "Final Revision", "description": "Past questions practice" },
+            { "week": 9, "topic": "WAEC/NECO Examinations", "description": "–" },
+            { "week": 10, "topic": "Graduation Preparation", "description": "–" },
+            { "week": "11-13", "topic": "Exams/Closing", "description": "–" }
+          ]
+        }
+      ]
+    }
+  ]
+}

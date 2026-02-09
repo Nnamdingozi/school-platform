@@ -1,0 +1,340 @@
+{
+  "subject": "Solar Photovoltaic Installation and Maintenance",
+  "curriculum": "Nigeria Curriculum",
+  "data": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Solar Photovoltaic (PV) System", "description": "Meaning and importance of solar energy; Difference between solar and other sources of energy; Components of a basic PV system; Advantages of solar energy in homes and schools" },
+            { "week": 2, "topic": "Electrical Appliances Power Load / Load Sizing", "description": "Meaning of load; Identifying electrical appliances in homes and schools; Calculating total power load (Wattage); Estimating energy consumption using power ratings" },
+            { "week": 3, "topic": "Electrical Safety Precautions", "description": "Definition of electrical safety; Causes of electrical accidents; Basic rules for safe use of electricity; First aid procedures for electric shock victims" },
+            { "week": 4, "topic": "Safety Precautions in Handling Solar PV System Materials", "description": "Handling solar panels and batteries safely; Protective gear (PPE); Preventing short circuits and fires; Safe storage of PV materials" },
+            { "week": 5, "topic": "MID-TERM EXAMINATION", "description": "Assessment of Weeks 1–4" },
+            { "week": 6, "topic": "Solar PV Components: Solar Panels", "description": "Function of solar panels; Types of solar panels (Monocrystalline, Polycrystalline); Panel efficiency and factors affecting it; Simple panel installation steps" },
+            { "week": 7, "topic": "MID-TERM BREAK", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "Solar PV Components: Inverters", "description": "Meaning and function of inverters; Types of inverters (Pure Sine Wave, Modified Sine Wave); Matching inverters with load; Installation basics" },
+            { "week": 9, "topic": "Solar PV Components: Battery Bank Storage", "description": "Role of batteries in PV systems; Types of batteries (Lead-acid, Lithium-ion); Battery capacity (Amp-hours); Safety in battery handling" },
+            { "week": 10, "topic": "System Sizing (Battery & Inverter)", "description": "Determining battery capacity for a given load; Selecting appropriate inverter size; Simple sizing calculations; Case study: Sizing for a small room" },
+            { "week": 11, "topic": "REVISION", "description": "Review of all topics in Term 1" },
+            { "week": 12, "topic": "EXAMINATION", "description": "End of Term Assessment" },
+            { "week": 13, "topic": "CLOSING", "description": "Term ends" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Review of First Term Work", "description": "Recap of PV components, safety, and load sizing" },
+            { "week": 2, "topic": "Concept of Entrepreneurship", "description": "Meaning and importance of entrepreneurship; Characteristics of an entrepreneur; Identifying business opportunities in solar energy" },
+            { "week": 3, "topic": "Concept of Money", "description": "History and meaning of money; Functions of money; Importance of financial management in business" },
+            { "week": 4, "topic": "Bookkeeping in Solar PV Installation and Maintenance", "description": "Meaning and importance of bookkeeping; Recording sales and purchases; Basic financial records for a small solar business" },
+            { "week": 5, "topic": "MID-TERM EXAMINATION", "description": "Assessment of Weeks 1–4" },
+            { "week": 6, "topic": "Business Start-Up in Solar PV Installation and Maintenance", "description": "Steps in starting a small solar business; Registration and licensing; Tools and equipment needed; Basic marketing for start-ups" },
+            { "week": 7, "topic": "MID-TERM BREAK", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "Marketing in Solar PV Installation and Maintenance (Goods and Services)", "description": "Meaning of marketing; Marketing solar products vs. maintenance services; Customer relations and communication skills" },
+            { "week": 9, "topic": "Safety in Solar Installation and Maintenance", "description": "Working at heights (ladders and roofs); Tool safety; Electrical insulation; Hazard identification and risk assessment" },
+            { "week": 10, "topic": "Maintenance of Solar Tools and Equipment", "description": "Cleaning and storage of tools; Routine checks on multimeters and testers; Importance of tool maintenance for business success" },
+            { "week": 11, "topic": "REVISION", "description": "Review of all topics in Term 2" },
+            { "week": 12, "topic": "EXAMINATION", "description": "End of Term Assessment" },
+            { "week": 13, "topic": "CLOSING", "description": "Term ends" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Review of Second Term Work", "description": "Recap of entrepreneurship and business basics" },
+            { "week": 2, "topic": "Introduction to Renewable Energy", "description": "Meaning of renewable and non-renewable energy; Types: solar, wind, hydro, biomass; Benefits of renewable energy" },
+            { "week": 3, "topic": "Principles of Solar Energy", "description": "How sunlight is converted to electricity; Solar radiation and intensity; Orientation and tilt of solar panels" },
+            { "week": 4, "topic": "Components of Solar PV Systems", "description": "Detailed look at panels, controllers, batteries, and inverters; Wiring and connectors; Protection devices (fuses, breakers)" },
+            { "week": 5, "topic": "MID-TERM EXAMINATION", "description": "Assessment of Weeks 1–4" },
+            { "week": 6, "topic": "Energy Storage Systems", "description": "Importance of energy storage; Charging and discharging cycles; Battery maintenance and lifespan" },
+            { "week": 7, "topic": "MID-TERM BREAK", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "Power Distribution and Load Management", "description": "Connecting loads to the system; DC vs. AC loads; Managing energy use to prevent system failure" },
+            { "week": 9, "topic": "Troubleshooting in Solar PV Systems", "description": "Identifying common faults; Using a multimeter for testing; Simple repairs and adjustments" },
+            { "week": 10, "topic": "Field Practice and Demonstration", "description": "Practical session on setting up a basic system; Hands-on tool usage; Group project: Small solar setup" },
+            { "week": 11, "topic": "REVISION", "description": "Review of all topics in Term 3" },
+            { "week": 12, "topic": "EXAMINATION", "description": "End of Term Assessment" },
+            { "week": 13, "topic": "CLOSING", "description": "Term ends" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of JSS 1 Work", "description": "Revision of basic concepts in solar PV systems; Review of components and their functions; Safety precautions during installation; Importance of entrepreneurship in solar PV" },
+            { "week": 2, "topic": "Electricity Fundamentals", "description": "Definition and importance of electricity; Conductors and insulators; Types of current: AC and DC; Voltage, current, and resistance (Ohm’s Law); Measuring electrical quantities using a multimeter" },
+            { "week": 3, "topic": "Energy Sources and Power Generation", "description": "Renewable vs non-renewable energy; Solar, wind, hydro, and thermal power; Electricity generation process; Importance of clean energy to the environment" },
+            { "week": 4, "topic": "Solar PV System Configuration", "description": "Types of solar PV systems: standalone, grid-tied, hybrid; Components connection (series and parallel); Advantages and disadvantages of each configuration; System setup demonstration" },
+            { "week": 5, "topic": "MID-TERM EXAMINATION", "description": "Assessment on Weeks 1–4 Topics" },
+            { "week": 6, "topic": "Solar Charge Controllers", "description": "Meaning and functions of charge controllers; Types of charge controllers (PWM and MPPT); Importance of charge regulation; Controller installation and wiring practice" },
+            { "week": 7, "topic": "MID-TERM BREAK", "description": "Rest / Practical Exercises" },
+            { "week": 8, "topic": "Solar Panels and Mounting Techniques", "description": "Review of solar panels and their efficiency; Steps in mounting solar panels; Mounting angles and direction; Care and maintenance of solar panels" },
+            { "week": 9, "topic": "Electrical Wiring in Solar Systems", "description": "Types of electrical wiring; Wire sizing and selection; Connecting components in a solar system; Importance of proper wiring for safety and efficiency" },
+            { "week": 10, "topic": "Entrepreneurship in Solar PV", "description": "Business opportunities in the solar energy sector; Small-scale solar business ideas; Marketing and customer relations; Simple record keeping for solar projects" },
+            { "week": 11, "topic": "REVISION", "description": "Review of first-term topics" },
+            { "week": 12, "topic": "EXAMINATION", "description": "First-term examination" },
+            { "week": 13, "topic": "CLOSING", "description": "Term ends" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Review of First Term Work", "description": "Recap of electricity fundamentals and system configurations" },
+            { "week": 2, "topic": "Solar Batteries", "description": "Types of solar batteries (deep cycle, lithium-ion, etc.); Battery capacity and sizing; Battery maintenance and safety; Proper disposal of used batteries" },
+            { "week": 3, "topic": "Inverters and Converters", "description": "Meaning and functions of inverters and converters; Types of inverters (pure sine wave, modified sine wave); Selecting the right inverter for specific loads; Inverter installation and safety" },
+            { "week": 4, "topic": "Load Estimation and Energy Demand", "description": "Meaning of load and load estimation; Calculating energy demand for homes and offices; Understanding appliance power ratings; Reducing energy consumption through efficiency" },
+            { "week": 5, "topic": "MID-TERM EXAMINATION", "description": "Assessment on Weeks 1–4 Topics" },
+            { "week": 6, "topic": "System Sizing and Design", "description": "Steps in solar PV system sizing; Calculating number of panels, batteries, and controller capacity; Designing a simple solar PV system; Practical sizing exercise" },
+            { "week": 7, "topic": "MID-TERM BREAK", "description": "Rest / Practical Exercises" },
+            { "week": 8, "topic": "Installation Procedures", "description": "Step-by-step installation of a standalone solar system; Wiring panels, batteries, and controllers; Mounting and grounding techniques; Final system testing" },
+            { "week": 9, "topic": "Safety Practices in Installation", "description": "Using personal protective equipment (PPE); Tool safety and handling; Preventing electrical shocks and fires; Emergency procedures during installation" },
+            { "week": 10, "topic": "Solar PV Maintenance and Troubleshooting", "description": "Routine maintenance of solar panels and batteries; Identifying common system faults; Using multimeters for troubleshooting; Simple system repairs" },
+            { "week": 11, "topic": "REVISION", "description": "Review of second-term topics" },
+            { "week": 12, "topic": "EXAMINATION", "description": "Second-term examination" },
+            { "week": 13, "topic": "CLOSING", "description": "Term ends" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Review of Second Term Work", "description": "Recap of batteries, inverters, and sizing" },
+            { "week": 2, "topic": "Energy Storage Systems", "description": "Importance of energy storage in solar systems; Charging and discharging mechanisms; Modern storage technologies (e.g., lithium, flow batteries); Comparing different storage options" },
+            { "week": 3, "topic": "Solar System Performance Evaluation", "description": "Monitoring system output and efficiency; Factors affecting performance (shading, temperature, dust); Measuring system parameters over time; Keeping performance records" },
+            { "week": 4, "topic": "Fault Detection in PV Systems", "description": "Using testing equipment (multimeter, clamp meter); Systematic approach to fault finding; Documenting faults and repairs; Case studies on common solar system failures" },
+            { "week": 5, "topic": "MID-TERM EXAMINATION", "description": "Assessment on Weeks 1–4 Topics" },
+            { "week": 6, "topic": "Entrepreneurship in Solar Energy", "description": "Developing a simple solar business plan; Costing and pricing of solar installations; Customer service and relationship management; Finding funding and resources for a startup" },
+            { "week": 7, "topic": "MID-TERM BREAK", "description": "Rest / Practical Exercises" },
+            { "week": 8, "topic": "Career Opportunities in Renewable Energy", "description": "Roles in the solar industry (installer, designer, salesperson); Professional certifications and training; Future trends in renewable energy; Building a career in the green economy" },
+            { "week": 9, "topic": "Environmental Impact of Solar Energy", "description": "Benefits of solar vs fossil fuels; Reducing carbon footprint; Disposal and recycling of solar components; Promoting environmental sustainability" },
+            { "week": 10, "topic": "Final Project and Demonstration", "description": "Group project: Designing and installing a small PV system; Testing and evaluating the installed system; Presentation of project results; Practical assessment" },
+            { "week": 11, "topic": "REVISION", "description": "General revision of JSS 2 topics" },
+            { "week": 12, "topic": "EXAMINATION", "description": "Third-term examination" },
+            { "week": 13, "topic": "CLOSING", "description": "Term ends" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction and Revision of Previous Work", "description": "Review of JSS 2 topics: energy storage, performance evaluation, and fault detection; Understanding advanced system configurations; Classroom discussion: evolution of solar technology" },
+            { "week": 2, "topic": "Advanced Solar System Components", "description": "Detailed study of PV modules (monocrystalline vs polycrystalline); MPPT vs PWM charge controllers; Inverter types: pure sine wave, modified sine wave, and hybrid; Importance of component matching" },
+            { "week": 3, "topic": "System Design and Sizing", "description": "Calculating daily energy consumption; Determining total solar array size; Battery bank sizing for autonomy; Sizing charge controllers and inverters based on load and array" },
+            { "week": 4, "topic": "Solar Installation Procedures (Advanced)", "description": "Pre-installation site survey; Mounting systems and structures; Wiring techniques: series vs parallel connections; Integrating protection devices (fuses, breakers, and surge protectors)" },
+            { "week": 5, "topic": "MID-TERM EXAMINATION", "description": "Assessment of Weeks 1–4" },
+            { "week": 6, "topic": "System Protection and Safety Devices", "description": "Importance of earthing (grounding) in solar systems; Lightning protection systems; Overcurrent and overvoltage protection; Using DC isolators and AC breakers" },
+            { "week": 7, "topic": "MID-TERM BREAK", "description": "Rest / Field Visit" },
+            { "week": 8, "topic": "Maintenance and Servicing of PV Systems", "description": "Cleaning and inspection of PV modules; Battery maintenance: checking electrolyte levels and terminal cleaning; Inverter and controller health checks; Maintenance schedules and logs" },
+            { "week": 9, "topic": "Renewable Energy Policies and Regulations", "description": "Introduction to Nigeria’s renewable energy policies; Standards and quality control (SON, NERC); Environmental regulations and sustainability; Global trends in renewable energy" },
+            { "week": 10, "topic": "Entrepreneurship in Solar Energy (Revisited)", "description": "Setting up a solar service business; Customer relations and communication; Project costing and quotation preparation; Marketing and branding for solar professionals" },
+            { "week": 11, "topic": "REVISION", "description": "General revision of term 1 topics" },
+            { "week": 12, "topic": "EXAMINATION", "description": "First term examination" },
+            { "week": 13, "topic": "CLOSING/VACATION", "description": "Term ends" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Revision of First Term Work", "description": "Recap of advanced components and system protection" },
+            { "week": 2, "topic": "Electrical Wiring for Solar Systems", "description": "Understanding wire gauges and current carrying capacity; Color coding and labeling in DC and AC wiring; Conduit and trunking techniques; Wiring diagrams and schematics" },
+            { "week": 3, "topic": "Battery Bank Configuration", "description": "Series, parallel, and series-parallel connections; Calculating total voltage and capacity (Ah); Balancing batteries in a bank; State of Charge (SoC) and Depth of Discharge (DoD)" },
+            { "week": 4, "topic": "Inverter Operation and Connection", "description": "Connecting the inverter to the battery bank and load; Understanding inverter settings and indicators; Standalone vs grid-tied inverter operation; Safety during inverter installation" },
+            { "week": 5, "topic": "MID-TERM EXAMINATION", "description": "Assessment of Weeks 1–4" },
+            { "week": 6, "topic": "Solar Load Management", "description": "Identifying priority vs non-priority loads; Using timers and sensors for energy efficiency; Educating users on energy-saving practices; Monitoring daily energy usage" },
+            { "week": 7, "topic": "MID-TERM BREAK", "description": "Rest / Practical Exercise" },
+            { "week": 8, "topic": "Fault Detection and Troubleshooting", "description": "Common solar system issues (e.g., low battery, no output); Using multimeters and clamp meters; Troubleshooting charge controllers and inverters; Resolving wiring and connection faults" },
+            { "week": 9, "topic": "Solar System Testing and Commissioning", "description": "System testing procedures (voltage and current checks); Final inspection and verification; Commissioning report and documentation; Handing over the system to the user" },
+            { "week": 10, "topic": "Documentation and Reporting", "description": "Preparing installation manuals and user guides; Keeping maintenance and service records; Writing professional installation reports; Importance of documentation for warranty claims" },
+            { "week": 11, "topic": "REVISION", "description": "General revision of term 2 topics" },
+            { "week": 12, "topic": "EXAMINATION", "description": "Second term examination" },
+            { "week": 13, "topic": "CLOSING/VACATION", "description": "Term ends" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Revision of Previous Work", "description": "Recap of JSS 3 Term 1 and 2 work" },
+            { "week": 2, "topic": "Occupational Health and Safety (OHS) in Solar Work", "description": "Personal protective equipment (PPE); Working safely at heights and on roofs; Electrical safety and first aid; Hazard identification and risk management" },
+            { "week": 3, "topic": "Solar Site Assessment", "description": "Tools for site assessment (compass, shading tools); Analyzing site layout and roof condition; Estimating solar potential and shading issues; Client consultation and requirements gathering" },
+            { "week": 4, "topic": "System Installation Procedure", "description": "Final project planning and preparation; Step-by-step assembly of the solar system; Quality control and safety checks; Teamwork and coordination during installation" },
+            { "week": 5, "topic": "MID-TERM EXAMINATION", "description": "Assessment of Weeks 1–4" },
+            { "week": 6, "topic": "Maintenance and Servicing of Solar PV Systems", "description": "Advanced troubleshooting and repair; Upgrading existing systems; Recycling and disposal of solar components; Long-term system performance monitoring" },
+            { "week": 7, "topic": "MID-TERM BREAK", "description": "Rest / Final Project Work" },
+            { "week": 8, "topic": "Energy Conservation and Efficiency", "description": "Role of energy-efficient appliances; Solar energy in building design; Behavior change for energy sustainability; Community awareness on renewable energy" },
+            { "week": 9, "topic": "Entrepreneurship in Solar Energy", "description": "Developing a simple solar business proposal; Understanding the solar market and supply chain; Ethics and professionalism in the solar industry; Career pathways in renewable energy" },
+            { "week": 10, "topic": "Project Work and Field Demonstration", "description": "Completion of final solar projects; Demonstration of installed systems; Peer review and evaluation; Final project presentation" },
+            { "week": 11, "topic": "REVISION", "description": "General revision for BECE" },
+            { "week": 12, "topic": "EXAMINATION", "description": "Final term examination (BECE)" },
+            { "week": 13, "topic": "CLOSING/VACATION", "description": "End of JSS curriculum" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Renewable Energy", "description": "Definition, types (solar, wind, biomass, hydro); Importance of renewable energy in Nigeria; Global energy trends" },
+            { "week": 2, "topic": "Basics of Solar Energy", "description": "Sun as an energy source; Solar radiation, irradiance, and peak sun hours; Photovoltaic effect: how solar cells work" },
+            { "week": 3, "topic": "Solar Energy Terminologies", "description": "Voltage (V), Current (I), Power (W), Energy (Wh); DC vs AC current; Series and parallel connections; Efficiency" },
+            { "week": 4, "topic": "Types of Solar Energy Systems", "description": "Standalone (Off-grid); Grid-tied; Hybrid systems; Comparison and applications" },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of weeks 1-4" },
+            { "week": 6, "topic": "Components of PV Systems I (Solar Panels)", "description": "Structure of a solar panel; Types: Monocrystalline, Polycrystalline, Thin-film; Panel specifications (STC vs NOCT)" },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "Components of PV Systems II (Charge Controllers)", "description": "Functions of charge controllers; Types: PWM and MPPT; Selecting the right controller for a system" },
+            { "week": 9, "topic": "Components of PV Systems III (Batteries)", "description": "Role of batteries in PV systems; Types: Lead-acid, Gel, AGM, Lithium-ion; Battery capacity (Ah), DoD, and cycle life" },
+            { "week": 10, "topic": "Components of PV Systems IV (Inverters)", "description": "Functions and types; Pure sine wave vs Modified sine wave; Grid-tie vs Off-grid inverters; Sizing inverters" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "General revision and first term examination" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Basic Electrical Concepts", "description": "Ohm’s Law and its application; Power law; Electrical circuits: series and parallel; Safety in electrical work" },
+            { "week": 2, "topic": "Tools & Instruments in PV Installation", "description": "Multimeters, clamp meters, solar pathfinders, crimping tools, screwdrivers, drills; Usage and maintenance" },
+            { "week": 3, "topic": "Solar Panel Connections I (Series)", "description": "Voltage and current in series; Practical demonstration of series wiring; Advantages and limitations" },
+            { "week": 4, "topic": "Solar Panel Connections II (Parallel)", "description": "Voltage and current in parallel; Practical demonstration of parallel wiring; Combining series and parallel (Arrays)" },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of weeks 1-4" },
+            { "week": 6, "topic": "Solar Panel Mounting Structures", "description": "Roof mounts, ground mounts, pole mounts; Materials used; Factors influencing tilt angle and orientation" },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "Wiring & Cabling", "description": "Types of cables for PV systems (DC cables); Sizing cables to minimize voltage drop; Connectors (MC4) and junction boxes" },
+            { "week": 9, "topic": "Earthing & Protection", "description": "Importance of grounding; Surge protection devices (SPDs); Lightning protection; Fuses and circuit breakers" },
+            { "week": 10, "topic": "Practical: Small Solar Setup", "description": "Hands-on assembly of a small standalone system; Connecting panel, controller, battery, and load; System testing" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "General revision and second term examination" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "PV System Design Principles", "description": "Steps in designing a solar system; Site assessment; Load analysis and energy consumption calculation" },
+            { "week": 2, "topic": "Sizing Solar Panels", "description": "Determining energy needs; Calculating required wattage; Considering peak sun hours and system losses" },
+            { "week": 3, "topic": "Sizing Batteries", "description": "Calculating required Amp-hours (Ah); Days of autonomy; Sizing based on Depth of Discharge (DoD)" },
+            { "week": 4, "topic": "Sizing Charge Controllers & Inverters", "description": "Matching controller to array voltage/current; Sizing inverter based on peak load and surge power" },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of weeks 1-4" },
+            { "week": 6, "topic": "Practical PV System Design", "description": "Class project: Designing a system for a specific household or school office; Drafting a design schematic" },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "PV System Installation Steps I", "description": "Pre-installation checks; Site preparation; Mounting the solar panels; Cable routing" },
+            { "week": 9, "topic": "PV System Installation Steps II", "description": "Installing the battery bank; Connecting the controller and inverter; Safe wiring procedures" },
+            { "week": 10, "topic": "System Testing & Commissioning", "description": "Verification of connections; Measuring output voltage and current; User education and system handover" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "General revision and third term examination" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of SS1 Work", "description": "Recap of PV components, sizing, and basic installation steps; Evaluation of practical skills from SS1" },
+            { "week": 2, "topic": "Advanced PV System Design", "description": "Designing for complex loads; Shading analysis and its impact; Using software tools for design; Professional schematics" },
+            { "week": 3, "topic": "Solar Energy Storage Technologies", "description": "Comparison of battery types; New trends: Lithium Iron Phosphate (LiFePO4); Battery Management Systems (BMS)" },
+            { "week": 4, "topic": "Energy Efficiency in Solar Systems", "description": "Reducing load through efficient appliances (LEDs, DC appliances); System losses and how to minimize them" },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of weeks 1-4" },
+            { "week": 6, "topic": "Safety in PV Installation", "description": "Working at heights; Electrical safety standards; Handling hazardous materials (lead-acid batteries); PPE usage" },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "Nigerian & International Standards", "description": "Standards for solar components (IEC, SON, NERC); Quality control and avoiding substandard products" },
+            { "week": 9, "topic": "Electrical Codes & Regulations", "description": "Nigerian Electrical Installations Regulations; Wiring standards for PV systems; Compliance and certification" },
+            { "week": 10, "topic": "Practical: Grid-tied Solar Setup", "description": "Demonstration of grid-tied inverter connection; Understanding net metering (concepts); Safety protocols" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "General revision and first term examination" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Solar Water Pumping Systems", "description": "Components of solar pumps; Sizing for irrigation and domestic use; DC vs AC pumps" },
+            { "week": 2, "topic": "Solar Street Lighting Systems", "description": "Components: Integrated vs Split systems; Installation techniques; Maintenance of street lights" },
+            { "week": 3, "topic": "Solar Home Systems", "description": "Pay-as-you-go (PAYG) models; Portable solar kits; Designing for rural electrification" },
+            { "week": 4, "topic": "Advanced Wiring Techniques", "description": "Trunking and conduit work; Professional terminal connections; Labeling and cable management" },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of weeks 1-4" },
+            { "week": 6, "topic": "PV System Maintenance I", "description": "Panel cleaning; Battery watering (for flooded lead-acid); Tightening connections; Visual inspections" },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "PV System Maintenance II", "description": "Troubleshooting common faults: low battery, no power, inverter errors; Replacing components" },
+            { "week": 9, "topic": "Monitoring & Performance Evaluation", "description": "Measuring system output (kWh); Comparing actual vs predicted performance; Remote monitoring basics" },
+            { "week": 10, "topic": "Practical: Maintenance of Installed Systems", "description": "Hands-on maintenance session on existing school or community systems" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "General revision and second term examination" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Solar Entrepreneurship", "description": "Business opportunities in solar: sales, installation, maintenance; The role of a solar entrepreneur" },
+            { "week": 2, "topic": "Business Skills in Solar Sector", "description": "Communication skills; Negotiation; Customer relationship management; Record keeping" },
+            { "week": 3, "topic": "Costing & Pricing of Solar Systems", "description": "Bill of Quantities (BOQ); Calculating profit margins; Preparing quotations and invoices" },
+            { "week": 4, "topic": "Customer Service & Support", "description": "Handling complaints; Warranty management; After-sales support; Building brand reputation" },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of weeks 1-4" },
+            { "week": 6, "topic": "Project Management in Solar Installations", "description": "Planning installation timelines; Resource management; Quality assurance; Finishing on time" },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "Case Studies of Nigerian Solar Projects", "description": "Analysis of successful and failed solar projects in Nigeria; Lessons learned" },
+            { "week": 9, "topic": "Practical: Business Simulation", "description": "Students prepare a business plan and mock quotation for a solar client" },
+            { "week": 10, "topic": "Field Visit", "description": "Visit to a solar farm, a mini-grid, or a professional solar company" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "General revision and third term examination" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Review of SS1 & SS2 Work", "description": "Core concepts recap; Identifying knowledge gaps; Summary of design and maintenance principles" },
+            { "week": 2, "topic": "Advanced PV Technologies", "description": "Bifacial panels, solar trackers; Perovskite cells; Future of PV efficiency" },
+            { "week": 3, "topic": "Smart Solar Systems", "description": "IoT integration, monitoring apps; Smart inverters and home automation; Data logging" },
+            { "week": 4, "topic": "Hybrid Energy Systems", "description": "Combining solar with wind/diesel; Design challenges; Controlling multiple energy sources" },
+            { "week": 5, "topic": "Midterm Test", "description": "Assessment of weeks 1-4" },
+            { "week": 6, "topic": "Energy Policies in Nigeria", "description": "Rural electrification policy; Feed-in tariffs; Government incentives and subsidies" },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "Climate Change & Renewable Energy", "description": "Global warming and the energy transition; Reducing carbon footprints with solar; UN Sustainable Development Goals (SDG 7)" },
+            { "week": 9, "topic": "Environmental Impacts of PV Systems", "description": "Lifecycle of solar panels; Battery recycling and hazardous waste; Land use concerns" },
+            { "week": 10, "topic": "Practical: Smart Solar Monitoring System", "description": "Setting up a remote monitoring system; Reading and interpreting performance data" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "General revision and first term examination" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Preparation for SSCE", "description": "Review of the WAEC/NECO syllabus for Solar PV Trade Subject" },
+            { "week": 2, "topic": "SSCE Past Questions – Theory", "description": "Drilling of theory questions from previous years" },
+            { "week": 3, "topic": "SSCE Past Questions – Practical", "description": "Practicing typical practical exam scenarios (sizing, wiring, fault finding)" },
+            { "week": 4, "topic": "Mock Installation Project I", "description": "Design phase of the mock installation" },
+            { "week": 5, "topic": "Midterm Test", "description": "Theory and practical assessment" },
+            { "week": 6, "topic": "Mock Installation Project II", "description": "Assembly and wiring phase of the mock installation" },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest" },
+            { "week": 8, "topic": "Mock Installation Project III", "description": "Testing and commissioning of the mock installation" },
+            { "week": 9, "topic": "Mock SSCE", "description": "Full-scale mock exam covering theory and practical" },
+            { "week": 10, "topic": "Exam Prep & Coaching", "description": "Final tips and troubleshooting for common exam mistakes" },
+            { "week": "11-13", "topic": "Revision & Exams", "description": "General revision and second term examination" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Comprehensive Revision I", "description": "Revision of SS1 topics" },
+            { "week": 2, "topic": "Comprehensive Revision II", "description": "Revision of SS2 topics" },
+            { "week": 3, "topic": "Final Project Presentation", "description": "Students present their final trade projects/business plans" },
+            { "week": 4, "topic": "Mock Exams", "description": "Final intensive practice exams" },
+            { "week": 5, "topic": "Midterm Test", "description": "Quick assessment/Review" },
+            { "week": 6, "topic": "Final SSCE Preparation", "description": "Final coaching and study sessions" },
+            { "week": 7, "topic": "Midterm Break", "description": "Holiday/Rest" },
+            { "week": "8-10", "topic": "WAEC/NECO Practical & Theory Exams", "description": "Conduct of final external examinations" },
+            { "week": "11-13", "topic": "Closing & Graduation", "description": "End of SS3" }
+          ]
+        }
+      ]
+    }
+  ]
+}

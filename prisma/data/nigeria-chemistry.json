@@ -1,0 +1,183 @@
+{
+  "subject": "Chemistry",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Chemistry", "description": "Definition, history, branches, and importance of chemistry" },
+            { "week": 2, "topic": "Chemical Industries and Laboratory Apparatus", "description": "Common laboratory apparatus and their uses" },
+            { "week": 3, "topic": "Nature of Matter", "description": "States of matter, properties, and changes of state" },
+            { "week": 4, "topic": "Separation Techniques", "description": "Filtration, distillation, sublimation, chromatography" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Atomic Structure", "description": "Structure of the atom; Subatomic particles" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Periodic Table", "description": "Groups, periods, and periodicity" },
+            { "week": 9, "topic": "Chemical Combination", "description": "Laws of chemical combination" },
+            { "week": 10, "topic": "Acids, Bases, and Salts", "description": "Definitions, examples, properties; pH scale; Neutralization" },
+            { "week": 11, "topic": "Chemical Symbols, Formulae, and Equations", "description": "Writing symbols, formulae; Balancing equations" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Quantitative and Qualitative Analysis (Introduction)", "description": "Basic concepts" },
+            { "week": 2, "topic": "Mole Concept and Stoichiometry", "description": "Mole, molar mass, Avogadro’s number" },
+            { "week": 3, "topic": "Percentage Composition and Empirical Formula", "description": "Calculations of composition and empirical formula" },
+            { "week": 4, "topic": "Gas Laws", "description": "Boyle’s law, Charles’ law, Ideal gas equation" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Structure of the Atom and Electronic Configuration", "description": "Bohr’s model; Electronic configurations" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Ionic and Covalent Bonding", "description": "Formation and properties" },
+            { "week": 9, "topic": "Oxidation and Reduction", "description": "Definitions, examples, redox reactions" },
+            { "week": 10, "topic": "Water and Solution", "description": "Properties, types of solutions, solubility" },
+            { "week": 11, "topic": "Solubility and Crystallization", "description": "Saturated solutions; Solubility curves" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Introduction to Organic Chemistry", "description": "Characteristics of organic compounds" },
+            { "week": 2, "topic": "Alkanes, Alkenes, and Alkynes", "description": "Structures, properties, and examples" },
+            { "week": 3, "topic": "Isomerism", "description": "Structural and geometric isomerism" },
+            { "week": 4, "topic": "Petroleum and Petrochemicals", "description": "Refining, fractional distillation of petroleum" },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Chemical Reactions and Types", "description": "Combination, decomposition, displacement" },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Energy Changes in Reactions", "description": "Endothermic and exothermic reactions" },
+            { "week": 9, "topic": "Rates of Chemical Reactions", "description": "Factors affecting reaction rates" },
+            { "week": 10, "topic": "Reversible Reactions and Chemical Equilibrium", "description": "Le Chatelier’s principle" },
+            { "week": 11, "topic": "Metals and Non-Metals", "description": "Properties and uses" },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Environmental Chemistry", "description": "Water pollution, air pollution, sources, effects, and control measures." },
+            { "week": 2, "topic": "Electrolysis", "description": "Electrolytes, electrodes, principles, applications of electrolysis, Faraday’s laws." },
+            { "week": 3, "topic": "Electrochemical Cells", "description": "Galvanic and electrolytic cells, construction, working principles, applications." },
+            { "week": 4, "topic": "Acid-Base Titration", "description": "Apparatus, procedures, acid-base indicators, titration calculations." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Revision and assessment of weeks 1–4." },
+            { "week": 6, "topic": "Solubility and Solubility Curves", "description": "Definition, factors affecting solubility, solubility calculations, interpretation of solubility curves." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Chemical Equilibrium", "description": "Concept of dynamic equilibrium, equilibrium constant (Kc), simple calculations." },
+            { "week": 9, "topic": "Chemical Kinetics", "description": "Meaning of reaction rate, factors affecting rates, rate laws, order of reaction." },
+            { "week": 10, "topic": "Heat of Reaction", "description": "Enthalpy change, calorimetry, Hess’s law applications." },
+            { "week": 11, "topic": "Energetics of Reactions", "description": "Activation energy, energy profile diagrams, exothermic and endothermic reactions." },
+            { "week": 12, "topic": "Examination", "description": "Term assessment." },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Saponification and Detergents", "description": "Chemistry of soap making, properties, differences between soap and detergent, uses." },
+            { "week": 2, "topic": "Introduction to Nuclear Chemistry", "description": "Radioactivity, half-life, nuclear reactions, applications and dangers." },
+            { "week": 3, "topic": "Halogens", "description": "General properties, trends, compounds, and uses of fluorine, chlorine, bromine, iodine." },
+            { "week": 4, "topic": "Alkali and Alkaline Earth Metals", "description": "Characteristics, occurrence, reactivity, and uses." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Revision and assessment of weeks 1–4." },
+            { "week": 6, "topic": "Transition Elements", "description": "General properties, variable oxidation states, complex compounds, industrial importance." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "General Properties of Metals", "description": "Reactivity series, extraction and refining, metallic bonding." },
+            { "week": 9, "topic": "Non-Metals and Their Compounds", "description": "Hydrogen, oxygen, nitrogen and their compounds." },
+            { "week": 10, "topic": "Water", "description": "Hardness of water, purification methods, water quality control." },
+            { "week": 11, "topic": "Environmental Pollution", "description": "Causes, effects, and control of land, air, and water pollution." },
+            { "week": 12, "topic": "Examination", "description": "Term assessment." },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Sulphur and Its Compounds", "description": "Occurrence, preparation, properties, uses of sulphur, sulphur dioxide, and sulphuric acid." },
+            { "week": 2, "topic": "Carbon and Its Compounds", "description": "Properties, oxides, carbonates, hydrocarbons, importance." },
+            { "week": 3, "topic": "Industrial Preparation of Chemicals", "description": "Large-scale production of HCl, NH₃, H₂SO₄, processes and applications." },
+            { "week": 4, "topic": "Organic Chemistry (Revision)", "description": "Functional groups, homologous series, IUPAC nomenclature." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Revision and assessment of weeks 1–4." },
+            { "week": 6, "topic": "Hydrocarbons", "description": "Types, properties, reactions, tests for hydrocarbons." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Alcohols, Ethers, and Phenols", "description": "Structures, uses, reactions, industrial applications." },
+            { "week": 9, "topic": "Aldehydes and Ketones", "description": "Preparation, identification, uses and reactions." },
+            { "week": 10, "topic": "Carboxylic Acids and Esters", "description": "Structure, reactions, uses, esterification." },
+            { "week": 11, "topic": "Polymers and Plastics", "description": "Types, polymerization, uses, dangers of plastics." },
+            { "week": 12, "topic": "Examination", "description": "Term assessment." },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            { "week": 1, "topic": "Food Chemistry", "description": "Carbohydrates, proteins, fats; their properties, reactions, and importance." },
+            { "week": 2, "topic": "Drugs and Their Effects", "description": "Classification of drugs; medicinal uses; harmful chemicals and drug abuse." },
+            { "week": 3, "topic": "Chemistry in Industry and Everyday Life", "description": "Applications of chemistry in food, medicine, agriculture, textiles, construction, and household products." },
+            { "week": 4, "topic": "Environmental Chemistry", "description": "Types of pollution (air, water, soil, noise); causes and effects; methods of remediation." },
+            { "week": 5, "topic": "Midterm Examination", "description": "Comprehensive WAEC/NECO syllabus review – overview of topics from SS1–SS3." },
+            { "week": 6, "topic": "Industrial Chemistry", "description": "Chemical industries in Nigeria – petroleum, cement, soap, paint, textiles, beverages, etc." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Revision of Organic Chemistry", "description": "Review of hydrocarbons, functional groups, reactions; practical activities and past questions." },
+            { "week": 9, "topic": "Revision of Inorganic Chemistry", "description": "Periodic table, properties of selected elements, their reactions and compounds." },
+            { "week": 10, "topic": "Revision of Physical Chemistry", "description": "Rates of reaction, equilibrium, gas laws, energetics." },
+            { "week": 11, "topic": "Chemical Calculations Practice", "description": "Moles, molar mass, titrations, stoichiometry, empirical and molecular formulas." },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            { "week": 1, "topic": "Practical Chemistry Techniques", "description": "Titrations, qualitative analysis (acid-base, redox, salts), preparation of gases." },
+            { "week": 2, "topic": "Summary of Major Topics", "description": "Review of essential concepts across SS1–SS3." },
+            { "week": 3, "topic": "Chemistry in Everyday Life", "description": "Chemistry of food, drugs, cosmetics, textiles, plastics, soaps, and detergents." },
+            { "week": 4, "topic": "Exam Strategy and Time Management", "description": "Techniques for multiple-choice, essay, and practical exams; time management skills." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "WAEC/NECO Past Questions Review", "description": "Analysis of past questions, marking schemes, common pitfalls." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Practical Chemistry Review", "description": "Use of indicators, gas preparation and identification, salt tests." },
+            { "week": 9, "topic": "Data Interpretation and Report Writing", "description": "Recording results, analysis of tables and graphs, drawing valid conclusions." },
+            { "week": 10, "topic": "Final Tips and Revision", "description": "Strategies for last-minute preparation, study timetables, mental readiness." },
+            { "week": 11, "topic": "Revision", "description": "General revision of SS1–SS3 chemistry." },
+            { "week": 12, "topic": "Mock Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            { "week": 1, "topic": "Intensive Revision", "description": "Consolidated revision of all SS1–SS3 topics." },
+            { "week": 2, "topic": "Individual Support Sessions", "description": "Remediation for weaker students; targeted help in problem areas." },
+            { "week": 3, "topic": "Final Exam Strategies", "description": "Speed, accuracy, presentation of answers, WAEC/NECO preparation." },
+            { "week": 4, "topic": "Past Exam Correction Sessions", "description": "Solving WAEC/NECO past papers; error correction and feedback." },
+            { "week": 5, "topic": "Midterm Examination", "description": "—" },
+            { "week": 6, "topic": "Group Discussion and Peer Review", "description": "Collaborative learning, question drills, team solving." },
+            { "week": 7, "topic": "Midterm Break", "description": "—" },
+            { "week": 8, "topic": "Last-Minute Revision", "description": "Summary sheets, formula recall, quick practice." },
+            { "week": 9, "topic": "Mock Final Exams", "description": "Simulated timed conditions for WAEC/NECO." },
+            { "week": 10, "topic": "Performance Review and Feedback", "description": "Teacher-student conferences, individualized improvement plans." },
+            { "week": 11, "topic": "Final Preparations", "description": "Confidence building, mental alertness, key focus areas." },
+            { "week": 12, "topic": "Examination", "description": "—" },
+            { "week": 13, "topic": "Closing", "description": "—" }
+          ]
+        }
+      ]
+    }
+  ]
+}

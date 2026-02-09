@@ -1,0 +1,506 @@
+{
+  "subject": "Agricultural Science",
+  "curiculum": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Meaning and Importance of Agriculture",
+              "description": "- Definition of agriculture - Importance of agriculture to individuals and the nation"
+            },
+            {
+              "week": 2,
+              "topic": "Problems of Agricultural Development and Solutions",
+              "description": "- Problems: land tenure, low technology, poor storage, pests and diseases - Suggested solutions"
+            },
+            {
+              "week": 3,
+              "topic": "Subsistence and Commercial Agriculture",
+              "description": "- Meaning - Characteristics - Differences between subsistence and commercial farming"
+            },
+            {
+              "week": 4,
+              "topic": "Role of Government in Agricultural Development",
+              "description": "- Agricultural programmes - Credit facilities - Extension services"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "---"
+            },
+            {
+              "week": 6,
+              "topic": "Role of NGOs in Agricultural Development",
+              "description": "- Contributions of NGOs (FAO, IFAD, etc.) - Importance of their interventions"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "---"
+            },
+            {
+              "week": 8,
+              "topic": "Agricultural Laws and Reforms",
+              "description": "- Land use decree - Land tenure systems - Government reforms"
+            },
+            {
+              "week": 9,
+              "topic": "Land and Its Uses",
+              "description": "- Types of land use (agriculture, forestry, housing, mining) - Importance of land"
+            },
+            {
+              "week": 10,
+              "topic": "Agricultural Ecology",
+              "description": "- Meaning - Components of farm ecosystem - Interactions of crops and animals"
+            },
+            {
+              "week": 11,
+              "topic": "Factors affecting Land Availability",
+              "description": "- Factors affecting land availability for agricultural purposes"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "---"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "---"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Agro-Allied Industries",
+              "description": "- Meaning - Examples (textile, breweries, oil mills) - Relationship with agriculture"
+            },
+            {
+              "week": 2,
+              "topic": "Environmental Factors Affecting Agriculture",
+              "description": "- Rainfall - Temperature - Wind - Soil - Biotic factors"
+            },
+            {
+              "week": 3,
+              "topic": "Rock Formation",
+              "description": "- Types of rocks (igneous, sedimentary, metamorphic) - Importance to agriculture"
+            },
+            {
+              "week": 4,
+              "topic": "Soil Formation and Profile Development",
+              "description": "- Processes of soil formation - Soil horizons and profiles"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "---"
+            },
+            {
+              "week": 6,
+              "topic": "Soil Types, Composition and Properties",
+              "description": "- Types of soil - Physical and chemical properties - Soil texture and structure"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "---"
+            },
+            {
+              "week": 8,
+              "topic": "Simple Farm Tools",
+              "description": "- Examples: hoe, cutlass, rake - Uses - Maintenance practices"
+            },
+            {
+              "week": 9,
+              "topic": "Farm Machinery and Implements",
+              "description": "- Examples: tractors, planters, harvesters - Functions and advantages"
+            },
+            {
+              "week": 10,
+              "topic": "Maintenance of Farm Machinery",
+              "description": "- Care and servicing of implements - Safety precautions"
+            },
+            {
+              "week": 11,
+              "topic": "Problems of agricultural mechanization",
+              "description": "- Problems of agricultural mechanization"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "---"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "---"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Prospects of Agricultural Mechanisation",
+              "description": "- Meaning of mechanisation - Benefits and limitations"
+            },
+            {
+              "week": 2,
+              "topic": "Sources of Farm Power",
+              "description": "- Human, animal, mechanical, electrical, solar, wind and water power"
+            },
+            {
+              "week": 3,
+              "topic": "Classification of Crops",
+              "description": "- Food crops - Cash crops - Annuals, biennials and perennials"
+            },
+            {
+              "week": 4,
+              "topic": "Husbandry of Selected Crops",
+              "description": "- Example: maize, cassava, yam - Land preparation, planting, maintenance and harvesting"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "---"
+            },
+            {
+              "week": 6,
+              "topic": "Pasture and Forage Crops",
+              "description": "- Meaning - Types - Importance in livestock production"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "---"
+            },
+            {
+              "week": 8,
+              "topic": "Plant Nutrients and Nutrient Cycle",
+              "description": "- Macro and micro nutrients - Nitrogen and carbon cycles"
+            },
+            {
+              "week": 9,
+              "topic": "Irrigation",
+              "description": "- Definition - Types of irrigation - Importance"
+            },
+            {
+              "week": 10,
+              "topic": "Drainage",
+              "description": "- Meaning - Types of drainage systems - Importance"
+            },
+            {
+              "week": 11,
+              "topic": "Agricultural Pollution",
+              "description": "- Agricultural pollution: meaning, causes, effects and control"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "---"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "---"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Farm Surveying and Planning",
+              "description": "Meaning of farm surveying; importance; instruments used; methods of land measurement; uses of surveying data in agriculture."
+            },
+            {
+              "week": 2,
+              "topic": "Farm Planning",
+              "description": "Definition of farm planning; objectives; factors influencing farm planning; steps in farm planning; importance to agricultural production."
+            },
+            {
+              "week": 3,
+              "topic": "Principles of Farmstead Planning and Location of Buildings/Structures",
+              "description": "Meaning of farmstead planning; factors affecting location (topography, soil type, water supply, nearness to market, accessibility); layout of farm structures (barn, silo, poultry house, fish pond, etc.)."
+            },
+            {
+              "week": 4,
+              "topic": "Forest Management",
+              "description": "Meaning; importance of forest to agriculture and economy; methods of forest management (afforestation, controlled exploitation, taungya system, forest reservation)."
+            },
+            {
+              "week": 5,
+              "topic": "Agro-Forestry Practices in Nigeria",
+              "description": "Definition of agroforestry; examples (alley cropping, shelter belts, windbreaks); benefits to soil fertility, erosion control, and biodiversity."
+            },
+            {
+              "week": 6,
+              "topic": "Importance of Ornamental Plants",
+              "description": "Economic, aesthetic, medicinal, and environmental importance of ornamental plants."
+            },
+            {
+              "week": 7,
+              "topic": "Common Types of Ornamental Plants",
+              "description": "Flowering plants, foliage plants, shrubs, lawn grasses, trees, climbers; examples of each."
+            },
+            {
+              "week": 8,
+              "topic": "Settings and Locations for Planting Each Type of Ornamental Plant",
+              "description": "Home gardens, parks, schools, offices, roadsides; factors to consider when locating ornamental plants."
+            },
+            {
+              "week": 9,
+              "topic": "Methods of Cultivating Ornamental Plants",
+              "description": "Direct seeding, transplanting, grafting, layering, budding, use of cuttings; care and management."
+            },
+            {
+              "week": 10,
+              "topic": "Revision",
+              "description": "Review of first term’s work."
+            },
+            {
+              "week": 11,
+              "topic": "Examination",
+              "description": "---"
+            },
+            {
+              "week": 12,
+              "topic": "Closing",
+              "description": "---"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Maintenance of Ornamental Plants",
+              "description": "Weeding, watering, pruning, staking, mulching, manuring, pest and disease control in ornamental plants."
+            },
+            {
+              "week": 2,
+              "topic": "Diseases of Crops",
+              "description": "Meaning of crop diseases; types (fungal, bacterial, viral, nematode); symptoms; effects; control measures."
+            },
+            {
+              "week": 3,
+              "topic": "Pests of Crops",
+              "description": "Definition of crop pests; examples (insects, birds, rodents, monkeys); economic importance; preventive and control measures."
+            },
+            {
+              "week": 4,
+              "topic": "Weeds and Weed Control",
+              "description": "Meaning and types of weeds; characteristics; harmful and beneficial effects; methods of weed control (cultural, mechanical, chemical, biological)."
+            },
+            {
+              "week": 5,
+              "topic": "Types and Classification of Farm Animals",
+              "description": "Cattle, sheep, goats, pigs, poultry, rabbits, fish; classification based on uses (meat, milk, work, eggs, hides/skins)."
+            },
+            {
+              "week": 6,
+              "topic": "Anatomy and Physiology of Farm Animals",
+              "description": "External parts; digestive, circulatory, respiratory, and reproductive systems of cattle, poultry, and pigs."
+            },
+            {
+              "week": 7,
+              "topic": "Animal Reproduction",
+              "description": "Meaning and importance; types (asexual and sexual); reproductive processes in farm animals; fertilization and gestation."
+            },
+            {
+              "week": 8,
+              "topic": "Environmental Physiology in Farm Animals",
+              "description": "Effects of climate (temperature, rainfall, humidity, wind) on growth, production, and reproduction of farm animals; adaptation strategies."
+            },
+            {
+              "week": 9,
+              "topic": "Livestock Management",
+              "description": "Meaning; principles; management practices for cattle, sheep, goats, pigs, poultry, and rabbits; housing, feeding, breeding, health care."
+            },
+            {
+              "week": 10,
+              "topic": "Revision",
+              "description": "Review of second term’s work."
+            },
+            {
+              "week": 11,
+              "topic": "Examination",
+              "description": "---"
+            },
+            {
+              "week": 12,
+              "topic": "Closing",
+              "description": "---"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Animal Nutrition",
+              "description": "Classes of food nutrients (carbohydrates, proteins, fats, vitamins, minerals, water); functions; sources; importance in animal production."
+            },
+            {
+              "week": 2,
+              "topic": "Rangeland Management",
+              "description": "Meaning of rangeland; types; importance; methods of improvement (reseeding, rotational grazing, controlled stocking, fertilizer application)."
+            },
+            {
+              "week": 3,
+              "topic": "Basic Economic Principles",
+              "description": "Definition; scarcity, choice, and opportunity cost; scale of preference; production possibilities curve."
+            },
+            {
+              "week": 4,
+              "topic": "Factors of Production",
+              "description": "Land, labour, capital, and entrepreneurship; meaning, characteristics, and roles in agriculture."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "---"
+            },
+            {
+              "week": 6,
+              "topic": "Principles of Demand",
+              "description": "Meaning; law of demand; demand schedule and curve; factors affecting demand; elasticity of demand in agriculture."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "---"
+            },
+            {
+              "week": 8,
+              "topic": "Principles of Supply",
+              "description": "Meaning; law of supply; supply schedule and curve; factors affecting supply; elasticity of supply in agriculture."
+            },
+            {
+              "week": 9,
+              "topic": "Implications of Demand and Supply for Agricultural Production",
+              "description": "Application of demand and supply to pricing, output, and farmers’ decisions in agriculture."
+            },
+            {
+              "week": 10,
+              "topic": "Functions of a Farm Manager",
+              "description": "Roles, qualities, and responsibilities of a farm manager; importance to agricultural productivity."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of third term’s work."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "---"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "---"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Crop Improvement",
+              "description": "Meaning and objectives of crop improvement; methods of crop improvement (selection, introduction, hybridization); advantages and disadvantages; importance of genetic improvement."
+            },
+            {
+              "week": 2,
+              "topic": "Animal Improvement",
+              "description": "Meaning and objectives of animal improvement; methods (inbreeding, crossbreeding, artificial insemination, embryo transfer); advantages and limitations."
+            },
+            {
+              "week": 3,
+              "topic": "Animal Health Management",
+              "description": "Importance of animal health; common diseases and parasites of livestock; symptoms, prevention and control measures; routine management practices for healthy animals."
+            },
+            {
+              "week": 4,
+              "topic": "Aquaculture",
+              "description": "Meaning and scope; types of aquaculture systems (extensive, semi-intensive, intensive); common species cultured; management practices; importance of aquaculture in food security."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "---"
+            },
+            {
+              "week": 6,
+              "topic": "Apiculture (Bee Keeping)",
+              "description": "Meaning and importance; types of bees; equipment used; management practices; products of beekeeping and their economic uses."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "---"
+            },
+            {
+              "week": 8,
+              "topic": "Agricultural Finance",
+              "description": "Meaning and importance; sources of agricultural finance (formal and informal); problems of agricultural finance; role of government and banks in agricultural credit."
+            },
+            {
+              "week": 9,
+              "topic": "Farm Records and Accounts",
+              "description": "Meaning and importance of farm records; types of farm records (production, financial, inventory, consumption); simple farm account preparation."
+            },
+            {
+              "week": 10,
+              "topic": "Marketing of Agricultural Produce",
+              "description": "Meaning and importance of agricultural marketing; functions of marketing; marketing channels; problems of agricultural marketing and solutions."
+            },
+            {
+              "week": 11,
+              "topic": "Agricultural Insurance",
+              "description": "Meaning and importance; types of agricultural insurance (crop, livestock, farm equipment, produce); benefits and limitations; role of government and insurance companies."
+            },
+            {
+              "week": 12,
+              "topic": "Agricultural Extension",
+              "description": "Meaning and objectives; role of agricultural extension agents; methods of extension (individual, group, mass media); problems of extension services in Nigeria."
+            },
+            {
+              "week": 13,
+              "topic": "Revision",
+              "description": "General review of all topics covered during the term."
+            },
+            {
+              "week": 14,
+              "topic": "Examination",
+              "description": "---"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,577 @@
+{
+  "subject": "Technical Drawing",
+   "curriculum_name": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Technical Drawing",
+              "description": "Meaning of technical drawing; Career opportunities requiring technical drawing skills; Specific uses of various drawing materials"
+            },
+            {
+              "week": 2,
+              "topic": "Safe Working Habits",
+              "description": "Practice of good and safe working habits in technical drawing"
+            },
+            {
+              "week": 3,
+              "topic": "Board Practice",
+              "description": "Fixing drawing sheet to the drawing board; Sharpening pencil into conical shape using sandpaper; Drawing borderlines and title block"
+            },
+            {
+              "week": 4,
+              "topic": "Lines (Types of Lines)",
+              "description": "Identification of various types of lines and their applications; Drawing different line types correctly; Differentiating between perpendicular and parallel lines"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Lettering and Numbering",
+              "description": "Distinction between upper and lower case letters; Writing numbers 0–9 correctly"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Plane Geometry – Division of Line",
+              "description": "Bisection of given lines; Trisection of lines; Dividing a given line into a number of equal parts; Dividing a line into given ratios and proportions"
+            },
+            {
+              "week": 9,
+              "topic": "Circles",
+              "description": "Types of circles; Identification of parts and properties of circles; Division of circles into equal parts; Recognition of circular objects around us"
+            },
+            {
+              "week": 10,
+              "topic": "Angles – Construction and Measurement",
+              "description": "Comprehending vertical walls forming angular relation with the ground; Recognizing angles in terms of rotation; Classification and description of angles; Relating angles to shapes; Ordering angles greater or less than a right angle"
+            },
+            {
+              "week": 11,
+              "topic": "Triangles",
+              "description": "Identification of roof truss of a building with low ridge roof; Labeling and explaining parts of triangles; Description of types of triangles; Construction of triangles; Inscribed, circumscribed and ascribed circles of triangles; Differentiation among inscribed, circumscribed and ascribed circles"
+            },
+            {
+              "week": 12,
+              "topic": "Quadrilaterals",
+              "description": "Description of quadrilaterals and their properties; Recognition of quadrilaterals in classroom objects; Construction of different quadrilaterals"
+            },
+            {
+              "week": 13,
+              "topic": "Revision, Examination and Closing",
+              "description": "General revision and end of term examination"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Polygons – Properties and Construction of Polygons",
+              "description": "Recognition of polygon-shaped sign boards on roads; Differentiation between types of polygons; Construction of regular and irregular polygons of different sizes using various methods"
+            },
+            {
+              "week": 2,
+              "topic": "Introduction to Polygons (Continued)",
+              "description": "Further recognition and classification of polygons; Advanced construction of polygons with compass and ruler"
+            },
+            {
+              "week": 3,
+              "topic": "Introduction to Polygons (Continued)",
+              "description": "Exercises on properties of polygons; Practical construction of polygons of various sizes"
+            },
+            {
+              "week": 4,
+              "topic": "Scales",
+              "description": "Meaning and uses of scales; Types of scales (plain, diagonal, RF); Distinguishing between plain and diagonal scales; Placing dimensions on objects using scales; Reading and interpreting scales"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Enlargement and Reduction of Plane Figures",
+              "description": "Applications of enlargement and reduction; Enlargement and reduction of plane figures using ratios of areas; Reproduction of plane figures to a given scale"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Equal Areas of Similar Figures",
+              "description": "Principles of determining equal areas; Conversion of one plane figure to another of equal area by construction; Determining areas graphically"
+            },
+            {
+              "week": 9,
+              "topic": "Equal Areas of Similar Figures (Continued)",
+              "description": "More exercises on equal area conversion; Advanced graphical methods of determining areas"
+            },
+            {
+              "week": 10,
+              "topic": "Tangents and Tangency – Properties and Construction",
+              "description": "Relationships between centers, normals and tangents; Principles and applications of tangency; Construction of tangents to a circle from a point outside; Tangents to equal and unequal circles; Practical applications"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "General revision of term’s work"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term examination"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Loci, Parabola, Hyperbola, Ellipse",
+              "description": "Identification and explanation of types of loci; Construction of loci; Plotting and tracing loci of given points; Loci in simple crank mechanism"
+            },
+            {
+              "week": 2,
+              "topic": "Loci, Parabola, Hyperbola, Ellipse (Continued)",
+              "description": "Further construction of loci; Exercises on parabola, hyperbola, ellipse; Applications in engineering and design"
+            },
+            {
+              "week": 3,
+              "topic": "Loci, Parabola, Hyperbola, Ellipse (Continued)",
+              "description": "Advanced plotting of loci; Problem-solving applications involving mechanisms"
+            },
+            {
+              "week": 4,
+              "topic": "Prisms",
+              "description": "Description and properties of prisms; Identification of real objects shaped like prisms (cube, maths set, etc.); Construction of various types of prisms; Cardboard model production of prisms"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Pyramids and Cones",
+              "description": "Description of pyramids and cones; Identification of objects shaped like pyramids and cones (funnels, buckets, etc.); Construction of pyramids and cones; Cardboard model production"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Surface Development",
+              "description": "Principles and importance of surface development; Construction of surface development of frustum of solids, right and oblique solids"
+            },
+            {
+              "week": 9,
+              "topic": "Surface Development (Continued)",
+              "description": "Advanced exercises on surface development of solids; Practical applications in packaging and metal works"
+            },
+            {
+              "week": 10,
+              "topic": "Dimensioning",
+              "description": "Measurement of classroom objects (bench, door, blackboard, etc.); Principles and rules guiding dimensioning; Applications with illustrations"
+            },
+            {
+              "week": 11,
+              "topic": "Construction of Isometric",
+              "description": "Explanation of isometric drawing and axis; Drawing blocks involving lines, arcs and circles; Techniques of isometric circles; Visualization of cubes with circles/curves; Drawing isometric cube showing ellipse"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term examination"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities and vacation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Revision of SS1 Work",
+              "description": "General review of previous year’s work"
+            },
+            {
+              "week": 2,
+              "topic": "Geometrical Construction",
+              "description": "Identification of different types of geometrical construction; Construction of geometrical figures using appropriate instruments"
+            },
+            {
+              "week": 3,
+              "topic": "Geometrical Construction (Continued)",
+              "description": "Construction of triangles, quadrilaterals, and polygons; Bisection of lines and angles"
+            },
+            {
+              "week": 4,
+              "topic": "Geometrical Construction (Continued)",
+              "description": "Division of lines into equal parts; Construction of tangents to circles"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Simple Scale Drawing – Plain and Diagonal Scales",
+              "description": "Explanation of plain and diagonal scales; Construction of scales to given representative fractions"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Pictorial Drawings – Oblique Projection",
+              "description": "Definition of oblique projection; Construction of oblique drawings using given dimensions"
+            },
+            {
+              "week": 9,
+              "topic": "Pictorial Drawings – Isometric Projection",
+              "description": "Definition of isometric projection; Construction of isometric drawings using given dimensions"
+            },
+            {
+              "week": 10,
+              "topic": "Freehand Sketching",
+              "description": "Sketching objects in freehand with correct proportion"
+            },
+            {
+              "week": 11,
+              "topic": "Freehand Sketching (Continued)",
+              "description": "Sketching more complex objects in freehand showing details"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term examination"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities and vacation"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Revision of First Term’s Work",
+              "description": "General review of First Term’s work"
+            },
+            {
+              "week": 2,
+              "topic": "Orthographic Projection",
+              "description": "Definition of orthographic projection; Differences between first angle and third angle projection; Drawing objects in both methods"
+            },
+            {
+              "week": 3,
+              "topic": "Orthographic Projection (Continued)",
+              "description": "Construction of orthographic views of given objects"
+            },
+            {
+              "week": 4,
+              "topic": "Sectional Views",
+              "description": "Definition of sectional views; Types of sectional views; Drawing sectional views of simple objects"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Sectional Views (Continued)",
+              "description": "Drawing more complex sectional views involving different shapes"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Auxiliary Views",
+              "description": "Definition of auxiliary views; Drawing auxiliary views of given objects"
+            },
+            {
+              "week": 9,
+              "topic": "Assembly Drawing",
+              "description": "Definition of assembly drawing; Identification of machine components; Drawing exploded and assembled views"
+            },
+            {
+              "week": 10,
+              "topic": "Assembly Drawing (Continued)",
+              "description": "Assembling given parts into complete objects in orthographic projection"
+            },
+            {
+              "week": 11,
+              "topic": "Fasteners",
+              "description": "Identification of types of fasteners (nuts, bolts, screws, rivets); Conventional representations"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term examination"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities and vacation"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Interpenetration and Development of Solids",
+              "description": "Definition of interpenetration; Practical applications; Construction of interpenetration of two solids"
+            },
+            {
+              "week": 2,
+              "topic": "Interpenetration and Development of Solids (Continued)",
+              "description": "Development of surfaces of interpenetrating solids"
+            },
+            {
+              "week": 3,
+              "topic": "Building Drawings",
+              "description": "Explanation of building drawings; Reading simple floor plans"
+            },
+            {
+              "week": 4,
+              "topic": "Building Drawings (Continued)",
+              "description": "Drawing floor plans and elevations of simple buildings"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Pictorial Drawing of Buildings",
+              "description": "Drawing pictorial views of simple buildings from given plans"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Pictorial Drawing of Buildings (Continued)",
+              "description": "Drawing more complex pictorial views of buildings"
+            },
+            {
+              "week": 9,
+              "topic": "Freehand Sketching",
+              "description": "Sketching building components and fittings accurately"
+            },
+            {
+              "week": 10,
+              "topic": "Freehand Sketching (Continued)",
+              "description": "Sketching more complex building components"
+            },
+            {
+              "week": 11,
+              "topic": "Specification Writing",
+              "description": "Definition of specification writing; Writing simple specifications for construction works"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term examination"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities and vacation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Engineering Designs and Working Drawing",
+              "description": "Preparation of working drawings on the drawing table"
+            },
+            {
+              "week": 2,
+              "topic": "Engineering Designs and Working Drawing (Continued)",
+              "description": "Preparation of working drawings on the drawing table"
+            },
+            {
+              "week": 3,
+              "topic": "Screw Threads, Fasteners and Locking Devices",
+              "description": "Meaning of screw threads, fasteners, and locking devices; Identification and sketching; Uses of screws for hanging wooden materials/doors"
+            },
+            {
+              "week": 4,
+              "topic": "Screw Threads, Fasteners and Locking Devices (Continued)",
+              "description": "Meaning of screw threads, fasteners, and locking devices; Identification and sketching; Uses of screws for hanging wooden materials/doors"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Engineering Working Drawing",
+              "description": "Reading and interpreting various engineering drawings; Preparing working drawings of simple machine parts to scale; Coupling simple machine parts (e.g., manual air pumps); Producing working drawings of machine assemblies"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Sections and Sectional Views",
+              "description": "Meaning of sectioning; Cutting and observing internal parts of an object; Identifying different types of sections in engineering drawing; Drawing sections of simple engines and assemblies"
+            },
+            {
+              "week": 9,
+              "topic": "Block Sectioning",
+              "description": "Design of building floor plans and sectional views; Building elevations; Roof structures; Sketching internal part of moulded hollow block; Recognizing different roof designs"
+            },
+            {
+              "week": 10,
+              "topic": "Block Sectioning (Continued)",
+              "description": "Continuation of floor plans, sectional views, elevations, roof structures, hollow blocks, and roof designs"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Computer",
+              "description": "Meaning of computer; Common hardware components; Parts of a computer system; Using computer and software for building/engineering design; Introduction to CAD applications"
+            },
+            {
+              "week": 2,
+              "topic": "Arches",
+              "description": "Meaning of arches; Types of arches; Importance of arches; Identification of arches in buildings"
+            },
+            {
+              "week": 3,
+              "topic": "Roofs",
+              "description": "Meaning of roof; Types of roofs and roof members; Designing roofs and members; Determining roof pitch; Identifying roof designs in buildings"
+            },
+            {
+              "week": 4,
+              "topic": "Conventional Representation of Materials and Symbols",
+              "description": "Plumbing, electrical, and mechanical symbols; Differentiation between symbols; Application of conventional representation of materials in technical drawings"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Blueprint Reading, Reproduction Services and Merchandising",
+              "description": "Reading and interpreting building drawings, engineering drawings, and blueprints; Methods of sourcing funds; Setting up blueprint reproduction service centers"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Blueprint Reading, Reproduction Services and Merchandising (Continued)",
+              "description": "Continuation of blueprint interpretation, construction/production applications, and managing blueprint services"
+            },
+            {
+              "week": 9,
+              "topic": "Computer-Aided Design (CAD)",
+              "description": "Basic skills in using CAD software; Producing technical drawings using CAD; Comparing manual drawing and CAD"
+            },
+            {
+              "week": 10,
+              "topic": "Computer-Aided Design (Continued)",
+              "description": "Advanced applications of CAD in engineering and building design"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+ 
+}
