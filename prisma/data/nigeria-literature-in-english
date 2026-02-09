@@ -1,5 +1,6 @@
 {
   "subject": "Literature-in-English",
+  "curriculum_name": "Nigeria Curiculum",
   "curriculum": [
     {
       "grade": "JSS 1",
@@ -7,55 +8,211 @@
         {
           "term": 1,
           "weeks": [
-            { "week": 1, "topic": "What is Literature?" },
-            { "week": 2, "topic": "Features of Literature; Types – Oral, Historical, Dance Drama, Miming" },
-            { "week": 3, "topic": "Purpose/Functions of Literature; Introduction to Prose" },
-            { "week": 4, "topic": "Elements of Prose – Plot, Style, Characterization; Types of Oral Literature" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Introduction to Drama; Types & Elements of Drama; Characterization & Themes in recommended prose text" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Introduction to Drama; Types & Elements; Characterization & Themes in recommended prose text" },
-            { "week": 9, "topic": "Folktales – Introduction, Definition, Types; Narration of a Folktale; Recommended Drama Text – Plot & Setting" },
-            { "week": 10, "topic": "Recommended Drama Text; Introduction to Figures of Speech – Simile, Metaphor, Irony" },
-            { "week": 11, "topic": "Recommended Drama Text; Figures of Speech – Simile, Metaphor, Irony" },
-            { "week": 12, "topic": "Revision & Examination – Review of texts; Figures of Speech" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "What is Literature?",
+              "description": "What is Literature?"
+            },
+            {
+              "week": 2,
+              "topic": "Features of Literature; Types – Oral, Historical, Dance Drama, Miming",
+              "description": "Features of Literature; Types – Oral, Historical, Dance Drama, Miming (with reference to texts)"
+            },
+            {
+              "week": 3,
+              "topic": "Purpose/Functions of Literature; Introduction to Prose",
+              "description": "Purpose/Functions of Literature; Introduction to Prose (use recommended text)"
+            },
+            {
+              "week": 4,
+              "topic": "Elements of Prose – Plot, Style, Characterization; Types of Oral Literature",
+              "description": "Elements of Prose – Plot, Style, Characterization; Types of Oral Literature"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Midterm Examination"
+            },
+            {
+              "week": 6,
+              "topic": "Introduction to Drama; Types & Elements of Drama; Characterization & Themes in recommended prose text",
+              "description": "Introduction to Drama; Types & Elements of Drama; Characterization & Themes in recommended prose text"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm Break"
+            },
+            {
+              "week": 8,
+              "topic": "Introduction to Drama; Types & Elements; Characterization & Themes in recommended prose text",
+              "description": "Introduction to Drama; Types & Elements; Characterization & Themes in recommended prose text"
+            },
+            {
+              "week": 9,
+              "topic": "Folktales – Introduction, Definition, Types; Narration of a Folktale; Recommended Drama Text – Plot & Setting",
+              "description": "Folktales – Introduction, Definition, Types; Narration of a Folktale; Recommended Drama Text – Plot & Setting"
+            },
+            {
+              "week": 10,
+              "topic": "Recommended Drama Text; Introduction to Figures of Speech – Simile, Metaphor, Irony",
+              "description": "Recommended Drama Text; Introduction to Figures of Speech – Simile, Metaphor, Irony"
+            },
+            {
+              "week": 11,
+              "topic": "Recommended Drama Text; Figures of Speech – Simile, Metaphor, Irony",
+              "description": "Recommended Drama Text; Figures of Speech – Simile, Metaphor, Irony"
+            },
+            {
+              "week": 12,
+              "topic": "Revision & Examination – Review of texts; Figures of Speech",
+              "description": "Revision & Examination – Review of texts; Informal Letter (e.g., to cousin about new school); Figures of Speech"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Closing"
+            }
           ]
         },
         {
           "term": 2,
           "weeks": [
-            { "week": 1, "topic": "Folktales – African Tales (Features: didactic, entertainment, magical); Recommended prose text" },
-            { "week": 2, "topic": "Introduction to Poetry – Definition, Features; Recommended prose text" },
-            { "week": 3, "topic": "Poetry – Types (Epic, Lyric, etc.); Oral vs Written Poetry" },
-            { "week": 4, "topic": "Drama – Features (Theme, Costumes, Audience, etc.); Identifying features of drama in a text" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Recommended prose text" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Myths and Legends – Comparing Myths and Legends; Recommended drama text" },
-            { "week": 9, "topic": "Myths and Legends – Features (magic, superstition, etc.); Recommended drama text" },
-            { "week": 10, "topic": "Dramatization of scenes from recommended drama text; Review of recommended texts" },
-            { "week": 11, "topic": "General Revision" },
-            { "week": 12, "topic": "End of Term Examination" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Folktales – African Tales (Features: didactic, entertainment, magical); Recommended prose text",
+              "description": "Folktales – African Tales (Features: didactic, entertainment, magical); Recommended prose text"
+            },
+            {
+              "week": 2,
+              "topic": "Introduction to Poetry – Definition, Features; Recommended prose text",
+              "description": "Introduction to Poetry – Definition, Features (concise, unique, etc.); Recommended prose text"
+            },
+            {
+              "week": 3,
+              "topic": "Poetry – Types (Epic, Lyric, etc.); Oral vs Written Poetry",
+              "description": "Poetry – Types (Epic, Lyric, etc.); Oral vs Written Poetry"
+            },
+            {
+              "week": 4,
+              "topic": "Drama – Features (Theme, Costumes, Audience, etc.); Identifying features of drama in a text",
+              "description": "Drama – Features (Theme, Costumes, Audience, etc.); Identifying features of drama in a text"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Midterm Examination"
+            },
+            {
+              "week": 6,
+              "topic": "Recommended prose text",
+              "description": "Recommended prose text"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm Break"
+            },
+            {
+              "week": 8,
+              "topic": "Myths and Legends – Comparing Myths and Legends; Recommended drama text",
+              "description": "Myths and Legends – Comparing Myths and Legends; Recommended drama text"
+            },
+            {
+              "week": 9,
+              "topic": "Myths and Legends – Features (magic, superstition, etc.); Recommended drama text",
+              "description": "Myths and Legends – Features (magic, superstition, etc.); Recommended drama text"
+            },
+            {
+              "week": 10,
+              "topic": "Dramatization of scenes from recommended drama text; Review of recommended texts",
+              "description": "Dramatization of scenes from recommended drama text; Review of recommended texts"
+            },
+            {
+              "week": 11,
+              "topic": "General Revision",
+              "description": "General Revision"
+            },
+            {
+              "week": 12,
+              "topic": "End of Term Examination",
+              "description": "End of Term Examination"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Closing"
+            }
           ]
         },
         {
           "term": 3,
           "weeks": [
-            { "week": 1, "topic": "Recommended prose text – Themes and Characterization" },
-            { "week": 2, "topic": "Recommended prose text – Setting/Plot" },
-            { "week": 3, "topic": "Poetry – Identifying language in a selected poem" },
-            { "week": 4, "topic": "Myths/Legends – Identifying moral lessons; Recommended drama text" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Poetry – Meaning of selected poem; Identification of figures of speech" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Recommended drama text – Write a short play or story" },
-            { "week": 9, "topic": "Recommended drama text – Using similes and metaphors in sentences" },
-            { "week": 10, "topic": "Dramatization of scenes from drama text; Turning similes to metaphors and vice versa" },
-            { "week": 11, "topic": "Figures of Speech – Euphemism and Pun" },
-            { "week": 12, "topic": "End of Term Examination" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Recommended prose text – Themes and Characterization",
+              "description": "Recommended prose text – Themes and Characterization"
+            },
+            {
+              "week": 2,
+              "topic": "Recommended prose text – Setting/Plot",
+              "description": "Recommended prose text – Setting/Plot"
+            },
+            {
+              "week": 3,
+              "topic": "Poetry – Identifying language in a selected poem",
+              "description": "Poetry – Identifying language in a selected poem"
+            },
+            {
+              "week": 4,
+              "topic": "Myths/Legends – Identifying moral lessons; Recommended drama text",
+              "description": "Myths/Legends – Identifying moral lessons; Recommended drama text"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Midterm Examination"
+            },
+            {
+              "week": 6,
+              "topic": "Poetry – Meaning of selected poem; Identification of figures of speech",
+              "description": "Poetry – Meaning of selected poem; Identification of figures of speech"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm Break"
+            },
+            {
+              "week": 8,
+              "topic": "Recommended drama text – Write a short play or story",
+              "description": "Recommended drama text – Write a short play or story"
+            },
+            {
+              "week": 9,
+              "topic": "Recommended drama text – Using similes and metaphors in sentences",
+              "description": "Recommended drama text – Using similes and metaphors in sentences"
+            },
+            {
+              "week": 10,
+              "topic": "Dramatization of scenes from drama text; Turning similes to metaphors and vice versa",
+              "description": "Dramatization of scenes from drama text; Turning similes to metaphors and vice versa"
+            },
+            {
+              "week": 11,
+              "topic": "Figures of Speech – Euphemism and Pun",
+              "description": "Figures of Speech – Euphemism and Pun"
+            },
+            {
+              "week": 12,
+              "topic": "End of Term Examination",
+              "description": "End of Term Examination"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Closing"
+            }
           ]
         }
       ]
@@ -66,55 +223,211 @@
         {
           "term": 1,
           "weeks": [
-            { "week": 1, "topic": "Review of features of prose (setting, theme, characterization)" },
-            { "week": 2, "topic": "Use the recommended text on prose" },
-            { "week": 3, "topic": "Features of folktales (didactic, entertaining, riddles); Use the recommended text on prose" },
-            { "week": 4, "topic": "Use the recommended text on prose" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Use the recommended text on drama – Characterization and plot" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Differentiating between a novella and a novel; Figures of Speech – Onomatopoeia and Personification" },
-            { "week": 9, "topic": "Select a folktale and explain the theme (use the recommended text on drama)" },
-            { "week": 10, "topic": "Use the recommended text on drama" },
-            { "week": 11, "topic": "Revision of Literary Terms" },
-            { "week": 12, "topic": "Examination" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Review of features of prose (setting, theme, characterization)",
+              "description": "Review of features of prose (setting, theme, characterization)"
+            },
+            {
+              "week": 2,
+              "topic": "Use the recommended text on prose",
+              "description": "Use the recommended text on prose"
+            },
+            {
+              "week": 3,
+              "topic": "Features of folktales (didactic, entertaining, riddles); Use the recommended text on prose",
+              "description": "Features of folktales (didactic, entertaining, riddles); Use the recommended text on prose"
+            },
+            {
+              "week": 4,
+              "topic": "Use the recommended text on prose",
+              "description": "Use the recommended text on prose"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Midterm Examination"
+            },
+            {
+              "week": 6,
+              "topic": "Use the recommended text on drama – Characterization and plot",
+              "description": "Use the recommended text on drama – Characterization and plot"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm Break"
+            },
+            {
+              "week": 8,
+              "topic": "Differentiating between a novella and a novel; Figures of Speech – Onomatopoeia and Personification",
+              "description": "Differentiating between a novella and a novel; Figures of Speech – Onomatopoeia and Personification"
+            },
+            {
+              "week": 9,
+              "topic": "Select a folktale and explain the theme (use the recommended text on drama)",
+              "description": "Select a folktale and explain the theme (use the recommended text on drama)"
+            },
+            {
+              "week": 10,
+              "topic": "Use the recommended text on drama",
+              "description": "Use the recommended text on drama"
+            },
+            {
+              "week": 11,
+              "topic": "Revision of Literary Terms",
+              "description": "Review of Literary Terms"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "Examination"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Closing"
+            }
           ]
         },
         {
           "term": 2,
           "weeks": [
-            { "week": 1, "topic": "Use the recommended text on prose" },
-            { "week": 2, "topic": "Themes and Characterization in the recommended prose text" },
-            { "week": 3, "topic": "Use the recommended text on drama" },
-            { "week": 4, "topic": "Use the recommended drama text (Language, Setting and Characterization)" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Identification of figures of speech in the recommended prose text" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Distinguish between Irony, Euphemism and Hyperbole; Write a short play on The Reward of Honesty" },
-            { "week": 9, "topic": "Summary of the recommended prose text" },
-            { "week": 10, "topic": "Summary of the recommended drama text" },
-            { "week": 11, "topic": "Review of Literary Terms" },
-            { "week": 12, "topic": "Revision" },
-            { "week": 13, "topic": "Examination and Closing" }
+            {
+              "week": 1,
+              "topic": "Use the recommended text on prose",
+              "description": "Use the recommended text on prose"
+            },
+            {
+              "week": 2,
+              "topic": "Themes and Characterization in the recommended prose text",
+              "description": "Themes and Characterization in the recommended prose text"
+            },
+            {
+              "week": 3,
+              "topic": "Use the recommended text on drama",
+              "description": "Use the recommended text on drama"
+            },
+            {
+              "week": 4,
+              "topic": "Use the recommended drama text (Language, Setting and Characterization)",
+              "description": "Use the recommended drama text (Language, Setting and Characterization)"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Midterm Examination"
+            },
+            {
+              "week": 6,
+              "topic": "Identification of figures of speech in the recommended prose text",
+              "description": "Identification of figures of speech in the recommended prose text"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm Break"
+            },
+            {
+              "week": 8,
+              "topic": "Distinguish between Irony, Euphemism and Hyperbole; Write a short play on The Reward of Honesty",
+              "description": "Distinguish between Irony, Euphemism and Hyperbole; Write a short play on The Reward of Honesty"
+            },
+            {
+              "week": 9,
+              "topic": "Summary of the recommended prose text",
+              "description": "Summary of the recommended prose text"
+            },
+            {
+              "week": 10,
+              "topic": "Summary of the recommended drama text",
+              "description": "Summary of the recommended drama text"
+            },
+            {
+              "week": 11,
+              "topic": "Review of Literary Terms",
+              "description": "Review of Literary Terms"
+            },
+            {
+              "week": 12,
+              "topic": "Revision",
+              "description": "Revision"
+            },
+            {
+              "week": 13,
+              "topic": "Examination and Closing",
+              "description": "Examination and Closing"
+            }
           ]
         },
         {
           "term": 3,
           "weeks": [
-            { "week": 1, "topic": "Review of Literary Terms and Figures of Speech" },
-            { "week": 2, "topic": "Use of recommended prose text; Themes in Myths and Legends" },
-            { "week": 3, "topic": "Characterization, Theme, and Diction in recommended prose; Write a story on Honesty and Fair Play" },
-            { "week": 4, "topic": "Recommended prose text; Writing a simple poem on Laziness" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Moral lessons in recommended prose text; Setting and Plot" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Recommended drama text; Figures of Speech in drama" },
-            { "week": 9, "topic": "Recommended drama text; Dramatization of extracts" },
-            { "week": 10, "topic": "Characterization, Diction, Plot, and Theme in recommended drama text" },
-            { "week": 11, "topic": "Review of recommended prose and drama texts" },
-            { "week": 12, "topic": "Revision" },
-            { "week": 13, "topic": "Examination and Closing" }
+            {
+              "week": 1,
+              "topic": "Review of Literary Terms and Figures of Speech",
+              "description": "Review of Literary Terms and Figures of Speech"
+            },
+            {
+              "week": 2,
+              "topic": "Use of recommended prose text; Themes in Myths and Legends",
+              "description": "Use of recommended prose text; Themes in Myths and Legends"
+            },
+            {
+              "week": 3,
+              "topic": "Characterization, Theme, and Diction in recommended prose; Write a story on Honesty and Fair Play",
+              "description": "Characterization, Theme, and Diction in recommended prose; Write a story on Honesty and Fair Play"
+            },
+            {
+              "week": 4,
+              "topic": "Recommended prose text; Writing a simple poem on Laziness",
+              "description": "Recommended prose text; Writing a simple poem on Laziness"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Midterm Examination"
+            },
+            {
+              "week": 6,
+              "topic": "Moral lessons in recommended prose text; Setting and Plot",
+              "description": "Moral lessons in recommended prose text; Setting and Plot"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm Break"
+            },
+            {
+              "week": 8,
+              "topic": "Recommended drama text; Figures of Speech in drama",
+              "description": "Recommended drama text; Figures of Speech in drama"
+            },
+            {
+              "week": 9,
+              "topic": "Recommended drama text; Dramatization of extracts",
+              "description": "Recommended drama text; Dramatization of extracts"
+            },
+            {
+              "week": 10,
+              "topic": "Characterization, Diction, Plot, and Theme in recommended drama text",
+              "description": "Characterization, Diction, Plot, and Theme in recommended drama text"
+            },
+            {
+              "week": 11,
+              "topic": "Review of recommended prose and drama texts",
+              "description": "Review of recommended prose and drama texts"
+            },
+            {
+              "week": 12,
+              "topic": "Revision",
+              "description": "Revision"
+            },
+            {
+              "week": 13,
+              "topic": "Examination and Closing",
+              "description": "Examination and Closing"
+            }
           ]
         }
       ]
@@ -125,45 +438,161 @@
         {
           "term": 1,
           "weeks": [
-            { "week": 1, "topic": "Introduction to Fiction & Non-Fiction; Examples of Non-Fiction" },
-            { "week": 2, "topic": "Poetry Analysis" },
-            { "week": 3, "topic": "Prose – Study of the recommended text" },
-            { "week": 4, "topic": "Prose – Characterization, Theme, Plot" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Drama – Recommended text; Rhyme Schemes; Characterization, Diction, Setting, Plot" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Drama – Costumes and Props; More on Rhyme Schemes" },
-            { "week": 9, "topic": "Prose – Questions on recommended text" },
-            { "week": 10, "topic": "Review of Prose and Drama texts" },
-            { "week": 11, "topic": "General Literature Revision (Prose, Drama, Poetry)" },
-            { "week": 12, "topic": "End of Term Examination" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Introduction to Fiction & Non-Fiction; Examples of Non-Fiction",
+              "description": "Introduction to Fiction & Non-Fiction; Examples of Non-Fiction"
+            },
+            {
+              "week": 2,
+              "topic": "Poetry Analysis",
+              "description": "Poetry Analysis"
+            },
+            {
+              "week": 3,
+              "topic": "Prose – Study of the recommended text",
+              "description": "Prose – Study of the recommended text"
+            },
+            {
+              "week": 4,
+              "topic": "Prose – Characterization, Theme, Plot",
+              "description": "Prose – Characterization, Theme, Plot"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Midterm Examination"
+            },
+            {
+              "week": 6,
+              "topic": "Drama – Recommended text; Rhyme Schemes; Characterization, Diction, Setting, Plot",
+              "description": "Drama – Recommended text; Rhyme Schemes; Characterization, Diction, Setting, Plot"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm Break"
+            },
+            {
+              "week": 8,
+              "topic": "Drama – Costumes and Props; More on Rhyme Schemes",
+              "description": "Drama – Costumes and Props; More on Rhyme Schemes"
+            },
+            {
+              "week": 9,
+              "topic": "Prose – Questions on recommended text",
+              "description": "Prose – Questions on recommended text"
+            },
+            {
+              "week": 10,
+              "topic": "Review of Prose and Drama texts",
+              "description": "Review of Prose and Drama texts"
+            },
+            {
+              "week": 11,
+              "topic": "General Literature Revision (Prose, Drama, Poetry)",
+              "description": "General Literature Revision (Prose, Drama, Poetry)"
+            },
+            {
+              "week": 12,
+              "topic": "End of Term Examination",
+              "description": "End of Term Examination"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Closing"
+            }
           ]
         },
         {
           "term": 2,
           "weeks": [
-            { "week": 1, "topic": "Review of Features of Folktales; Discussion of Selected Folktales" },
-            { "week": 3, "topic": "Poetry – Write a short poem (The Lonely Child); Short story (How the Tortoise got the Pattern on His Shell)" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Prose – Use of recommended text; Identification of Prose Features" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Drama – Theme, Setting, Characterization in recommended drama text" },
-            { "week": 9, "topic": "Drama – Use of recommended text; Write a short playlet" },
-            { "week": 10, "topic": "Poetry – Language in Poetry; Construct sentences with Irony and Hyperbole" },
-            { "week": 11, "topic": "Summarizing the Prose Text" },
-            { "week": 12, "topic": "Drama – Revision of text with relevant questions" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Review of Features of Folktales; Discussion of Selected Folktales",
+              "description": "Review of Features of Folktales; Discussion of Selected Folktales"
+            },
+            {
+              "week": 3,
+              "topic": "Poetry – Write a short poem (The Lonely Child); Short story (How the Tortoise got the Pattern on His Shell)",
+              "description": "Poetry – Write a short poem (The Lonely Child); Short story (How the Tortoise got the Pattern on His Shell)"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Midterm Examination"
+            },
+            {
+              "week": 6,
+              "topic": "Prose – Use of recommended text; Identification of Prose Features",
+              "description": "Prose – Use of recommended text; Identification of Prose Features"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "Midterm Break"
+            },
+            {
+              "week": 8,
+              "topic": "Drama – Theme, Setting, Characterization in recommended drama text",
+              "description": "Drama – Theme, Setting, Characterization in recommended drama text"
+            },
+            {
+              "week": 9,
+              "topic": "Drama – Use of recommended text; Write a short playlet",
+              "description": "Drama – Use of recommended text; Write a short playlet"
+            },
+            {
+              "week": 10,
+              "topic": "Poetry – Language in Poetry; Construct sentences with Irony and Hyperbole",
+              "description": "Poetry – Language in Poetry; Construct sentences with Irony and Hyperbole"
+            },
+            {
+              "week": 11,
+              "topic": "Summarizing the Prose Text",
+              "description": "Summarizing the Prose Text"
+            },
+            {
+              "week": 12,
+              "topic": "Drama – Revision of text with relevant questions",
+              "description": "Drama – Revision of text with relevant questions"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Closing"
+            }
           ]
         },
         {
           "term": 3,
           "weeks": [
-            { "week": 2, "topic": "Review of Major/Minor Characters, Theme, Plot, Tragic/Comic Elements, and Diction" },
-            { "week": 3, "topic": "Review of Literary Terms in Poetry (Metaphor, Simile, Alliteration, Irony, etc.)" },
-            { "week": 4, "topic": "Use past questions" },
-            { "week": "5-10", "topic": "General Literature Revision" },
-            { "week": 11, "topic": "Examination" }
+            {
+              "week": 2,
+              "topic": "Review of Major/Minor Characters, Theme, Plot, Tragic/Comic Elements, and Diction",
+              "description": "Review of Major/Minor Characters, Theme, Plot, Tragic/Comic Elements, and Diction"
+            },
+            {
+              "week": 3,
+              "topic": "Review of Literary Terms in Poetry (Metaphor, Simile, Alliteration, Irony, etc.)",
+              "description": "Review of Literary Terms in Poetry (Metaphor, Simile, Alliteration, Irony, etc.)"
+            },
+            {
+              "week": 4,
+              "topic": "Use past questions",
+              "description": "Use past questions"
+            },
+            {
+              "week": "5-10",
+              "topic": "General Literature Revision",
+              "description": "General Revision"
+            },
+            {
+              "week": 11,
+              "topic": "Examination",
+              "description": "Examination"
+            }
           ]
         }
       ]
@@ -174,55 +603,211 @@
         {
           "term": 1,
           "weeks": [
-            { "week": 1, "topic": "Introduction to Literature - Definition, Functions, Importance" },
-            { "week": 2, "topic": "Literary Appreciation - Elements: Theme, Plot, Setting, Style, Tone, Mood" },
-            { "week": 3, "topic": "Literary Devices I - Meaning and examples of Figures of Speech: Simile, Metaphor, Irony, Personification, Oxymoron" },
-            { "week": 4, "topic": "Literary Devices II - Additional Figures of Speech: Euphemism, Alliteration, Hyperbole, Allusion, Assonance, Paradox, Repetition" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Genres/Branches of Literature - Prose, Poetry, Drama; Structural features" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Shakespearean Text: Antony and Cleopatra I - Background and setting; Plot summary (Acts I–II)" },
-            { "week": 9, "topic": "Shakespearean Text: Antony and Cleopatra II - Plot summary (Acts III–V); Themes and characterization" },
-            { "week": 10, "topic": "Shakespearean Text: Antony and Cleopatra III - Language and style; Imagery and dramatic techniques; Relevance to society" },
-            { "week": 11, "topic": "Revision - Review of all topics and texts (Weeks 1–10)" },
-            { "week": 12, "topic": "Examination" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Introduction to Literature - Definition, Functions, Importance",
+              "description": "- Definition of Literature - Functions of Literature - Importance of studying Literature"
+            },
+            {
+              "week": 2,
+              "topic": "Literary Appreciation - Elements: Theme, Plot, Setting, Style, Tone, Mood",
+              "description": "- Meaning of Literary Appreciation - Elements of Literary Appreciation: Theme, Plot, Setting, Style, Tone, Mood"
+            },
+            {
+              "week": 3,
+              "topic": "Literary Devices I - Meaning and examples of Figures of Speech: Simile, Metaphor, Irony, Personification, Oxymoron",
+              "description": "- Meaning and examples of Figures of Speech: Simile, Metaphor, Irony, Personification, Oxymoron"
+            },
+            {
+              "week": 4,
+              "topic": "Literary Devices II - Additional Figures of Speech: Euphemism, Alliteration, Hyperbole, Allusion, Assonance, Paradox, Repetition",
+              "description": "- Additional Figures of Speech: Euphemism, Alliteration, Hyperbole, Allusion, Assonance, Paradox, Repetition"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Genres/Branches of Literature - Prose, Poetry, Drama; Structural features",
+              "description": "- Overview of the three genres of Literature: Prose, Poetry, Drama - Structural features of each genre"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Shakespearean Text: Antony and Cleopatra I - Background and setting; Plot summary (Acts I–II)",
+              "description": "- Background of William Shakespeare - Background and setting of Antony and Cleopatra - Plot summary (Acts I–II)"
+            },
+            {
+              "week": 9,
+              "topic": "Shakespearean Text: Antony and Cleopatra II - Plot summary (Acts III–V); Themes and characterization",
+              "description": "- Plot summary (Acts III–V) - Themes and characterization"
+            },
+            {
+              "week": 10,
+              "topic": "Shakespearean Text: Antony and Cleopatra III - Language and style; Imagery and dramatic techniques; Relevance to society",
+              "description": "- Language and style - Imagery and dramatic techniques - Relevance to modern society"
+            },
+            {
+              "week": 11,
+              "topic": "Revision - Review of all topics and texts (Weeks 1–10)",
+              "description": "Review of all topics and texts (Weeks 1–10)"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "—"
+            }
           ]
         },
         {
           "term": 2,
           "weeks": [
-            { "week": 1, "topic": "Introduction to African Drama - Features; Oral tradition and cultural elements" },
-            { "week": 2, "topic": "African Drama: Bosede Ademilua-Afolayan’s Once Upon an Elephant I - Background; Setting and summary of Act One" },
-            { "week": 3, "topic": "African Drama: Once Upon an Elephant II - Plot summary (Act Two); Themes and characterization" },
-            { "week": 4, "topic": "African Drama: Efua Sutherland’s The Marriage of Anansewa I - Background; Plot summary and analysis of Act One" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "African Drama: The Marriage of Anansewa II - Themes, style, and characterization; Cultural values" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Non-African Drama: J. D. Priestley’s An Inspector Calls I - Background; Historical context; Setting and summary (Acts I–II)" },
-            { "week": 9, "topic": "Non-African Drama: An Inspector Calls II - Themes, style, and characterization; Social commentary" },
-            { "week": 10, "topic": "Non-African Drama: Robert Bolt’s A Man for All Seasons - Background; Themes of integrity, conscience, and power" },
-            { "week": 11, "topic": "Revision - Review of all topics and plays (Weeks 1–10)" },
-            { "week": 12, "topic": "Examination" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Introduction to African Drama - Features; Oral tradition and cultural elements",
+              "description": "- Features of African Drama - Oral tradition and cultural elements in African plays"
+            },
+            {
+              "week": 2,
+              "topic": "African Drama: Bosede Ademilua-Afolayan’s Once Upon an Elephant I - Background; Setting and summary of Act One",
+              "description": "- Background of the playwright - Background of the text - Setting and summary of Act One"
+            },
+            {
+              "week": 3,
+              "topic": "African Drama: Once Upon an Elephant II - Plot summary (Act Two); Themes and characterization",
+              "description": "- Plot summary (Act Two) - Themes and characterization"
+            },
+            {
+              "week": 4,
+              "topic": "African Drama: Efua Sutherland’s The Marriage of Anansewa I - Background; Plot summary and analysis of Act One",
+              "description": "- Background of the playwright - Background of the text - Plot summary and analysis of Act One"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "African Drama: The Marriage of Anansewa II - Themes, style, and characterization; Cultural values",
+              "description": "- Themes, style, and characterization - Cultural values and moral lessons"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Non-African Drama: J. D. Priestley’s An Inspector Calls I - Background; Historical context; Setting and summary (Acts I–II)",
+              "description": "- Background of the playwright - Historical context - Setting and summary (Acts I–II)"
+            },
+            {
+              "week": 9,
+              "topic": "Non-African Drama: An Inspector Calls II - Themes, style, and characterization; Social commentary",
+              "description": "- Themes, style, and characterization - Social commentary and moral implications"
+            },
+            {
+              "week": 10,
+              "topic": "Non-African Drama: Robert Bolt’s A Man for All Seasons - Background; Themes of integrity, conscience, and power",
+              "description": "- Background of the playwright - Themes of integrity, conscience, and power"
+            },
+            {
+              "week": 11,
+              "topic": "Revision - Review of all topics and plays (Weeks 1–10)",
+              "description": "Review of all topics and plays (Weeks 1–10)"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "—"
+            }
           ]
         },
         {
           "term": 3,
           "weeks": [
-            { "week": 1, "topic": "Introduction to Prose - Features; Elements: Plot, Setting, Characterization, Theme, Point of View" },
-            { "week": 2, "topic": "African Prose: Pede Hollist’s So the Path Does Not Die I - Background; Setting and plot summary (Chapters 1–4)" },
-            { "week": 3, "topic": "African Prose: So the Path Does Not Die II - Themes, style, and characterization; Socio-cultural issues" },
-            { "week": 4, "topic": "Non-African Prose: Harper Lee’s To Kill a Mockingbird I - Background; Plot summary (Chapters 1–5); Setting and tone" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Non-African Prose: To Kill a Mockingbird II - Themes of justice, racism, and innocence; Character analysis" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "African Poetry I - Gabriel Okara – “Once Upon a Time”; Niyi Osundare – “Not My Business”; Themes, tone" },
-            { "week": 9, "topic": "African Poetry II - Wole Soyinka – “Night”; Syl Cheney-Coker – “The Breast of the Sea”; Imagery, structure" },
-            { "week": 10, "topic": "Non-African Poetry - Maya Angelou – “Still I Rise”; Lord Byron – “She Walks in Beauty”; Themes, diction" },
-            { "week": 11, "topic": "Revision - Review of all prose, drama, and poetry texts" },
-            { "week": 12, "topic": "Examination" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Introduction to Prose - Features; Elements: Plot, Setting, Characterization, Theme, Point of View",
+              "description": "- Features of prose - Elements: Plot, Setting, Characterization, Theme, Point of View"
+            },
+            {
+              "week": 2,
+              "topic": "African Prose: Pede Hollist’s So the Path Does Not Die I - Background; Setting and plot summary (Chapters 1–4)",
+              "description": "- Background of the author - Setting and plot summary (Chapters 1–4)"
+            },
+            {
+              "week": 3,
+              "topic": "African Prose: So the Path Does Not Die II - Themes, style, and characterization; Socio-cultural issues",
+              "description": "- Themes, style, and characterization - Socio-cultural issues in the text"
+            },
+            {
+              "week": 4,
+              "topic": "Non-African Prose: Harper Lee’s To Kill a Mockingbird I - Background; Plot summary (Chapters 1–5); Setting and tone",
+              "description": "- Background of the author - Plot summary (Chapters 1–5) - Setting and tone"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Non-African Prose: To Kill a Mockingbird II - Themes of justice, racism, and innocence; Character analysis",
+              "description": "- Themes of justice, racism, and innocence - Character analysis and style"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "African Poetry I - Gabriel Okara – “Once Upon a Time”; Niyi Osundare – “Not My Business”; Themes, tone",
+              "description": "- Gabriel Okara – “Once Upon a Time” - Niyi Osundare – “Not My Business” - Themes, tone, and poetic devices"
+            },
+            {
+              "week": 9,
+              "topic": "African Poetry II - Wole Soyinka – “Night”; Syl Cheney-Coker – “The Breast of the Sea”; Imagery, structure",
+              "description": "- Wole Soyinka – “Night” - Syl Cheney-Coker – “The Breast of the Sea” - Imagery, symbolism, and structure"
+            },
+            {
+              "week": 10,
+              "topic": "Non-African Poetry - Maya Angelou – “Still I Rise”; Lord Byron – “She Walks in Beauty”; Themes, diction",
+              "description": "- Maya Angelou – “Still I Rise” - Lord Byron – “She Walks in Beauty” - Themes, diction, and moral lessons"
+            },
+            {
+              "week": 11,
+              "topic": "Revision - Review of all prose, drama, and poetry texts",
+              "description": "Review of all prose, drama, and poetry texts"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "—"
+            }
           ]
         }
       ]
@@ -233,55 +818,211 @@
         {
           "term": 1,
           "weeks": [
-            { "week": 1, "topic": "Introduction to African Poetry - Study of Gabriel Okara – “Once Upon a Time”" },
-            { "week": 2, "topic": "African Poetry - Study of Wole Soyinka – “Night”" },
-            { "week": 3, "topic": "African Poetry - Study of Niyi Osundare – “Not My Business”" },
-            { "week": 4, "topic": "African Poetry - Study of Syl Cheney-Coker – “The Breast of the Sea”" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "African Poetry - Study of S.O.H. Afriyie-Vidza – “Hearty Garlands” and Elizabeth L. A. Kamara – “New Tongue”" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Non-African Poetry - Study of Maya Angelou – “Still I Rise”" },
-            { "week": 9, "topic": "Non-African Poetry - Study of Lord Byron – “She Walks in Beauty”" },
-            { "week": 10, "topic": "Non-African Poetry - Study of Seamus Heaney – “Digging” and Fleur Adcock – “The Telephone Call”" },
-            { "week": 11, "topic": "Revision - General review of all poems studied (African and Non-African)" },
-            { "week": 12, "topic": "Examination" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Introduction to African Poetry - Study of Gabriel Okara – “Once Upon a Time”",
+              "description": "Study of Gabriel Okara – “Once Upon a Time”; themes, content analysis, and poetic devices."
+            },
+            {
+              "week": 2,
+              "topic": "African Poetry - Study of Wole Soyinka – “Night”",
+              "description": "Study of Wole Soyinka – “Night”; themes, structure, and poetic devices."
+            },
+            {
+              "week": 3,
+              "topic": "African Poetry - Study of Niyi Osundare – “Not My Business”",
+              "description": "Study of Niyi Osundare – “Not My Business”; themes, style, tone, and poetic analysis."
+            },
+            {
+              "week": 4,
+              "topic": "African Poetry - Study of Syl Cheney-Coker – “The Breast of the Sea”",
+              "description": "Study of Syl Cheney-Coker – “The Breast of the Sea”; themes, content analysis, imagery, and symbolism."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment of first half of the term’s work."
+            },
+            {
+              "week": 6,
+              "topic": "African Poetry - Study of S.O.H. Afriyie-Vidza – “Hearty Garlands” and Elizabeth L. A. Kamara – “New Tongue”",
+              "description": "Study of S.O.H. Afriyie-Vidza – “Hearty Garlands” and Elizabeth L. A. Kamara – “New Tongue”; themes, mood, tone, and poetic devices."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Non-African Poetry - Study of Maya Angelou – “Still I Rise”",
+              "description": "Study of Maya Angelou – “Still I Rise”; themes of perseverance and empowerment; poetic techniques."
+            },
+            {
+              "week": 9,
+              "topic": "Non-African Poetry - Study of Lord Byron – “She Walks in Beauty”",
+              "description": "Study of Lord Byron – “She Walks in Beauty”; themes, diction, mood, and imagery."
+            },
+            {
+              "week": 10,
+              "topic": "Non-African Poetry - Study of Seamus Heaney – “Digging” and Fleur Adcock – “The Telephone Call”",
+              "description": "Study of Seamus Heaney – “Digging” and Fleur Adcock – “The Telephone Call”; structure, tone, and poetic analysis."
+            },
+            {
+              "week": 11,
+              "topic": "Revision - General review of all poems studied (African and Non-African)",
+              "description": "General review of all poems studied (African and Non-African)."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term examinations."
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities."
+            }
           ]
         },
         {
           "term": 2,
           "weeks": [
-            { "week": 1, "topic": "Welcome Test and Review of previous term’s work; Introduction to prose elements" },
-            { "week": 2, "topic": "Introduction to African Prose - Study of Elma Shaw – “Redemption Road”" },
-            { "week": 3, "topic": "African Prose - Detailed analysis of Redemption Road (Chapters 1–5)" },
-            { "week": 4, "topic": "African Prose - Continued analysis (Chapters 6–10); Themes and character development" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "African Prose - Continued study (Chapters 11–15); Stylistic and structural analysis" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Non-African Prose - Study of Susanne Bellefeuille – “Path of Lucas: The Journey He Endured”" },
-            { "week": 9, "topic": "Non-African Prose - Detailed analysis (Chapters 1–6); major events and themes" },
-            { "week": 10, "topic": "Non-African Prose - Continued analysis; characterization, plot development" },
-            { "week": 11, "topic": "Revision - General review of African and Non-African prose texts" },
-            { "week": 12, "topic": "Examination" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Welcome Test and Review of previous term’s work; Introduction to prose elements",
+              "description": "Review of previous term’s work; introduction to prose elements and literary terms."
+            },
+            {
+              "week": 2,
+              "topic": "Introduction to African Prose - Study of Elma Shaw – “Redemption Road”",
+              "description": "Study of Elma Shaw – “Redemption Road”; plot structure, setting (physical, social, and temporal)."
+            },
+            {
+              "week": 3,
+              "topic": "African Prose - Detailed analysis of Redemption Road (Chapters 1–5)",
+              "description": "Detailed analysis of Redemption Road (Chapters 1–5); introduction of characters and major events."
+            },
+            {
+              "week": 4,
+              "topic": "African Prose - Continued analysis (Chapters 6–10); Themes and character development",
+              "description": "Continued analysis (Chapters 6–10); themes and character development."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment of first half of the term’s work."
+            },
+            {
+              "week": 6,
+              "topic": "African Prose - Continued study (Chapters 11–15); Stylistic and structural analysis",
+              "description": "Continued study (Chapters 11–15); stylistic and structural analysis."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Non-African Prose - Study of Susanne Bellefeuille – “Path of Lucas: The Journey He Endured”",
+              "description": "Study of Susanne Bellefeuille – “Path of Lucas: The Journey He Endured”; background of the author and text overview."
+            },
+            {
+              "week": 9,
+              "topic": "Non-African Prose - Detailed analysis (Chapters 1–6); major events and themes",
+              "description": "Detailed analysis (Chapters 1–6); major events and themes of perseverance, love, and endurance."
+            },
+            {
+              "week": 10,
+              "topic": "Non-African Prose - Continued analysis; characterization, plot development",
+              "description": "Continued analysis; characterization, plot development, and narrative techniques."
+            },
+            {
+              "week": 11,
+              "topic": "Revision - General review of African and Non-African prose texts",
+              "description": "General review of African and Non-African prose texts."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term examinations."
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities."
+            }
           ]
         },
         {
           "term": 3,
           "weeks": [
-            { "week": 1, "topic": "Introduction to African Drama - Overview of African Drama and cultural influences" },
-            { "week": 2, "topic": "African Drama - Study of Efua Sutherland – “The Marriage of Anansewa”; Background and Act One" },
-            { "week": 3, "topic": "African Drama - Detailed analysis of The Marriage of Anansewa (Acts Two–Three)" },
-            { "week": 4, "topic": "African Drama - Continued study; themes, style, and dramatic techniques" },
-            { "week": 5, "topic": "Midterm Examination" },
-            { "week": 6, "topic": "Non-African Drama - Study of Robert Bolt – “A Man for All Seasons”; Background and Acts One–Two" },
-            { "week": 7, "topic": "Midterm Break" },
-            { "week": 8, "topic": "Non-African Drama - Continued analysis of A Man for All Seasons; themes and style" },
-            { "week": 9, "topic": "Non-African Drama - Study of J.D. Priestley – “An Inspector Calls”; Background and plot summary" },
-            { "week": 10, "topic": "Non-African Drama - Themes and dramatic techniques in An Inspector Calls" },
-            { "week": 11, "topic": "Revision - General review of all drama texts and poems" },
-            { "week": 12, "topic": "Examination" },
-            { "week": 13, "topic": "Closing" }
+            {
+              "week": 1,
+              "topic": "Introduction to African Drama - Overview of African Drama and cultural influences",
+              "description": "Overview of African Drama and cultural influences."
+            },
+            {
+              "week": 2,
+              "topic": "African Drama - Study of Efua Sutherland – “The Marriage of Anansewa”; Background and Act One",
+              "description": "Study of Efua Sutherland – “The Marriage of Anansewa”; background, setting, and summary of Act One."
+            },
+            {
+              "week": 3,
+              "topic": "African Drama - Detailed analysis of The Marriage of Anansewa (Acts Two–Three)",
+              "description": "Detailed analysis of The Marriage of Anansewa (Acts Two–Three); themes, plot, and characterization."
+            },
+            {
+              "week": 4,
+              "topic": "African Drama - Continued study; themes, style, and dramatic techniques",
+              "description": "Continued study of The Marriage of Anansewa; moral lessons, style, and dramatic techniques."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "Assessment of first half of the term’s work."
+            },
+            {
+              "week": 6,
+              "topic": "Non-African Drama - Study of Robert Bolt – “A Man for All Seasons”; Background and Acts One–Two",
+              "description": "Study of Robert Bolt – “A Man for All Seasons”; background of the playwright, setting, and Acts One–Two."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Non-African Drama - Continued analysis of A Man for All Seasons; themes and style",
+              "description": "Continued analysis of A Man for All Seasons; themes, characterization, and style."
+            },
+            {
+              "week": 9,
+              "topic": "Non-African Drama - Study of J.D. Priestley – “An Inspector Calls”; Background and plot summary",
+              "description": "Study of J.D. Priestley – “An Inspector Calls”; background, plot summary, and character analysis."
+            },
+            {
+              "week": 10,
+              "topic": "Non-African Drama - Themes and dramatic techniques in An Inspector Calls",
+              "description": "Themes and dramatic techniques in An Inspector Calls; moral and social significance."
+            },
+            {
+              "week": 11,
+              "topic": "Revision - General review of all drama texts and poems",
+              "description": "General review of all drama texts and poems."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term examinations."
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "End of term activities."
+            }
           ]
         }
       ]
@@ -292,35 +1033,120 @@
         {
           "term": 1,
           "weeks": [
-            { "week": 1, "topic": "Welcome Test / Revision; Historical and thematic background to Antony and Cleopatra" },
-            { "week": 2, "topic": "Dramatic Personae of William Shakespeare’s Antony and Cleopatra" },
-            { "week": 3, "topic": "Antony and Cleopatra – Act I analysis" },
-            { "week": 4, "topic": "Antony and Cleopatra – Act II analysis; character of Cleopatra" },
-            { "week": 5, "topic": "Antony and Cleopatra – Act III analysis; battle scenes" },
-            { "week": 6, "topic": "Antony and Cleopatra – Acts IV & V; tragic resolution and themes" },
-            { "week": 7, "topic": "Mid-Term Break / Open Day" },
-            { "week": 8, "topic": "Introduction to Unseen Prose - Features and analysis tools" },
-            { "week": "9-10", "topic": "Introduction to Unseen Poem - Features, imagery, and literary devices" },
-            { "week": 11, "topic": "Principles of Answering Context and Literature Questions" },
-            { "week": 12, "topic": "Revision - Review of Antony and Cleopatra and unseen texts" },
-            { "week": 13, "topic": "Examination" }
+            {
+              "week": 1,
+              "topic": "Welcome Test / Revision; Historical and thematic background to Antony and Cleopatra",
+              "description": "- Recall the previous term’s work. - Relate Shakespeare’s background to Antony and Cleopatra. - Discuss the play’s historical and thematic background."
+            },
+            {
+              "week": 2,
+              "topic": "Dramatic Personae of William Shakespeare’s Antony and Cleopatra",
+              "description": "- Analyse the characters: Antony, Cleopatra, Octavius Caesar, Enobarbus, Charmian, and others. - Discuss relationships among the key characters and their roles in the tragedy."
+            },
+            {
+              "week": 3,
+              "topic": "Antony and Cleopatra – Act I analysis",
+              "description": "- Analyse the events and conflicts in Act I. - Discuss Antony’s divided loyalty between Rome and Egypt. - Examine themes of love, power, and politics."
+            },
+            {
+              "week": 4,
+              "topic": "Antony and Cleopatra – Act II analysis; character of Cleopatra",
+              "description": "- Discuss the growing tension between Antony and Caesar. - Analyse Cleopatra’s character and her influence on Antony. - Examine language, imagery, and dramatic techniques used."
+            },
+            {
+              "week": 5,
+              "topic": "Antony and Cleopatra – Act III analysis; battle scenes",
+              "description": "- Study the battle scenes and turning points. - Examine betrayal, ambition, and loyalty. - Discuss the role of Enobarbus as a foil to Antony."
+            },
+            {
+              "week": 6,
+              "topic": "Antony and Cleopatra – Acts IV & V; tragic resolution and themes",
+              "description": "- Analyse the tragic resolution of the play. - Identify the main themes: love vs. duty, honour, pride, and fate. - Discuss Shakespeare’s use of imagery, irony, and symbolism."
+            },
+            {
+              "week": 7,
+              "topic": "Mid-Term Break / Open Day",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Introduction to Unseen Prose - Features and analysis tools",
+              "description": "- Features of unseen prose: comprehension and plot. - Tools for unseen passage analysis: theme, setting, tone, and character. - Practice analysis using short unseen prose excerpts."
+            },
+            {
+              "week": "9-10",
+              "topic": "Introduction to Unseen Poem - Features, imagery, and literary devices",
+              "description": "- Features of unseen poem: structure, imagery, and mood. - Literary devices: metaphor, personification, simile, irony, alliteration, paradox. - Practice unseen poem analysis using short modern poems."
+            },
+            {
+              "week": 11,
+              "topic": "Principles of Answering Context and Literature Questions",
+              "description": "- Interpret common exam verbs (comment, describe, contrast, examine). - Develop accurate, concise responses to context-based questions."
+            },
+            {
+              "week": 12,
+              "topic": "Revision - Review of Antony and Cleopatra and unseen texts",
+              "description": "- Review of Antony and Cleopatra and unseen texts."
+            },
+            {
+              "week": 13,
+              "topic": "Examination",
+              "description": "—"
+            }
           ]
         },
         {
           "term": 2,
           "weeks": [
-            { "week": 1, "topic": "Welcome Test / Revision of Antony and Cleopatra" },
-            { "week": 2, "topic": "Review of Shakespearean Text - characterization and conflicts" },
-            { "week": 3, "topic": "Revision of African Prose - Study of Pede Hollist and Elma Shaw" },
-            { "week": 4, "topic": "Revision of Non-African Prose - Study of Harper Lee and Susanne Bellefeuille" },
-            { "week": 5, "topic": "Revision of African Drama - Study of Efua Sutherland and Bosede Ademilua-Afolayan" },
-            { "week": 6, "topic": "Revision of Non-African Drama - Study of Robert Bolt and J. D. Priestley" },
-            { "week": 7, "topic": "Revision of African and Non-African Poetry" },
-            { "week": 8, "topic": "Mid-Term Break / Open Day" },
-            { "week": "9-14", "topic": "General Revision - Focus on examination techniques and model answers" }
+            {
+              "week": 1,
+              "topic": "Welcome Test / Revision of Antony and Cleopatra",
+              "description": "- Overview of Antony and Cleopatra. - Key themes, characters, and stylistic features."
+            },
+            {
+              "week": 2,
+              "topic": "Review of Shakespearean Text - characterization and conflicts",
+              "description": "- Discussion on characterization, plot development, and major conflicts. - Relate moral lessons from the play to modern society."
+            },
+            {
+              "week": 3,
+              "topic": "Revision of African Prose - Study of Pede Hollist and Elma Shaw",
+              "description": "- Study of Pede Hollist – So the Path Does Not Die and Elma Shaw – Redemption Road. - Analyse themes, characters, and narrative techniques. - Discuss social, political, and cultural contexts."
+            },
+            {
+              "week": 4,
+              "topic": "Revision of Non-African Prose - Study of Harper Lee and Susanne Bellefeuille",
+              "description": "- Study of Harper Lee – To Kill a Mockingbird and Susanne Bellefeuille – Path of Lucas: The Journey He Endured. - Discuss plot, characters, and moral lessons. - Analyse themes of justice, love, and endurance."
+            },
+            {
+              "week": 5,
+              "topic": "Revision of African Drama - Study of Efua Sutherland and Bosede Ademilua-Afolayan",
+              "description": "- Study of Efua Sutherland – The Marriage of Anansewa and Bosede Ademilua-Afolayan – Once Upon an Elephant. - Identify dramatic techniques and themes. - Discuss societal values reflected in both plays."
+            },
+            {
+              "week": 6,
+              "topic": "Revision of Non-African Drama - Study of Robert Bolt and J. D. Priestley",
+              "description": "- Study of Robert Bolt – A Man for All Seasons and J. D. Priestley – An Inspector Calls. - Discuss themes of justice, integrity, hypocrisy, and social responsibility. - Identify major and minor characters."
+            },
+            {
+              "week": 7,
+              "topic": "Revision of African and Non-African Poetry",
+              "description": "- Review of all selected African and Non-African poems. - Identify themes, tone, mood, and poetic devices. - Relate imagery to central ideas."
+            },
+            {
+              "week": 8,
+              "topic": "Mid-Term Break / Open Day",
+              "description": "—"
+            },
+            {
+              "week": "9-14",
+              "topic": "General Revision - Focus on examination techniques and model answers",
+              "description": "- Comprehensive revision of all prescribed texts: Drama, Prose, and Poetry. - Focus on examination techniques, past questions, and model answers."
+            }
           ]
         }
       ]
     }
   ]
+  
 }

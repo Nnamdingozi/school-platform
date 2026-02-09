@@ -1,353 +1,1267 @@
 {
-    "subject": "Livestock Farming",
-    "curriculum": [
-      {
-        "grade": "JSS 1",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Livestock Farming" },
-              { "week": 2, "topic": "Types of Poultry Birds" },
-              { "week": 3, "topic": "Breeds of Poultry Birds" },
-              { "week": 4, "topic": "Poultry Housing" },
-              { "week": 5, "topic": "Mid-Term Examination" },
-              { "week": 6, "topic": "Poultry Equipment" },
-              { "week": 7, "topic": "Mid-Term Break" },
-              { "week": 8, "topic": "Poultry Management Practices" },
-              { "week": 9, "topic": "Poultry Diseases and Control" },
-              { "week": 10, "topic": "Classification of Feed Ingredients" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing / Vacation" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Rabbit Production" },
-              { "week": 2, "topic": "Breeds of Rabbit" },
-              { "week": 3, "topic": "Rabbit Housing" },
-              { "week": 4, "topic": "Rabbit Feeds" },
-              { "week": 5, "topic": "Mid-Term Examination" },
-              { "week": 6, "topic": "Health Management in Rabbits" },
-              { "week": 7, "topic": "Mid-Term Break" },
-              { "week": 8, "topic": "Reproduction in Rabbits" },
-              { "week": 9, "topic": "Record Keeping in Rabbitry" },
-              { "week": 10, "topic": "Handling and Management Practices" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing / Vacation" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Concept of Sheep and Goat Production" },
-              { "week": 2, "topic": "Breeds of Sheep and Goats" },
-              { "week": 3, "topic": "Housing and Equipment for Sheep and Goats" },
-              { "week": 4, "topic": "Feeds for Sheep and Goats" },
-              { "week": 5, "topic": "Mid-Term Examination" },
-              { "week": 6, "topic": "Health Management in Sheep and Goats" },
-              { "week": 7, "topic": "Mid-Term Break" },
-              { "week": 8, "topic": "Sick Sheep or Goat in a Herd" },
-              { "week": 9, "topic": "Breeding in Sheep and Goats" },
-              { "week": 10, "topic": "Practical: Identifying Feeds and Breeds" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing / Vacation" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "JSS 2",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Review of JSS 1 Livestock Farming" },
-              { "week": 2, "topic": "Poultry Management (Advanced)" },
-              { "week": 3, "topic": "Poultry Feed Formulation" },
-              { "week": 4, "topic": "Egg and Meat Production" },
-              { "week": 5, "topic": "Mid-Term Examination" },
-              { "week": 6, "topic": "Rabbit Management (Advanced)" },
-              { "week": 7, "topic": "Mid-Term Break" },
-              { "week": 8, "topic": "Rabbit Feed Formulation" },
-              { "week": 9, "topic": "Record Keeping in Livestock Production" },
-              { "week": 10, "topic": "Sanitation and Biosecurity" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing / Vacation" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Sheep and Goat Production (Advanced)" },
-              { "week": 2, "topic": "Disease Prevention and Control" },
-              { "week": 3, "topic": "Pasture Management" },
-              { "week": 4, "topic": "Livestock Housing" },
-              { "week": 5, "topic": "Mid-Term Examination" },
-              { "week": 6, "topic": "Concept of Entrepreneurship" },
-              { "week": 7, "topic": "Mid-Term Break" },
-              { "week": 8, "topic": "Importance of Entrepreneurship" },
-              { "week": 9, "topic": "Concept of Money" },
-              { "week": 10, "topic": "Practical: Budgeting in Livestock Farming" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing / Vacation" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Business Start-up in Livestock Farming" },
-              { "week": 2, "topic": "Factors to Consider Before Starting" },
-              { "week": 3, "topic": "Business Records" },
-              { "week": 4, "topic": "Marketing of Livestock Products" },
-              { "week": 5, "topic": "Mid-Term Examination" },
-              { "week": 6, "topic": "Marketing Channels" },
-              { "week": 7, "topic": "Mid-Term Break" },
-              { "week": 8, "topic": "Packaging and Processing" },
-              { "week": 9, "topic": "Marketing Poultry, Rabbit, Sheep, and Goat Products" },
-              { "week": 10, "topic": "Project Work" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing / Vacation" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "JSS 3",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Review of JSS 2 Work" },
-              { "week": 2, "topic": "Advanced Poultry Management" },
-              { "week": 3, "topic": "Livestock Breeding Techniques" },
-              { "week": 4, "topic": "Health and Safety in Livestock Farming" },
-              { "week": 5, "topic": "Mid-Term Examination" },
-              { "week": 6, "topic": "Waste Management" },
-              { "week": 7, "topic": "Mid-Term Break" },
-              { "week": 8, "topic": "Farm Layout Planning" },
-              { "week": 9, "topic": "Livestock Record Analysis" },
-              { "week": 10, "topic": "Practical: Livestock Farm Design" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing / Vacation" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Advanced Entrepreneurship in Livestock" },
-              { "week": 2, "topic": "Financial Management in Livestock Business" },
-              { "week": 3, "topic": "Marketing Strategies" },
-              { "week": 4, "topic": "Cooperative Farming" },
-              { "week": 5, "topic": "Mid-Term Examination" },
-              { "week": 6, "topic": "Farm Record Keeping (Advanced)" },
-              { "week": 7, "topic": "Mid-Term Break" },
-              { "week": 8, "topic": "Value Addition in Livestock Products" },
-              { "week": 9, "topic": "Export of Livestock Products" },
-              { "week": 10, "topic": "Practical Project" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing / Vacation" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Agribusiness Project Development" },
-              { "week": 2, "topic": "Marketing and Distribution Channels" },
-              { "week": 3, "topic": "Pricing and Cost Control" },
-              { "week": 4, "topic": "Mid-Term Examination" },
-              { "week": 5, "topic": "Livestock Exhibition and Demonstration" },
-              { "week": 6, "topic": "Revision" },
-              { "week": "7-10", "topic": "BECE Preparation and Examination" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 1",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Livestock Farming" },
-              { "week": 2, "topic": "History and Development of Livestock Farming in Nigeria" },
-              { "week": 3, "topic": "Classification of Livestock" },
-              { "week": 4, "topic": "Livestock Housing" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Animal Nutrition I" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Animal Nutrition II" },
-              { "week": 9, "topic": "Animal Breeding I" },
-              { "week": 10, "topic": "Animal Breeding II" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Poultry Farming" },
-              { "week": 2, "topic": "Poultry Management I" },
-              { "week": 3, "topic": "Poultry Management II" },
-              { "week": 4, "topic": "Poultry Diseases" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Poultry Business" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Goat and Sheep Farming I" },
-              { "week": 9, "topic": "Goat and Sheep Farming II" },
-              { "week": 10, "topic": "Goat and Sheep Business" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Cattle Farming I" },
-              { "week": 2, "topic": "Cattle Farming II" },
-              { "week": 3, "topic": "Cattle Breeding and Production" },
-              { "week": 4, "topic": "Cattle Diseases" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Pig Farming I" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Pig Farming II" },
-              { "week": 9, "topic": "Rabbit and Grasscutter Farming" },
-              { "week": 10, "topic": "Business Opportunities in Livestock" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 2",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Aquaculture" },
-              { "week": 2, "topic": "Fish Pond Construction" },
-              { "week": 3, "topic": "Fish Breeds and Fingerlings" },
-              { "week": 4, "topic": "Fish Nutrition and Feeding" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Fish Health and Disease" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Fish Harvesting" },
-              { "week": 9, "topic": "Fish Marketing" },
-              { "week": 10, "topic": "Economics of Aquaculture" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Snail Farming I" },
-              { "week": 2, "topic": "Snail Farming II" },
-              { "week": 3, "topic": "Honey Bee Keeping (Apiculture) I" },
-              { "week": 4, "topic": "Honey Bee Keeping II" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Grasscutter Farming" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Animal Health I" },
-              { "week": 9, "topic": "Animal Health II" },
-              { "week": 10, "topic": "Pasture and Forage Crops" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Livestock Economics" },
-              { "week": 2, "topic": "Farm Records and Accounts" },
-              { "week": 3, "topic": "Marketing of Livestock Products I" },
-              { "week": 4, "topic": "Marketing of Livestock Products II" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Value Addition in Livestock" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Cooperative Societies in Livestock" },
-              { "week": 9, "topic": "Government Policies in Livestock Farming" },
-              { "week": 10, "topic": "Contemporary Issues" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 3",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Animal Biotechnology" },
-              { "week": 2, "topic": "Reproductive Technologies" },
-              { "week": 3, "topic": "Genetic Improvement" },
-              { "week": 4, "topic": "Animal Welfare and Ethics" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Sustainable Livestock Farming" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Livestock Business Planning" },
-              { "week": 9, "topic": "Farm Project Development" },
-              { "week": 10, "topic": "Entrepreneurship in Livestock" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Dairy Technology I" },
-              { "week": 2, "topic": "Dairy Technology II" },
-              { "week": 3, "topic": "Meat Science I" },
-              { "week": 4, "topic": "Meat Science II" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Hide and Skin Processing" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Egg Technology" },
-              { "week": 9, "topic": "Livestock Product Quality Control" },
-              { "week": 10, "topic": "Export of Livestock Products" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Farm Mechanization in Livestock" },
-              { "week": 2, "topic": "ICT in Livestock Farming" },
-              { "week": 3, "topic": "Farm Management Simulation" },
-              { "week": 4, "topic": "Field Work" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Project Work" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Presentation of Projects" },
-              { "week": 9, "topic": "Career Opportunities in Livestock" },
-              { "week": 10, "topic": "Final Preparations for External Exams" },
-              { "week": 11, "topic": "General Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+  "subject": "Livestock Farming",
+  "curriculum_name": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Livestock Farming",
+              "description": "Meaning and importance of livestock farming; Types of livestock animals; Benefits of livestock to humans"
+            },
+            {
+              "week": 2,
+              "topic": "Types of Poultry Birds",
+              "description": "Meaning of poultry; Common types — chicken, turkey, duck, guinea fowl, pigeon, quail; Uses of poultry birds"
+            },
+            {
+              "week": 3,
+              "topic": "Breeds of Poultry Birds",
+              "description": "Local and exotic breeds (layers, broilers, cockerels); Characteristics of each breed"
+            },
+            {
+              "week": 4,
+              "topic": "Poultry Housing",
+              "description": "Types of poultry houses; Requirements of a good house; Construction materials"
+            },
+            {
+              "week": 5,
+              "topic": "Mid-Term Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Poultry Equipment",
+              "description": "Types (feeders, drinkers, brooders, laying nests, perches); Uses and maintenance"
+            },
+            {
+              "week": 7,
+              "topic": "Mid-Term Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Poultry Management Practices",
+              "description": "Daily care and management of chicks, growers, and layers; Sanitation and record-keeping"
+            },
+            {
+              "week": 9,
+              "topic": "Poultry Diseases and Control",
+              "description": "Common diseases (Newcastle, Coccidiosis, Fowl Pox); Symptoms, prevention, and control"
+            },
+            {
+              "week": 10,
+              "topic": "Classification of Feed Ingredients",
+              "description": "Meaning of feed; Ingredients (protein, carbohydrate, vitamins, minerals); Feed formulation"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of term’s work and practicals"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing / Vacation",
+              "description": "—"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Rabbit Production",
+              "description": "Importance of rabbits; Characteristics and benefits of rabbit rearing"
+            },
+            {
+              "week": 2,
+              "topic": "Breeds of Rabbit",
+              "description": "Local and exotic breeds (New Zealand White, Chinchilla, Dutch, etc.); Characteristics and uses"
+            },
+            {
+              "week": 3,
+              "topic": "Rabbit Housing",
+              "description": "Types of hutches; Materials used; Requirements of a good hutch"
+            },
+            {
+              "week": 4,
+              "topic": "Rabbit Feeds",
+              "description": "Types of feeds — concentrates and roughages; Feeding schedules and water management"
+            },
+            {
+              "week": 5,
+              "topic": "Mid-Term Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Health Management in Rabbits",
+              "description": "Common diseases, symptoms, prevention, and control"
+            },
+            {
+              "week": 7,
+              "topic": "Mid-Term Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Reproduction in Rabbits",
+              "description": "Mating process, gestation, kindling, and weaning"
+            },
+            {
+              "week": 9,
+              "topic": "Record Keeping in Rabbitry",
+              "description": "Importance; Types of records (feeding, breeding, sales)"
+            },
+            {
+              "week": 10,
+              "topic": "Handling and Management Practices",
+              "description": "Handling methods, grooming, sanitation, and waste disposal"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Practical demonstration: feeding, cleaning, and maintenance"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing / Vacation",
+              "description": "—"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Concept of Sheep and Goat Production",
+              "description": "Meaning, importance, and uses of sheep and goats; Differences between sheep and goats"
+            },
+            {
+              "week": 2,
+              "topic": "Breeds of Sheep and Goats",
+              "description": "Local and exotic breeds — West African Dwarf, Yankasa, Sokoto Red, etc."
+            },
+            {
+              "week": 3,
+              "topic": "Housing and Equipment for Sheep and Goats",
+              "description": "Types of housing; Feeding and watering equipment"
+            },
+            {
+              "week": 4,
+              "topic": "Feeds for Sheep and Goats",
+              "description": "Common feed ingredients; Grazing, browsing, and supplementary feeding"
+            },
+            {
+              "week": 5,
+              "topic": "Mid-Term Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Health Management in Sheep and Goats",
+              "description": "Common diseases and parasites; Causes, symptoms, and control"
+            },
+            {
+              "week": 7,
+              "topic": "Mid-Term Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Sick Sheep or Goat in a Herd",
+              "description": "Identification and isolation of sick animals; Treatment and record-keeping"
+            },
+            {
+              "week": 9,
+              "topic": "Breeding in Sheep and Goats",
+              "description": "Mating systems; Gestation period; Care of pregnant animals and young ones"
+            },
+            {
+              "week": 10,
+              "topic": "Practical: Identifying Feeds and Breeds",
+              "description": "Recognition and classification exercises; Field observation"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of term’s work and key livestock practices"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing / Vacation",
+              "description": "—"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Review of JSS 1 Livestock Farming",
+              "description": "Recap of poultry, rabbit, and sheep/goat production concepts"
+            },
+            {
+              "week": 2,
+              "topic": "Poultry Management (Advanced)",
+              "description": "Brooding management; Culling; Vaccination; Record-keeping"
+            },
+            {
+              "week": 3,
+              "topic": "Poultry Feed Formulation",
+              "description": "Balancing nutrients; Mixing procedures; Feed ratios and formulation steps"
+            },
+            {
+              "week": 4,
+              "topic": "Egg and Meat Production",
+              "description": "Egg collection, processing, and storage; Slaughtering and dressing of birds"
+            },
+            {
+              "week": 5,
+              "topic": "Mid-Term Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Rabbit Management (Advanced)",
+              "description": "Breeding, kindling, care of young; Weaning and growth stages"
+            },
+            {
+              "week": 7,
+              "topic": "Mid-Term Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Rabbit Feed Formulation",
+              "description": "Local feed ingredients; Feeding management and schedules"
+            },
+            {
+              "week": 9,
+              "topic": "Record Keeping in Livestock Production",
+              "description": "Types and importance of records — feeding, health, and financial records"
+            },
+            {
+              "week": 10,
+              "topic": "Sanitation and Biosecurity",
+              "description": "Hygiene, disinfection, and disease prevention methods"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of advanced livestock management topics"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing / Vacation",
+              "description": "—"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Sheep and Goat Production (Advanced)",
+              "description": "Feeding methods, breeding systems, care of lambs and kids"
+            },
+            {
+              "week": 2,
+              "topic": "Disease Prevention and Control",
+              "description": "Vaccination schedules; Sanitation; Isolation of sick animals"
+            },
+            {
+              "week": 3,
+              "topic": "Pasture Management",
+              "description": "Types of pastures; Grazing systems; Establishment and maintenance of pastures"
+            },
+            {
+              "week": 4,
+              "topic": "Livestock Housing",
+              "description": "Improved housing materials and layout for animal comfort"
+            },
+            {
+              "week": 5,
+              "topic": "Mid-Term Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Concept of Entrepreneurship",
+              "description": "Meaning of entrepreneurship; Characteristics of an entrepreneur"
+            },
+            {
+              "week": 7,
+              "topic": "Mid-Term Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Importance of Entrepreneurship",
+              "description": "Role in employment creation; Opportunities in livestock farming"
+            },
+            {
+              "week": 9,
+              "topic": "Concept of Money",
+              "description": "Definition and functions of money; Forms of money in agribusiness"
+            },
+            {
+              "week": 10,
+              "topic": "Practical: Budgeting in Livestock Farming",
+              "description": "Simple record-keeping and cost management exercises"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of the term’s work"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing / Vacation",
+              "description": "—"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Business Start-up in Livestock Farming",
+              "description": "Steps in starting a small poultry, rabbit, or goat business"
+            },
+            {
+              "week": 2,
+              "topic": "Factors to Consider Before Starting",
+              "description": "Capital, location, breed selection, and feeding requirements"
+            },
+            {
+              "week": 3,
+              "topic": "Business Records",
+              "description": "Daily and monthly records — expenditure, income, and profit tracking"
+            },
+            {
+              "week": 4,
+              "topic": "Marketing of Livestock Products",
+              "description": "Meaning and importance of marketing livestock products"
+            },
+            {
+              "week": 5,
+              "topic": "Mid-Term Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Marketing Channels",
+              "description": "From producer to consumer; Role of middlemen and wholesalers"
+            },
+            {
+              "week": 7,
+              "topic": "Mid-Term Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Packaging and Processing",
+              "description": "Methods of packaging eggs, meat, hides, and fur for sale"
+            },
+            {
+              "week": 9,
+              "topic": "Marketing Poultry, Rabbit, Sheep, and Goat Products",
+              "description": "Sales, branding, and advertising techniques"
+            },
+            {
+              "week": 10,
+              "topic": "Project Work",
+              "description": "Practical farm visit or market survey"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of the term’s topics and key concepts"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing / Vacation",
+              "description": "—"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Review of JSS 2 Work",
+              "description": "Revision of poultry, rabbit, and sheep/goat production"
+            },
+            {
+              "week": 2,
+              "topic": "Advanced Poultry Management",
+              "description": "Hatchery management, incubation, and chick brooding"
+            },
+            {
+              "week": 3,
+              "topic": "Livestock Breeding Techniques",
+              "description": "Natural and artificial insemination methods"
+            },
+            {
+              "week": 4,
+              "topic": "Health and Safety in Livestock Farming",
+              "description": "Hygiene, handling of chemicals, and personal safety on the farm"
+            },
+            {
+              "week": 5,
+              "topic": "Mid-Term Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Waste Management",
+              "description": "Composting, recycling, and manure utilization"
+            },
+            {
+              "week": 7,
+              "topic": "Mid-Term Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Farm Layout Planning",
+              "description": "Design and organization of small livestock farms"
+            },
+            {
+              "week": 9,
+              "topic": "Livestock Record Analysis",
+              "description": "Profit and loss determination; Evaluation of production efficiency"
+            },
+            {
+              "week": 10,
+              "topic": "Practical: Livestock Farm Design",
+              "description": "Group project — planning and model design of a small farm"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of all topics covered during the term"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing / Vacation",
+              "description": "—"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Advanced Entrepreneurship in Livestock",
+              "description": "Identifying business opportunities; Expansion and scaling up production"
+            },
+            {
+              "week": 2,
+              "topic": "Financial Management in Livestock Business",
+              "description": "Budgeting, savings, credit facilities, and agricultural loans"
+            },
+            {
+              "week": 3,
+              "topic": "Marketing Strategies",
+              "description": "Branding, advertising, customer service, and retention"
+            },
+            {
+              "week": 4,
+              "topic": "Cooperative Farming",
+              "description": "Meaning, types, and benefits of agricultural cooperatives"
+            },
+            {
+              "week": 5,
+              "topic": "Mid-Term Examination",
+              "description": "—"
+            },
+            {
+              "week": 6,
+              "topic": "Farm Record Keeping (Advanced)",
+              "description": "Income statement, sales record, and expenditure analysis"
+            },
+            {
+              "week": 7,
+              "topic": "Mid-Term Break",
+              "description": "—"
+            },
+            {
+              "week": 8,
+              "topic": "Value Addition in Livestock Products",
+              "description": "Processing eggs, meat, hides, and fur for higher profits"
+            },
+            {
+              "week": 9,
+              "topic": "Export of Livestock Products",
+              "description": "Export requirements, standards, and documentation"
+            },
+            {
+              "week": 10,
+              "topic": "Practical Project",
+              "description": "Developing a mini business plan or market survey"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of the term’s work"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "—"
+            },
+            {
+              "week": 13,
+              "topic": "Closing / Vacation",
+              "description": "—"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Agribusiness Project Development",
+              "description": "Developing a business plan for livestock enterprise"
+            },
+            {
+              "week": 2,
+              "topic": "Marketing and Distribution Channels",
+              "description": "Identifying buyers and marketing outlets"
+            },
+            {
+              "week": 3,
+              "topic": "Pricing and Cost Control",
+              "description": "Calculating production cost and setting prices"
+            },
+            {
+              "week": 4,
+              "topic": "Mid-Term Examination",
+              "description": "—"
+            },
+            {
+              "week": 5,
+              "topic": "Livestock Exhibition and Demonstration",
+              "description": "Presentation of class livestock projects"
+            },
+            {
+              "week": 6,
+              "topic": "Revision",
+              "description": "Comprehensive review of JSS1–3 work"
+            },
+            {
+              "week": "7-10",
+              "topic": "BECE Preparation and Examination",
+              "description": "—"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Livestock Farming",
+              "description": "Meaning and importance of livestock farming; Scope (cattle, poultry, goats, sheep, pigs, rabbits, fish); Difference between subsistence and commercial livestock farming"
+            },
+            {
+              "week": 2,
+              "topic": "History and Development of Livestock Farming in Nigeria",
+              "description": "Traditional livestock keeping; Modern methods; Government roles in livestock development"
+            },
+            {
+              "week": 3,
+              "topic": "Classification of Livestock",
+              "description": "Ruminants and non-ruminants; Examples and characteristics"
+            },
+            {
+              "week": 4,
+              "topic": "Livestock Housing",
+              "description": "Types of housing for poultry, goats, sheep, cattle, pigs; Principles of good housing"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Animal Nutrition I",
+              "description": "Classes of feed: Energy, protein, minerals, vitamins, water; Examples of feed ingredients"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Animal Nutrition II",
+              "description": "Balanced ration; Factors affecting feed formulation; Feed storage"
+            },
+            {
+              "week": 9,
+              "topic": "Animal Breeding I",
+              "description": "Natural breeding; Artificial insemination; Selection methods"
+            },
+            {
+              "week": 10,
+              "topic": "Animal Breeding II",
+              "description": "Crossbreeding, inbreeding, line breeding; Advantages and disadvantages"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Poultry Farming",
+              "description": "Importance; Types of poultry (broilers, layers, cockerels, turkeys, ducks); Poultry house design"
+            },
+            {
+              "week": 2,
+              "topic": "Poultry Management I",
+              "description": "Brooding, feeding, vaccination; Care of day-old chicks"
+            },
+            {
+              "week": 3,
+              "topic": "Poultry Management II",
+              "description": "Growers and layers management; Egg production and handling"
+            },
+            {
+              "week": 4,
+              "topic": "Poultry Diseases",
+              "description": "Common diseases (Newcastle, coccidiosis, fowl pox); Causes, symptoms, prevention and control"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Poultry Business",
+              "description": "Cost analysis; Record keeping; Marketing of eggs and broilers"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Goat and Sheep Farming I",
+              "description": "Breeds, housing, feeding practices"
+            },
+            {
+              "week": 9,
+              "topic": "Goat and Sheep Farming II",
+              "description": "Breeding, diseases, management"
+            },
+            {
+              "week": 10,
+              "topic": "Goat and Sheep Business",
+              "description": "Economics of goat/sheep farming; Value chain products (meat, milk, hides)"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Cattle Farming I",
+              "description": "Breeds of cattle (local and exotic); Housing; Feeding"
+            },
+            {
+              "week": 2,
+              "topic": "Cattle Farming II",
+              "description": "Dairy vs beef cattle; Management practices"
+            },
+            {
+              "week": 3,
+              "topic": "Cattle Breeding and Production",
+              "description": "Breeding methods; Milk production; Beef fattening"
+            },
+            {
+              "week": 4,
+              "topic": "Cattle Diseases",
+              "description": "Major diseases (trypanosomiasis, foot and mouth, mastitis); Control measures"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Pig Farming I",
+              "description": "Breeds, housing, feeding"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Pig Farming II",
+              "description": "Breeding, disease control, management"
+            },
+            {
+              "week": 9,
+              "topic": "Rabbit and Grasscutter Farming",
+              "description": "Importance; Housing; Feeding; Management"
+            },
+            {
+              "week": 10,
+              "topic": "Business Opportunities in Livestock",
+              "description": "Meat processing, hides and skin, manure use; Value addition"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Aquaculture",
+              "description": "Meaning and importance of fish farming; Systems of aquaculture (extensive, semi-intensive, intensive)"
+            },
+            {
+              "week": 2,
+              "topic": "Fish Pond Construction",
+              "description": "Site selection, pond design, pond preparation"
+            },
+            {
+              "week": 3,
+              "topic": "Fish Breeds and Fingerlings",
+              "description": "Common fish species in Nigeria (catfish, tilapia); Fingerling production"
+            },
+            {
+              "week": 4,
+              "topic": "Fish Nutrition and Feeding",
+              "description": "Fish feed types; Feed formulation; Feeding methods"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Fish Health and Disease",
+              "description": "Common fish diseases; Symptoms, prevention, treatment"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Fish Harvesting",
+              "description": "Methods of harvesting; Processing of fish"
+            },
+            {
+              "week": 9,
+              "topic": "Fish Marketing",
+              "description": "Storage, transportation, sales channels"
+            },
+            {
+              "week": 10,
+              "topic": "Economics of Aquaculture",
+              "description": "Cost–benefit analysis; Record keeping; Challenges of fish farming"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Snail Farming I",
+              "description": "Importance; Housing and equipment; Feeding"
+            },
+            {
+              "week": 2,
+              "topic": "Snail Farming II",
+              "description": "Breeding; Management; Harvesting and marketing"
+            },
+            {
+              "week": 3,
+              "topic": "Honey Bee Keeping (Apiculture) I",
+              "description": "Importance of honey bees; Bee species; Beekeeping equipment"
+            },
+            {
+              "week": 4,
+              "topic": "Honey Bee Keeping II",
+              "description": "Apiary management; Honey extraction and processing"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Grasscutter Farming",
+              "description": "Importance; Housing; Feeding; Breeding"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Animal Health I",
+              "description": "Common livestock parasites (internal & external); Prevention and control"
+            },
+            {
+              "week": 9,
+              "topic": "Animal Health II",
+              "description": "Veterinary drugs; Vaccination programmes; Quarantine practices"
+            },
+            {
+              "week": 10,
+              "topic": "Pasture and Forage Crops",
+              "description": "Types of pasture; Cultivation; Conservation (silage, hay)"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Livestock Economics",
+              "description": "Principles of farm management; Enterprise budgeting"
+            },
+            {
+              "week": 2,
+              "topic": "Farm Records and Accounts",
+              "description": "Types of records; Importance of records; Practical record keeping"
+            },
+            {
+              "week": 3,
+              "topic": "Marketing of Livestock Products I",
+              "description": "Channels of distribution; Pricing; Market surveys"
+            },
+            {
+              "week": 4,
+              "topic": "Marketing of Livestock Products II",
+              "description": "Packaging; Branding; Export opportunities"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Value Addition in Livestock",
+              "description": "Processing meat, milk, hides, skins; By-products"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Cooperative Societies in Livestock",
+              "description": "Roles of cooperatives; Benefits to farmers"
+            },
+            {
+              "week": 9,
+              "topic": "Government Policies in Livestock Farming",
+              "description": "Subsidies; Extension services; Regulations"
+            },
+            {
+              "week": 10,
+              "topic": "Contemporary Issues",
+              "description": "Climate change impact on livestock; Biosecurity measures"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Animal Biotechnology",
+              "description": "Meaning; Importance in livestock improvement"
+            },
+            {
+              "week": 2,
+              "topic": "Reproductive Technologies",
+              "description": "Artificial insemination; Embryo transfer; Cloning"
+            },
+            {
+              "week": 3,
+              "topic": "Genetic Improvement",
+              "description": "Selective breeding; Hybrid vigour; Genetic modification"
+            },
+            {
+              "week": 4,
+              "topic": "Animal Welfare and Ethics",
+              "description": "Animal rights; Humane treatment; Slaughtering methods"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Sustainable Livestock Farming",
+              "description": "Organic livestock farming; Waste management"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Livestock Business Planning",
+              "description": "Business plan preparation; Funding sources"
+            },
+            {
+              "week": 9,
+              "topic": "Farm Project Development",
+              "description": "Practical steps in establishing a livestock enterprise"
+            },
+            {
+              "week": 10,
+              "topic": "Entrepreneurship in Livestock",
+              "description": "Opportunities; Success stories; Challenges"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Dairy Technology I",
+              "description": "Milk production; Handling and hygiene"
+            },
+            {
+              "week": 2,
+              "topic": "Dairy Technology II",
+              "description": "Milk processing into yoghurt, cheese, butter"
+            },
+            {
+              "week": 3,
+              "topic": "Meat Science I",
+              "description": "Slaughtering process; Carcass dressing"
+            },
+            {
+              "week": 4,
+              "topic": "Meat Science II",
+              "description": "Processing, preservation and packaging of meat"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Hide and Skin Processing",
+              "description": "Tanning methods; Leather products"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Egg Technology",
+              "description": "Egg preservation; Processing into products"
+            },
+            {
+              "week": 9,
+              "topic": "Livestock Product Quality Control",
+              "description": "Standards; Certification; Food safety"
+            },
+            {
+              "week": 10,
+              "topic": "Export of Livestock Products",
+              "description": "International markets; Trade barriers; Opportunities"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Farm Mechanization in Livestock",
+              "description": "Equipment used in housing, feeding, milking"
+            },
+            {
+              "week": 2,
+              "topic": "ICT in Livestock Farming",
+              "description": "Digital tools; Record systems; Precision livestock farming"
+            },
+            {
+              "week": 3,
+              "topic": "Farm Management Simulation",
+              "description": "Planning and budgeting exercises"
+            },
+            {
+              "week": 4,
+              "topic": "Field Work",
+              "description": "Practical visits to livestock farms and processing plants"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "–"
+            },
+            {
+              "week": 6,
+              "topic": "Project Work",
+              "description": "Students embark on supervised livestock projects"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "–"
+            },
+            {
+              "week": 8,
+              "topic": "Presentation of Projects",
+              "description": "Class presentations of findings and experiences"
+            },
+            {
+              "week": 9,
+              "topic": "Career Opportunities in Livestock",
+              "description": "Extension officer, veterinary services, agribusiness, processing"
+            },
+            {
+              "week": 10,
+              "topic": "Final Preparations for External Exams",
+              "description": "WAEC/NECO syllabus revision"
+            },
+            {
+              "week": 11,
+              "topic": "General Revision",
+              "description": "–"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "–"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "–"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+
+}
