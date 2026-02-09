@@ -1,164 +1,582 @@
 {
-    "subject": "Food and Nutrition",
-    "curriculum": [
-      {
-        "grade": "SS 1",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Food and Nutrition" },
-              { "week": 2, "topic": "Careers in Food and Nutrition" },
-              { "week": 3, "topic": "Interrelationship of Food and Nutrition with Other Subjects" },
-              { "week": 4, "topic": "Foods in the Locality" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Basic Food Nutrients (Carbohydrates)" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Proteins" },
-              { "week": 9, "topic": "Fats and Oils" },
-              { "week": 10, "topic": "Vitamins & Minerals" },
-              { "week": 11, "topic": "Water" },
-              { "week": 12, "topic": "Revision" },
-              { "week": 13, "topic": "Examination & Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Scientific Study of Foods" },
-              { "week": 2, "topic": "Effects of Heat on Nutrients" },
-              { "week": 3, "topic": "Tests for Proteins" },
-              { "week": 4, "topic": "Tests for Carbohydrates, Fats, and Oils" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "The Digestive System" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Digestion and Absorption" },
-              { "week": 9, "topic": "Reproductive Health" },
-              { "week": 10, "topic": "Kitchen Plans, Equipment, and Tools" },
-              { "week": 11, "topic": "Kitchen Plans, Equipment, and Utensils" },
-              { "week": 12, "topic": "Small or Moveable Tools/Utensils" },
-              { "week": 13, "topic": "Revision, Examination & Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Cleaning Agents and Abrasives" },
-              { "week": 2, "topic": "Safety Habits in the Kitchen" },
-              { "week": 3, "topic": "Measures to Prevent Cuts, Suffocation and Accidental Poisoning" },
-              { "week": 4, "topic": "Content and Use of First Aid Box; Simple First Aid Treatment" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Hygiene: Personal Hygiene" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Food and Kitchen Hygiene" },
-              { "week": 9, "topic": "Waste and Refuse Disposal" },
-              { "week": 10, "topic": "Food Borne Diseases" },
-              { "week": 11, "topic": "ICPC (Misappropriate execution of family food budgets)" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 2",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Meat Cookery" },
-              { "week": 2, "topic": "Poultry" },
-              { "week": 3, "topic": "Eggs" },
-              { "week": 4, "topic": "Milk and Milk Products" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Sea Foods" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Food Additives" },
-              { "week": 9, "topic": "Practical on Meat, Poultry, Milk, Sea Foods, and Food Additives" },
-              { "week": 10, "topic": "Starchy Roots and Plantain" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Energy Management in Food Preparation" },
-              { "week": 2, "topic": "Kitchen Equipment and Utensils" },
-              { "week": 3, "topic": "Labour Saving Devices" },
-              { "week": 4, "topic": "Special Nutritional Needs I" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Special Nutritional Needs II" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Project on Test Interpretation" },
-              { "week": 9, "topic": "Flour Cookery" },
-              { "week": 10, "topic": "Raising Agents" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Convenience Foods" },
-              { "week": 2, "topic": "Preservation of Foods" },
-              { "week": 3, "topic": "Methods of Food Preservation" },
-              { "week": 4, "topic": "Food Storage" },
-              { "week": 5, "topic": "Midterm Test" },
-              { "week": 6, "topic": "Practical on Convenience Foods and Food Storage" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Budgeting" },
-              { "week": 9, "topic": "Food Purchasing" },
-              { "week": 10, "topic": "Consumer Education I & II" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 3",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Beverages" },
-              { "week": 2, "topic": "Beverages (Non-Alcoholic)" },
-              { "week": 3, "topic": "Special Diet" },
-              { "week": 4, "topic": "Practical on Beverages and Special Diet" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Cultural Food Habit" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Traditional and Foreign Dishes" },
-              { "week": 9, "topic": "Practical on Traditional and Foreign Dishes" },
-              { "week": 10, "topic": "Art of Entertainment" },
-              { "week": 11, "topic": "Table Setting and Etiquette" },
-              { "week": 12, "topic": "Revision" },
-              { "week": 13, "topic": "Examination and Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Welcome Test & Food Service" },
-              { "week": 2, "topic": "Self Employment (Catering Enterprise)" },
-              { "week": 3, "topic": "Self Employment (Work Ethics and Food Packaging)" },
-              { "week": 4, "topic": "Experimental Cookery" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Test Interpretation" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Cooking Assignment" },
-              { "week": 9, "topic": "Practical Cookery Exercises" },
-              { "week": 10, "topic": "Practical Assessment" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+  "subject": "Food and Nutrition",
+  "curriculum_name": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Food and Nutrition",
+              "description": "Definition of basic terms in food and nutrition (food, nutrition, antinutrient, malnutrition, pro-vitamin, etc.); Importance of foods and nutrition; Factors affecting foods and nutrition e.g., available income, availability of food, foods in season, etc."
+            },
+            {
+              "week": 2,
+              "topic": "Careers in Food and Nutrition",
+              "description": "Careers in foods and nutrition e.g., Teaching, Dietetics, Food Science and Technology, Food Engineering, Community Nutrition, Clinical Nutrition, Hotel and Catering Management."
+            },
+            {
+              "week": 3,
+              "topic": "Interrelationship of Food and Nutrition with Other Subjects",
+              "description": "Relationship between food and nutrition and other subjects."
+            },
+            {
+              "week": 4,
+              "topic": "Foods in the Locality",
+              "description": "Foods in the locality; Nutrients quality; Functions according to their nutrient quality."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Basic Food Nutrients (Carbohydrates)",
+              "description": "Composition; Classification; Functions; Dietary deficiencies; Food sources of carbohydrates."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Proteins",
+              "description": "Composition; Classification; Complementary and supplementary values of protein; Functions; Dietary deficiencies; Food sources."
+            },
+            {
+              "week": 9,
+              "topic": "Fats and Oils",
+              "description": "Differences between fats and oils; Classification; Functions; Dietary deficiency symptoms/diseases; Food sources."
+            },
+            {
+              "week": 10,
+              "topic": "Vitamins & Minerals",
+              "description": "Vitamins – Chemical names, classifications, functions, deficiency symptoms/diseases, food sources. Minerals – Classification, functions, deficiency symptoms/diseases, food sources."
+            },
+            {
+              "week": 11,
+              "topic": "Water",
+              "description": "Chemical composition, functions, food sources."
+            },
+            {
+              "week": 12,
+              "topic": "Revision",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Examination & Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Scientific Study of Foods",
+              "description": "Measurements, units, and accuracy; Food weighing; Nutrient weight; Uses of scales, weights, and handy measures."
+            },
+            {
+              "week": 2,
+              "topic": "Effects of Heat on Nutrients",
+              "description": "Effects of heat on carbohydrates, proteins, fats and oils, minerals, and vitamins."
+            },
+            {
+              "week": 3,
+              "topic": "Tests for Proteins",
+              "description": "Foam test, Millon test, Biuret test, Coagulation test."
+            },
+            {
+              "week": 4,
+              "topic": "Tests for Carbohydrates, Fats, and Oils",
+              "description": "Iodine test, Litmus test, Blotting paper test, Sudan III test, Ethanol test."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "The Digestive System",
+              "description": "Definition of simple metabolic processes – digestion, absorption, utilization, enzymes."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Digestion and Absorption",
+              "description": "Digestion process from the mouth, stomach, duodenum, small intestine or ileum."
+            },
+            {
+              "week": 9,
+              "topic": "Reproductive Health",
+              "description": "Definition; Identification of female and male reproductive organs; Relationship between nutrition and reproductive health."
+            },
+            {
+              "week": 10,
+              "topic": "Kitchen Plans, Equipment, and Tools",
+              "description": "Definition; Kitchen plans or layout; Factors that affect size of a kitchen; Advantages of a well-planned kitchen."
+            },
+            {
+              "week": 11,
+              "topic": "Kitchen Plans, Equipment, and Utensils",
+              "description": "Factors to consider when selecting kitchen equipment/tools; Large kitchen equipment – selection and care."
+            },
+            {
+              "week": 12,
+              "topic": "Small or Moveable Tools/Utensils",
+              "description": "Small or moveable utensils – selection, use, and care; Labour-saving devices."
+            },
+            {
+              "week": 13,
+              "topic": "Revision, Examination & Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Cleaning Agents and Abrasives",
+              "description": "- Definition - Types - Commercial cleaning agents - Local cleaning agents"
+            },
+            {
+              "week": 2,
+              "topic": "Safety Habits in the Kitchen",
+              "description": "- Causes of accidents in the kitchen - Measures to prevent falls - Measures to prevent burns and scalds"
+            },
+            {
+              "week": 3,
+              "topic": "Measures to Prevent Cuts, Suffocation and Accidental Poisoning",
+              "description": "- Measures to prevent cuts - Measures to prevent suffocation - Measures to prevent accidental poisoning"
+            },
+            {
+              "week": 4,
+              "topic": "Content and Use of First Aid Box; Simple First Aid Treatment",
+              "description": "- Definition - Content and use of a first aid box - Simple first aid treatment for cuts, burns and scalds"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Hygiene: Personal Hygiene",
+              "description": "- Definition - Personal hygiene - Rules for personal hygiene of the food handler"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Food and Kitchen Hygiene",
+              "description": "- Definition - Rules of kitchen hygiene - Definition - Rules of food hygiene"
+            },
+            {
+              "week": 9,
+              "topic": "Waste and Refuse Disposal",
+              "description": "- Methods of waste disposal - Use of refuse bins and bags - Use and care of bins - Pests and pest control"
+            },
+            {
+              "week": 10,
+              "topic": "Food Borne Diseases",
+              "description": "- Food poisoning - Food infection - Prevention of food borne diseases - Food sanitation laws"
+            },
+            {
+              "week": 11,
+              "topic": "ICPC (Misappropriate execution of family food budgets)",
+              "description": "- Misappropriate execution of family food budgets"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Meat Cookery",
+              "description": "Meaning and types of meat; structure of meat; nutritive value of meat; factors affecting choice of meat; methods of cooking meat and meat dishes"
+            },
+            {
+              "week": 2,
+              "topic": "Poultry",
+              "description": "Meaning and types of poultry; structure; preparation; nutritive value; factors affecting choice; methods of cooking poultry dishes"
+            },
+            {
+              "week": 3,
+              "topic": "Eggs",
+              "description": "Meaning, uses and nutritive value of eggs; structure of egg; test for freshness; methods of cooking eggs and egg dishes"
+            },
+            {
+              "week": 4,
+              "topic": "Milk and Milk Products",
+              "description": "Meaning, types and nutritive value of milk; methods of preserving milk; examples of milk dishes"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "Assessment of weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "Sea Foods",
+              "description": "Meaning and classification of sea foods; nutritive value; factors to consider when choosing sea foods; methods of cooking fishes"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Food Additives",
+              "description": "Meaning, types (flavouring, herbs, spices etc.); classification (local and foreign); uses and presentation on album/cardboard"
+            },
+            {
+              "week": 9,
+              "topic": "Practical on Meat, Poultry, Milk, Sea Foods, and Food Additives",
+              "description": "Preparation and serving of dishes; use of additives in meals"
+            },
+            {
+              "week": 10,
+              "topic": "Starchy Roots and Plantain",
+              "description": "Meaning; types of starchy roots; nutritive value; types and value of plantain; dishes made from plantain"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "General review of all topics"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term exams"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Vacation"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Energy Management in Food Preparation",
+              "description": "Meaning, advantages, principles of energy management; steps in managing energy; meaning of fatigue"
+            },
+            {
+              "week": 2,
+              "topic": "Kitchen Equipment and Utensils",
+              "description": "Meaning, classification, selection, use, care and storage of large and small kitchen equipment, fixtures and appliances"
+            },
+            {
+              "week": 3,
+              "topic": "Labour Saving Devices",
+              "description": "Meaning, uses, factors to consider in selection; care and maintenance"
+            },
+            {
+              "week": 4,
+              "topic": "Special Nutritional Needs I",
+              "description": "Infants, children, adolescents, adults, aged, pregnant and lactating mothers: meal planning and physiological needs"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "Assessment of weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "Special Nutritional Needs II",
+              "description": "Continuation of meal planning for different groups and physiological needs"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Project on Test Interpretation",
+              "description": "Practice in interpreting exam questions and writing responses"
+            },
+            {
+              "week": 9,
+              "topic": "Flour Cookery",
+              "description": "Meaning and types of flour; local flour sources; nutritive value; dishes from flour (bread, pastries etc.)"
+            },
+            {
+              "week": 10,
+              "topic": "Raising Agents",
+              "description": "Meaning; types (yeast, baking powder etc.); composition and evaluation"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "General review of all topics"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term exams"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Vacation"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Convenience Foods",
+              "description": "Meaning, uses, forms, examples; selection factors; advantages and disadvantages; dishes made with convenience foods"
+            },
+            {
+              "week": 2,
+              "topic": "Preservation of Foods",
+              "description": "Meaning of spoilage; causes and agents; importance of preservation; principles of preservation"
+            },
+            {
+              "week": 3,
+              "topic": "Methods of Food Preservation",
+              "description": "Various preservation methods (drying, smoking, salting, freezing, canning etc.)"
+            },
+            {
+              "week": 4,
+              "topic": "Food Storage",
+              "description": "Meaning and importance; storage of perishable and non-perishable foods; storage equipment and spaces (barns, refrigerator, deep freezers)"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Test",
+              "description": "Assessment of weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "Practical on Convenience Foods and Food Storage",
+              "description": "Preparation of dishes using convenience foods; practical demonstration of preservation methods"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Budgeting",
+              "description": "Meaning of budgeting; income, expenditure; family needs; food budgeting; factors influencing budgeting"
+            },
+            {
+              "week": 9,
+              "topic": "Food Purchasing",
+              "description": "Meaning of bulk-purchasing, piece-meal, impulse buying; factors to consider; advantages and disadvantages; shopping list preparation"
+            },
+            {
+              "week": 10,
+              "topic": "Consumer Education I & II",
+              "description": "Meaning and principles; consumer agents; government agencies (NAFDAC, SON, FCCPC); duties of consumer agents; consumer practices (adulteration, falsification, misbranding)"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "General review of all topics"
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "End of term exams"
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "Vacation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Beverages",
+              "description": "• Explain the term beverages. • Classify beverages into alcoholic and non • alcoholic with examples. • Discuss the nutritive value of beverages. • Highlight the characteristics of alcoholic and non • alcoholic beverages."
+            },
+            {
+              "week": 2,
+              "topic": "Beverages (Non-Alcoholic)",
+              "description": "• Classify non • alcoholic beverages. • Justify each class of non • alcoholic beverages with examples."
+            },
+            {
+              "week": 3,
+              "topic": "Special Diet",
+              "description": "• Explain the term Special Diet. • Explain the different types of vegetarian diet: strict/vegan, lacto, ovo, lacto • ovo, pescatarian, pollotarian, flexitarian. • Differentiate between overweight and underweight diet. • Discuss diets for persons suffering from: HIV/AIDS, fever and infection, overweight, diarrhoea, diabetes, ulcer, etc."
+            },
+            {
+              "week": 4,
+              "topic": "Practical on Beverages and Special Diet",
+              "description": "• Prepare and serve different types of beverages (cocoa, coffee, tea, fruit drinks, juice, egg flip, milk drinks, etc.). • Prepare and serve dishes for vegetarians, overweight, diabetic, ulcer patients, etc."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "• Midterm Test."
+            },
+            {
+              "week": 6,
+              "topic": "Cultural Food Habit",
+              "description": "• Explain food habits, food taboos, food facts, and food fallacies. • Analyse the factors influencing food habits. • Identify traditional foods associated with taboos. • Justify food fallacies with examples and correct facts."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "• —"
+            },
+            {
+              "week": 8,
+              "topic": "Traditional and Foreign Dishes",
+              "description": "• Explain the terms: traditional dishes and foreign dishes. • Identify traditional dishes from different localities."
+            },
+            {
+              "week": 9,
+              "topic": "Practical on Traditional and Foreign Dishes",
+              "description": "• Prepare and serve traditional dishes from their ethnic group. • Prepare and serve selected foreign dishes."
+            },
+            {
+              "week": 10,
+              "topic": "Art of Entertainment",
+              "description": "• Explain the term Entertainment. • Discuss steps in organising a party. • Justify the different types of parties (birthday, surprise, dinner, garden, cocktail, tea, reception, costume, Christmas caroling, pool, fundraising, graduation, housewarming, welcome, farewell, etc.)."
+            },
+            {
+              "week": 11,
+              "topic": "Table Setting and Etiquette",
+              "description": "• Explain the terms: host/hostess, guest, waiter/waitress. • Discuss the qualities of a good host/hostess, guest, waiter/waitress. • Explain the terms: table setting and table etiquette. • Differentiate between formal and informal table setting requirements. • Demonstrate table setting. • Highlight table manners and etiquette."
+            },
+            {
+              "week": 12,
+              "topic": "Revision",
+              "description": "• General review of all topics covered."
+            },
+            {
+              "week": 13,
+              "topic": "Examination and Closing",
+              "description": "• End of Term Examinations and Closing Activities."
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Welcome Test & Food Service",
+              "description": "• Answer questions on previous topics. • Explain food service. • Differentiate between formal and informal food service. • Analyse different types of informal service. • Justify the importance of food service."
+            },
+            {
+              "week": 2,
+              "topic": "Self Employment (Catering Enterprise)",
+              "description": "• Explain the terms: entrepreneur, entrepreneurship, enterprise. • Discuss the characteristics of entrepreneurship. • State advantages and disadvantages of entrepreneurship. • Identify factors contributing to the success of an enterprise. • Discuss how to set up a catering enterprise."
+            },
+            {
+              "week": 3,
+              "topic": "Self Employment (Work Ethics and Food Packaging)",
+              "description": "• Explain the terms: work ethics and food packaging. • Discuss good work ethics. • Enumerate reasons for packaging food. • Justify types and qualities of packaging materials."
+            },
+            {
+              "week": 4,
+              "topic": "Experimental Cookery",
+              "description": "• Explain the term recipe. • Identify sources of collecting information on recipes. • Discuss methods of collecting information for recipes. • Analyse the importance of collecting recipe information. • Justify the advantages of recipes. • Create a recipe."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": "• Midterm Test."
+            },
+            {
+              "week": 6,
+              "topic": "Test Interpretation",
+              "description": "• Interpret given cookery test questions. • Write out responses to cooking test questions."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": "• —"
+            },
+            {
+              "week": 8,
+              "topic": "Cooking Assignment",
+              "description": "• Interpret given cookery test questions. • Write out time and cooking schedules for the tests."
+            },
+            {
+              "week": 9,
+              "topic": "Practical Cookery Exercises",
+              "description": "• Carry out selected cooking assignments. • Apply recipe knowledge to practical cookery tasks."
+            },
+            {
+              "week": 10,
+              "topic": "Practical Assessment",
+              "description": "• Demonstrate practical skills in food preparation. • Present finished food items. • Apply table setting and service techniques in practice."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "• General review of all topics covered."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": "• Second Term Examinations."
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": "• End of Term Activities."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  
+}
