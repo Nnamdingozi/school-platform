@@ -16,7 +16,7 @@ const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-async function main() {
+ v async function main() {
   // 1. Curriculum
   const existingCurriculum = await prisma.curriculum.findFirst({
     where: { name: "Nigerian National Curriculum" },
