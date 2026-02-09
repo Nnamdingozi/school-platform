@@ -1,143 +1,497 @@
 {
-    "subject": "Geography",
-    "curriculum": [
-      {
-        "grade": "SS 1",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Geography" },
-              { "week": 2, "topic": "The Earth and Other Planets" },
-              { "week": 3, "topic": "Earth’s Rotation and Revolution" },
-              { "week": 4, "topic": "Latitudes and Longitudes" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "The Earth’s Structure" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Rocks" },
-              { "week": 9, "topic": "Town/Village" },
-              { "week": 10, "topic": "The Local Government Area (LGA)" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Mountains" },
-              { "week": 2, "topic": "Lowlands" },
-              { "week": 3, "topic": "The Environment" },
-              { "week": 4, "topic": "Weather" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Climate I" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Nigeria: Location and Position" },
-              { "week": 9, "topic": "Physical Setting of Nigeria" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Population of Nigeria" },
-              { "week": 2, "topic": "Resources of Nigeria" },
-              { "week": 3, "topic": "Basic Concepts in Map Reading" },
-              { "week": 4, "topic": "Map Distances" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Map Reduction and Enlargement" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Interpretation of Physical and Cultural Features" },
-              { "week": 9, "topic": "Transportation" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 2",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Industry" },
-              { "week": 2, "topic": "Basic Concepts of GIS" },
-              { "week": 3, "topic": "Components of GIS" },
-              { "week": 4, "topic": "Earth’s External Processes and Landform Development" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Climate II" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Climatic Classification" },
-              { "week": 9, "topic": "Environmental Resources" },
-              { "week": 10, "topic": "Revision" },
-              { "week": 11, "topic": "Examination" },
-              { "week": 12, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Renewable and Non-Renewable Resources" },
-              { "week": 2, "topic": "Environmental Problems" },
-              { "week": 3, "topic": "Environmental Conservation" },
-              { "week": 4, "topic": "Agriculture" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Transport and Communication in Nigeria" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Manufacturing Industries in Nigeria" },
-              { "week": 9, "topic": "Commercial Activities in Nigeria" },
-              { "week": 10, "topic": "Revision" },
-              { "week": 11, "topic": "Examination" },
-              { "week": 12, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Direction and Bearing" },
-              { "week": 2, "topic": "Representation of Relief Forms" },
-              { "week": 3, "topic": "Population" },
-              { "week": 4, "topic": "Settlements" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Settlement Interactions" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Geo-political Issues" },
-              { "week": 9, "topic": "GIS Data" },
-              { "week": 10, "topic": "Earth’s Internal Processes" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 3",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Denudation Processes" },
-              { "week": 2, "topic": "Weathering" },
-              { "week": 3, "topic": "Mass Movements" },
-              { "week": 4, "topic": "Climatic Change" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "ECOWAS" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Trade" },
-              { "week": 9, "topic": "Tourism" },
-              { "week": 10, "topic": "Satellite Remote Sensing" },
-              { "week": 11, "topic": "GIS Application" },
-              { "week": 12, "topic": "Revision" },
-              { "week": 13, "topic": "Examination" },
-              { "week": 14, "topic": "Closing" }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+  "subject": "Geography",
+  "curriculum_name": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Geography",
+              "description": "Meaning, nature, scope, and value of geography"
+            },
+            {
+              "week": 2,
+              "topic": "The Earth and Other Planets",
+              "description": "Characteristics of the Earth, comparison with other planets"
+            },
+            {
+              "week": 3,
+              "topic": "Earth’s Rotation and Revolution",
+              "description": "Rotation: effects; Revolution: seasons, solstices, equinoxes"
+            },
+            {
+              "week": 4,
+              "topic": "Latitudes and Longitudes",
+              "description": "Definitions, uses in location and time calculation"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "The Earth’s Structure",
+              "description": "Layers: crust, mantle, core – composition and importance"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Rocks",
+              "description": "Types of rocks: igneous, sedimentary, metamorphic; formation and importance"
+            },
+            {
+              "week": 9,
+              "topic": "Town/Village",
+              "description": "Characteristics, similarities and differences"
+            },
+            {
+              "week": 10,
+              "topic": "The Local Government Area (LGA)",
+              "description": "Definition, functions, importance in geography"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Mountains",
+              "description": "Types: block, fold, volcanic; formation and importance"
+            },
+            {
+              "week": 2,
+              "topic": "Lowlands",
+              "description": "Types, examples in Nigeria and West Africa, importance"
+            },
+            {
+              "week": 3,
+              "topic": "The Environment",
+              "description": "Meaning, components (physical and human), interactions"
+            },
+            {
+              "week": 4,
+              "topic": "Weather",
+              "description": "Meaning, elements of weather, instruments for measurement"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Climate I",
+              "description": "Meaning, elements, factors influencing climate"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Nigeria: Location and Position",
+              "description": "Latitudinal and longitudinal extent, boundaries, neighbours"
+            },
+            {
+              "week": 9,
+              "topic": "Physical Setting of Nigeria",
+              "description": "Relief, drainage, vegetation zones"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Population of Nigeria",
+              "description": "Size, distribution, density, factors influencing population"
+            },
+            {
+              "week": 2,
+              "topic": "Resources of Nigeria",
+              "description": "Types: human and natural; distribution and importance"
+            },
+            {
+              "week": 3,
+              "topic": "Basic Concepts in Map Reading",
+              "description": "Scale, direction, symbols, conventional signs"
+            },
+            {
+              "week": 4,
+              "topic": "Map Distances",
+              "description": "Methods of measuring distances on maps"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Map Reduction and Enlargement",
+              "description": "Techniques, practical exercises"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Interpretation of Physical and Cultural Features",
+              "description": "Relief, drainage, settlement, transport features"
+            },
+            {
+              "week": 9,
+              "topic": "Transportation",
+              "description": "Modes: road, rail, water, air; importance and problems"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Industry",
+              "description": "Meaning and types of industries (primary, secondary, tertiary, quaternary); importance of industries in economic development."
+            },
+            {
+              "week": 2,
+              "topic": "Basic Concepts of GIS",
+              "description": "Meaning of GIS (Geographic Information System); importance and uses of GIS in geography and planning."
+            },
+            {
+              "week": 3,
+              "topic": "Components of GIS",
+              "description": "Hardware, software, data, people, and methods; functions of each component."
+            },
+            {
+              "week": 4,
+              "topic": "Earth’s External Processes and Landform Development",
+              "description": "Weathering, erosion, transportation and deposition; resulting landforms (valleys, deltas, beaches, dunes, floodplains)."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Climate II",
+              "description": "Elements of climate; climatic controls; differences between weather and climate."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Climatic Classification",
+              "description": "Koppen’s classification of climate; other approaches to classifying climate; world climatic regions."
+            },
+            {
+              "week": 9,
+              "topic": "Environmental Resources",
+              "description": "Meaning and types (renewable and non-renewable); importance and sustainable use of environmental resources."
+            },
+            {
+              "week": 10,
+              "topic": "Revision",
+              "description": "Review of first term’s work."
+            },
+            {
+              "week": 11,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Renewable and Non-Renewable Resources",
+              "description": "Meaning and examples; differences; significance in Nigeria’s economy."
+            },
+            {
+              "week": 2,
+              "topic": "Environmental Problems",
+              "description": "Pollution (air, water, land, noise); deforestation; desertification; soil erosion; overpopulation."
+            },
+            {
+              "week": 3,
+              "topic": "Environmental Conservation",
+              "description": "Meaning; methods (afforestation, reforestation, legislation, recycling, controlled grazing); importance of conservation."
+            },
+            {
+              "week": 4,
+              "topic": "Agriculture",
+              "description": "Types (subsistence, commercial, mixed farming); importance of agriculture; problems and solutions in Nigeria."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Transport and Communication in Nigeria",
+              "description": "Types of transport (road, rail, water, air, pipeline); importance and challenges; types of communication; role in economic development."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Manufacturing Industries in Nigeria",
+              "description": "Types and examples; factors influencing location; contributions to GDP; problems of industries in Nigeria."
+            },
+            {
+              "week": 9,
+              "topic": "Commercial Activities in Nigeria",
+              "description": "Meaning and types of commercial activities; role of trade, banking, insurance, and tourism in Nigeria’s economy."
+            },
+            {
+              "week": 10,
+              "topic": "Revision",
+              "description": "Review of second term’s work."
+            },
+            {
+              "week": 11,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Direction and Bearing",
+              "description": "Meaning of direction and bearing; use of compass and bearings in navigation and map reading."
+            },
+            {
+              "week": 2,
+              "topic": "Representation of Relief Forms",
+              "description": "Methods of showing relief on maps (contours, hachures, spot heights, shading, layer colouring); interpretation of relief features."
+            },
+            {
+              "week": 3,
+              "topic": "Population",
+              "description": "Meaning; factors influencing population distribution; population structure, density and growth; problems of overpopulation and underpopulation."
+            },
+            {
+              "week": 4,
+              "topic": "Settlements",
+              "description": "Meaning and types (rural and urban); functions of settlements; factors affecting location of settlements."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Settlement Interactions",
+              "description": "Rural-urban migration; effects of rural-urban interactions on development; problems and solutions."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Geo-political Issues",
+              "description": "Meaning; examples in Nigeria and Africa (boundary disputes, ethnic conflicts, political instability); effects on development."
+            },
+            {
+              "week": 9,
+              "topic": "GIS Data",
+              "description": "Types of GIS data (spatial, attribute); sources of GIS data; uses in planning and development."
+            },
+            {
+              "week": 10,
+              "topic": "Earth’s Internal Processes",
+              "description": "Meaning; processes such as vulcanicity, earthquakes, folding and faulting; landforms associated with each."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of third term’s work."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Denudation Processes",
+              "description": "Meaning of denudation; agents of denudation (running water, wind, ice, waves); processes of denudation – weathering, erosion, transportation, deposition."
+            },
+            {
+              "week": 2,
+              "topic": "Weathering",
+              "description": "Meaning of weathering; types of weathering (mechanical, chemical, biological); factors influencing weathering; importance and effects of weathering on the environment."
+            },
+            {
+              "week": 3,
+              "topic": "Mass Movements",
+              "description": "Definition; types of mass movement (soil creep, landslides, rock fall, mudflow, solifluction, avalanches); causes and effects on human activities."
+            },
+            {
+              "week": 4,
+              "topic": "Climatic Change",
+              "description": "Meaning of climate and climate change; historical and contemporary evidence; causes of climate change (natural and human); effects on environment, agriculture, and human activities; global and local responses."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "ECOWAS",
+              "description": "Formation and objectives; structure and functions; achievements and challenges of ECOWAS; role in regional integration."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Trade",
+              "description": "Meaning of trade; types of trade (internal and international); importance of trade; trade patterns in Nigeria and West Africa; problems of trade."
+            },
+            {
+              "week": 9,
+              "topic": "Tourism",
+              "description": "Meaning and importance; types of tourism (domestic, international, eco-tourism, cultural tourism); tourist attractions in Nigeria and West Africa; benefits and challenges of tourism."
+            },
+            {
+              "week": 10,
+              "topic": "Satellite Remote Sensing",
+              "description": "Meaning and principles; types of remote sensing (aerial photography, satellite imagery); importance and applications in geography (mapping, agriculture, environmental monitoring)."
+            },
+            {
+              "week": 11,
+              "topic": "GIS Application",
+              "description": "Meaning of Geographic Information Systems (GIS); components of GIS (hardware, software, data, people, methods); applications of GIS in resource management, planning, and environmental studies."
+            },
+            {
+              "week": 12,
+              "topic": "Revision",
+              "description": "General review of all topics covered during the term."
+            },
+            {
+              "week": 13,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 14,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  
+}

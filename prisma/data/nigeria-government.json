@@ -1,156 +1,542 @@
 {
-    "subject": "Government",
-    "curriculum": [
-      {
-        "grade": "SS 1",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Meaning, Nature and Scope of Government" },
-              { "week": 2, "topic": "Basic Concepts of Government" },
-              { "week": 3, "topic": "Basic Principles of Government" },
-              { "week": 4, "topic": "Types and Characteristics of Government" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Systems of Government" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Political Ideologies" },
-              { "week": 9, "topic": "Constitution" },
-              { "week": 10, "topic": "Rule of Law and its Limitations" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Separation of Powers and Its Application" },
-              { "week": 2, "topic": "Delegated Legislation" },
-              { "week": 3, "topic": "Citizenship" },
-              { "week": 4, "topic": "Process of Political Socialisation" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Political Participation" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Public Opinion" },
-              { "week": 9, "topic": "Political Parties" },
-              { "week": 10, "topic": "Party System" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Pressure Groups" },
-              { "week": 2, "topic": "Public Administration" },
-              { "week": 3, "topic": "Civil Service" },
-              { "week": 4, "topic": "Local Government" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Pre-Colonial Administration in Nigeria" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Colonial Administration in Nigeria" },
-              { "week": 9, "topic": "Nationalism in Nigeria" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 2",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Colonial Administration in Nigeria: British, French, Indirect Rule" },
-              { "week": 2, "topic": "Nationalism in Nigeria: Causes, Effects, Key Personalities" },
-              { "week": 3, "topic": "Constitutional Development in Nigeria I" },
-              { "week": 4, "topic": "Constitutional Development in Nigeria II" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Military Rule in Nigeria: Causes, Achievements, Failures" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Civil Rule in Nigeria: Features, Merits, Challenges" },
-              { "week": 9, "topic": "Nigerian Federalism I: Features and Evolution" },
-              { "week": 10, "topic": "Nigerian Federalism II: Problems and Solutions" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Revenue Allocation in Nigeria: Principles and Issues" },
-              { "week": 2, "topic": "Inter-Governmental Relations" },
-              { "week": 3, "topic": "Political Crisis in Nigeria I" },
-              { "week": 4, "topic": "Political Crisis in Nigeria II" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "The Nigerian Civil War: Causes, Effects, Resolution" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Civil Society and Popular Participation" },
-              { "week": 9, "topic": "Citizenship Education and National Integration" },
-              { "week": 10, "topic": "Political Apathy: Causes, Effects, Solutions" },
-              { "week": 11, "topic": "Revision" },
-              { "week": 12, "topic": "Examination" },
-              { "week": 13, "topic": "Closing" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Electoral Systems: Types, Merits and Demerits" },
-              { "week": 2, "topic": "Electoral Commissions in Nigeria: Past and Present" },
-              { "week": 3, "topic": "Electoral Malpractices: Types, Causes, Consequences" },
-              { "week": 4, "topic": "Democratic Processes in Nigeria" },
-              { "week": 5, "topic": "Midterm Examination" },
-              { "week": 6, "topic": "Judiciary: Structure, Functions, Independence" },
-              { "week": 7, "topic": "Midterm Break" },
-              { "week": 8, "topic": "Human Rights: Meaning, Categories, Protection, Limitations" },
-              { "week": 9, "topic": "Public Corporations in Nigeria: Meaning, Types, Roles, Control" },
-              { "week": 10, "topic": "Revision" },
-              { "week": 11, "topic": "Examination" },
-              { "week": 12, "topic": "Closing" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "SS 3",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": "1-2", "topic": "Resumption Test / Military Rule in Nigeria" },
-              { "week": 3, "topic": "Conflict Resolution and Management" },
-              { "week": 4, "topic": "Peace Education" },
-              { "week": 5, "topic": "The Interdependence of Nations and Globalization" },
-              { "week": 6, "topic": "Nigeria’s Foreign Policy I" },
-              { "week": 7, "topic": "Midterm Test / Open Day / Midterm Break" },
-              { "week": 8, "topic": "Nigeria’s Foreign Policy II" },
-              { "week": 9, "topic": "International Organisation: United Nations Organisation (UNO)" },
-              { "week": 10, "topic": "International Organisation: Organisation of African Unity (OAU) / African Union (AU)" },
-              { "week": 11, "topic": "International Organisation: Commonwealth" },
-              { "week": 12, "topic": "Revision" },
-              { "week": "13-14", "topic": "Examination" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": "1-2", "topic": "Resumption Test / International Organisation: ECOWAS" },
-              { "week": "3-4", "topic": "International Organisation: OPEC" },
-              { "week": 5, "topic": "Millennium Development Goals (MDGs) & NEPAD" },
-              { "week": 6, "topic": "Government, Leadership and Followership" },
-              { "week": 7, "topic": "Midterm Test / Break" },
-              { "week": "8-11", "topic": "Continuation / Practical Applications" },
-              { "week": 12, "topic": "Revision" },
-              { "week": "13-14", "topic": "Examination" }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+  "subject": "Government",
+  "curriculum_name": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "SS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Meaning, Nature and Scope of Government",
+              "description": "Definition of government; nature and scope; importance of government"
+            },
+            {
+              "week": 2,
+              "topic": "Basic Concepts of Government",
+              "description": "Power, authority, legitimacy, sovereignty"
+            },
+            {
+              "week": 3,
+              "topic": "Basic Principles of Government",
+              "description": "Rule of law, separation of powers, checks and balances"
+            },
+            {
+              "week": 4,
+              "topic": "Types and Characteristics of Government",
+              "description": "Unitary, federal, confederal systems; features, merits, and demerits"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Systems of Government",
+              "description": "Parliamentary and presidential systems; features, merits, and demerits"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Political Ideologies",
+              "description": "Capitalism, socialism, communism, fascism – meaning, features, and applications"
+            },
+            {
+              "week": 9,
+              "topic": "Constitution",
+              "description": "Meaning, sources, features, types, and importance"
+            },
+            {
+              "week": 10,
+              "topic": "Rule of Law and its Limitations",
+              "description": "Meaning of rule of law; limitations in practice"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Separation of Powers and Its Application",
+              "description": "Meaning and application in presidential and parliamentary systems"
+            },
+            {
+              "week": 2,
+              "topic": "Delegated Legislation",
+              "description": "Meaning, reasons for, types, merits, and demerits"
+            },
+            {
+              "week": 3,
+              "topic": "Citizenship",
+              "description": "Meaning, acquisition, rights, duties, and obligations"
+            },
+            {
+              "week": 4,
+              "topic": "Process of Political Socialisation",
+              "description": "Meaning, agents, and importance of political socialisation"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Political Participation",
+              "description": "Forms, importance, and limitations of political participation"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Public Opinion",
+              "description": "Meaning, formation, measurement, importance, and limitations"
+            },
+            {
+              "week": 9,
+              "topic": "Political Parties",
+              "description": "Definition, types, functions, and importance"
+            },
+            {
+              "week": 10,
+              "topic": "Party System",
+              "description": "One-party, two-party, and multi-party systems; merits and demerits"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Pressure Groups",
+              "description": "Meaning, types, functions, similarities and differences with political parties"
+            },
+            {
+              "week": 2,
+              "topic": "Public Administration",
+              "description": "Meaning, features, importance, and functions"
+            },
+            {
+              "week": 3,
+              "topic": "Civil Service",
+              "description": "Meaning, characteristics, structure, roles, and problems"
+            },
+            {
+              "week": 4,
+              "topic": "Local Government",
+              "description": "Meaning, features, functions, sources of revenue, challenges"
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Pre-Colonial Administration in Nigeria",
+              "description": "Hausa/Fulani, Yoruba, and Igbo systems of administration"
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Colonial Administration in Nigeria",
+              "description": "Features, structures, merits, and demerits"
+            },
+            {
+              "week": 9,
+              "topic": "Nationalism in Nigeria",
+              "description": "Meaning, factors, roles of individuals and groups, effects"
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Colonial Administration in Nigeria: British, French, Indirect Rule",
+              "description": "Features of colonial administration; differences between British and French systems; principles and practice of indirect rule; successes and failures of indirect rule in Nigeria."
+            },
+            {
+              "week": 2,
+              "topic": "Nationalism in Nigeria: Causes, Effects, Key Personalities",
+              "description": "Meaning of nationalism; factors that led to its rise (education, media, religion, economy); roles of key nationalists (Herbert Macaulay, Nnamdi Azikiwe, Obafemi Awolowo, Ahmadu Bello, Tafawa Balewa, Anthony Enahoro, Ernest Ikoli); effects on Nigeria’s independence struggle."
+            },
+            {
+              "week": 3,
+              "topic": "Constitutional Development in Nigeria I",
+              "description": "Clifford Constitution (1922) – features, merits, demerits; Richards Constitution (1946) – features, merits, demerits; Macpherson Constitution (1951) – features, merits, demerits."
+            },
+            {
+              "week": 4,
+              "topic": "Constitutional Development in Nigeria II",
+              "description": "Lyttleton Constitution (1954) – federal structure and significance; Independence Constitution (1960); Republican Constitution (1963); comparative analysis of the constitutions."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Military Rule in Nigeria: Causes, Achievements, Failures",
+              "description": "Reasons for military intervention; achievements (infrastructure, centralization, civil service reforms); failures (dictatorship, corruption, abuse of rights)."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Civil Rule in Nigeria: Features, Merits, Challenges",
+              "description": "Meaning of civil rule; characteristics (constitutionality, rule of law, separation of powers); merits and challenges (corruption, instability, ethnicity)."
+            },
+            {
+              "week": 9,
+              "topic": "Nigerian Federalism I: Features and Evolution",
+              "description": "Meaning of federalism; evolution of Nigerian federalism (from 1954 till date); main features of Nigerian federalism."
+            },
+            {
+              "week": 10,
+              "topic": "Nigerian Federalism II: Problems and Solutions",
+              "description": "Problems: resource control, revenue allocation, minority agitations, state creation; possible solutions for strengthening federalism."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of first term’s work."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Revenue Allocation in Nigeria: Principles and Issues",
+              "description": "Meaning of revenue allocation; principles (derivation, need, equality of states, population, national interest); controversies and challenges in Nigeria’s revenue allocation."
+            },
+            {
+              "week": 2,
+              "topic": "Inter-Governmental Relations",
+              "description": "Meaning; types (federal–state, state–local, federal–local); importance and problems of inter-governmental relations."
+            },
+            {
+              "week": 3,
+              "topic": "Political Crisis in Nigeria I",
+              "description": "1962 Census Crisis – causes, effects; 1963 Tiv Crisis – causes, effects."
+            },
+            {
+              "week": 4,
+              "topic": "Political Crisis in Nigeria II",
+              "description": "1964 Election Crisis – causes, effects; 1965 Western Region Crisis – causes, effects; impact of crises on Nigerian politics."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "The Nigerian Civil War: Causes, Effects, Resolution",
+              "description": "Causes of the war (ethnic tension, coup, secession); major events; effects on Nigeria; resolution and reconciliation efforts (Gowon’s 3Rs: Reconstruction, Rehabilitation, Reconciliation)."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Civil Society and Popular Participation",
+              "description": "Definition and role of civil society; examples (labour unions, NGOs, student movements, faith-based organizations); importance of popular participation in governance."
+            },
+            {
+              "week": 9,
+              "topic": "Citizenship Education and National Integration",
+              "description": "Meaning of citizenship; rights and duties of citizens; importance of national integration; challenges to unity in Nigeria."
+            },
+            {
+              "week": 10,
+              "topic": "Political Apathy: Causes, Effects, Solutions",
+              "description": "Meaning of political apathy; causes (ignorance, mistrust, corruption); effects (low voter turnout, weak democracy); solutions (civic education, transparency, accountability)."
+            },
+            {
+              "week": 11,
+              "topic": "Revision",
+              "description": "Review of second term’s work."
+            },
+            {
+              "week": 12,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 13,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Electoral Systems: Types, Merits and Demerits",
+              "description": "Meaning; types (simple majority, proportional representation, second ballot, alternative vote); merits and demerits of each."
+            },
+            {
+              "week": 2,
+              "topic": "Electoral Commissions in Nigeria: Past and Present",
+              "description": "Historical overview of electoral commissions in Nigeria – NEC, FEDECO, INEC; roles, achievements, and challenges."
+            },
+            {
+              "week": 3,
+              "topic": "Electoral Malpractices: Types, Causes, Consequences",
+              "description": "Meaning; types (rigging, ballot stuffing, intimidation, falsification of results); causes; consequences on democracy."
+            },
+            {
+              "week": 4,
+              "topic": "Democratic Processes in Nigeria",
+              "description": "Meaning; democratic principles (rule of law, majority rule, protection of minority rights, regular elections); challenges to democratic processes in Nigeria."
+            },
+            {
+              "week": 5,
+              "topic": "Midterm Examination",
+              "description": ""
+            },
+            {
+              "week": 6,
+              "topic": "Judiciary: Structure, Functions, Independence",
+              "description": "Structure (hierarchy of courts); functions (interpretation of laws, protection of rights, settlement of disputes); independence of the judiciary and threats to independence."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Break",
+              "description": ""
+            },
+            {
+              "week": 8,
+              "topic": "Human Rights: Meaning, Categories, Protection, Limitations",
+              "description": "Meaning and types (civil, political, economic, social, cultural rights); protection of rights; limitations in practice; institutions for enforcement."
+            },
+            {
+              "week": 9,
+              "topic": "Public Corporations in Nigeria: Meaning, Types, Roles, Control",
+              "description": "Meaning and examples (NITEL, NNPC, Nigerian Railway Corporation); roles in national development; methods of control (ministerial control, legislative control, judicial control)."
+            },
+            {
+              "week": 10,
+              "topic": "Revision",
+              "description": "Review of third term’s work."
+            },
+            {
+              "week": 11,
+              "topic": "Examination",
+              "description": ""
+            },
+            {
+              "week": 12,
+              "topic": "Closing",
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "SS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": "1-2",
+              "topic": "Resumption Test / Military Rule in Nigeria",
+              "description": "• Discuss reasons for military intervention. • Explain the roles of government structure under military rule. • Describe the performance of military administration. • Identify ways military coups can be avoided."
+            },
+            {
+              "week": 3,
+              "topic": "Conflict Resolution and Management",
+              "description": "• Explain the meaning of conflict. • Discuss causes of conflict. • Examine the consequences of conflict. • Identify ways of resolving conflict."
+            },
+            {
+              "week": 4,
+              "topic": "Peace Education",
+              "description": "• Explain the meaning of peace. • Discuss the need for peace. • Identify ways peace can be promoted."
+            },
+            {
+              "week": 5,
+              "topic": "The Interdependence of Nations and Globalization",
+              "description": "• Discuss interdependence of nations. • Explain Nigeria’s international relations: economic, political, cultural, and social. • Identify advantages and disadvantages of interaction among nations."
+            },
+            {
+              "week": 6,
+              "topic": "Nigeria’s Foreign Policy I",
+              "description": "• Explain foreign policy. • Examine factors that influence Nigeria’s foreign policy. • Outline the principles of Nigeria’s foreign policy. • Highlight objectives of Nigeria’s foreign policy."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Test / Open Day / Midterm Break",
+              "description": "• —"
+            },
+            {
+              "week": 8,
+              "topic": "Nigeria’s Foreign Policy II",
+              "description": "• Explain the origin of Africa as the centrepiece of Nigeria’s policy. • Justify reasons for adopting Africa as the centrepiece of Nigeria’s foreign policy. • Highlight ways Nigeria has demonstrated Africa as the centrepiece. • Describe the meaning of non-alignment. • Identify aims and objectives of non-alignment policy. • Outline problems associated with non-alignment."
+            },
+            {
+              "week": 9,
+              "topic": "International Organisation: United Nations Organisation (UNO)",
+              "description": "• Explain the origins and organs of UNO. • Outline aims and objectives of UNO. • Enumerate achievements of UNO. • Discuss problems confronting UNO."
+            },
+            {
+              "week": 10,
+              "topic": "International Organisation: Organisation of African Unity (OAU) / African Union (AU)",
+              "description": "• Explain the origin of OAU/AU. • Outline aims and objectives of OAU/AU. • Enumerate achievements of OAU/AU. • Discuss problems confronting OAU/AU."
+            },
+            {
+              "week": 11,
+              "topic": "International Organisation: Commonwealth",
+              "description": "• Explain the origin of the Commonwealth. • List aims and objectives. • Mention principles of the organisation. • Explain organs of the Commonwealth. • Identify achievements. • Criticize based on shortcomings."
+            },
+            {
+              "week": 12,
+              "topic": "Revision",
+              "description": "• General review of all first term topics."
+            },
+            {
+              "week": "13-14",
+              "topic": "Examination",
+              "description": "• End of Term Examinations."
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": "1-2",
+              "topic": "Resumption Test / International Organisation: ECOWAS",
+              "description": "• Explain the formation of ECOWAS. • Outline aims and objectives of ECOWAS. • Explain organs of ECOWAS. • Highlight achievements of ECOWAS. • Identify problems confronting ECOWAS."
+            },
+            {
+              "week": "3-4",
+              "topic": "International Organisation: OPEC",
+              "description": "• Explain the formation of OPEC. • Outline aims and objectives. • Explain organs of OPEC. • Highlight achievements of OPEC. • Discuss problems confronting OPEC."
+            },
+            {
+              "week": 5,
+              "topic": "Millennium Development Goals (MDGs) & NEPAD",
+              "description": "• Explain meaning of MDGs. • Identify achievements of MDGs by 2015. • Describe the term NEPAD. • Outline aims of NEPAD."
+            },
+            {
+              "week": 6,
+              "topic": "Government, Leadership and Followership",
+              "description": "• Explain the meaning of e-government. • Give examples of e-government. • Discuss advantages and disadvantages of e-government. • Describe leadership and followership. • Discuss qualities of a good leader. • Explain roles of leaders and followers in politics and government."
+            },
+            {
+              "week": 7,
+              "topic": "Midterm Test / Break",
+              "description": "• —"
+            },
+            {
+              "week": "8-11",
+              "topic": "Continuation / Practical Applications",
+              "description": "• (Depending on state/unified curriculum adjustments: case studies, debates, or model United Nations exercises)."
+            },
+            {
+              "week": 12,
+              "topic": "Revision",
+              "description": "• General review of second term topics."
+            },
+            {
+              "week": "13-14",
+              "topic": "Examination",
+              "description": "• End of Term Examinations."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+ 
+}

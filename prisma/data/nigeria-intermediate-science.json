@@ -1,182 +1,652 @@
 {
-    "subject": "Intermediate Science",
-    "curriculum": [
-      {
-        "grade": "JSS 1",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Intermediate Science" },
-              { "week": 2, "topic": "Environmental Degradation: Erosion" },
-              { "week": 3, "topic": "Environmental Degradation: Flooding" },
-              { "week": 4, "topic": "Environmental Degradation: Bush Burning" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "MID-TERM BREAK" },
-              { "week": 7, "topic": "Climate and Weather" },
-              { "week": 8, "topic": "Environmental Protection" },
-              { "week": 9, "topic": "Sanitation and Waste Management" },
-              { "week": 10, "topic": "Review on Environmental Degradation" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Matter – Basic Concepts" },
-              { "week": 2, "topic": "Living Matter" },
-              { "week": 3, "topic": "Non-Living Matter" },
-              { "week": 4, "topic": "Energy" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "MID-TERM BREAK" },
-              { "week": 7, "topic": "Renewable Energy" },
-              { "week": 8, "topic": "Non-Renewable Energy" },
-              { "week": 9, "topic": "Energy Conversion and Conservation" },
-              { "week": 10, "topic": "Review on Matter and Energy" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Skill Acquisition" },
-              { "week": 2, "topic": "Ethical Issues in Science and Development" },
-              { "week": 3, "topic": "Familiarisation Tour of the Laboratory and Workshop" },
-              { "week": 4, "topic": "Workshop Accidents and Safety" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "MID-TERM BREAK" },
-              { "week": 7, "topic": "Materials: Wood, Metals, Ceramics, and Building Materials" },
-              { "week": 8, "topic": "Workshop Processes: Drawing Practice" },
-              { "week": 9, "topic": "Workshop Processes: Board Practice" },
-              { "week": 10, "topic": "Machines and Tools: Woodwork & Metalwork Hand Tools" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "JSS 2",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Review of JSS 1 Science Concepts" },
-              { "week": 2, "topic": "Components of the Environment" },
-              { "week": 3, "topic": "Soil Formation and Conservation" },
-              { "week": 4, "topic": "Environmental Pollution" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "MID-TERM BREAK" },
-              { "week": 7, "topic": "Waste and Its Management" },
-              { "week": 8, "topic": "Air and Water Pollution" },
-              { "week": 9, "topic": "Conservation of Natural Resources" },
-              { "week": 10, "topic": "Climate and Environmental Changes" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Elements, Compounds and Mixtures" },
-              { "week": 2, "topic": "Acids, Bases and Salts" },
-              { "week": 3, "topic": "The Human Body" },
-              { "week": 4, "topic": "Reproduction in Plants and Animals" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "MID-TERM BREAK" },
-              { "week": 7, "topic": "Classification of Living Things" },
-              { "week": 8, "topic": "Cells as the Basic Units of Life" },
-              { "week": 9, "topic": "Growth and Development" },
-              { "week": 10, "topic": "Microorganisms" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Forms and Sources of Energy" },
-              { "week": 2, "topic": "Heat and Temperature" },
-              { "week": 3, "topic": "Light and Its Properties" },
-              { "week": 4, "topic": "Sound" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "MID-TERM BREAK" },
-              { "week": 7, "topic": "Electricity and Magnetism" },
-              { "week": 8, "topic": "Machines" },
-              { "week": 9, "topic": "Science, Technology and Development" },
-              { "week": 10, "topic": "Skill Acquisition and Entrepreneurship" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "JSS 3",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Review of JSS 2 Work" },
-              { "week": 2, "topic": "Ecosystem" },
-              { "week": 3, "topic": "Natural Resources" },
-              { "week": 4, "topic": "Environmental Hazards" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "MID-TERM BREAK" },
-              { "week": 7, "topic": "Environmental Health" },
-              { "week": 8, "topic": "Waste Disposal and Recycling" },
-              { "week": 9, "topic": "Sustainable Development" },
-              { "week": 10, "topic": "Review of Environmental Concepts" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "The Cell and Its Functions" },
-              { "week": 2, "topic": "Tissues and Organs" },
-              { "week": 3, "topic": "Heredity and Variation" },
-              { "week": 4, "topic": "Adaptation of Organisms" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "MID-TERM BREAK" },
-              { "week": 7, "topic": "Atoms and Molecules" },
-              { "week": 8, "topic": "Changes in Matter" },
-              { "week": 9, "topic": "Water and Air" },
-              { "week": 10, "topic": "Microorganisms and Diseases" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Energy Transformation" },
-              { "week": 2, "topic": "Heat Transfer" },
-              { "week": 3, "topic": "Electrical Energy" },
-              { "week": 4, "topic": "Science, Technology and National Development" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "MID-TERM BREAK" },
-              { "week": 7, "topic": "Machines and Mechanisms" },
-              { "week": 8, "topic": "ICT and Scientific Advancement" },
-              { "week": 9, "topic": "Career Opportunities in Science and Technology" },
-              { "week": 10, "topic": "Science Projects and Exhibitions" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+  "subject": "Intermediate Science",
+   "curriculum_name": "Nigeria Curiculum",
+  "curriculum": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Intermediate Science",
+              "description": "• Meaning and importance of science • Branches and scope of science • The role of science in everyday life • Attitudes of a good scientist"
+            },
+            {
+              "week": 2,
+              "topic": "Environmental Degradation: Erosion",
+              "description": "• Meaning and types of erosion • Causes and effects of erosion • Preventive measures (terracing, tree planting, contour ridges) • Simple demonstration of soil erosion"
+            },
+            {
+              "week": 3,
+              "topic": "Environmental Degradation: Flooding",
+              "description": "• Meaning and causes of flooding • Effects of flooding on the environment and human life • Flood control measures • Community roles in flood prevention"
+            },
+            {
+              "week": 4,
+              "topic": "Environmental Degradation: Bush Burning",
+              "description": "• Meaning of bush burning • Causes and effects on soil, air, and living organisms• Alternatives to bush burning • Importance of environmental conservation"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment of Weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 7,
+              "topic": "Climate and Weather",
+              "description": "• Difference between climate and weather • Factors affecting weather • Measuring weather elements • Effects of weather on farming and human activities"
+            },
+            {
+              "week": 8,
+              "topic": "Environmental Protection",
+              "description": "• Meaning and importance of environmental protection • Individual and community roles• Government agencies (NESREA, FEPA, etc.) • Activities that promote sustainability"
+            },
+            {
+              "week": 9,
+              "topic": "Sanitation and Waste Management",
+              "description": "• Meaning of sanitation and waste • Types and sources of waste • Waste disposal methods • Recycling and reusing waste materials"
+            },
+            {
+              "week": 10,
+              "topic": "Review on Environmental Degradation",
+              "description": "• Summary of erosion, flooding, and bush burning • Preventive measures • Project: Drawing and labeling a scene of an eroded area or floodplain"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Review of all topics covered in Term 1"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Matter – Basic Concepts",
+              "description": "• Meaning of matter • States of matter: solid, liquid, gas • Properties of each state • Changes in states: melting, freezing, evaporation, condensation"
+            },
+            {
+              "week": 2,
+              "topic": "Living Matter",
+              "description": "• Meaning and characteristics of living things • Examples of plants and animals • Growth, respiration, and reproduction in living things • Differences between living and non-living matter"
+            },
+            {
+              "week": 3,
+              "topic": "Non-Living Matter",
+              "description": "• Meaning and examples • Physical and chemical properties • Importance of non-living matter in our environment • Relationship between living and non-living matter"
+            },
+            {
+              "week": 4,
+              "topic": "Energy",
+              "description": "• Meaning and forms of energy (light, heat, sound, kinetic, potential) • Energy transformations • Sources and uses of energy • Importance of energy in everyday life"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment of Weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 7,
+              "topic": "Renewable Energy",
+              "description": "• Meaning and examples: solar, wind, hydro, biomass • Importance and advantages of renewable energy • Local sources and simple demonstrations • Limitations of renewable energy sources"
+            },
+            {
+              "week": 8,
+              "topic": "Non-Renewable Energy",
+              "description": "• Meaning and examples: coal, petroleum, natural gas • Uses of non-renewable energy • Effects on the environment • Conservation measures"
+            },
+            {
+              "week": 9,
+              "topic": "Energy Conversion and Conservation",
+              "description": "• Energy conversion (mechanical to electrical, etc.)• Law of conservation of energy • Energy-saving habits • Experiment: Demonstration of energy change"
+            },
+            {
+              "week": 10,
+              "topic": "Review on Matter and Energy",
+              "description": "• Summary of matter, living and non-living things • Renewable vs. non-renewable energy • Practical revision exercises"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Review of all topics covered in Term 2"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Skill Acquisition",
+              "description": "• Meaning and importance of skill acquisition • Types of vocational skills (technical, agricultural, home economics, ICT) • Benefits of practical skills to national development • Entrepreneurship awareness"
+            },
+            {
+              "week": 2,
+              "topic": "Ethical Issues in Science and Development",
+              "description": "• Meaning of ethics • Positive and negative use of science and technology • Responsible use of technology • Ethical concerns: pollution, cloning, genetic modification"
+            },
+            {
+              "week": 3,
+              "topic": "Familiarisation Tour of the Laboratory and Workshop",
+              "description": "• Meaning and purpose of laboratories and workshops • Rules and regulations • Identification of laboratory and workshop areas • Laboratory symbols and safety signs"
+            },
+            {
+              "week": 4,
+              "topic": "Workshop Accidents and Safety",
+              "description": "• Common causes of accidents in workshop • Safety rules and precautions • First aid in workshop accidents • Teacher demonstration: using basic protective equipment"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment of Weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 7,
+              "topic": "Materials: Wood, Metals, Ceramics, and Building Materials",
+              "description": "• Types and properties of common materials • Uses in science and technology • Advantages and disadvantages • Identifying materials through observation"
+            },
+            {
+              "week": 8,
+              "topic": "Workshop Processes: Drawing Practice",
+              "description": "• Meaning of drawing in science and technology • Types of drawings (freehand, technical) • Drawing instruments and their uses • Simple exercises on lines and shapes"
+            },
+            {
+              "week": 9,
+              "topic": "Workshop Processes: Board Practice",
+              "description": "• Meaning of board practice • Tools and materials used • Simple layout and lettering on drawing boards • Safe handling of instruments"
+            },
+            {
+              "week": 10,
+              "topic": "Machines and Tools: Woodwork & Metalwork Hand Tools",
+              "description": "• Identification of basic tools • Functions and uses of each tool • Maintenance and storage of tools and machines • Simple demonstrations"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Review of all topics covered in Term 3"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Review of JSS 1 Science Concepts",
+              "description": "Revision of matter, energy, and environment; Laboratory rules and safety recap; Importance of observation and measurement"
+            },
+            {
+              "week": 2,
+              "topic": "Components of the Environment",
+              "description": "Biotic and abiotic components; Interdependence between living and non-living things; Food chains and food webs; Energy flow in ecosystems"
+            },
+            {
+              "week": 3,
+              "topic": "Soil Formation and Conservation",
+              "description": "Meaning of soil and its formation; Types of soil and characteristics; Soil erosion and conservation practices; Importance of soil to living things"
+            },
+            {
+              "week": 4,
+              "topic": "Environmental Pollution",
+              "description": "Meaning and types (air, water, soil, noise); Causes and effects; Control and prevention methods; Roles of individuals and government agencies"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment of Weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 7,
+              "topic": "Waste and Its Management",
+              "description": "Meaning and types of waste; Waste disposal methods; Reduce, Reuse, Recycle (3Rs); Effects of poor waste management"
+            },
+            {
+              "week": 8,
+              "topic": "Air and Water Pollution",
+              "description": "Sources of air and water pollution; Effects on living organisms; Prevention and purification methods; Experiment: filtration of muddy water"
+            },
+            {
+              "week": 9,
+              "topic": "Conservation of Natural Resources",
+              "description": "Meaning and types of natural resources; Importance of conservation; Renewable vs. non-renewable resources; Role of individuals in conservation"
+            },
+            {
+              "week": 10,
+              "topic": "Climate and Environmental Changes",
+              "description": "Meaning and causes of climate change; Effects of global warming; Mitigation and adaptation strategies; School-based tree planting projects"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Review of all topics in Term 1"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Elements, Compounds and Mixtures",
+              "description": "Meaning and examples; Differences between elements, compounds, and mixtures; Simple separation techniques; Practical demonstrations"
+            },
+            {
+              "week": 2,
+              "topic": "Acids, Bases and Salts",
+              "description": "Meaning and identification; Common household acids and bases; Indicators (litmus, turmeric, methyl orange); Neutralization reactions"
+            },
+            {
+              "week": 3,
+              "topic": "The Human Body",
+              "description": "Digestive, circulatory, and respiratory systems; Functions of major organs; Healthy habits and body care; Simple diagrams and labeling"
+            },
+            {
+              "week": 4,
+              "topic": "Reproduction in Plants and Animals",
+              "description": "Meaning and types (sexual, asexual); Structure and function of reproductive organs; Importance of reproduction; Life cycles of selected animals"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment of Weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 7,
+              "topic": "Classification of Living Things",
+              "description": "Basis for classification; Five kingdoms of living organisms; Major characteristics of each group; Examples and simple charts"
+            },
+            {
+              "week": 8,
+              "topic": "Cells as the Basic Units of Life",
+              "description": "Meaning and discovery of cells; Cell structure and functions; Differences between plant and animal cells; Use of microscope (demonstration)"
+            },
+            {
+              "week": 9,
+              "topic": "Growth and Development",
+              "description": "Definition of growth and development; Factors affecting growth; Stages in human development; Measurement of growth"
+            },
+            {
+              "week": 10,
+              "topic": "Microorganisms",
+              "description": "Types: bacteria, fungi, virus, protozoa; Beneficial and harmful effects; Control of harmful microorganisms; Experiment: observing mould growth"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Review of all topics in Term 2"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Forms and Sources of Energy",
+              "description": "Light, heat, sound, mechanical, electrical, chemical; Renewable and non-renewable energy sources; Energy transformation; Simple classroom experiments"
+            },
+            {
+              "week": 2,
+              "topic": "Heat and Temperature",
+              "description": "Meaning of heat and temperature; Measurement using thermometers; Effects of heat on matter; Practical demonstrations"
+            },
+            {
+              "week": 3,
+              "topic": "Light and Its Properties",
+              "description": "Reflection, refraction, and absorption; Transparent, translucent, opaque objects; Shadows and eclipses; Simple activities with mirrors and lenses"
+            },
+            {
+              "week": 4,
+              "topic": "Sound",
+              "description": "Production and transmission of sound; Loudness, pitch, and vibration; Noise pollution; Sound safety measures"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment of Weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 7,
+              "topic": "Electricity and Magnetism",
+              "description": "Conductors and insulators; Simple circuits; Magnetic and non-magnetic materials; Safety precautions"
+            },
+            {
+              "week": 8,
+              "topic": "Machines",
+              "description": "Simple machines and their uses; Levers, pulleys, inclined planes; Mechanical advantage and efficiency; Practical demonstrations"
+            },
+            {
+              "week": 9,
+              "topic": "Science, Technology and Development",
+              "description": "Relationship between science and technology; Positive and negative effects of technology; Careers in science and technology; National development contributions"
+            },
+            {
+              "week": 10,
+              "topic": "Skill Acquisition and Entrepreneurship",
+              "description": "Meaning and importance; Vocational and technological skills; School-based projects; Self-reliance through practical skills"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Review of all topics in Term 3"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Review of JSS 2 Work",
+              "description": "Revision of matter, energy, and classification; Laboratory conduct and safety; Introduction to JSS 3 concepts"
+            },
+            {
+              "week": 2,
+              "topic": "Ecosystem",
+              "description": "Meaning and components; Interdependence and balance of nature; Food chains, food webs, and energy flow; Disruption of ecosystems"
+            },
+            {
+              "week": 3,
+              "topic": "Natural Resources",
+              "description": "Types: renewable and non-renewable; Importance to national economy; Conservation and management; Field observation project"
+            },
+            {
+              "week": 4,
+              "topic": "Environmental Hazards",
+              "description": "Meaning and types: drought, desertification, erosion, flooding; Causes and prevention; Disaster preparedness; Community safety measures"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment of Weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 7,
+              "topic": "Environmental Health",
+              "description": "Meaning and components; Importance of clean environment; Role of individuals and government; Environmental health officers"
+            },
+            {
+              "week": 8,
+              "topic": "Waste Disposal and Recycling",
+              "description": "Methods of waste disposal; Importance of recycling; Practical waste sorting activity; Effects of poor waste management"
+            },
+            {
+              "week": 9,
+              "topic": "Sustainable Development",
+              "description": "Meaning and principles; Environmental protection and sustainable use; SDGs related to environment; School eco-project"
+            },
+            {
+              "week": 10,
+              "topic": "Review of Environmental Concepts",
+              "description": "Summary of major environmental topics; Quiz and group presentation"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Review of all topics in Term 1"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "The Cell and Its Functions",
+              "description": "Cell theory; Organelles and their roles; Differences between plant and animal cells; Observation under microscope"
+            },
+            {
+              "week": 2,
+              "topic": "Tissues and Organs",
+              "description": "Meaning and examples of tissues; Types and functions; Organs and organ systems; Importance of coordination"
+            },
+            {
+              "week": 3,
+              "topic": "Heredity and Variation",
+              "description": "Meaning of heredity; Inherited and acquired traits; Importance of variation; Simple genetic inheritance"
+            },
+            {
+              "week": 4,
+              "topic": "Adaptation of Organisms",
+              "description": "Meaning and examples; Adaptation to habitat; Structural and behavioral adaptations; Importance of adaptation"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment of Weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 7,
+              "topic": "Atoms and Molecules",
+              "description": "Basic structure of atom; Elements, compounds, and mixtures; Symbols and formulae; Simple chemical equations"
+            },
+            {
+              "week": 8,
+              "topic": "Changes in Matter",
+              "description": "Physical and chemical changes; Reversible and irreversible processes; Simple experiments"
+            },
+            {
+              "week": 9,
+              "topic": "Water and Air",
+              "description": "Composition and importance; Water purification and conservation; Air pressure and experiments"
+            },
+            {
+              "week": 10,
+              "topic": "Microorganisms and Diseases",
+              "description": "Pathogens and disease transmission; Prevention and control; Vaccination and hygiene practices"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Review of all topics in Term 2"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Energy Transformation",
+              "description": "Conversion from one form to another; Energy conservation; Simple demonstrations"
+            },
+            {
+              "week": 2,
+              "topic": "Heat Transfer",
+              "description": "Conduction, convection, radiation; Practical examples; Insulators and conductors"
+            },
+            {
+              "week": 3,
+              "topic": "Electrical Energy",
+              "description": "Meaning and sources; Electric circuit and symbols; Domestic wiring and safety; Conservation of electricity"
+            },
+            {
+              "week": 4,
+              "topic": "Science, Technology and National Development",
+              "description": "Relationship among science, technology, and development; Role of research in development; Inventions and innovators"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment of Weeks 1–4"
+            },
+            {
+              "week": 6,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 7,
+              "topic": "Machines and Mechanisms",
+              "description": "Simple and compound machines; Functions and uses; Mechanical advantage; Practical demonstration"
+            },
+            {
+              "week": 8,
+              "topic": "ICT and Scientific Advancement",
+              "description": "Role of ICT in science; Data collection and storage; Modern communication tools; Internet and global learning"
+            },
+            {
+              "week": 9,
+              "topic": "Career Opportunities in Science and Technology",
+              "description": "Careers in medical, engineering, ICT, and research fields; Skills required; Importance to national growth"
+            },
+            {
+              "week": 10,
+              "topic": "Science Projects and Exhibitions",
+              "description": "Planning and execution; Presentation and teamwork; Assessment and reflection"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Review of all topics in Term 3"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+ 
+}

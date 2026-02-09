@@ -1,182 +1,652 @@
 {
-    "subject": "Islamic Religious Studies",
-    "curriculum": [
-      {
-        "grade": "JSS 1",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to the Qur’an" },
-              { "week": 2, "topic": "Qur’anic Recitation: Suratul Tariq (Q86:1–17)" },
-              { "week": 3, "topic": "Qur’anic Recitation: Suratul Buruj (Q85:1–22)" },
-              { "week": 4, "topic": "Qur’anic Recitation: Suratul Inshiqaq (Q84:1–25)" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "Introduction to Tajwid" },
-              { "week": 7, "topic": "MID-TERM BREAK" },
-              { "week": 8, "topic": "Rules of Nun Sakinah and Tanwin" },
-              { "week": 9, "topic": "Rules of Mim Sakinah" },
-              { "week": 10, "topic": "Importance of Tajwid" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Hadith" },
-              { "week": 2, "topic": "Hadith No. 11 (An-Nawawi Collection)" },
-              { "week": 3, "topic": "Hadith Nos. 12–13" },
-              { "week": 4, "topic": "Hadith Nos. 14–15" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "Healthy Social Relationships in Islam" },
-              { "week": 7, "topic": "MID-TERM BREAK" },
-              { "week": 8, "topic": "Corruption in Islam" },
-              { "week": 9, "topic": "Spirituality and Essence of Man’s Creation" },
-              { "week": 10, "topic": "Application of Islamic Ethics" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to Fiqh" },
-              { "week": 2, "topic": "Supererogatory Prayers (Nawafil)" },
-              { "week": 3, "topic": "Prohibited Prayer Times" },
-              { "week": 4, "topic": "Fundamental Principles of Iman" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "Faith and Good Deeds" },
-              { "week": 7, "topic": "MID-TERM BREAK" },
-              { "week": 8, "topic": "Application of Faith" },
-              { "week": 9, "topic": "Review of Qur’an and Hadith" },
-              { "week": 10, "topic": "Ethical Conduct in Islam" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "JSS 2",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Revision of JSS1 Qur’anic Recitations" },
-              { "week": 2, "topic": "Qur’anic Recitation: Suratul A’la (Q87:1–19)" },
-              { "week": 3, "topic": "Qur’anic Recitation: Suratul Ghashiyah (Q88:1–26)" },
-              { "week": 4, "topic": "Qur’anic Recitation: Suratul Fajr (Q89:1–30)" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "Rules of Madd (Prolongation)" },
-              { "week": 7, "topic": "MID-TERM BREAK" },
-              { "week": 8, "topic": "Rules of Qalqalah" },
-              { "week": 9, "topic": "Rules of Idgham and Ikhfa (Revision and Practice)" },
-              { "week": 10, "topic": "The Importance of Perfecting Recitation" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Introduction to the Hadith of the Prophet (SAW)" },
-              { "week": 2, "topic": "Selected Hadith on Good Character" },
-              { "week": 3, "topic": "Hadith on Brotherhood and Unity" },
-              { "week": 4, "topic": "Hadith on Justice and Equality" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "Tahdhib: Good Manners and Social Conduct" },
-              { "week": 7, "topic": "MID-TERM BREAK" },
-              { "week": 8, "topic": "Tahdhib: Respect for Parents and Elders" },
-              { "week": 9, "topic": "Avoidance of Corruption and Dishonesty" },
-              { "week": 10, "topic": "The Role of the Muslim in Society" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Review of Fiqh from JSS1" },
-              { "week": 2, "topic": "The Pillars of Islam (Arkan al-Islam)" },
-              { "week": 3, "topic": "Types of Fasting (Sawm)" },
-              { "week": 4, "topic": "Zakah and Charity" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "Faith in Angels and Prophets" },
-              { "week": 7, "topic": "MID-TERM BREAK" },
-              { "week": 8, "topic": "Faith in the Day of Judgment" },
-              { "week": 9, "topic": "Faith in Divine Decree (Qadar)" },
-              { "week": 10, "topic": "Applying Iman in Daily Life" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          }
-        ]
-      },
-      {
-        "grade": "JSS 3",
-        "terms": [
-          {
-            "term": 1,
-            "weeks": [
-              { "week": 1, "topic": "Review of JSS2 Surahs" },
-              { "week": 2, "topic": "Qur’anic Recitation: Suratul Balad (Q90:1–20)" },
-              { "week": 3, "topic": "Qur’anic Recitation: Suratul Shams (Q91:1–15)" },
-              { "week": 4, "topic": "Qur’anic Recitation: Suratul Layl (Q92:1–21)" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "Rules of Ghunnah (Nasal Sound)" },
-              { "week": 7, "topic": "MID-TERM BREAK" },
-              { "week": 8, "topic": "Rules of Waqf (Stopping Signs)" },
-              { "week": 9, "topic": "Practical Tajwid Exercises" },
-              { "week": 10, "topic": "Importance of the Qur’an in Muslim Life" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 2,
-            "weeks": [
-              { "week": 1, "topic": "Review of Previous Hadith" },
-              { "week": 2, "topic": "Selected Hadith on Leadership" },
-              { "week": 3, "topic": "Hadith on Justice and Accountability" },
-              { "week": 4, "topic": "Hadith on Seeking Knowledge" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "Tahdhib: Respect for Human Life and Property" },
-              { "week": 7, "topic": "MID-TERM BREAK" },
-              { "week": 8, "topic": "Tahdhib: Discipline and Responsibility" },
-              { "week": 9, "topic": "Tahdhib: Purity of Intention" },
-              { "week": 10, "topic": "Tahdhib: Role of Muslims in Society" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          },
-          {
-            "term": 3,
-            "weeks": [
-              { "week": 1, "topic": "Review of Fiqh and Iman (JSS2)" },
-              { "week": 2, "topic": "Funeral Rites in Islam" },
-              { "week": 3, "topic": "Marriage in Islam" },
-              { "week": 4, "topic": "Inheritance (Mirath)" },
-              { "week": 5, "topic": "MID-TERM EXAMINATION" },
-              { "week": 6, "topic": "Faith in Allah and His Attributes" },
-              { "week": 7, "topic": "MID-TERM BREAK" },
-              { "week": 8, "topic": "Belief in the Holy Books" },
-              { "week": 9, "topic": "Belief in the Hereafter" },
-              { "week": 10, "topic": "Living a Life of Faith" },
-              { "week": 11, "topic": "REVISION" },
-              { "week": 12, "topic": "EXAMINATION" },
-              { "week": 13, "topic": "CLOSING/VACATION" }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+  "subject": "Islamic Religious Studies",
+   "curriculum_name": "Nigeria Curiculum"
+  "curriculum": [
+    {
+      "grade": "JSS 1",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to the Qur’an",
+              "description": "• Meaning and importance of the Qur’an• Revelation and preservation of the Qur’an• Difference between the Qur’an and Hadith"
+            },
+            {
+              "week": 2,
+              "topic": "Qur’anic Recitation: Suratul Tariq (Q86:1–17)",
+              "description": "• Recitation and memorization• Translation and interpretation• Lessons on Allah’s power and human accountability"
+            },
+            {
+              "week": 3,
+              "topic": "Qur’anic Recitation: Suratul Buruj (Q85:1–22)",
+              "description": "• Recitation and memorization• Explanation of meanings• Lessons on patience and steadfastness"
+            },
+            {
+              "week": 4,
+              "topic": "Qur’anic Recitation: Suratul Inshiqaq (Q84:1–25)",
+              "description": "• Recitation and memorization• Explanation of meanings• Lessons on judgment and the Hereafter"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment of Qur’anic Recitation and Interpretation (Surahs 84–86)"
+            },
+            {
+              "week": 6,
+              "topic": "Introduction to Tajwid",
+              "description": "• Meaning and importance of Tajwid• Rules of pronunciation and fluency• Common errors in recitation"
+            },
+            {
+              "week": 7,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 8,
+              "topic": "Rules of Nun Sakinah and Tanwin",
+              "description": "• Idgham, Ikhfa, Izhar, Iqlab• Examples from the Qur’an• Class recitation practice"
+            },
+            {
+              "week": 9,
+              "topic": "Rules of Mim Sakinah",
+              "description": "• Idgham Shafawi, Ikhfa Shafawi, Izhar Shafawi• Practical exercises using selected verses"
+            },
+            {
+              "week": 10,
+              "topic": "Importance of Tajwid",
+              "description": "• Benefits of correct recitation• Role of Tajwid in preserving the Qur’an"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Comprehensive review of Surahs and Tajwid rules"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Hadith",
+              "description": "• Meaning and significance• Difference between Hadith and Sunnah• Preservation of Hadith"
+            },
+            {
+              "week": 2,
+              "topic": "Hadith No. 11 (An-Nawawi Collection)",
+              "description": "• Text, translation, and interpretation• Lessons on good manners and sincerity"
+            },
+            {
+              "week": 3,
+              "topic": "Hadith Nos. 12–13",
+              "description": "• Explanation of purity, faith, and humility• Moral lessons from Hadith"
+            },
+            {
+              "week": 4,
+              "topic": "Hadith Nos. 14–15",
+              "description": "• Translation and application in daily life• Moral lessons on discipline and honesty"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment on Hadith Nos. 11–15"
+            },
+            {
+              "week": 6,
+              "topic": "Healthy Social Relationships in Islam",
+              "description": "• Meaning and importance• Islamic teachings on kindness, cooperation, and unity"
+            },
+            {
+              "week": 7,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 8,
+              "topic": "Corruption in Islam",
+              "description": "• Meaning, forms, and dangers• Islamic stance on corruption• Role of honesty and accountability"
+            },
+            {
+              "week": 9,
+              "topic": "Spirituality and Essence of Man’s Creation",
+              "description": "• Purpose of creation• Spiritual growth and worship• Duties of man on earth"
+            },
+            {
+              "week": 10,
+              "topic": "Application of Islamic Ethics",
+              "description": "• Practical examples of honesty, justice, and compassion"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Comprehensive review of Hadith and Tahdhib lessons"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to Fiqh",
+              "description": "• Meaning and sources of Islamic Law• Importance of Fiqh in Muslim life"
+            },
+            {
+              "week": 2,
+              "topic": "Supererogatory Prayers (Nawafil)",
+              "description": "• Meaning and examples• Benefits of voluntary prayers"
+            },
+            {
+              "week": 3,
+              "topic": "Prohibited Prayer Times",
+              "description": "• Times when prayers are not allowed• Exceptions and significance"
+            },
+            {
+              "week": 4,
+              "topic": "Fundamental Principles of Iman",
+              "description": "• Meaning of Iman (faith)• Six Articles of Faith• Importance in Muslim life"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment on Fiqh and Iman"
+            },
+            {
+              "week": 6,
+              "topic": "Faith and Good Deeds",
+              "description": "• Relationship between belief and action• Avoiding hypocrisy"
+            },
+            {
+              "week": 7,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 8,
+              "topic": "Application of Faith",
+              "description": "• Living a faithful life through honesty, prayer, and service"
+            },
+            {
+              "week": 9,
+              "topic": "Review of Qur’an and Hadith",
+              "description": "• Integration of faith and practice• Recitation exercises"
+            },
+            {
+              "week": 10,
+              "topic": "Ethical Conduct in Islam",
+              "description": "• Modesty, patience, and truthfulness"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Comprehensive review of Fiqh, Iman, and ethics"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 2",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Revision of JSS1 Qur’anic Recitations",
+              "description": "• Review of Surahs: Tariq, Buruj, Inshiqaq • Pronunciation and Tajwid practice"
+            },
+            {
+              "week": 2,
+              "topic": "Qur’anic Recitation: Suratul A’la (Q87:1–19)",
+              "description": "• Recitation and memorization • Translation and moral lessons • Lessons on glorifying Allah"
+            },
+            {
+              "week": 3,
+              "topic": "Qur’anic Recitation: Suratul Ghashiyah (Q88:1–26)",
+              "description": "• Meaning and interpretation • Lessons on the Hereafter"
+            },
+            {
+              "week": 4,
+              "topic": "Qur’anic Recitation: Suratul Fajr (Q89:1–30)",
+              "description": "• Recitation and memorization • Explanation of moral messages on patience and obedience"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment on Surahs and Tajwid Rules"
+            },
+            {
+              "week": 6,
+              "topic": "Rules of Madd (Prolongation)",
+              "description": "• Meaning and types of Madd • Application during recitation"
+            },
+            {
+              "week": 7,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 8,
+              "topic": "Rules of Qalqalah",
+              "description": "• Meaning and letters of Qalqalah • Examples and practical application"
+            },
+            {
+              "week": 9,
+              "topic": "Rules of Idgham and Ikhfa (Revision and Practice)",
+              "description": "• Review of previous Tajwid rules • Recitation drills"
+            },
+            {
+              "week": 10,
+              "topic": "The Importance of Perfecting Recitation",
+              "description": "• Role of Tajwid in Qur’anic understanding and preservation"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Comprehensive review of Surahs and Tajwid"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Introduction to the Hadith of the Prophet (SAW)",
+              "description": "• Review of Hadith meaning • Transmission and preservation of Hadith"
+            },
+            {
+              "week": 2,
+              "topic": "Selected Hadith on Good Character",
+              "description": "• Importance of honesty, humility, and patience • Moral lessons from Hadith"
+            },
+            {
+              "week": 3,
+              "topic": "Hadith on Brotherhood and Unity",
+              "description": "• Concept of brotherhood in Islam • The Prophet’s teachings on peace and unity"
+            },
+            {
+              "week": 4,
+              "topic": "Hadith on Justice and Equality",
+              "description": "• Islamic view on fairness and equality • Applications in daily life"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment on Hadith Studies"
+            },
+            {
+              "week": 6,
+              "topic": "Tahdhib: Good Manners and Social Conduct",
+              "description": "• Islamic etiquette in speech, dress, and behavior"
+            },
+            {
+              "week": 7,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 8,
+              "topic": "Tahdhib: Respect for Parents and Elders",
+              "description": "• Importance of filial piety • Lessons from the Prophet’s examples"
+            },
+            {
+              "week": 9,
+              "topic": "Avoidance of Corruption and Dishonesty",
+              "description": "• Islamic teachings on truth and integrity"
+            },
+            {
+              "week": 10,
+              "topic": "The Role of the Muslim in Society",
+              "description": "• Living as a good Muslim in community and school"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Comprehensive review of Hadith and Tahdhib"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Review of Fiqh from JSS1",
+              "description": "• Overview of prayers and Iman"
+            },
+            {
+              "week": 2,
+              "topic": "The Pillars of Islam (Arkan al-Islam)",
+              "description": "• Shahadah, Salah, Sawm, Zakah, Hajj • Significance of each pillar"
+            },
+            {
+              "week": 3,
+              "topic": "Types of Fasting (Sawm)",
+              "description": "• Obligatory, voluntary, and prohibited fasting• Rules and benefits"
+            },
+            {
+              "week": 4,
+              "topic": "Zakah and Charity",
+              "description": "• Meaning, purpose, and recipients • Social benefits of giving"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment on Pillars of Islam and Fiqh"
+            },
+            {
+              "week": 6,
+              "topic": "Faith in Angels and Prophets",
+              "description": "• Roles and responsibilities of Angels • Importance of Prophets as guides"
+            },
+            {
+              "week": 7,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 8,
+              "topic": "Faith in the Day of Judgment",
+              "description": "• Description of life after death• Preparation for accountability"
+            },
+            {
+              "week": 9,
+              "topic": "Faith in Divine Decree (Qadar)",
+              "description": "• Meaning and acceptance of destiny • Balancing belief and effort"
+            },
+            {
+              "week": 10,
+              "topic": "Applying Iman in Daily Life",
+              "description": "• Living in obedience and submission to Allah"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Comprehensive review of Fiqh and Iman"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "grade": "JSS 3",
+      "terms": [
+        {
+          "term": 1,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Review of JSS2 Surahs",
+              "description": "• A’la, Ghashiyah, Fajr — revision and recitation"
+            },
+            {
+              "week": 2,
+              "topic": "Qur’anic Recitation: Suratul Balad (Q90:1–20)",
+              "description": "• Recitation and translation • Lessons on moral courage"
+            },
+            {
+              "week": 3,
+              "topic": "Qur’anic Recitation: Suratul Shams (Q91:1–15)",
+              "description": "• Explanation of meaning • Lessons on purity and righteousness"
+            },
+            {
+              "week": 4,
+              "topic": "Qur’anic Recitation: Suratul Layl (Q92:1–21)",
+              "description": "• Memorization and understanding • Rewards of good deeds"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment on Surahs and Tajwid"
+            },
+            {
+              "week": 6,
+              "topic": "Rules of Ghunnah (Nasal Sound)",
+              "description": "• Explanation, letters, and application • Practical recitation exercises"
+            },
+            {
+              "week": 7,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 8,
+              "topic": "Rules of Waqf (Stopping Signs)",
+              "description": "• Understanding symbols and pauses in recitation"
+            },
+            {
+              "week": 9,
+              "topic": "Practical Tajwid Exercises",
+              "description": "• Group recitation and corrections"
+            },
+            {
+              "week": 10,
+              "topic": "Importance of the Qur’an in Muslim Life",
+              "description": "• Guidance, healing, and reflection"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Comprehensive review of Tajwid and Surahs"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 2,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Review of Previous Hadith",
+              "description": "• Summary of JSS2 lessons"
+            },
+            {
+              "week": 2,
+              "topic": "Selected Hadith on Leadership",
+              "description": "• Qualities of good leadership • Prophet Muhammad (SAW) as a model leader"
+            },
+            {
+              "week": 3,
+              "topic": "Hadith on Justice and Accountability",
+              "description": "• Importance of fairness and honesty in leadership"
+            },
+            {
+              "week": 4,
+              "topic": "Hadith on Seeking Knowledge",
+              "description": "• Virtue of learning and teaching"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment on Hadith Studies"
+            },
+            {
+              "week": 6,
+              "topic": "Tahdhib: Respect for Human Life and Property",
+              "description": "• Sanctity of life and property • Avoiding violence and theft"
+            },
+            {
+              "week": 7,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 8,
+              "topic": "Tahdhib: Discipline and Responsibility",
+              "description": "• Islamic teachings on self-control and accountability"
+            },
+            {
+              "week": 9,
+              "topic": "Tahdhib: Purity of Intention",
+              "description": "• Doing good deeds sincerely for Allah’s sake"
+            },
+            {
+              "week": 10,
+              "topic": "Tahdhib: Role of Muslims in Society",
+              "description": "• Promoting peace, honesty, and compassion"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Comprehensive review of Hadith and Tahdhib"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        },
+        {
+          "term": 3,
+          "weeks": [
+            {
+              "week": 1,
+              "topic": "Review of Fiqh and Iman (JSS2)",
+              "description": "• Recap of Arkan al-Islam and Arkan al-Iman"
+            },
+            {
+              "week": 2,
+              "topic": "Funeral Rites in Islam",
+              "description": "• Washing, shrouding, prayer, and burial"
+            },
+            {
+              "week": 3,
+              "topic": "Marriage in Islam",
+              "description": "• Conditions, types, and importance • Rights and responsibilities of spouses"
+            },
+            {
+              "week": 4,
+              "topic": "Inheritance (Mirath)",
+              "description": "• Basic principles of inheritance • Rights of heirs"
+            },
+            {
+              "week": 5,
+              "topic": "MID-TERM EXAMINATION",
+              "description": "Assessment on Islamic Laws and Practices"
+            },
+            {
+              "week": 6,
+              "topic": "Faith in Allah and His Attributes",
+              "description": "• Names and attributes of Allah • Importance of Tawhid"
+            },
+            {
+              "week": 7,
+              "topic": "MID-TERM BREAK",
+              "description": "Holiday/Rest"
+            },
+            {
+              "week": 8,
+              "topic": "Belief in the Holy Books",
+              "description": "• The Qur’an and previous revelations • Role of revelation in human life"
+            },
+            {
+              "week": 9,
+              "topic": "Belief in the Hereafter",
+              "description": "• Accountability, Paradise, and Hellfire"
+            },
+            {
+              "week": 10,
+              "topic": "Living a Life of Faith",
+              "description": "• Applying Iman through daily actions"
+            },
+            {
+              "week": 11,
+              "topic": "REVISION",
+              "description": "Comprehensive review of Fiqh and Iman"
+            },
+            {
+              "week": 12,
+              "topic": "EXAMINATION",
+              "description": "End of Term Assessment"
+            },
+            {
+              "week": 13,
+              "topic": "CLOSING/VACATION",
+              "description": "Term ends"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+ 
+}
