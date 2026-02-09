@@ -1,0 +1,340 @@
+{
+    "subject": "Social and Citizenship Studies / Citizenship and Heritage Studies",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Citizenship" },
+              { "week": 2, "topic": "Rights and Duties of Citizens" },
+              { "week": 3, "topic": "Family as a Primary Social Group" },
+              { "week": 4, "topic": "Culture and Identity" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "Socialization" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Social Conflict" },
+              { "week": 9, "topic": "Peace Education" },
+              { "week": 10, "topic": "Conflict Prevention and Resolution" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Environment and Sustainability" },
+              { "week": 2, "topic": "Climate Change" },
+              { "week": 3, "topic": "Disaster Risk Reduction" },
+              { "week": 4, "topic": "Disaster Forecasting and Early Warning Signs" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "Environmental Protection" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Response to Epidemics" },
+              { "week": 9, "topic": "Promoting Safety in Our Community" },
+              { "week": 10, "topic": "Harmful Traditional Practices" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Digital Technologies" },
+              { "week": 2, "topic": "Cyber and Digital Security" },
+              { "week": 3, "topic": "Benefits and Ideals of Money" },
+              { "week": 4, "topic": "Financial Risks and Rewards" },
+              { "week": 5, "topic": "MID-TERM EXAMINATION" },
+              { "week": 6, "topic": "Migration" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Smuggling of Migrants and Irregular Migration" },
+              { "week": 9, "topic": "Human Trafficking" },
+              { "week": 10, "topic": "International Relations" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Citizenship" },
+              { "week": 2, "topic": "Rights and Responsibilities" },
+              { "week": 3, "topic": "Constitution" },
+              { "week": 4, "topic": "Government Institutions" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Civic Virtues" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Public Service" },
+              { "week": 9, "topic": "Democracy in Practice" },
+              { "week": 10, "topic": "Human Trafficking" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Population and Society" },
+              { "week": 2, "topic": "Social Problems" },
+              { "week": 3, "topic": "Crime and National Security" },
+              { "week": 4, "topic": "Human Rights Abuse" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Electoral Malpractices" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Media and Society" },
+              { "week": 9, "topic": "International Organisations" },
+              { "week": 10, "topic": "Global Citizenship" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Economic Values" },
+              { "week": 2, "topic": "Taxation and Civic Duty" },
+              { "week": 3, "topic": "Environmental Citizenship" },
+              { "week": 4, "topic": "Human Rights Institutions" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Corruption and Accountability" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "National Development" },
+              { "week": 9, "topic": "Social Institutions" },
+              { "week": 10, "topic": "Civic Challenges in Nigeria" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Citizenship Education Recap" },
+              { "week": 2, "topic": "Democracy and Human Rights" },
+              { "week": 3, "topic": "Nigerian Constitution (1999)" },
+              { "week": 4, "topic": "Separation of Powers" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Political Parties" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Election Processes" },
+              { "week": 9, "topic": "Good Governance" },
+              { "week": 10, "topic": "Youth and Nation-Building" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "National Issues" },
+              { "week": 2, "topic": "Humanitarian Issues" },
+              { "week": 3, "topic": "Peace Education" },
+              { "week": 4, "topic": "Human Rights Protection" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Citizenship in a Digital Age" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "International Relations" },
+              { "week": 9, "topic": "Global Peace and Security" },
+              { "week": 10, "topic": "Civic Leadership Skills" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Civic Challenges in Africa" },
+              { "week": 2, "topic": "Human Rights in Africa" },
+              { "week": 3, "topic": "Sustainable Development" },
+              { "week": 4, "topic": "Entrepreneurship and Civic Responsibility" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Civic Competence" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Civic Participation in Nigeria’s Future" },
+              { "week": 9, "topic": "Revision of Entire Junior Secondary Curriculum" },
+              { "week": 10, "topic": "Mock Examination" },
+              { "week": 11, "topic": "Final Examination" },
+              { "week": 12, "topic": "Closing (End of JSS cycle)" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Citizenship & Heritage Studies" },
+              { "week": 2, "topic": "Origin of Citizenship" },
+              { "week": 3, "topic": "Rights of Citizens" },
+              { "week": 4, "topic": "Duties and Obligations of Citizens" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "National Symbols & Their Meanings" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Nigerian Heritage" },
+              { "week": 9, "topic": "Preservation of Nigerian Heritage" },
+              { "week": 10, "topic": "Threats to National Heritage" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Citizenship by Law" },
+              { "week": 2, "topic": "Rule of Law" },
+              { "week": 3, "topic": "Democratic Values" },
+              { "week": 4, "topic": "National Unity & Integration" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Ethnic & Religious Heritage of Nigeria" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Interpersonal Relations & Social Harmony" },
+              { "week": 9, "topic": "Leadership & Followership" },
+              { "week": 10, "topic": "Corruption & Its Effects on Citizenship" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Global Citizenship" },
+              { "week": 2, "topic": "Citizenship Education in Other Countries" },
+              { "week": 3, "topic": "International Organizations & Citizenship" },
+              { "week": 4, "topic": "Protection of Human Rights" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Cultural Exchange & Tourism" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Contemporary Issues in Citizenship" },
+              { "week": 9, "topic": "Patriotism" },
+              { "week": 10, "topic": "Civic Participation" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Nigerian Constitution" },
+              { "week": 2, "topic": "Fundamental Objectives & Directive Principles" },
+              { "week": 3, "topic": "Separation of Powers" },
+              { "week": 4, "topic": "Public Service & Citizenship" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Nigerian Heritage Sites" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Traditional Institutions" },
+              { "week": 9, "topic": "Colonial Heritage" },
+              { "week": 10, "topic": "Preservation of Historical Records" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Governance & Citizenship" },
+              { "week": 2, "topic": "Federalism in Nigeria" },
+              { "week": 3, "topic": "Human Rights Violations" },
+              { "week": 4, "topic": "Civil Society & NGOs" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Security & Citizenship" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Nigerian Foreign Policy" },
+              { "week": 9, "topic": "Citizenship in a Digital Age" },
+              { "week": 10, "topic": "Case Studies" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Democratic Institutions in Nigeria" },
+              { "week": 2, "topic": "Elections & Citizenship" },
+              { "week": 3, "topic": "Electoral Malpractices" },
+              { "week": 4, "topic": "Media & Citizenship" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Nigerian Cultural Heritage in Global Context" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Civic Challenges" },
+              { "week": 9, "topic": "National Development" },
+              { "week": 10, "topic": "Environmental Citizenship" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of Citizenship Concepts" },
+              { "week": 2, "topic": "National Identity & Citizenship" },
+              { "week": 3, "topic": "Global Peace & Citizenship" },
+              { "week": 4, "topic": "Justice & Fairness" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Heritage in Modern Nigeria" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Civic Entrepreneurship" },
+              { "week": 9, "topic": "Ethics & Integrity" },
+              { "week": 10, "topic": "National Rebirth & Transformation Agenda" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Global Issues in Citizenship" },
+              { "week": 2, "topic": "Nigeria’s Role in International Affairs" },
+              { "week": 3, "topic": "Human Rights Protection in Nigeria" },
+              { "week": 4, "topic": "Sustainable Development Goals (SDGs)" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Youth & Citizenship" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Challenges of Nigerian Citizenship" },
+              { "week": 9, "topic": "Strategies for Strengthening Citizenship" },
+              { "week": 10, "topic": "Civic Competence for Nation Building" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Consolidation of Citizenship Education" },
+              { "week": 2, "topic": "National Consciousness" },
+              { "week": 3, "topic": "Preparing for Civic Roles after Secondary School" },
+              { "week": 4, "topic": "Global Citizenship & Future of Nigeria" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Legacy of Nigerian Heritage" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Mock Citizenship Project" },
+              { "week": 9, "topic": "SSCE Preparation" },
+              { "week": 10, "topic": "Life After School" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

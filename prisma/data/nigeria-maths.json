@@ -1,0 +1,326 @@
+{
+    "subject": "Mathematics",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Whole Numbers" },
+              { "week": 2, "topic": "LCM (Least Common Multiple)" },
+              { "week": 3, "topic": "HCF (Highest Common Factor)" },
+              { "week": 4, "topic": "Counting in Base 2" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Conversion of Numbers" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Fractions I" },
+              { "week": 9, "topic": "Fractions II" },
+              { "week": 10, "topic": "Basic Operations on Whole Numbers" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Addition & Subtraction of Fractions" },
+              { "week": 2, "topic": "Multiplication & Division of Fractions" },
+              { "week": 3, "topic": "Estimation & Approximation" },
+              { "week": 4, "topic": "Numbers in Base 2 – Addition" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Numbers in Base 2 – Subtraction" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Numbers in Base 2 – Multiplication" },
+              { "week": 9, "topic": "Algebraic Processes I" },
+              { "week": 10, "topic": "Simplification of Algebraic Expressions" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Simple Equations" },
+              { "week": 2, "topic": "Plane Shapes" },
+              { "week": 3, "topic": "Three-Dimensional Figures" },
+              { "week": 4, "topic": "Constructions" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Angles" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Everyday Statistics I" },
+              { "week": 9, "topic": "Everyday Statistics II" },
+              { "week": 10, "topic": "Everyday Statistics III" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Basic Operation of Integers / Whole Numbers I" },
+              { "week": 2, "topic": "Basic Operation of Integers / Whole Numbers II" },
+              { "week": 3, "topic": "LCM & HCF" },
+              { "week": 4, "topic": "Fractions – Transactions in Homes and Offices" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Approximation" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Directed and Non-Directed Numbers" },
+              { "week": 9, "topic": "Multiplication and Division of Directed Numbers" },
+              { "week": 10, "topic": "Algebraic Expressions I" },
+              { "week": 11, "topic": "Algebraic Expressions II" },
+              { "week": 12, "topic": "Revision and Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Review of First Term’s Work" },
+              { "week": 2, "topic": "Simple Equations" },
+              { "week": 3, "topic": "Linear Inequalities I" },
+              { "week": 4, "topic": "Linear Inequalities II" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Graphs I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Graphs II" },
+              { "week": 9, "topic": "Plane Figures/Shapes" },
+              { "week": 10, "topic": "Scale Drawing of Length and Distances" },
+              { "week": 11, "topic": "Quantitative Aptitude" },
+              { "week": 12, "topic": "Revision and Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Revision of Second Term’s Examination" },
+              { "week": 2, "topic": "Angles and Polygons" },
+              { "week": 3, "topic": "Angles of Elevation and Depression" },
+              { "week": 4, "topic": "Bearings and Distances I" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Bearings and Distances II" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Statistics I – Data Presentation" },
+              { "week": 9, "topic": "Statistics II – Graphical Representation" },
+              { "week": 10, "topic": "Probability" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Vacation" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Whole Numbers I" },
+              { "week": 2, "topic": "Whole Numbers II" },
+              { "week": 3, "topic": "Addition and Subtraction of Numbers in Base 2" },
+              { "week": 4, "topic": "Multiplication and Division of Numbers in Base 2" },
+              { "week": 5, "topic": "Mid-Term Examination" },
+              { "week": 6, "topic": "Rational and Non-Rational Numbers" },
+              { "week": 7, "topic": "Mid-Term Break" },
+              { "week": 8, "topic": "Variations" },
+              { "week": 9, "topic": "Factorization" },
+              { "week": 10, "topic": "Simple Equations Involving Fractions" },
+              { "week": 11, "topic": "Change of Subject of Formulae" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Simultaneous Linear Equations (I) – In One or Two Variables" },
+              { "week": 2, "topic": "Simultaneous Linear Equations (II)" },
+              { "week": 3, "topic": "Geometry I – Similar Shapes" },
+              { "week": 4, "topic": "Geometry II" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Area Of Plane Figures I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Area of Plane Figures II" },
+              { "week": 9, "topic": "Trigonometry" },
+              { "week": 10, "topic": "Angles of Elevation and Depression / Study of Measurement Using Clinometers" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Vacation" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Construction" },
+              { "week": 2, "topic": "Measures of Central Tendency" },
+              { "week": 3, "topic": "Application of Measures of Central Tendency To Analyze any Given Information" },
+              { "week": 4, "topic": "Data Presentation – Pie Charts" },
+              { "week": 5, "topic": "Revision" },
+              { "week": 6, "topic": "Revision of JSS 3 Work" },
+              { "week": "7-8", "topic": "Mock Examination" },
+              { "week": 9, "topic": "JSSC Examination" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Number Base System" },
+              { "week": 2, "topic": "Modular Arithmetic" },
+              { "week": 3, "topic": "Indices" },
+              { "week": 4, "topic": "Logarithms" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Effective Use of Logarithm Tables" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Simple Equations and Variations" },
+              { "week": 9, "topic": "Quadratic Equations I" },
+              { "week": 10, "topic": "Quadratic Equations II" },
+              { "week": 11, "topic": "Logical Reasoning I" },
+              { "week": 12, "topic": "Logical Reasoning II" },
+              { "week": 13, "topic": "Revision, Examination & Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Constructions I" },
+              { "week": 2, "topic": "Constructions II" },
+              { "week": 3, "topic": "Proofs of Theorems I" },
+              { "week": 4, "topic": "Proofs of Theorems II (Riders)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Trigonometric Ratios" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Trigonometric Ratios of Special Angles" },
+              { "week": 9, "topic": "Application of Trigonometric Ratios" },
+              { "week": 10, "topic": "Trigonometric Ratios & Graphs" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Mensuration I" },
+              { "week": 2, "topic": "Mensuration II" },
+              { "week": 3, "topic": "Surface Area of Solids" },
+              { "week": 4, "topic": "Volume of Solids" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Area and Volume of Frustum" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Statistics I" },
+              { "week": 9, "topic": "Statistics II" },
+              { "week": 10, "topic": "Statistics III" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Revision of Previous Work" },
+              { "week": 2, "topic": "Numbers and Approximation" },
+              { "week": 3, "topic": "Use of Logarithm Tables and Calculators" },
+              { "week": 4, "topic": "Sequences and Series" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Quadratic Equations I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Quadratic Equations II" },
+              { "week": 9, "topic": "Simultaneous Equations" },
+              { "week": 10, "topic": "Graphical Solutions" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Straight Line Graphs" },
+              { "week": 2, "topic": "Circle Geometry I" },
+              { "week": 3, "topic": "Circle Geometry II" },
+              { "week": 4, "topic": "Circle Geometry III" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Trigonometry I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Trigonometry II" },
+              { "week": 9, "topic": "Fractions" },
+              { "week": 10, "topic": "Further Application of Trigonometry" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Linear Programming" },
+              { "week": 2, "topic": "Linear Programming Graphical Solutions" },
+              { "week": 3, "topic": "Bearings" },
+              { "week": 4, "topic": "Angles of Elevation and Depression" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Frequency Distribution" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Graphical Representation of Frequency" },
+              { "week": 9, "topic": "Measures from Frequency" },
+              { "week": 10, "topic": "Probability" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Welcome Test and Review of Difficult SS2 Topics" },
+              { "week": 2, "topic": "Logic" },
+              { "week": 3, "topic": "Application of Surds to Trigonometry" },
+              { "week": 4, "topic": "Matrices and Determinants" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Linear and Quadratic Equations" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Surface Area and Volume of Spheres and Hemispheres" },
+              { "week": 9, "topic": "Longitude and Latitude I" },
+              { "week": 10, "topic": "Longitude and Latitude II" },
+              { "week": 11, "topic": "Binary Operations" },
+              { "week": 12, "topic": "Arithmetic of Finance" },
+              { "week": 13, "topic": "Revision / Examination / Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Review of First Term Work & Financial Mathematics" },
+              { "week": 2, "topic": "Coordinate Geometry of a Straight Line" },
+              { "week": 3, "topic": "Construction I" },
+              { "week": 4, "topic": "Differentiation of Algebraic Functions I" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Differentiation of Algebraic Functions II" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Integration of Algebraic Functions" },
+              { "week": 9, "topic": "Functions and Mapping" },
+              { "week": 10, "topic": "General Review of Calculus" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

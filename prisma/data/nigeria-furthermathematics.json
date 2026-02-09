@@ -1,0 +1,144 @@
+{
+    "subject": "Further Mathematics",
+    "curriculum": [
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": "1–2", "topic": "Sets" },
+              { "week": 3, "topic": "Indices and Logarithms" },
+              { "week": 4, "topic": "Surds" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Linear Inequalities" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Binary Operations" },
+              { "week": 9, "topic": "Functions" },
+              { "week": 10, "topic": "Sequence and Series" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": "1–2", "topic": "Trigonometric Ratios of Special Angles & Logical Reasoning" },
+              { "week": 3, "topic": "Calculating and Processing Devices" },
+              { "week": 4, "topic": "The Straight Line in Coordinate Geometry" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Vectors in Two Dimensions I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Vectors in Two Dimensions II" },
+              { "week": "9–10", "topic": "Revision" },
+              { "week": "11–12", "topic": "Examination" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": "1–2", "topic": "Location" },
+              { "week": "3–4", "topic": "Measures of Dispersion" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Measures of Location" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "History and Nature of Operations Research" },
+              { "week": 9, "topic": "Models" },
+              { "week": 10, "topic": "Application of Models" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Solution to Quadratic Equation" },
+              { "week": 2, "topic": "Tangent and Normal to Curve" },
+              { "week": 3, "topic": "Polynomials I" },
+              { "week": 4, "topic": "Polynomials II" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Polynomials II (Cont.)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Cubic Equations and their Factorization" },
+              { "week": 9, "topic": "Logical Reasoning I" },
+              { "week": 10, "topic": "Logical Reasoning II" },
+              { "week": 11, "topic": "Trigonometric Function" },
+              { "week": 12, "topic": "Graphs of Trigonometric Function" },
+              { "week": 13, "topic": "Trigonometric Identity & Graphs of Inverse Trigonometric Ratios; Pythagoras Theorem" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Limits of Functions and Differentiation from First Principle" },
+              { "week": 2, "topic": "Rules of Differentiation I" },
+              { "week": 3, "topic": "Rules of Differentiation II" },
+              { "week": 4, "topic": "Differentiation of Trigonometric, Logarithmic, and Exponential Functions" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Application of Differentiation" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Maximum and Minimum Points and Values" },
+              { "week": 9, "topic": "The Circle" },
+              { "week": 10, "topic": "Conic Sections I" },
+              { "week": 11, "topic": "Conic Sections II" },
+              { "week": 12, "topic": "Conic Sections III" },
+              { "week": 13, "topic": "Sample Space and Events" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Sample Space and Events (Cont.)" },
+              { "week": 2, "topic": "Permutation and Combination I" },
+              { "week": 3, "topic": "Permutation and Combination II" },
+              { "week": 4, "topic": "Dynamics I" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Dynamics II" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Work, Power, Energy" },
+              { "week": 9, "topic": "Projectiles" },
+              { "week": 10, "topic": "Binomial Expansion" },
+              { "week": 11, "topic": "Mechanics (Vector Geometry)" },
+              { "week": 12, "topic": "Integration I" },
+              { "week": 13, "topic": "Integration II and Applications" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Inequalities" },
+              { "week": "2–3", "topic": "Matrices and Determinants" },
+              { "week": 4, "topic": "Partial Fractions" },
+              { "week": "5–6", "topic": "Probability Distributions" },
+              { "week": "7–8", "topic": "Variance" },
+              { "week": "9–10", "topic": "Correlation" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": "1–2", "topic": "Integration" },
+              { "week": "3–4", "topic": "Conic Sections" },
+              { "week": "5–6", "topic": "Statics" },
+              { "week": 7, "topic": "Modelling" },
+              { "week": 8, "topic": "Game Theory" },
+              { "week": 9, "topic": "Revision" },
+              { "week": 10, "topic": "Examination" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

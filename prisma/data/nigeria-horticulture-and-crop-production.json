@@ -1,0 +1,359 @@
+{
+    "subject": "Horticulture and Crop Production",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Crop Production" },
+              { "week": 2, "topic": "Farm Tools and Safety Measures" },
+              { "week": 3, "topic": "Farmland Preparation Practices" },
+              { "week": 4, "topic": "Soil and Its Properties" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Soil Texture and Structure" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Site Selection and Crop Types" },
+              { "week": 9, "topic": "Crop Classification" },
+              { "week": 10, "topic": "Farm Records and Management" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Horticulture" },
+              { "week": 2, "topic": "Nursery Establishment (Part 1)" },
+              { "week": 3, "topic": "Nursery Bed Preparation" },
+              { "week": 4, "topic": "Fertilizer Application" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Seed Collection and Dormancy Breaking" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Rootstock Preparation" },
+              { "week": 9, "topic": "Scion Collection" },
+              { "week": 10, "topic": "Vegetable Production" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Vegetative Propagation in Horticultural Crops" },
+              { "week": 2, "topic": "Practical Session on Vegetative Propagation" },
+              { "week": 3, "topic": "Post-Harvest Management of Vegetables" },
+              { "week": 4, "topic": "Concept of Entrepreneurship in Horticulture" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Concept of Money" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Book Keeping in Horticulture and Crop Production" },
+              { "week": 9, "topic": "Business Start-Up in Horticulture" },
+              { "week": 10, "topic": "Enterprise Development" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of JSS1 Work" },
+              { "week": 2, "topic": "Farm Tools and Machines" },
+              { "week": 3, "topic": "Soil Fertility and Improvement" },
+              { "week": 4, "topic": "Land Preparation Techniques" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Site Selection for Crop Production" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Crop Spacing and Planting Methods" },
+              { "week": 9, "topic": "Weed Management" },
+              { "week": 10, "topic": "Crop Protection" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Nursery Practices" },
+              { "week": 2, "topic": "Seed Germination" },
+              { "week": 3, "topic": "Fertilizer Application Methods" },
+              { "week": 4, "topic": "Vegetative Propagation" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Maintenance of Horticultural Crops" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Harvesting and Storage" },
+              { "week": 9, "topic": "Marketing of Horticultural Crops" },
+              { "week": 10, "topic": "Farm Record-Keeping" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Vegetable Production" },
+              { "week": 2, "topic": "Post-Harvest Management" },
+              { "week": 3, "topic": "Introduction to Agribusiness" },
+              { "week": 4, "topic": "Entrepreneurship in Agriculture" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Enterprise Development" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Financial Management" },
+              { "week": 9, "topic": "Marketing and Promotion" },
+              { "week": 10, "topic": "Business Simulation" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of JSS2 Work" },
+              { "week": 2, "topic": "Soil Management" },
+              { "week": 3, "topic": "Crop Planting Techniques" },
+              { "week": 4, "topic": "Fertilizer Management" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Crop Irrigation" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Pest and Disease Control" },
+              { "week": 9, "topic": "Crop Harvesting and Yield Improvement" },
+              { "week": 10, "topic": "Post-Harvest Technology" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Crop Improvement" },
+              { "week": 2, "topic": "Seed Production and Certification" },
+              { "week": 3, "topic": "Organic Farming" },
+              { "week": 4, "topic": "Greenhouse Technology" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Enterprise Skills in Agriculture" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Business Plan Development" },
+              { "week": 9, "topic": "Marketing and Branding" },
+              { "week": 10, "topic": "Agribusiness Project" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Agripreneurship" },
+              { "week": 2, "topic": "Enterprise Development" },
+              { "week": 3, "topic": "Record-Keeping and Bookkeeping" },
+              { "week": 4, "topic": "Financial Literacy" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Business Management" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Marketing and Distribution" },
+              { "week": 9, "topic": "Sustainable Agriculture" },
+              { "week": 10, "topic": "Project Presentation" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Horticulture" },
+              { "week": 2, "topic": "Branches of Horticulture" },
+              { "week": 3, "topic": "Crop Classification" },
+              { "week": 4, "topic": "Tools and Equipment" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Soil in Horticulture" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Nursery Practices" },
+              { "week": 9, "topic": "Crop Propagation Methods" },
+              { "week": 10, "topic": "Irrigation and Watering Techniques" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Fertilizer and Manure Application" },
+              { "week": 2, "topic": "Weed and Pest Control" },
+              { "week": 3, "topic": "Crop Diseases" },
+              { "week": 4, "topic": "Environmental Factors" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Farm Records in Horticulture" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Harvesting of Horticultural Crops" },
+              { "week": 9, "topic": "Post-Harvest Handling" },
+              { "week": 10, "topic": "Marketing of Horticultural Products" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Crop Production" },
+              { "week": 2, "topic": "Classification of Crops by Life Cycle" },
+              { "week": 3, "topic": "Crop Ecology" },
+              { "week": 4, "topic": "Land Preparation" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Planting Operations" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Maintenance of Crops" },
+              { "week": 9, "topic": "Crop Protection" },
+              { "week": 10, "topic": "Harvesting of Field Crops" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Horticultural Crop Improvement" },
+              { "week": 2, "topic": "Genetic Principles in Crop Production" },
+              { "week": 3, "topic": "Biotechnology in Horticulture" },
+              { "week": 4, "topic": "Organic Horticulture" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Greenhouse Technology" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Urban and Peri-Urban Horticulture" },
+              { "week": 9, "topic": "Agroforestry" },
+              { "week": 10, "topic": "Environmental Sustainability in Horticulture" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Crop Rotation" },
+              { "week": 2, "topic": "Mixed Cropping and Intercropping" },
+              { "week": 3, "topic": "Crop Yield Measurement" },
+              { "week": 4, "topic": "Farm Mechanization in Crop Production" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Irrigation Systems" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Storage Structures" },
+              { "week": 9, "topic": "Agricultural Extension Services" },
+              { "week": 10, "topic": "Agricultural Cooperatives" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Cereal Crops" },
+              { "week": 2, "topic": "Leguminous Crops" },
+              { "week": 3, "topic": "Tuber Crops" },
+              { "week": 4, "topic": "Oil Crops" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Vegetables" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Fruits" },
+              { "week": 9, "topic": "Spices and Condiments" },
+              { "week": 10, "topic": "Medicinal Plants" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of SS1–SS2 Work" },
+              { "week": 2, "topic": "Advanced Greenhouse Technology" },
+              { "week": 3, "topic": "Hydroponics" },
+              { "week": 4, "topic": "Aeroponics" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Aquaponics" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Precision Agriculture" },
+              { "week": 9, "topic": "Climate Change and Crop Production" },
+              { "week": 10, "topic": "Sustainable Horticultural Practices" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Export Crops in Nigeria" },
+              { "week": 2, "topic": "Global Trends in Horticulture" },
+              { "week": 3, "topic": "Agribusiness Opportunities" },
+              { "week": 4, "topic": "Farm Management" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Agricultural Finance" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Agricultural Policies in Nigeria" },
+              { "week": 9, "topic": "Agricultural Marketing Boards" },
+              { "week": 10, "topic": "Project Planning" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Final Year Project Supervision" },
+              { "week": 2, "topic": "Project Execution" },
+              { "week": 3, "topic": "Project Execution II" },
+              { "week": 4, "topic": "Project Report Writing" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Presentation Skills" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Mock Exams" },
+              { "week": 9, "topic": "Review of Practical Sessions" },
+              { "week": 10, "topic": "WAEC/NECO Preparatory Classes" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing/Graduation" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

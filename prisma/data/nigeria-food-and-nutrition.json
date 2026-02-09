@@ -1,0 +1,164 @@
+{
+    "subject": "Food and Nutrition",
+    "curriculum": [
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Food and Nutrition" },
+              { "week": 2, "topic": "Careers in Food and Nutrition" },
+              { "week": 3, "topic": "Interrelationship of Food and Nutrition with Other Subjects" },
+              { "week": 4, "topic": "Foods in the Locality" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Basic Food Nutrients (Carbohydrates)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Proteins" },
+              { "week": 9, "topic": "Fats and Oils" },
+              { "week": 10, "topic": "Vitamins & Minerals" },
+              { "week": 11, "topic": "Water" },
+              { "week": 12, "topic": "Revision" },
+              { "week": 13, "topic": "Examination & Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Scientific Study of Foods" },
+              { "week": 2, "topic": "Effects of Heat on Nutrients" },
+              { "week": 3, "topic": "Tests for Proteins" },
+              { "week": 4, "topic": "Tests for Carbohydrates, Fats, and Oils" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "The Digestive System" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Digestion and Absorption" },
+              { "week": 9, "topic": "Reproductive Health" },
+              { "week": 10, "topic": "Kitchen Plans, Equipment, and Tools" },
+              { "week": 11, "topic": "Kitchen Plans, Equipment, and Utensils" },
+              { "week": 12, "topic": "Small or Moveable Tools/Utensils" },
+              { "week": 13, "topic": "Revision, Examination & Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Cleaning Agents and Abrasives" },
+              { "week": 2, "topic": "Safety Habits in the Kitchen" },
+              { "week": 3, "topic": "Measures to Prevent Cuts, Suffocation and Accidental Poisoning" },
+              { "week": 4, "topic": "Content and Use of First Aid Box; Simple First Aid Treatment" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Hygiene: Personal Hygiene" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Food and Kitchen Hygiene" },
+              { "week": 9, "topic": "Waste and Refuse Disposal" },
+              { "week": 10, "topic": "Food Borne Diseases" },
+              { "week": 11, "topic": "ICPC (Misappropriate execution of family food budgets)" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Meat Cookery" },
+              { "week": 2, "topic": "Poultry" },
+              { "week": 3, "topic": "Eggs" },
+              { "week": 4, "topic": "Milk and Milk Products" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Sea Foods" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Food Additives" },
+              { "week": 9, "topic": "Practical on Meat, Poultry, Milk, Sea Foods, and Food Additives" },
+              { "week": 10, "topic": "Starchy Roots and Plantain" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Energy Management in Food Preparation" },
+              { "week": 2, "topic": "Kitchen Equipment and Utensils" },
+              { "week": 3, "topic": "Labour Saving Devices" },
+              { "week": 4, "topic": "Special Nutritional Needs I" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Special Nutritional Needs II" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Project on Test Interpretation" },
+              { "week": 9, "topic": "Flour Cookery" },
+              { "week": 10, "topic": "Raising Agents" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Convenience Foods" },
+              { "week": 2, "topic": "Preservation of Foods" },
+              { "week": 3, "topic": "Methods of Food Preservation" },
+              { "week": 4, "topic": "Food Storage" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Practical on Convenience Foods and Food Storage" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Budgeting" },
+              { "week": 9, "topic": "Food Purchasing" },
+              { "week": 10, "topic": "Consumer Education I & II" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Beverages" },
+              { "week": 2, "topic": "Beverages (Non-Alcoholic)" },
+              { "week": 3, "topic": "Special Diet" },
+              { "week": 4, "topic": "Practical on Beverages and Special Diet" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Cultural Food Habit" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Traditional and Foreign Dishes" },
+              { "week": 9, "topic": "Practical on Traditional and Foreign Dishes" },
+              { "week": 10, "topic": "Art of Entertainment" },
+              { "week": 11, "topic": "Table Setting and Etiquette" },
+              { "week": 12, "topic": "Revision" },
+              { "week": 13, "topic": "Examination and Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Welcome Test & Food Service" },
+              { "week": 2, "topic": "Self Employment (Catering Enterprise)" },
+              { "week": 3, "topic": "Self Employment (Work Ethics and Food Packaging)" },
+              { "week": 4, "topic": "Experimental Cookery" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Test Interpretation" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Cooking Assignment" },
+              { "week": 9, "topic": "Practical Cookery Exercises" },
+              { "week": 10, "topic": "Practical Assessment" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

@@ -1,0 +1,340 @@
+{
+    "subject": "Digital Technologies",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Digital Technology" },
+              { "week": 2, "topic": "Historical Development of Digital Devices" },
+              { "week": 3, "topic": "Career Opportunities in Information Technology" },
+              { "week": 4, "topic": "Basic Computer Hardware Components I" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Basic Computer Hardware Components II: Storage Units" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Basic Software Concepts" },
+              { "week": 9, "topic": "Computer Booting and Shutdown Processes" },
+              { "week": 10, "topic": "MS Word (Introduction)" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "MS PowerPoint (Introduction)" },
+              { "week": 2, "topic": "3D Modelling with Paint 3D" },
+              { "week": 3, "topic": "Data Processing" },
+              { "week": 4, "topic": "Basic Computer Communication" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Introduction to Computer Networks" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Basic Internet Concepts" },
+              { "week": 9, "topic": "Online Safety Rules" },
+              { "week": 10, "topic": "Online Privacy and Security" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Internet Communication Practices" },
+              { "week": 2, "topic": "Spam and Online Threats" },
+              { "week": 3, "topic": "Intellectual Property" },
+              { "week": 4, "topic": "Safety and Security Features on Digital Devices" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Introduction to Graphic Design" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Introduction to Canva" },
+              { "week": 9, "topic": "Digital Media" },
+              { "week": 10, "topic": "Computer Waste Management" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of JSS1 Work" },
+              { "week": 2, "topic": "Basic Computer Communication Networks" },
+              { "week": 3, "topic": "Components of a Computer Network" },
+              { "week": 4, "topic": "Network Topologies" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Internet and Web Services" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Cloud Computing" },
+              { "week": 9, "topic": "Cybersecurity Awareness" },
+              { "week": 10, "topic": "Data Protection" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Programming" },
+              { "week": 2, "topic": "Basic Algorithms" },
+              { "week": 3, "topic": "Block Coding" },
+              { "week": 4, "topic": "Variables in Programming" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Control with Conditions" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Loops in Programming" },
+              { "week": 9, "topic": "Game Development with Visual Programming" },
+              { "week": 10, "topic": "Debugging" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Robotics" },
+              { "week": 2, "topic": "Parts and Functions of a Robot" },
+              { "week": 3, "topic": "Basic Robotic Movements" },
+              { "week": 4, "topic": "Artificial Intelligence (AI)" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Difference Between AI and Robotics" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Real-Life Application of AI" },
+              { "week": 9, "topic": "Careers in Robotics and AI" },
+              { "week": 10, "topic": "Class Project: Building a Simple Robot (Simulation)" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of JSS2 Work" },
+              { "week": 2, "topic": "Advanced MS Word" },
+              { "week": 3, "topic": "Advanced MS PowerPoint" },
+              { "week": 4, "topic": "Introduction to Digital Media" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Graphic Design with Canva" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Photo Editing and Visual Communication" },
+              { "week": 9, "topic": "Copyright and Media Ethics" },
+              { "week": 10, "topic": "Digital Portfolio Creation" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Digital Entrepreneurship" },
+              { "week": 2, "topic": "Internet Communication and Collaboration" },
+              { "week": 3, "topic": "Social Media for Education and Business" },
+              { "week": 4, "topic": "Digital Marketing Basics" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Cyber Ethics and Netiquette" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Online Privacy and Protection" },
+              { "week": 9, "topic": "Managing Digital Footprint" },
+              { "week": 10, "topic": "Digital Project: Online Business Simulation" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Management of e-Waste" },
+              { "week": 2, "topic": "Recycling Digital Devices" },
+              { "week": 3, "topic": "Emerging Technologies" },
+              { "week": 4, "topic": "Preparing for Digital Future" },
+              { "week": 5, "topic": "MID-TERM TEST" },
+              { "week": 6, "topic": "Artificial Intelligence in Everyday Life" },
+              { "week": 7, "topic": "MID-TERM BREAK" },
+              { "week": 8, "topic": "Global Digital Citizenship" },
+              { "week": 9, "topic": "Technology and Sustainable Development" },
+              { "week": 10, "topic": "Final Project: Student Digital Innovation" },
+              { "week": 11, "topic": "REVISION" },
+              { "week": 12, "topic": "EXAMINATION" },
+              { "week": 13, "topic": "CLOSING/VACATION" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Introduction to Digital Technologies" },
+              { "week": 2, "topic": "History & Evolution of Digital Technologies" },
+              { "week": 3, "topic": "Number Systems" },
+              { "week": 4, "topic": "Computer Hardware" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Computer Software" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Operating Systems" },
+              { "week": 9, "topic": "Computer Maintenance & Safety" },
+              { "week": 10, "topic": "Data Representation" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Computer Networks" },
+              { "week": 2, "topic": "Internet Technologies" },
+              { "week": 3, "topic": "Email & Online Communication" },
+              { "week": 4, "topic": "Digital Storage & Cloud Computing" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Cybersecurity I" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Cybersecurity II" },
+              { "week": 9, "topic": "Data Privacy & Digital Ethics" },
+              { "week": 10, "topic": "Social Media Technologies" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Word Processing Applications" },
+              { "week": 2, "topic": "Spreadsheet Applications I" },
+              { "week": 3, "topic": "Spreadsheet Applications II" },
+              { "week": 4, "topic": "Presentation Software" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Database Introduction" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Practical Database Management" },
+              { "week": 9, "topic": "Emerging Technologies I" },
+              { "week": 10, "topic": "Emerging Technologies II" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of SS1 Work" },
+              { "week": 2, "topic": "Advanced Word Processing" },
+              { "week": 3, "topic": "Advanced Spreadsheet I" },
+              { "week": 4, "topic": "Advanced Spreadsheet II" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Advanced Presentation Tools" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Web Design I" },
+              { "week": 9, "topic": "Web Design II" },
+              { "week": 10, "topic": "Web Publishing & Hosting" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Computer Programming I" },
+              { "week": 2, "topic": "Computer Programming II" },
+              { "week": 3, "topic": "Programming Basics" },
+              { "week": 4, "topic": "Control Structures" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Data Science Basics" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Big Data & Analytics" },
+              { "week": 9, "topic": "Artificial Intelligence" },
+              { "week": 10, "topic": "Machine Learning Basics" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Mobile Application Development I" },
+              { "week": 2, "topic": "Mobile Application Development II" },
+              { "week": 3, "topic": "Cloud Computing II" },
+              { "week": 4, "topic": "Blockchain Technology" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Cybersecurity III" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Cyber Laws & Digital Rights" },
+              { "week": 9, "topic": "Digital Entrepreneurship" },
+              { "week": 10, "topic": "Project Work" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Review of SS2 Work" },
+              { "week": 2, "topic": "Advanced Programming I" },
+              { "week": 3, "topic": "Advanced Programming II" },
+              { "week": 4, "topic": "Software Development Life Cycle (SDLC)" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Networking II" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Cloud & Virtualization" },
+              { "week": 9, "topic": "Internet of Things (IoT) Applications" },
+              { "week": 10, "topic": "Data Protection & Backup Systems" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Advanced Web Design" },
+              { "week": 2, "topic": "Advanced Database Management" },
+              { "week": 3, "topic": "Networking III" },
+              { "week": 4, "topic": "Digital Project Management" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Emerging Tech III" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Revision of SSCE Past Questions I" },
+              { "week": 9, "topic": "Revision of SSCE Past Questions II" },
+              { "week": 10, "topic": "Mock Exam Prep" },
+              { "week": "11-13", "topic": "Revision & Exams" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Comprehensive Revision of SS1–SS3" },
+              { "week": 2, "topic": "Past Question Drills (WAEC/NECO)" },
+              { "week": 3, "topic": "Practical Project I" },
+              { "week": 4, "topic": "Practical Project II" },
+              { "week": 5, "topic": "Midterm Test" },
+              { "week": 6, "topic": "Mock Examination" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "SSCE Preparation" },
+              { "week": "9-10", "topic": "WAEC/NECO & Final Examinations" },
+              { "week": "11-13", "topic": "Closing & Graduation" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

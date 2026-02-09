@@ -1,0 +1,164 @@
+{
+    "subject": "Economics",
+    "curriculum": [
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Meaning of Economics and Related Concepts" },
+              { "week": 2, "topic": "Basic Tools of Economic Analysis" },
+              { "week": 3, "topic": "Concept of Demand and Supply" },
+              { "week": 4, "topic": "Theory of Production" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Basic Economic Problems of Society" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Firms and Industry" },
+              { "week": 9, "topic": "Population" },
+              { "week": 10, "topic": "Labour Market" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "The Nature of the Nigerian Economy" },
+              { "week": 2, "topic": "Agriculture" },
+              { "week": 3, "topic": "Mining" },
+              { "week": 4, "topic": "Meaning of Financial Institutions" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Money: Meaning, Characteristics, and Functions" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Channels of Distribution" },
+              { "week": 9, "topic": "Instruments of Business Finance" },
+              { "week": 10, "topic": "Tools of Economic Analysis (Revision)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Cost Concepts" },
+              { "week": 2, "topic": "Revenue Concepts" },
+              { "week": 3, "topic": "Types and Features of Economic Systems" },
+              { "week": 4, "topic": "Labour Market" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Elementary Treatment of Utility Theory" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Price Determination" },
+              { "week": 9, "topic": "Market Structures" },
+              { "week": 10, "topic": "Industries in Nigeria" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Elementary Treatment of Fiscal Policy" },
+              { "week": 2, "topic": "Balanced and Unbalanced Budget" },
+              { "week": 3, "topic": "Elements of National Income Accounting" },
+              { "week": 4, "topic": "Money: Demand for and Supply of Money" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Money: Inflation and Deflation" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Economic Lessons from Asian Tigers, Japan, Europe, and America" },
+              { "week": 9, "topic": "Human Capital Development" },
+              { "week": 10, "topic": "Petroleum and the Nigerian Economy" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Manufacturing and Construction Service Industries" },
+              { "week": 2, "topic": "Agencies that Regulate the Financial Markets" },
+              { "week": 3, "topic": "Functions and Role of Regulatory Agencies (I)" },
+              { "week": 4, "topic": "Functions and Role of Regulatory Agencies (II)" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "International Trade" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Economic Growth and Development" },
+              { "week": 9, "topic": "Balance of Payments (BOP)" },
+              { "week": 10, "topic": "Revision" },
+              { "week": 11, "topic": "Examination" },
+              { "week": 12, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Economic Development Planning" },
+              { "week": 2, "topic": "International Economic Organization (I)" },
+              { "week": 3, "topic": "International Economic Organization (II)" },
+              { "week": 4, "topic": "Current Economic Plans: MDGs, NEEDS, Vision 2020" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Economic Development Challenges" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Economic Reform Programs" },
+              { "week": 9, "topic": "Past Question Drilling (I)" },
+              { "week": 10, "topic": "Past Question Drilling (II)" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Economics Lessons from Asian Tigers, Japan, Europe, and America (1)" },
+              { "week": 2, "topic": "Economics Lessons from Asian Tigers, Japan, Europe, and America (2)" },
+              { "week": 3, "topic": "Human Capital Development" },
+              { "week": 4, "topic": "Petroleum and the Nigerian Economy" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Manufacturing and Construction" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Service Industries" },
+              { "week": 9, "topic": "Agencies that Regulate Financial Markets" },
+              { "week": 10, "topic": "International Trade (1)" },
+              { "week": 11, "topic": "International Trade (2)" },
+              { "week": 12, "topic": "Revision" },
+              { "week": 13, "topic": "Examination" },
+              { "week": 14, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Balance of Payments (B.O.P) I" },
+              { "week": 2, "topic": "Balance of Payments (B.O.P) II" },
+              { "week": 3, "topic": "Economic Growth and Development" },
+              { "week": 4, "topic": "Economic Development Planning" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "International Economic Organizations" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Current Economic Plans: MDGs, NEEDS, Vision 2020" },
+              { "week": 9, "topic": "Economic Development Challenges" },
+              { "week": 10, "topic": "Economic Reform Programmes" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

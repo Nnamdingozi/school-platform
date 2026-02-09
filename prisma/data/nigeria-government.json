@@ -1,0 +1,156 @@
+{
+    "subject": "Government",
+    "curriculum": [
+      {
+        "grade": "SS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Meaning, Nature and Scope of Government" },
+              { "week": 2, "topic": "Basic Concepts of Government" },
+              { "week": 3, "topic": "Basic Principles of Government" },
+              { "week": 4, "topic": "Types and Characteristics of Government" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Systems of Government" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Political Ideologies" },
+              { "week": 9, "topic": "Constitution" },
+              { "week": 10, "topic": "Rule of Law and its Limitations" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Separation of Powers and Its Application" },
+              { "week": 2, "topic": "Delegated Legislation" },
+              { "week": 3, "topic": "Citizenship" },
+              { "week": 4, "topic": "Process of Political Socialisation" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Political Participation" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Public Opinion" },
+              { "week": 9, "topic": "Political Parties" },
+              { "week": 10, "topic": "Party System" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Pressure Groups" },
+              { "week": 2, "topic": "Public Administration" },
+              { "week": 3, "topic": "Civil Service" },
+              { "week": 4, "topic": "Local Government" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Pre-Colonial Administration in Nigeria" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Colonial Administration in Nigeria" },
+              { "week": 9, "topic": "Nationalism in Nigeria" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Colonial Administration in Nigeria: British, French, Indirect Rule" },
+              { "week": 2, "topic": "Nationalism in Nigeria: Causes, Effects, Key Personalities" },
+              { "week": 3, "topic": "Constitutional Development in Nigeria I" },
+              { "week": 4, "topic": "Constitutional Development in Nigeria II" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Military Rule in Nigeria: Causes, Achievements, Failures" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Civil Rule in Nigeria: Features, Merits, Challenges" },
+              { "week": 9, "topic": "Nigerian Federalism I: Features and Evolution" },
+              { "week": 10, "topic": "Nigerian Federalism II: Problems and Solutions" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Revenue Allocation in Nigeria: Principles and Issues" },
+              { "week": 2, "topic": "Inter-Governmental Relations" },
+              { "week": 3, "topic": "Political Crisis in Nigeria I" },
+              { "week": 4, "topic": "Political Crisis in Nigeria II" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "The Nigerian Civil War: Causes, Effects, Resolution" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Civil Society and Popular Participation" },
+              { "week": 9, "topic": "Citizenship Education and National Integration" },
+              { "week": 10, "topic": "Political Apathy: Causes, Effects, Solutions" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Electoral Systems: Types, Merits and Demerits" },
+              { "week": 2, "topic": "Electoral Commissions in Nigeria: Past and Present" },
+              { "week": 3, "topic": "Electoral Malpractices: Types, Causes, Consequences" },
+              { "week": 4, "topic": "Democratic Processes in Nigeria" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Judiciary: Structure, Functions, Independence" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Human Rights: Meaning, Categories, Protection, Limitations" },
+              { "week": 9, "topic": "Public Corporations in Nigeria: Meaning, Types, Roles, Control" },
+              { "week": 10, "topic": "Revision" },
+              { "week": 11, "topic": "Examination" },
+              { "week": 12, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "SS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": "1-2", "topic": "Resumption Test / Military Rule in Nigeria" },
+              { "week": 3, "topic": "Conflict Resolution and Management" },
+              { "week": 4, "topic": "Peace Education" },
+              { "week": 5, "topic": "The Interdependence of Nations and Globalization" },
+              { "week": 6, "topic": "Nigeria’s Foreign Policy I" },
+              { "week": 7, "topic": "Midterm Test / Open Day / Midterm Break" },
+              { "week": 8, "topic": "Nigeria’s Foreign Policy II" },
+              { "week": 9, "topic": "International Organisation: United Nations Organisation (UNO)" },
+              { "week": 10, "topic": "International Organisation: Organisation of African Unity (OAU) / African Union (AU)" },
+              { "week": 11, "topic": "International Organisation: Commonwealth" },
+              { "week": 12, "topic": "Revision" },
+              { "week": "13-14", "topic": "Examination" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": "1-2", "topic": "Resumption Test / International Organisation: ECOWAS" },
+              { "week": "3-4", "topic": "International Organisation: OPEC" },
+              { "week": 5, "topic": "Millennium Development Goals (MDGs) & NEPAD" },
+              { "week": 6, "topic": "Government, Leadership and Followership" },
+              { "week": 7, "topic": "Midterm Test / Break" },
+              { "week": "8-11", "topic": "Continuation / Practical Applications" },
+              { "week": 12, "topic": "Revision" },
+              { "week": "13-14", "topic": "Examination" }
+            ]
+          }
+        ]
+      }
+    ]
+  }

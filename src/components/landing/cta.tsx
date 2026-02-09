@@ -36,18 +36,17 @@ export function CTA() {
             </motion.div>
 
             <motion.h2
-              className="text-balance text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              Ready to{" "}
-
-              <span className="bg-linear-to-r from-[hsl(217,91%,60%)] to-[hsl(199,89%,48%)] bg-clip-text text-transparent">
-                Transform
-              </span>{" "}
-              Your School?
-            </motion.h2>
+  className="text-balance text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl"
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, delay: 0.2 }}
+>
+  Ready to{" "}
+  <span className="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 bg-clip-text text-transparent">
+    Transform
+  </span>{" "}
+  Your School?
+</motion.h2>
 
             <motion.p
               className="mx-auto mt-8 max-w-2xl text-pretty text-lg leading-relaxed text-slate-400"

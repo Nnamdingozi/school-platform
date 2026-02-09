@@ -1,0 +1,176 @@
+{
+    "subject": "Physical and Health Education",
+    "curriculum": [
+      {
+        "grade": "JSS 1",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Meaning of Physical Fitness" },
+              { "week": 2, "topic": "Components of Physical Fitness" },
+              { "week": 3, "topic": "Characteristics of a Physically Fit Person" },
+              { "week": 4, "topic": "Importance of Physical Fitness" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Exercises to Develop Strength, Endurance and Flexibility" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Safety Precautions while Performing Exercises" },
+              { "week": 9, "topic": "Meaning of Recreation, Leisure and Dance" },
+              { "week": 10, "topic": "Differences between Dance, Leisure and Recreation" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Benefits of Recreation and Dance" },
+              { "week": 2, "topic": "Athletics – Shot-Put (Basic Skills and Techniques)" },
+              { "week": 3, "topic": "Athletics – Execution of Shot-Put Techniques" },
+              { "week": 4, "topic": "Athletics – Discus Throw (Basic Skills and Techniques)" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Execution of Discus Throw Techniques" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Rules Governing Shot-Put and Discus Throw" },
+              { "week": 9, "topic": "Safety Measures in Track and Field Events" },
+              { "week": 10, "topic": "Football" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Volleyball" },
+              { "week": 2, "topic": "Contact and Non-Contact Sports – Meaning" },
+              { "week": 3, "topic": "Contact and Non-Contact Sports – Types" },
+              { "week": 4, "topic": "Benefits of Contact and Non-Contact Sports" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Basic Skills and Techniques in Contact and Non-Contact Sports" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Safety Measures in Contact and Non-Contact Sports" },
+              { "week": 9, "topic": "Personal, School and Community Health – Determinants of Health" },
+              { "week": 10, "topic": "Characteristics of a Healthy Person" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 2",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Posture" },
+              { "week": 2, "topic": "Posture (Appropriate Posture in Sitting, Standing, Walking and Lifting)" },
+              { "week": 3, "topic": "Postural Defects" },
+              { "week": 4, "topic": "Issues & Challenges in Physical & Health Education" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Human Trafficking (Meaning, Health Implications on Victims)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Human Trafficking (Solutions to Human Trafficking)" },
+              { "week": 9, "topic": "Sports Laws" },
+              { "week": 10, "topic": "Recreation & Leisure" },
+              { "week": "11-13", "topic": "Revision, Examination & Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Recreation & Leisure (Demonstration of Recreational Activities)" },
+              { "week": 2, "topic": "Dance Activities (Dramatic & Creative Rhythms)" },
+              { "week": 3, "topic": "Dance Activities (Types of Dance Activities)" },
+              { "week": 4, "topic": "Computer Games" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Table Tennis (History & Development; Equipment and Facilities)" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Table Tennis (Officials and their Duties)" },
+              { "week": 9, "topic": "Tennis (History & Development; Facilities and Equipment)" },
+              { "week": 10, "topic": "Tennis (Scoring System, Officials and Terminologies)" },
+              { "week": "11-13", "topic": "Revision, Examination & Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Accidents & Safety" },
+              { "week": 2, "topic": "Sports Injuries" },
+              { "week": 3, "topic": "First Aid" },
+              { "week": 4, "topic": "Preventive Measures" },
+              { "week": 5, "topic": "Midterm Exams" },
+              { "week": 6, "topic": "Personal, School & Community Health" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "School Health Programme" },
+              { "week": 9, "topic": "Environmental Pollution" },
+              { "week": 10, "topic": "Non-communicable Diseases" },
+              { "week": "11-13", "topic": "Revision, Examination & Closing" }
+            ]
+          }
+        ]
+      },
+      {
+        "grade": "JSS 3",
+        "terms": [
+          {
+            "term": 1,
+            "weeks": [
+              { "week": 1, "topic": "Physical Fitness & Body Conditioning" },
+              { "week": 2, "topic": "Recreation, Leisure and Dance Activities (Part 1)" },
+              { "week": 3, "topic": "Recreation, Leisure and Dance Activities (Part 2)" },
+              { "week": 4, "topic": "Track and Field Events" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Ball Games (Hockey) – Part 1" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Ball Games (Hockey) – Part 2" },
+              { "week": 9, "topic": "Group/Combined Events – Part 1" },
+              { "week": 10, "topic": "Group/Combined Events – Part 2" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 2,
+            "weeks": [
+              { "week": 1, "topic": "Nigerian Sports Heroes – Part 1" },
+              { "week": 2, "topic": "Nigerian Sports Heroes – Part 2" },
+              { "week": 3, "topic": "Contact Games – Taekwondo" },
+              { "week": 4, "topic": "Contact Games – Boxing" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Non-contact Games – Part 1" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Non-contact Games – Part 2" },
+              { "week": 9, "topic": "Personal, School & Community Health I – Part 1" },
+              { "week": 10, "topic": "Personal, School & Community Health I – Part 2" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          },
+          {
+            "term": 3,
+            "weeks": [
+              { "week": 1, "topic": "Personal, School & Community Health II – Part 1" },
+              { "week": 2, "topic": "Personal, School & Community Health II – Part 2" },
+              { "week": 3, "topic": "Pathogens, Diseases & Prevention – Part 1" },
+              { "week": 4, "topic": "Pathogens, Diseases & Prevention – Part 2" },
+              { "week": 5, "topic": "Midterm Examination" },
+              { "week": 6, "topic": "Family Health – Part 1" },
+              { "week": 7, "topic": "Midterm Break" },
+              { "week": 8, "topic": "Family Health – Part 2" },
+              { "week": 9, "topic": "Family Health – Part 3" },
+              { "week": 10, "topic": "General Health Education Review" },
+              { "week": 11, "topic": "Revision" },
+              { "week": 12, "topic": "Examination" },
+              { "week": 13, "topic": "Closing" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
