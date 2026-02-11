@@ -1,7 +1,7 @@
 {
   "subject": "Cultural and Creative Arts (Visual Arts for SSS)",
-    "curriculum_name": "Nigeria Curriculum",
-  "curriculum": [
+    "curriculum": "Nigeria Curriculum",
+  "grades": [
     {
       "grade": "JSS 1",
       "terms": [

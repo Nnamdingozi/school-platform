@@ -1,7 +1,7 @@
 {
   "subject": "Social and Citizenship Studies / Citizenship and Heritage Studies",
-   "curriculum_name": "Nigeria Curiculum",
-  "curriculum": [
+   "curriculum": "Nigeria Curiculum",
+  "grades": [
     {
       "grade": "JSS 1",
       "terms": [
@@ -1197,6 +1197,6 @@
         }
       ]
     }
-  ],
+  ]
  
 }

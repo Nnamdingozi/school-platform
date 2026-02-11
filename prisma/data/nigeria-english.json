@@ -1,6 +1,7 @@
 {
     "subject": "English Studies",
-    "curriculum": [
+    "curriculum": "Nigeria Curriculum",
+    "grades": [
       {
         "grade": "JSS 1",
         "terms": [

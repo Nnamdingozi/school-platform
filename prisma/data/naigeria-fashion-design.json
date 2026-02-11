@@ -1,7 +1,7 @@
 {
   "subject": "Fashion Design and Garment Making",
   "curiculum": "Nigeria Curiculum",
-  "curriculum": [
+  "grades": [ 
     {
       "grade": "JSS 1",
       "terms": [
@@ -337,4 +337,4 @@
       ]
     }
   ]
-}
+} 

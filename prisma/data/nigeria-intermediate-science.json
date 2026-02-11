@@ -1,7 +1,7 @@
 {
   "subject": "Intermediate Science",
-   "curriculum_name": "Nigeria Curiculum",
-  "curriculum": [
+   "curriculum": "Nigeria Curiculum",
+  "grades": [
     {
       "grade": "JSS 1",
       "terms": [
