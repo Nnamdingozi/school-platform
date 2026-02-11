@@ -290,13 +290,8 @@ model Lesson {
   schoolId    String?
   school      School?  @relation(fields: [schoolId], references: [id])
 
-<<<<<<< HEAD
- topicId    String  @unique 
-  topic   Topic  @relation(fields: [topicId], references: [id])
-=======
   // NEW: Link to the Quiz
   quiz        Quiz?
->>>>>>> 390352f91fd2da988b54d266bb4a5a1da28ae1c9
 
   aiContent   Json?    // We keep this as a backup of the raw AI response
   createdAt   DateTime @default(now())
