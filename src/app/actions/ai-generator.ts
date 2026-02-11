@@ -1,16 +1,16 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
-const prisma = new PrismaClient();
-
-const lessonSchema = z.object({
+// 1. THE BLUEPRINT: Exact shape of the AI response
+const LessonAiSchema = z.object({
   title: z.string(),
   learningObjectives: z.array(z.string()),
-  explanation: z.string(), // markdown
+  explanation: z.string(), // Markdown body
   examples: z.array(
     z.object({
       task: z.string(),
@@ -22,98 +22,114 @@ const lessonSchema = z.object({
   quiz: z.array(
     z.object({
       question: z.string(),
-      options: z.array(z.string()).min(2),
+      options: z.array(z.string()),
       answer: z.string(),
       explanation: z.string(),
     })
   ),
 });
 
-type LessonPayload = z.infer<typeof lessonSchema>;
-
-export async function generateAiLessonForTopic(topicId: string) {
+/**
+ * SENIOR REFACTOR: DYNAMIC MULTI-TENANT GENERATOR
+ * Handles Lessons, Quizzes, and Questions in a single Atomic Transaction.
+ */
+export async function generateLessonForTopic(topicId: string) {
+  // 2. FETCH HIERARCHICAL CONTEXT
   const topic = await prisma.topic.findUnique({
     where: { id: topicId },
     include: {
       gradeSubject: {
         include: {
-          grade: true,
+          grade: { include: { curriculum: true } },
           subject: true,
         },
       },
+      school: true,
     },
   });
 
-  if (!topic) {
-    throw new Error(`Topic with id ${topicId} not found`);
-  }
+  if (!topic) throw new Error("Topic not found");
 
-  const scopeTitle = topic.title;
-  const scopeDescription =
-    (topic as any).description ??
-    "Use only the given title and general Nigerian secondary school curriculum context.";
+  const { curriculum } = topic.gradeSubject.grade;
+  const subjectName = topic.gradeSubject.subject.name;
 
-  const { object } = await generateObject({
+  // 3. DYNAMIC CHAMELEON PROMPT
+  const dynamicPrompt = `
+    You are an expert ${curriculum.name} instructional designer.
+    Generate a comprehensive lesson for the subject: ${subjectName}.
+   
+    STRICT SCOPE:
+    - Topic: ${topic.title}
+    - Content Breakdown: ${topic.description ?? "Focus on core syllabus principles."}
+    - Level: ${topic.gradeSubject.grade.displayName} (${curriculum.yearLabel})
+   
+    INSTRUCTIONS:
+    - Tone: Pedagogically aligned with ${curriculum.name} standards.
+    - Format: Use structured Markdown for the main explanation.
+    - Localization: Use terminology and units relevant to a student in this curriculum.
+  `;
+
+  // 4. CALL THE AI
+  const { object: ai } = await generateObject({
     model: google("gemini-1.5-flash"),
-    schema: lessonSchema,
-    system:
-      "You are an expert Nigerian secondary-school teacher and curriculum designer. " +
-      "You create clear, age-appropriate, and engaging lessons that teachers can present directly " +
-      "and students can also read independently. Always respond strictly as JSON that matches the provided schema.",
-    prompt:
-      [
-        "STRICT SCOPE (do not go outside this topic):",
-        `Topic title: ${scopeTitle}`,
-        `Topic description: ${scopeDescription}`,
-        "",
-        "Task:",
-        "- Create a complete lesson for this topic.",
-        "- The lesson should be structured so that:",
-        "  - A teacher can use it as a teaching script and lesson plan.",
-        "  - A student can read it independently and learn the concept.",
-        "- Use clear Nigerian English, simple explanations, and localised/relatable examples where helpful.",
-        "",
-        "Requirements for each field:",
-        "- title: A clear, student-friendly lesson title.",
-        "- learningObjectives: 3–6 specific, measurable ‘By the end of this lesson, students should be able to…’ items.",
-        "- explanation: Main lesson body in Markdown with headings, bullet points, and short paragraphs.",
-        "- examples: 3–5 worked examples with 'task' and 'solution'.",
-        "- videoScript: A narrative script a teacher or video agent could read out loud, including pauses and questions.",
-        "- summary: A concise recap of the key ideas in 3–6 bullet points.",
-        "- quiz: 5–10 multiple-choice questions with options, the correct answer, and a short explanation.",
-      ].join("\n"),
+    schema: LessonAiSchema,
+    prompt: dynamicPrompt,
   });
 
-  const lessonContent: LessonPayload = object;
+  // 5. THE ATOMIC TRANSACTION: Save everything or nothing
+  const lesson = await prisma.$transaction(async (tx) => {
+   
+    // A. CLEANUP: If a lesson already exists, remove its old quiz/questions
+    const existingLesson = await tx.lesson.findUnique({
+      where: { topicId: topic.id },
+      select: { id: true }
+    });
 
-  // Either update existing lesson for this topic or create a new one
-  const existingLesson = await prisma.lesson.findFirst({
-    where: { topicId },
+    if (existingLesson) {
+      // Deleting the Quiz will automatically delete Questions due to 'onDelete: Cascade' in Schema
+      await tx.quiz.deleteMany({ where: { lessonId: existingLesson.id } });
+    }
+
+    // B. UPSERT LESSON: Create or Update the main lesson content
+    const savedLesson = await tx.lesson.upsert({
+      where: { topicId: topic.id },
+      update: {
+        title: ai.title,
+        content: ai.explanation,
+        videoScript: ai.videoScript,
+        aiContent: ai as any, // Backup of raw AI data
+      },
+      create: {
+        topicId: topic.id,
+        title: ai.title,
+        content: ai.explanation,
+        videoScript: ai.videoScript,
+        schoolId: topic.schoolId,
+        aiContent: ai as any,
+      },
+    });
+
+    // C. CREATE QUIZ: The container for our questions
+    const quiz = await tx.quiz.create({
+      data: { lessonId: savedLesson.id }
+    });
+
+    // D. BATCH CREATE QUESTIONS: Efficiently insert all questions at once
+    await tx.question.createMany({
+      data: ai.quiz.map((q) => ({
+        quizId: quiz.id,
+        text: q.question,
+        options: q.options,
+        correctAnswer: q.answer,
+        explanation: q.explanation,
+      })),
+    });
+
+    return savedLesson;
   });
 
-  let lesson;
-
-  if (existingLesson) {
-    lesson = await prisma.lesson.update({
-      where: { id: existingLesson.id },
-      data: {
-        title: lessonContent.title,
-        content: lessonContent.explanation,
-        aiContent: lessonContent,
-      },
-    });
-  } else {
-    lesson = await prisma.lesson.create({
-      data: {
-        title: lessonContent.title,
-        content: lessonContent.explanation,
-        topicId,
-        aiContent: lessonContent,
-        schoolId: (topic as any).schoolId ?? null,
-      },
-    });
-  }
-
+  // 6. UI REFRESH
+  revalidatePath(`/dashboard/lessons/${topic.id}`);
+ 
   return lesson;
 }
-

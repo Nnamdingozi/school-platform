@@ -283,7 +283,7 @@ model Lesson {
   title   String
   content String?
 
-  topicId String
+ topicId    String  @unique 
   topic   Topic  @relation(fields: [topicId], references: [id])
 
   schoolId String?
