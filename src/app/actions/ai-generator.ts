@@ -1,16 +1,16 @@
 "use server";
-import { PrismaClient } from "@prisma/client";
+
+import { prisma } from "@/lib/prisma";
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
-const prisma = new PrismaClient();
-
-// Zod schema for the AI-generated lesson
-export const LessonAiSchema = z.object({
+// 1. THE BLUEPRINT: Exact shape of the AI response
+const LessonAiSchema = z.object({
   title: z.string(),
   learningObjectives: z.array(z.string()),
-  explanation: z.string(), // main lesson body in Markdown
+  explanation: z.string(), // Markdown body
   examples: z.array(
     z.object({
       task: z.string(),
@@ -29,20 +29,18 @@ export const LessonAiSchema = z.object({
   ),
 });
 
-export type LessonAiContent = z.infer<typeof LessonAiSchema>;
-
 /**
- * Generate an AI lesson for a given Topic and persist it on the Lesson model.
- * - Strictly scoped to the Topic's title and description.
- * - Returns the saved Lesson record.
+ * SENIOR REFACTOR: DYNAMIC MULTI-TENANT GENERATOR
+ * Handles Lessons, Quizzes, and Questions in a single Atomic Transaction.
  */
 export async function generateLessonForTopic(topicId: string) {
+  // 2. FETCH HIERARCHICAL CONTEXT
   const topic = await prisma.topic.findUnique({
     where: { id: topicId },
     include: {
       gradeSubject: {
         include: {
-          grade: true,
+          grade: { include: { curriculum: true } },
           subject: true,
         },
       },
@@ -50,75 +48,88 @@ export async function generateLessonForTopic(topicId: string) {
     },
   });
 
-  if (!topic) {
-    throw new Error(`Topic with id '${topicId}' not found`);
-  }
+  if (!topic) throw new Error("Topic not found");
 
-  const model = google("gemini-1.5-flash");
+  const { curriculum } = topic.gradeSubject.grade;
+  const subjectName = topic.gradeSubject.subject.name;
 
-  const scopeTitle = topic.title;
-  const scopeDescription =
-    topic.description ??
-    "No description was provided. Focus strictly on the topic title.";
+  // 3. DYNAMIC CHAMELEON PROMPT
+  const dynamicPrompt = `
+    You are an expert ${curriculum.name} instructional designer.
+    Generate a comprehensive lesson for the subject: ${subjectName}.
+   
+    STRICT SCOPE:
+    - Topic: ${topic.title}
+    - Content Breakdown: ${topic.description ?? "Focus on core syllabus principles."}
+    - Level: ${topic.gradeSubject.grade.displayName} (${curriculum.yearLabel})
+   
+    INSTRUCTIONS:
+    - Tone: Pedagogically aligned with ${curriculum.name} standards.
+    - Format: Use structured Markdown for the main explanation.
+    - Localization: Use terminology and units relevant to a student in this curriculum.
+  `;
 
-  const gradeName = topic.gradeSubject?.grade.displayName;
-  const subjectName = topic.gradeSubject?.subject.name;
-
-  const strictScopePrompt = [
-    "You are an expert Nigerian secondary school teacher and lesson designer.",
-    "You must strictly stay within the following topic scope.",
-    "",
-    "STRICT SCOPE (do not go beyond this topic):",
-    `- Topic title: ${scopeTitle}`,
-    `- Topic description: ${scopeDescription}`,
-    gradeName ? `- Grade: ${gradeName}` : "",
-    subjectName ? `- Subject: ${subjectName}` : "",
-    "",
-    "Generate a complete lesson that is perfect for:",
-    "- A TEACHER to present in class (including clear teaching flow, explanations, and examples).",
-    "- A STUDENT to read independently (clear structure, definitions, step-by-step reasoning).",
-    "",
-    "Requirements:",
-    "- Use clear, student-friendly language appropriate for Nigerian secondary schools.",
-    "- Keep all content aligned only with the STRICT SCOPE above.",
-    "- The main explanation must be in structured Markdown (headings, bullet points, etc.).",
-    "- Include worked examples that match the topic.",
-    "- Include a quiz that a teacher can give at the end.",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  const result = await generateObject({
-    model,
+  // 4. CALL THE AI
+  const { object: ai } = await generateObject({
+    model: google("gemini-1.5-flash"),
     schema: LessonAiSchema,
-    mode: "json",
-    prompt: strictScopePrompt,
+    prompt: dynamicPrompt,
   });
 
-  const lessonContent = result.object;
+  // 5. THE ATOMIC TRANSACTION: Save everything or nothing
+  const lesson = await prisma.$transaction(async (tx) => {
+   
+    // A. CLEANUP: If a lesson already exists, remove its old quiz/questions
+    const existingLesson = await tx.lesson.findUnique({
+      where: { topicId: topic.id },
+      select: { id: true }
+    });
 
-  // Ensure there is exactly one Lesson per Topic: update if exists, otherwise create.
-  const existingLesson = await prisma.lesson.findFirst({
-    where: { topicId: topic.id },
+    if (existingLesson) {
+      // Deleting the Quiz will automatically delete Questions due to 'onDelete: Cascade' in Schema
+      await tx.quiz.deleteMany({ where: { lessonId: existingLesson.id } });
+    }
+
+    // B. UPSERT LESSON: Create or Update the main lesson content
+    const savedLesson = await tx.lesson.upsert({
+      where: { topicId: topic.id },
+      update: {
+        title: ai.title,
+        content: ai.explanation,
+        videoScript: ai.videoScript,
+        aiContent: ai as any, // Backup of raw AI data
+      },
+      create: {
+        topicId: topic.id,
+        title: ai.title,
+        content: ai.explanation,
+        videoScript: ai.videoScript,
+        schoolId: topic.schoolId,
+        aiContent: ai as any,
+      },
+    });
+
+    // C. CREATE QUIZ: The container for our questions
+    const quiz = await tx.quiz.create({
+      data: { lessonId: savedLesson.id }
+    });
+
+    // D. BATCH CREATE QUESTIONS: Efficiently insert all questions at once
+    await tx.question.createMany({
+      data: ai.quiz.map((q) => ({
+        quizId: quiz.id,
+        text: q.question,
+        options: q.options,
+        correctAnswer: q.answer,
+        explanation: q.explanation,
+      })),
+    });
+
+    return savedLesson;
   });
 
-  const data = {
-    title: lessonContent.title,
-    content: lessonContent.explanation,
-    topicId: topic.id,
-    schoolId: topic.schoolId ?? undefined,
-    aiContent: lessonContent as unknown as object,
-  };
-
-  const lesson = existingLesson
-    ? await prisma.lesson.update({
-        where: { id: existingLesson.id },
-        data,
-      })
-    : await prisma.lesson.create({
-        data,
-      });
-
+  // 6. UI REFRESH
+  revalidatePath(`/dashboard/lessons/${topic.id}`);
+ 
   return lesson;
 }
-
