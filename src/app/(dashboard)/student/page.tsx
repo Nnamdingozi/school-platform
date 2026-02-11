@@ -1,25 +1,28 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Header } from "@/components/student-dashboard/header"
-import { Navigation } from "@/components/student-dashboard/navigation"
-import { WhatsDueWidget } from "@/components/student-dashboard/whats-due-widget"
-import { CurrentLessonCard } from "@/components/student-dashboard/current-lesson-card"
-import { RecentFeedback } from "@/components/student-dashboard/recent-feedback"
-import { TeacherContact } from "@/components/student-dashboard/teacher-contact"
-import { QuickStats } from "@/components/student-dashboard/quick-stats"
-import { SubjectsGrid } from "@/components/student-dashboard/subjects-grid"
-import { Sparkles } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { Header } from "@/components/student-dashboard/header";
+import { Navigation } from "@/components/student-dashboard/navigation";
+import { WhatsDueWidget } from "@/components/student-dashboard/whats-due-widget";
+import { CurrentLessonCard } from "@/components/student-dashboard/current-lesson-card";
+import { RecentFeedback } from "@/components/student-dashboard/recent-feedback";
+import { TeacherContact } from "@/components/student-dashboard/teacher-contact";
+import { QuickStats } from "@/components/student-dashboard/quick-stats";
+import { SubjectsGrid } from "@/components/student-dashboard/subjects-grid";
+import { Sparkles } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 // Sample student data
 const studentData = {
   name: "Adaora Chukwuma",
   schoolName: "Greenfield Academy",
   grade: "JSS 1 - Section B",
-}
+};
 
 export default function StudentDashboard() {
-  const [activeNav, setActiveNav] = useState("dashboard")
+  const [activeNav, setActiveNav] = useState("dashboard");
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,7 +66,7 @@ export default function StudentDashboard() {
           {/* Main Grid Layout */}
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Left Column - What's Due & Feedback */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="space-y-6 lg:col-span-2">
               {/* What's Due */}
               <WhatsDueWidget />
 
@@ -86,6 +89,24 @@ export default function StudentDashboard() {
                 duration="45 min"
                 isLive={true}
               />
+
+              {/* Manage Subjects Link Card */}
+              <Card className="border-dashed">
+                <CardHeader>
+                  <CardTitle>Manage Your Subjects</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-3">
+                  <p className="text-sm text-muted-foreground">
+                    Add or remove subjects from your dashboard so you only see
+                    the classes that matter most to you.
+                  </p>
+                  <Button asChild size="sm">
+                    <Link href="/subjects/manage?role=student">
+                      Open Subject Management
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
@@ -109,5 +130,6 @@ export default function StudentDashboard() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
+
