@@ -1,5 +1,4 @@
 "use server";
-
 import { prisma } from "@/lib/prisma"; // Ensure this points to your global prisma client
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
@@ -83,7 +82,7 @@ export async function generateLessonForTopic(topicId: string) {
     `- Ensure the tone reflects the pedagogical standards of the ${curriculumName}.`,
     `- The explanation must be in structured Markdown (using ## headings, bullet points, and bold text).`,
     `- Include real-world examples relevant to the student's context.`,
-    `- Generate a 5-question multiple choice quiz with detailed explanations for the correct answers.`,
+    `- Generate a 10-question multiple choice quiz with detailed explanations for the correct answers.`,
   ].join("\n");
 
   // 5. CALL THE AI

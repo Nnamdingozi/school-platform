@@ -1,5 +1,4 @@
 "use server";
-
 import { PrismaClient } from "@prisma/client";
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
@@ -7,10 +6,11 @@ import { z } from "zod";
 
 const prisma = new PrismaClient();
 
-const lessonSchema = z.object({
+// Zod schema for the AI-generated lesson
+export const LessonAiSchema = z.object({
   title: z.string(),
   learningObjectives: z.array(z.string()),
-  explanation: z.string(), // markdown
+  explanation: z.string(), // main lesson body in Markdown
   examples: z.array(
     z.object({
       task: z.string(),
@@ -22,16 +22,21 @@ const lessonSchema = z.object({
   quiz: z.array(
     z.object({
       question: z.string(),
-      options: z.array(z.string()).min(2),
+      options: z.array(z.string()),
       answer: z.string(),
       explanation: z.string(),
     })
   ),
 });
 
-type LessonPayload = z.infer<typeof lessonSchema>;
+export type LessonAiContent = z.infer<typeof LessonAiSchema>;
 
-export async function generateAiLessonForTopic(topicId: string) {
+/**
+ * Generate an AI lesson for a given Topic and persist it on the Lesson model.
+ * - Strictly scoped to the Topic's title and description.
+ * - Returns the saved Lesson record.
+ */
+export async function generateLessonForTopic(topicId: string) {
   const topic = await prisma.topic.findUnique({
     where: { id: topicId },
     include: {
@@ -41,78 +46,78 @@ export async function generateAiLessonForTopic(topicId: string) {
           subject: true,
         },
       },
+      school: true,
     },
   });
 
   if (!topic) {
-    throw new Error(`Topic with id ${topicId} not found`);
+    throw new Error(`Topic with id '${topicId}' not found`);
   }
+
+  const model = google("gemini-1.5-flash");
 
   const scopeTitle = topic.title;
   const scopeDescription =
-    (topic as any).description ??
-    "Use only the given title and general Nigerian secondary school curriculum context.";
+    topic.description ??
+    "No description was provided. Focus strictly on the topic title.";
 
-  const { object } = await generateObject({
-    model: google("gemini-1.5-flash"),
-    schema: lessonSchema,
-    system:
-      "You are an expert Nigerian secondary-school teacher and curriculum designer. " +
-      "You create clear, age-appropriate, and engaging lessons that teachers can present directly " +
-      "and students can also read independently. Always respond strictly as JSON that matches the provided schema.",
-    prompt:
-      [
-        "STRICT SCOPE (do not go outside this topic):",
-        `Topic title: ${scopeTitle}`,
-        `Topic description: ${scopeDescription}`,
-        "",
-        "Task:",
-        "- Create a complete lesson for this topic.",
-        "- The lesson should be structured so that:",
-        "  - A teacher can use it as a teaching script and lesson plan.",
-        "  - A student can read it independently and learn the concept.",
-        "- Use clear Nigerian English, simple explanations, and localised/relatable examples where helpful.",
-        "",
-        "Requirements for each field:",
-        "- title: A clear, student-friendly lesson title.",
-        "- learningObjectives: 3–6 specific, measurable ‘By the end of this lesson, students should be able to…’ items.",
-        "- explanation: Main lesson body in Markdown with headings, bullet points, and short paragraphs.",
-        "- examples: 3–5 worked examples with 'task' and 'solution'.",
-        "- videoScript: A narrative script a teacher or video agent could read out loud, including pauses and questions.",
-        "- summary: A concise recap of the key ideas in 3–6 bullet points.",
-        "- quiz: 5–10 multiple-choice questions with options, the correct answer, and a short explanation.",
-      ].join("\n"),
+  const gradeName = topic.gradeSubject?.grade.displayName;
+  const subjectName = topic.gradeSubject?.subject.name;
+
+  const strictScopePrompt = [
+    "You are an expert Nigerian secondary school teacher and lesson designer.",
+    "You must strictly stay within the following topic scope.",
+    "",
+    "STRICT SCOPE (do not go beyond this topic):",
+    `- Topic title: ${scopeTitle}`,
+    `- Topic description: ${scopeDescription}`,
+    gradeName ? `- Grade: ${gradeName}` : "",
+    subjectName ? `- Subject: ${subjectName}` : "",
+    "",
+    "Generate a complete lesson that is perfect for:",
+    "- A TEACHER to present in class (including clear teaching flow, explanations, and examples).",
+    "- A STUDENT to read independently (clear structure, definitions, step-by-step reasoning).",
+    "",
+    "Requirements:",
+    "- Use clear, student-friendly language appropriate for Nigerian secondary schools.",
+    "- Keep all content aligned only with the STRICT SCOPE above.",
+    "- The main explanation must be in structured Markdown (headings, bullet points, etc.).",
+    "- Include worked examples that match the topic.",
+    "- Include a quiz that a teacher can give at the end.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const result = await generateObject({
+    model,
+    schema: LessonAiSchema,
+    mode: "json",
+    prompt: strictScopePrompt,
   });
 
-  const lessonContent: LessonPayload = object;
+  const lessonContent = result.object;
 
-  // Either update existing lesson for this topic or create a new one
+  // Ensure there is exactly one Lesson per Topic: update if exists, otherwise create.
   const existingLesson = await prisma.lesson.findFirst({
-    where: { topicId },
+    where: { topicId: topic.id },
   });
 
-  let lesson;
+  const data = {
+    title: lessonContent.title,
+    content: lessonContent.explanation,
+    topicId: topic.id,
+    schoolId: topic.schoolId ?? undefined,
+    aiContent: lessonContent as unknown as object,
+  };
 
-  if (existingLesson) {
-    lesson = await prisma.lesson.update({
-      where: { id: existingLesson.id },
-      data: {
-        title: lessonContent.title,
-        content: lessonContent.explanation,
-        aiContent: lessonContent,
-      },
-    });
-  } else {
-    lesson = await prisma.lesson.create({
-      data: {
-        title: lessonContent.title,
-        content: lessonContent.explanation,
-        topicId,
-        aiContent: lessonContent,
-        schoolId: (topic as any).schoolId ?? null,
-      },
-    });
-  }
+  const lesson = existingLesson
+    ? await prisma.lesson.update({
+        where: { id: existingLesson.id },
+        data,
+      })
+    : await prisma.lesson.create({
+        data,
+      });
 
   return lesson;
 }
