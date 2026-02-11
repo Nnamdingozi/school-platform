@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 // Load environment variables from .env
 dotenv.config();
 
-// Prisma 7: Setup Connection
+// Prisma 7: Use PostgreSQL adapter for direct connection
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
   throw new Error("DATABASE_URL environment variable is not set");
@@ -23,7 +23,6 @@ const prisma = new PrismaClient({ adapter });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// --- Types ---
 type WeekJson = {
   week: number | string;
   topic: string;
@@ -36,7 +35,7 @@ type TermJson = {
 };
 
 type GradeJson = {
-  grade: string; 
+  grade: string;
   terms: TermJson[];
 };
 
@@ -46,139 +45,346 @@ type SubjectJson = {
   grades: GradeJson[];
 };
 
-// --- Helper Functions ---
 function slugifyGrade(name: string): string {
-  return name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function shortNameFromGrade(name: string): string {
   return name.replace(/\s+/g, "");
 }
 
-/**
- * Robustly maps JSS/SSS names to numeric levels.
- * Handles "SS 1", "SS1", "SSS 1", etc.
- */
 function levelFromGradeName(name: string): number | null {
   const trimmed = name.trim();
 
-  // JSS 1-3 => Levels 7-9
-  const jssMatch = /^JSS\s*(\d+)$/i.exec(trimmed);
+  // JSS 1 => 7, JSS 2 => 8, JSS 3 => 9
+  const jssMatch = /^JSS\s+(\d+)$/i.exec(trimmed);
   if (jssMatch) {
     const n = Number(jssMatch[1]);
-    return 6 + n;
+    if (!Number.isNaN(n)) return 6 + n;
   }
 
-  // SSS or SS 1-3 => Levels 10-12
-  const sssMatch = /^(SSS|SS)\s*(\d+)$/i.exec(trimmed);
+  // SSS 1 => 10, SSS 2 => 11, SSS 3 => 12
+  const sssMatch = /^SSS\s+(\d+)$/i.exec(trimmed);
   if (sssMatch) {
-    const n = Number(sssMatch[2]);
-    return 9 + n;
+    const n = Number(sssMatch[1]);
+    if (!Number.isNaN(n)) return 9 + n;
   }
 
-  // Fallback for "Grade 1" or "Year 1"
-  const gradeMatch = /^(Grade|Year)\s*(\d+)$/i.exec(trimmed);
+  // Fallback: "Grade 1" => 1, etc.
+  const gradeMatch = /^Grade\s+(\d+)$/i.exec(trimmed);
   if (gradeMatch) {
-    return Number(gradeMatch[2]);
+    const n = Number(gradeMatch[1]);
+    if (!Number.isNaN(n)) return n;
   }
 
   return null;
 }
 
 function termDisplayName(index: number): string {
-  const map: Record<number, string> = { 1: "First Term", 2: "Second Term", 3: "Third Term" };
-  return map[index] || `Term ${index}`;
+  if (index === 1) return "First Term";
+  if (index === 2) return "Second Term";
+  if (index === 3) return "Third Term";
+  return `Term ${index}`;
 }
 
 function weekNumberFromValue(value: number | string | undefined): number | null {
-  if (value === undefined || value === null) return null;
+  if (value === undefined) return null;
   if (typeof value === "number") return value;
-  const match = String(value).match(/^(\d+)/);
-  return match ? parseInt(match[1], 10) : null;
+  const parsed = parseInt(value, 10);
+  return Number.isNaN(parsed) ? null : parsed;
 }
-
-// --- Database Logic ---
 
 async function ensureCurriculum() {
   const name = "Nigerian National Curriculum";
-  return await prisma.curriculum.upsert({
-    where: { id: "nigerian-national-curriculum" }, // Consistent ID for lookups
-    update: { name, yearLabel: "Grade", termLabel: "Term", subjectLabel: "Subject" },
-    create: { id: "nigerian-national-curriculum", name, yearLabel: "Grade", termLabel: "Term", subjectLabel: "Subject" },
+
+  const existing = await prisma.curriculum.findFirst({
+    where: { name },
   });
+
+  if (!existing) {
+    const created = await prisma.curriculum.create({
+      data: {
+        name,
+        yearLabel: "Grade",
+        termLabel: "Term",
+        subjectLabel: "Subject",
+      },
+    });
+
+    console.log(`Created curriculum '${name}'`);
+    return created;
+  }
+
+  // Ensure labels are up to date
+  if (
+    existing.yearLabel !== "Grade" ||
+    existing.termLabel !== "Term" ||
+    existing.subjectLabel !== "Subject"
+  ) {
+    const updated = await prisma.curriculum.update({
+      where: { id: existing.id },
+      data: {
+        yearLabel: "Grade",
+        termLabel: "Term",
+        subjectLabel: "Subject",
+      },
+    });
+    console.log(`Updated labels for curriculum '${name}'`);
+    return updated;
+  }
+
+  return existing;
 }
 
 async function ensureSchool(curriculumId: string) {
   const name = "Lagos International Academy";
-  const existing = await prisma.school.findFirst({ where: { name } });
-  if (existing) return existing;
-  return await prisma.school.create({ data: { name, curriculumId } });
-}
 
-async function processSubjectFile(filePath: string, curriculumId: string, schoolId: string) {
-  const fileName = path.basename(filePath);
-  const raw = await fs.readFile(filePath, "utf-8");
-  const data: SubjectJson = JSON.parse(raw);
-
-  console.log(`\n📘 Processing: ${data.subject} (${fileName})`);
-
-  // 1. Ensure Subject
-  const subject = await prisma.subject.upsert({
-    where: { id: slugifyGrade(data.subject) + "-" + curriculumId }, // Create unique ID per curriculum
-    update: { name: data.subject },
-    create: { id: slugifyGrade(data.subject) + "-" + curriculumId, name: data.subject, curriculumId, schoolId },
+  let school = await prisma.school.findFirst({
+    where: { name, curriculumId },
   });
 
+  if (!school) {
+    school = await prisma.school.create({
+      data: {
+        name,
+        curriculumId,
+      },
+    });
+    console.log(`Created school '${name}'`);
+  }
+
+  return school;
+}
+
+async function upsertSubjectForCurriculum(
+  curriculumId: string,
+  schoolId: string | null,
+  subjectName: string
+) {
+  let subject = await prisma.subject.findFirst({
+    where: { name: subjectName, curriculumId },
+  });
+
+  if (!subject) {
+    subject = await prisma.subject.create({
+      data: {
+        name: subjectName,
+        curriculumId,
+        schoolId: schoolId ?? undefined,
+      },
+    });
+    console.log(`  Created subject '${subjectName}'`);
+  } else if (!subject.schoolId && schoolId) {
+    subject = await prisma.subject.update({
+      where: { id: subject.id },
+      data: { schoolId },
+    });
+    console.log(`  Linked subject '${subjectName}' to school`);
+  } else {
+    console.log(`  Reusing subject '${subjectName}'`);
+  }
+
+  return subject;
+}
+
+async function upsertGrade(
+  curriculumId: string,
+  schoolId: string | null,
+  gradeName: string
+) {
+  const level = levelFromGradeName(gradeName);
+  if (level == null) {
+    console.warn(`  Skipping grade '${gradeName}' - could not infer level`);
+    return null;
+  }
+
+  const slug = slugifyGrade(gradeName);
+  const shortName = shortNameFromGrade(gradeName);
+
+  const grade = await prisma.grade.upsert({
+    where: {
+      curriculumId_level: {
+        curriculumId,
+        level,
+      },
+    },
+    update: {
+      displayName: gradeName,
+      shortName,
+      slug,
+      schoolId: schoolId ?? undefined,
+    },
+    create: {
+      level,
+      slug,
+      displayName: gradeName,
+      shortName,
+      curriculumId,
+      schoolId: schoolId ?? undefined,
+    },
+  });
+
+  console.log(`  Upserted grade '${gradeName}' (level=${level}, slug='${slug}')`);
+  return grade;
+}
+
+async function upsertGradeSubject(
+  gradeId: string,
+  subjectId: string,
+  schoolId: string | null
+) {
+  const gradeSubject = await prisma.gradeSubject.upsert({
+    where: {
+      gradeId_subjectId: {
+        gradeId,
+        subjectId,
+      },
+    },
+    update: {
+      schoolId: schoolId ?? undefined,
+    },
+    create: {
+      gradeId,
+      subjectId,
+      schoolId: schoolId ?? undefined,
+    },
+  });
+
+  console.log(`    Linked grade and subject via GradeSubject`);
+  return gradeSubject;
+}
+
+async function upsertTerm(
+  gradeId: string,
+  index: number,
+  schoolId: string | null
+) {
+  const displayName = termDisplayName(index);
+
+  const term = await prisma.term.upsert({
+    where: {
+      gradeId_index: {
+        gradeId,
+        index,
+      },
+    },
+    update: {
+      displayName,
+      schoolId: schoolId ?? undefined,
+    },
+    create: {
+      index,
+      displayName,
+      gradeId,
+      schoolId: schoolId ?? undefined,
+    },
+  });
+
+  console.log(`    Upserted term '${displayName}' (index=${index})`);
+  return term;
+}
+
+async function upsertTopic(
+  title: string,
+  description: string | undefined,
+  weekNumber: number | null,
+  gradeSubjectId: string,
+  termId: string,
+  schoolId: string | null
+) {
+  const existing = await prisma.topic.findFirst({
+    where: {
+      title,
+      gradeSubjectId,
+      termId,
+      weekNumber: weekNumber ?? undefined,
+    },
+  });
+
+  if (existing) {
+    await prisma.topic.update({
+      where: { id: existing.id },
+      data: {
+        description,
+        weekNumber: weekNumber ?? undefined,
+        schoolId: schoolId ?? undefined,
+      },
+    });
+    console.log(
+      `      Updated topic '${title}' (week=${weekNumber ?? "n/a"})`
+    );
+    return;
+  }
+
+  await prisma.topic.create({
+    data: {
+      title,
+      description,
+      weekNumber: weekNumber ?? undefined,
+      gradeSubjectId,
+      termId,
+      schoolId: schoolId ?? undefined,
+    },
+  });
+  console.log(`      Created topic '${title}' (week=${weekNumber ?? "n/a"})`);
+}
+
+async function processSubjectFile(
+  filePath: string,
+  curriculumId: string,
+  schoolId: string | null
+) {
+  const fileName = path.basename(filePath);
+  const raw = await fs.readFile(filePath, "utf-8");
+  const data = JSON.parse(raw) as SubjectJson;
+
+  console.log(`\nProcessing file: ${fileName}`);
+  console.log(` Subject: ${data.subject}`);
+
+  const subject = await upsertSubjectForCurriculum(
+    curriculumId,
+    schoolId,
+    data.subject
+  );
+
   for (const gradeJson of data.grades) {
-    const level = levelFromGradeName(gradeJson.grade);
-    if (level === null) {
-      console.warn(`  ⚠️ Skipping Grade: "${gradeJson.grade}" - Format not recognized (Expected JSS 1, SS 1, etc.)`);
-      continue;
-    }
+    console.log(` Grade: ${gradeJson.grade}`);
 
-    // 2. Ensure Grade
-    const grade = await prisma.grade.upsert({
-      where: { curriculumId_level: { curriculumId, level } },
-      update: { displayName: gradeJson.grade, slug: slugifyGrade(gradeJson.grade) },
-      create: { curriculumId, level, displayName: gradeJson.grade, slug: slugifyGrade(gradeJson.grade), shortName: shortNameFromGrade(gradeJson.grade), schoolId },
-    });
+    const grade = await upsertGrade(curriculumId, schoolId, gradeJson.grade);
+    if (!grade) continue;
 
-    // 3. Link Grade and Subject
-    const gradeSubject = await prisma.gradeSubject.upsert({
-      where: { gradeId_subjectId: { gradeId: grade.id, subjectId: subject.id } },
-      update: {},
-      create: { gradeId: grade.id, subjectId: subject.id, schoolId },
-    });
+    const gradeSubject = await upsertGradeSubject(
+      grade.id,
+      subject.id,
+      schoolId
+    );
 
     for (const termJson of gradeJson.terms) {
-      // 4. Ensure Term
-      const term = await prisma.term.upsert({
-        where: { gradeId_index: { gradeId: grade.id, index: termJson.term } },
-        update: { displayName: termDisplayName(termJson.term) },
-        create: { gradeId: grade.id, index: termJson.term, displayName: termDisplayName(termJson.term), schoolId },
-      });
+      const termIndex = termJson.term ?? 0;
+      if (!termIndex) {
+        console.warn(
+          `    Skipping term with invalid index for grade '${grade.displayName}'`
+        );
+        continue;
+      }
+
+      const term = await upsertTerm(grade.id, termIndex, schoolId);
 
       for (const weekJson of termJson.weeks) {
-        // 5. Ensure Topic
-        const weekNum = weekNumberFromValue(weekJson.week);
-        await prisma.topic.upsert({
-          where: { 
-            // Composite key or unique check logic
-            id: slugifyGrade(`${grade.displayName}-${subject.name}-${term.index}-${weekJson.topic}`)
-          },
-          update: { description: weekJson.description, weekNumber: weekNum },
-          create: {
-            id: slugifyGrade(`${grade.displayName}-${subject.name}-${term.index}-${weekJson.topic}`),
-            title: weekJson.topic,
-            description: weekJson.description,
-            weekNumber: weekNum,
-            gradeSubjectId: gradeSubject.id,
-            termId: term.id,
-            schoolId
-          }
-        });
+        const weekNumber = weekNumberFromValue(weekJson.week);
+        await upsertTopic(
+          weekJson.topic,
+          weekJson.description,
+          weekNumber,
+          gradeSubject.id,
+          term.id,
+          schoolId
+        );
       }
-      console.log(`    ✅ ${grade.displayName} - ${term.displayName}: ${termJson.weeks.length} topics.`);
     }
   }
 }
@@ -187,32 +393,75 @@ async function main() {
   const curriculum = await ensureCurriculum();
   const school = await ensureSchool(curriculum.id);
 
+  // Still seed basic demo users so the app has some accounts to work with
+  const teacher = await prisma.user.upsert({
+    where: { email: "teacher@lagosacademy.test" },
+    update: {
+      name: "Test Teacher",
+      schoolId: school.id,
+      curriculumId: curriculum.id,
+      role: Role.TEACHER,
+    },
+    create: {
+      email: "teacher@lagosacademy.test",
+      name: "Test Teacher",
+      role: Role.TEACHER,
+      schoolId: school.id,
+      curriculumId: curriculum.id,
+    },
+  });
+
+  const student = await prisma.user.upsert({
+    where: { email: "student@lagosacademy.test" },
+    update: {
+      name: "Test Student",
+      schoolId: school.id,
+      curriculumId: curriculum.id,
+      role: Role.STUDENT,
+    },
+    create: {
+      email: "student@lagosacademy.test",
+      name: "Test Student",
+      role: Role.STUDENT,
+      schoolId: school.id,
+      curriculumId: curriculum.id,
+    },
+  });
+
+  console.log(
+    `\nUsing curriculum '${curriculum.name}' and school '${school.name}'`
+  );
+
   const dataDir = path.join(__dirname, "data");
   const entries = await fs.readdir(dataDir);
-  let jsonFiles = entries.filter((f) => f.toLowerCase().endsWith(".json"));
+  const jsonFiles = entries.filter((f) => f.toLowerCase().endsWith(".json"));
 
-  // --- TARGETED FILTERING ---
-  const subjectFilter = process.argv[2]; 
-  if (subjectFilter) {
-    const filtered = jsonFiles.filter(file => file.toLowerCase().includes(subjectFilter.toLowerCase()));
-    if (filtered.length === 0) {
-      console.error(`\n❌ ERROR: No file matching "${subjectFilter}" found in prisma/data/`);
-      console.log(`Available: ${jsonFiles.join(", ")}`);
-      process.exit(1);
-    }
-    jsonFiles = filtered;
-    console.log(`\n🎯 Running single-subject mode: ${jsonFiles[0]}`);
-  } else {
-    console.log(`\n📂 Running all subjects (${jsonFiles.length} files)`);
+  if (jsonFiles.length === 0) {
+    console.warn("No JSON files found in prisma/data");
   }
 
   for (const file of jsonFiles) {
-    await processSubjectFile(path.join(dataDir, file), curriculum.id, school.id);
+    const fullPath = path.join(dataDir, file);
+    try {
+      await processSubjectFile(fullPath, curriculum.id, school.id);
+    } catch (err) {
+      console.error(`Error processing file ${file}:`, err);
+    }
   }
 
-  console.log("\n🚀 Seeding Complete.");
+  console.log("\nSeeding complete.");
+  console.log(" Demo users:", {
+    teacher: teacher.email,
+    student: student.email,
+  });
 }
 
 main()
-  .catch((e) => { console.error(e); process.exit(1); })
-  .finally(async () => { await prisma.$disconnect(); await pool.end(); });
+  .catch((e) => {
+    console.error("Seeding error", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+    await pool.end();
+  });

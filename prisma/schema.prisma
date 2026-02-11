@@ -279,23 +279,49 @@ model Assessment {
 // ---------------- AI & Integration ----------------
 
 model Lesson {
-  id      String  @id @default(uuid())
-  title   String
-  content String?
+  id          String   @id @default(uuid())
+  title       String
+  content     String?  @db.Text // The Markdown Explanation
+  videoScript String?  @db.Text // The Teacher's Script
+ 
+  topicId     String   @unique
+  topic       Topic    @relation(fields: [topicId], references: [id])
+ 
+  schoolId    String?
+  school      School?  @relation(fields: [schoolId], references: [id])
 
+<<<<<<< HEAD
  topicId    String  @unique 
   topic   Topic  @relation(fields: [topicId], references: [id])
+=======
+  // NEW: Link to the Quiz
+  quiz        Quiz?
+>>>>>>> 390352f91fd2da988b54d266bb4a5a1da28ae1c9
 
-  schoolId String?
-  school   School? @relation(fields: [schoolId], references: [id])
+  aiContent   Json?    // We keep this as a backup of the raw AI response
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
-  // AI-generated scripts, charts, etc.
-  aiContent Json?
+model Quiz {
+  id        String     @id @default(uuid())
+  lessonId  String     @unique
+  lesson    Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  questions Question[]
+ 
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([schoolId])
+model Question {
+  id            String   @id @default(uuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+ 
+  text          String   @db.Text
+  options       Json     // Stored as ["Option A", "Option B", etc.]
+  correctAnswer String
+  explanation   String?  @db.Text // Why this answer is correct
 }
 
 model Feedback {
