@@ -1,7 +1,7 @@
 {
   "subject": "Further Mathematics",
-  "curriculum_name": "Nigeria Curiculum",
-  "curriculum": [
+  "curriculum": "Nigeria Curiculum",
+  "grades": [
     {
       "grade": "SS 1",
       "terms": [

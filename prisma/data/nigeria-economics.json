@@ -1,6 +1,7 @@
 {
   "subject": "Economics",
-  "curriculum": [
+  "curriculum": "Nigeria Curriculum",
+  "grades": [
     {
       "grade": "SS 1",
       "terms": [
