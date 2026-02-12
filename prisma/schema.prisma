@@ -36,7 +36,7 @@ model School {
   curriculumId String
   curriculum   Curriculum @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
 
-  users     User[]
+  users     Profile[]
   classes   Class[]
   curricula Curriculum[] @relation("SchoolCurriculum")
 
@@ -54,7 +54,7 @@ model School {
   updatedAt DateTime @updatedAt
 }
 
-model User {
+model Profile {
   id    String  @id @default(uuid())
   email String  @unique
   name  String?
@@ -79,6 +79,7 @@ model User {
 
   @@index([schoolId])
   @@index([curriculumId])
+  @@map("profiles")
 }
 
 // ---------------- Curriculum Hierarchy ----------------
@@ -98,7 +99,7 @@ model Curriculum {
 
   grades         Grade[]
   subjects       Subject[]
-  users          User[]
+  users          Profile[]
   primarySchools School[]  @relation("SchoolPrimaryCurriculum")
 
   createdAt DateTime @default(now())
@@ -215,7 +216,7 @@ model Class {
   school   School? @relation(fields: [schoolId], references: [id])
 
   teacherId String
-  teacher   User   @relation("TeacherClasses", fields: [teacherId], references: [id])
+  teacher   Profile   @relation("TeacherClasses", fields: [teacherId], references: [id])
 
   // Optional: membership through join table
   enrollments ClassEnrollment[]
@@ -232,7 +233,7 @@ model ClassEnrollment {
   studentId String
 
   class   Class @relation(fields: [classId], references: [id])
-  student User  @relation(fields: [studentId], references: [id])
+  student Profile  @relation(fields: [studentId], references: [id])
 
   schoolId String?
   school   School? @relation(fields: [schoolId], references: [id])
@@ -251,7 +252,7 @@ model Assessment {
 
   // Required: the student being assessed
   studentId String
-  student   User   @relation("StudentAssessments", fields: [studentId], references: [id])
+  student   Profile   @relation("StudentAssessments", fields: [studentId], references: [id])
 
   // Links to the specific subject taught in a grade
   gradeSubjectId String
@@ -352,7 +353,7 @@ model GradeSubject {
 
   // Teacher responsible for this subject in this grade (usually across all terms)
   teacherId String?
-  teacher   User?   @relation("TeacherGradeSubjects", fields: [teacherId], references: [id])
+  teacher   Profile?   @relation("TeacherGradeSubjects", fields: [teacherId], references: [id])
 
   schoolId String?
   school   School? @relation(fields: [schoolId], references: [id])
