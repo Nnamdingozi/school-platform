@@ -44,7 +44,7 @@ async function main() {
   });
 
   // 3. Seed Test Teacher
-  const teacher = await prisma.user.upsert({
+  const teacher = await prisma.profile.upsert({
     where: { email: "teacher@lagosacademy.test" },
     update: {
       name: "Test Teacher",
@@ -62,7 +62,7 @@ async function main() {
   });
 
   // 4. Seed Test Student
-  const student = await prisma.user.upsert({
+  const student = await prisma.profile.upsert({
     where: { email: "student@lagosacademy.test" },
     update: {
       name: "Test Student",
