@@ -57,15 +57,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      <body className="antialiased">
+        {/* All content must be here! */}
+        <main>{children}</main>
+        
+        {/* ✅ The Toaster MUST be inside the body tags */}
+        <Toaster richColors closeButton position="top-right" />
       </body>
-      <Toaster richColors closeButton position="top-right" />
     </html>
   );
 }
