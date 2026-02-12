@@ -129,11 +129,12 @@
 //   );
 // }
 
-
+"use server"
 
 import { prisma } from "@/lib/prisma";
 import { ManageSubjectsClient } from "@/components/subjects/manage-subjects-client";
-import { Prisma, Role } from "@prisma/client";
+import {  Role } from "@/generated/prisma/enums";
+import { Prisma } from "@/generated/prisma/client";
 
 type PageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
