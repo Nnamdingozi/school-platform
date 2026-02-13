@@ -129,7 +129,7 @@
 //   );
 // }
 
-"use server"
+
 
 import { prisma } from "@/lib/prisma";
 import { ManageSubjectsClient } from "@/components/subjects/manage-subjects-client";
@@ -152,26 +152,26 @@ type GradeSubjectWithRelations = Prisma.GradeSubjectGetPayload<{
 }>;
 async function getSeedUser(roleHint?: string) {
   if (roleHint === "student") {
-    const student = await prisma.user.findFirst({
+    const student = await prisma.profile.findFirst({
       where: { email: "student@lagosacademy.test" },
     });
     if (student) return student;
   }
 
   if (roleHint === "teacher") {
-    const teacher = await prisma.user.findFirst({
+    const teacher = await prisma.profile.findFirst({
       where: { email: "teacher@lagosacademy.test" },
     });
     if (teacher) return teacher;
   }
 
   // Default: prefer teacher, then student.
-  const teacher = await prisma.user.findFirst({
+  const teacher = await prisma.profile.findFirst({
     where: { email: "teacher@lagosacademy.test" },
   });
   if (teacher) return teacher;
 
-  const student = await prisma.user.findFirst({
+  const student = await prisma.profile.findFirst({
     where: { email: "student@lagosacademy.test" },
   });
   if (student) return student;
@@ -185,6 +185,8 @@ export default async function ManageSubjectsPage({ searchParams }: PageProps) {
   const roleHint = typeof params.role === "string" ? params.role : undefined;
   
   const user = await getSeedUser(roleHint);
+  console.log("🕵️ Found User:", user?.email, "Role:", user?.role);
+
 
   if (!user) {
     return (
@@ -233,27 +235,47 @@ export default async function ManageSubjectsPage({ searchParams }: PageProps) {
     }
   } else {
     // Teacher: see all GradeSubjects for their curriculum (and school, if set).
-    gradeSubjects = await prisma.gradeSubject.findMany({
-      where: {
-        grade: {
-          curriculumId: user.curriculumId,
-        },
-        schoolId: user.schoolId ?? undefined,
-      },
-      include: {
-        grade: true,
-        subject: true,
-        selectedByUsers: {
-          where: { id: user.id },
-          select: { id: true },
-        },
-      },
-      orderBy: [
-        { grade: { level: "asc" } },
-        { subject: { name: "asc" } },
-      ],
-    });
-  }
+  //   gradeSubjects = await prisma.gradeSubject.findMany({
+  //     where: {
+  //       grade: {
+  //         curriculumId: user.curriculumId, // Must match user's curriculum
+  //       },
+  //       // THE CRITICAL FIX:
+  //       // Show subjects that have NO schoolId (Global) 
+  //       // OR subjects that match the user's schoolId
+  //       OR: [
+  //         { schoolId: null },
+  //         { schoolId: user.schoolId }
+  //       ]
+  //     },
+  //     include: {
+  //       grade: true,
+  //       subject: true,
+  //       selectedByUsers: {
+  //         where: { id: user.id },
+  //         select: { id: true },
+  //       },
+  //     },
+  //     orderBy: [
+  //       { grade: { level: "asc" } },
+  //       { subject: { name: "asc" } },
+  //     ],
+  //   });
+  // 
+
+  //TEACHER: Wide Net Query for Debugging
+gradeSubjects = await prisma.gradeSubject.findMany({
+  include: {
+    grade: true,
+    subject: true,
+    selectedByUsers: {
+      where: { id: user.id },
+      select: { id: true },
+    },
+  },
+});
+}
+  console.log("📊 Number of GradeSubjects found:", gradeSubjects.length);
 
   // Now TypeScript knows exactly what gs.grade and gs.subject are
   const subjects = gradeSubjects.map((gs) => ({
@@ -262,7 +284,7 @@ export default async function ManageSubjectsPage({ searchParams }: PageProps) {
     subjectName: gs.subject.name,
     isSelected: gs.selectedByUsers.length > 0,
   }));
-
+  console.log("📦 Final subjects array being sent to Client:", subjects.length);
   return (
     <main className="min-h-screen bg-background px-4 py-6 md:px-8 md:py-10">
       <ManageSubjectsClient
