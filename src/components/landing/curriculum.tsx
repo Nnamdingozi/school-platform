@@ -1,7 +1,8 @@
 "use client";
 
 import { Globe, BookMarked, GraduationCap } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
+
 
 const curriculums = [
   {
@@ -21,7 +22,7 @@ const curriculums = [
   },
 ];
 
-const cardVariants = {
+const cardVariants:Variants = {
   hidden: { opacity: 0, y: 20, scale: 0.95 },
   visible: (i: number) => ({
     opacity: 1,

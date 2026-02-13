@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, Variants} from "framer-motion";
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -12,7 +12,7 @@ const containerVariants = {
   },
 };
 
-const fadeUpZoom = {
+const fadeUpZoom: Variants = {
   hidden: { opacity: 0, y: 20, scale: 0.95 },
   visible: { 
     opacity: 1, 
@@ -22,7 +22,7 @@ const fadeUpZoom = {
   },
 };
 
-const scaleIn = {
+const scaleIn: Variants = {
   hidden: { opacity: 0, scale: 0.8, rotateX: -10 },
   visible: { 
     opacity: 1, 
