@@ -7,9 +7,11 @@ generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
+
 datasource db {
   provider = "postgresql"
 }
+
 // ---------------- Enums ----------------
 
 enum Role {
@@ -69,13 +71,14 @@ model Profile {
   curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
 
   // Relations
-  taughtClasses       Class[]        @relation("TeacherClasses")
-  assessments         Assessment[]   @relation("StudentAssessments")
-  gradeSubjectsTaught GradeSubject[] @relation("TeacherGradeSubjects")
+  taughtClasses       Class[]           @relation("TeacherClasses")
+  assessments         Assessment[]      @relation("StudentAssessments")
+  gradeSubjectsTaught GradeSubject[]    @relation("TeacherGradeSubjects")
   classEnrollments    ClassEnrollment[]
 
   // Dynamic subject selections (many-to-many with GradeSubject)
-  selectedSubjects GradeSubject[] @relation("UserSelectedSubjects")
+  selectedSubjects   GradeSubject[] @relation("UserSelectedSubjects")
+  ownedGradeSubjects GradeSubject[] @relation("ProfileToGradeSubject")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -92,8 +95,8 @@ model Curriculum {
   name String // e.g., "British National"
 
   // Magic labels: naming per country/curriculum
-  yearLabel    String @default("Year")    // "Year", "Grade", or "Class"
-  termLabel    String @default("Term")    // "Term", "Semester", or "Quarter"
+  yearLabel    String @default("Year") // "Year", "Grade", or "Class"
+  termLabel    String @default("Term") // "Term", "Semester", or "Quarter"
   subjectLabel String @default("Subject") // "Subject" or "Course"
 
   // Optional: which school is using this curriculum as tenant-scoped copy
@@ -185,9 +188,9 @@ model Topic {
   id    String @id @default(uuid())
   title String
 
-  description  String? 
-  weekNumber   Int?
-   
+  description String?
+  weekNumber  Int?
+
   gradeSubjectId String
   gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
 
@@ -219,7 +222,7 @@ model Class {
   school   School? @relation(fields: [schoolId], references: [id])
 
   teacherId String
-  teacher   Profile   @relation("TeacherClasses", fields: [teacherId], references: [id])
+  teacher   Profile @relation("TeacherClasses", fields: [teacherId], references: [id])
 
   // Optional: membership through join table
   enrollments ClassEnrollment[]
@@ -231,20 +234,22 @@ model Class {
 }
 
 model ClassEnrollment {
-  id        String @id @default(uuid())
-  classId   String
+  id        String  @id @default(uuid())
   studentId String
+  student   Profile @relation(fields: [studentId], references: [id])
 
-  class   Class @relation(fields: [classId], references: [id])
-  student Profile  @relation(fields: [studentId], references: [id])
+  // ✅ 2. THE LINK BACK: 
+  // Each enrollment record points to a specific GradeSubject
+  gradeSubjectId String
+  gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
 
   schoolId String?
   school   School? @relation(fields: [schoolId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@index([schoolId])
+  class     Class?   @relation(fields: [classId], references: [id])
+  classId   String?
 }
 
 // ---------------- Assessment System ----------------
@@ -255,7 +260,7 @@ model Assessment {
 
   // Required: the student being assessed
   studentId String
-  student   Profile   @relation("StudentAssessments", fields: [studentId], references: [id])
+  student   Profile @relation("StudentAssessments", fields: [studentId], references: [id])
 
   // Links to the specific subject taught in a grade
   gradeSubjectId String
@@ -283,23 +288,23 @@ model Assessment {
 // ---------------- AI & Integration ----------------
 
 model Lesson {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
-  content     String?  @db.Text // The Markdown Explanation
-  videoScript String?  @db.Text // The Teacher's Script
- 
-  topicId     String   @unique
-  topic       Topic    @relation(fields: [topicId], references: [id])
- 
-  schoolId    String?
-  school      School?  @relation(fields: [schoolId], references: [id])
+  content     String? @db.Text // The Markdown Explanation
+  videoScript String? @db.Text // The Teacher's Script
+
+  topicId String @unique
+  topic   Topic  @relation(fields: [topicId], references: [id])
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
 
   // NEW: Link to the Quiz
-  quiz        Quiz?
+  quiz Quiz?
 
-  aiContent   Json?    // We keep this as a backup of the raw AI response
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  aiContent Json? // We keep this as a backup of the raw AI response
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Quiz {
@@ -307,20 +312,20 @@ model Quiz {
   lessonId  String     @unique
   lesson    Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   questions Question[]
- 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Question {
-  id            String   @id @default(uuid())
-  quizId        String
-  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
- 
-  text          String   @db.Text
-  options       Json     // Stored as ["Option A", "Option B", etc.]
+  id     String @id @default(uuid())
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  text          String  @db.Text
+  options       Json // Stored as ["Option A", "Option B", etc.]
   correctAnswer String
-  explanation   String?  @db.Text // Why this answer is correct
+  explanation   String? @db.Text // Why this answer is correct
 }
 
 model Feedback {
@@ -346,30 +351,32 @@ model Feedback {
 // ---------------- Grade-Subject Architecture ----------------
 
 model GradeSubject {
-  id String @id @default(uuid())
-
-  gradeId String
-  grade   Grade  @relation(fields: [gradeId], references: [id])
-
+  id        String  @id @default(uuid())
+  gradeId   String
   subjectId String
+  grade     Grade   @relation(fields: [gradeId], references: [id])
   subject   Subject @relation(fields: [subjectId], references: [id])
 
-  // Teacher responsible for this subject in this grade (usually across all terms)
-  teacherId String?
-  teacher   Profile?   @relation("TeacherGradeSubjects", fields: [teacherId], references: [id])
+  // ✅ 1. THE OPPOSITE RELATION: 
+  // A GradeSubject (JSS 1 Math) has a list of students enrolled in it.
+  enrollments ClassEnrollment[]
 
   schoolId String?
   school   School? @relation(fields: [schoolId], references: [id])
+  topics   Topic[]
 
-  topics      Topic[]
-  assessments Assessment[]
-
-  // Users (teachers or students) who have selected this subject
+  // Teachers linked to this subject
+  teachers        Profile[] @relation("TeacherGradeSubjects")
+  // ✅ 3. Opposite field for the many-to-many selection
   selectedByUsers Profile[] @relation("UserSelectedSubjects")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // ✅ 4. The direct link to a Profile (Teacher)
+  profile   Profile? @relation("ProfileToGradeSubject", fields: [profileId], references: [id])
+  profileId String?
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  assessments Assessment[]
 
   @@unique([gradeId, subjectId])
-  @@index([schoolId])
 }
