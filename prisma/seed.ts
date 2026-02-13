@@ -1,8 +1,8 @@
-import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import * as dotenv from "dotenv";
-import { Role } from "@/generated/prisma/enums";
+import { Role } from "../src/generated/prisma/enums";
 
 // Load environment variables
 dotenv.config();

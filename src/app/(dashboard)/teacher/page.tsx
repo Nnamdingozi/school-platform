@@ -1,12 +1,15 @@
-"use client"
+"use client";
 
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/TeacherDashboard/app-sidebar"
-import { DashboardHeader } from "@/components/TeacherDashboard/dashboard-header"
-import { ActiveTopicCard } from "@/components/TeacherDashboard/active-topic-card"
-import { PerformanceCharts } from "@/components/TeacherDashboard/performance-charts"
-import { AILessonPlanner } from "@/components/TeacherDashboard/ai-learning-planner"
-import { WhatsAppStatus } from "@/components/TeacherDashboard/whatsapp-status"
+import Link from "next/link";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/TeacherDashboard/app-sidebar";
+import { DashboardHeader } from "@/components/TeacherDashboard/dashboard-header";
+import { ActiveTopicCard } from "@/components/TeacherDashboard/active-topic-card";
+import { PerformanceCharts } from "@/components/TeacherDashboard/performance-charts";
+import { AILessonPlanner } from "@/components/TeacherDashboard/ai-learning-planner";
+import { WhatsAppStatus } from "@/components/TeacherDashboard/whatsapp-status";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function TeacherDashboard() {
   return (
@@ -34,9 +37,30 @@ export default function TeacherDashboard() {
               <AILessonPlanner />
               <WhatsAppStatus />
             </section>
+
+            {/* Subject Management Link */}
+            <section>
+              <Card className="border-dashed">
+                <CardHeader>
+                  <CardTitle>Manage Your Subjects</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Choose which grades and subjects you actively teach. This
+                    helps personalize your dashboard and planning tools.
+                  </p>
+                  <Button asChild>
+                    <Link href="/subjects/manage?role=teacher">
+                      Open Subject Management
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </section>
           </div>
         </main>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
+

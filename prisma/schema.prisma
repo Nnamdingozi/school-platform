@@ -3,9 +3,9 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 datasource db {
   provider = "postgresql"
@@ -69,10 +69,13 @@ model Profile {
   curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
 
   // Relations
-  taughtClasses       Class[]           @relation("TeacherClasses")
-  assessments         Assessment[]      @relation("StudentAssessments")
-  gradeSubjectsTaught GradeSubject[]    @relation("TeacherGradeSubjects")
+  taughtClasses       Class[]        @relation("TeacherClasses")
+  assessments         Assessment[]   @relation("StudentAssessments")
+  gradeSubjectsTaught GradeSubject[] @relation("TeacherGradeSubjects")
   classEnrollments    ClassEnrollment[]
+
+  // Dynamic subject selections (many-to-many with GradeSubject)
+  selectedSubjects GradeSubject[] @relation("UserSelectedSubjects")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -360,6 +363,9 @@ model GradeSubject {
 
   topics      Topic[]
   assessments Assessment[]
+
+  // Users (teachers or students) who have selected this subject
+  selectedByUsers User[] @relation("UserSelectedSubjects")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

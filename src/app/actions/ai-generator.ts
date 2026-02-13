@@ -1,5 +1,4 @@
 "use server";
-
 import { prisma } from "@/lib/prisma";
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
