@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/TeacherDashboard/app-sidebar";
@@ -10,14 +8,101 @@ import { AILessonPlanner } from "@/components/TeacherDashboard/ai-learning-plann
 import { WhatsAppStatus } from "@/components/TeacherDashboard/whatsapp-status";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 
-export default function TeacherDashboard() {
+type GradeSubjectWithRelations = Prisma.GradeSubjectGetPayload<{
+  include: {
+    grade: true;
+    subject: true;
+    classEnrollments: true;
+  };
+}>;
+
+type TeacherWithSelectedSubjects = Prisma.ProfileGetPayload<{
+  include: {
+    selectedSubjects: {
+      include: {
+        grade: true;
+        subject: true;
+        classEnrollments: true;
+      };
+    };
+  };
+}>;
+
+type SubjectOption = {
+  id: string;
+  displayName: string;
+  studentCount: number;
+};
+
+async function getTeacherWithSubjects(): Promise<{
+  teacherName: string;
+  subjects: SubjectOption[];
+}> {
+  const teacherEmail = "teacher@lagosacademy.test";
+
+  const teacher = await prisma.profile.findUnique<TeacherWithSelectedSubjects>({
+    where: { email: teacherEmail },
+    include: {
+      selectedSubjects: {
+        include: {
+          grade: true,
+          subject: true,
+          classEnrollments: true,
+        },
+      },
+    },
+  });
+
+  const teacherName = teacher?.name ?? "Teacher";
+
+  const subjects: SubjectOption[] =
+    teacher?.selectedSubjects.map((gradeSubject: GradeSubjectWithRelations) => ({
+      id: gradeSubject.id,
+      // UI requirement: "[Grade Name] [Subject Name]"
+      displayName: `${gradeSubject.grade.displayName} ${gradeSubject.subject.name}`,
+      // Student Count Logic: number of classEnrollments per GradeSubject
+      studentCount: gradeSubject.classEnrollments.length,
+    })) ?? [];
+
+  return {
+    teacherName,
+    subjects,
+  };
+}
+
+export default async function TeacherDashboard() {
+  const { teacherName, subjects } = await getTeacherWithSubjects();
+
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <DashboardHeader />
+        <DashboardHeader teacherName={teacherName} subjects={subjects} />
         <main className="flex-1 overflow-auto p-4 md:p-6">
+
+          {/* Subject Management Link */}
+          <section>
+              <Card className="border-dashed">
+                <CardHeader>
+                  <CardTitle>Manage Your Subjects</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Choose which grades and subjects you actively teach. This
+                    helps personalize your dashboard and planning tools.
+                  </p>
+                  <Button asChild>
+                    <Link href="/subjects/manage?role=teacher">
+                      Open Subject Management
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </section>
+            
           <div className="mx-auto max-w-7xl space-y-6">
             
             {/* Active Topic Section */}
@@ -37,26 +122,6 @@ export default function TeacherDashboard() {
             <section className="grid gap-6 lg:grid-cols-2">
               <AILessonPlanner />
               <WhatsAppStatus />
-            </section>
-
-            {/* Subject Management Link */}
-            <section>
-              <Card className="border-dashed">
-                <CardHeader>
-                  <CardTitle>Manage Your Subjects</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    Choose which grades and subjects you actively teach. This
-                    helps personalize your dashboard and planning tools.
-                  </p>
-                  <Button asChild>
-                    <Link href="/subjects/manage?role=teacher">
-                      Open Subject Management
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
             </section>
           </div>
         </main>
