@@ -19,9 +19,9 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log("🚀 Starting targeted user seeding...");
 
-  // 1. Ensure the parent Curriculum exists (needed for user foreign keys)
+  // 1. Ensure the parent Curriculum exists
   const curriculum = await prisma.curriculum.upsert({
-    where: { id: "nigerian-national-curriculum" }, // Using a stable ID
+    where: { id: "nigerian-national-curriculum" },
     update: {},
     create: {
       id: "nigerian-national-curriculum",
@@ -34,7 +34,7 @@ async function main() {
 
   // 2. Ensure the parent School exists
   const school = await prisma.school.upsert({
-    where: { id: "lagos-international-academy-id" }, // Using a stable ID
+    where: { id: "lagos-international-academy-id" },
     update: {},
     create: {
       id: "lagos-international-academy-id",
@@ -79,17 +79,32 @@ async function main() {
     },
   });
 
+  // 5. NEW: Link the Teacher to the Subject Grade
+  console.log("🔗 Linking Teacher to Subjects...");
+  
+  // Find the specific "Bridge" (GradeSubject) you want to link
+  const mathLink = await prisma.gradeSubject.findFirst({
+    where: {
+      grade: { displayName: "JSS 1" },
+      subject: { name: "Mathematics" }
+    }
+  });
+
+  if (mathLink) {
+    await prisma.profile.update({
+      where: { email: teacher.email },
+      data: {
+        selectedSubjects: {
+          connect: { id: mathLink.id }
+        }
+      }
+    });
+    console.log("✅ Teacher is now enrolled in JSS 1 Mathematics");
+  } else {
+    console.warn("⚠️ Could not find JSS 1 Mathematics. Ensure curriculum is seeded first.");
+  }
+
   console.log("✅ Seeding complete.");
   console.log("Teacher Email:", teacher.email);
   console.log("Student Email:", student.email);
 }
-
-main()
-  .catch((e) => {
-    console.error("Seeding error", e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-    await pool.end();
-  });
