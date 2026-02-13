@@ -365,7 +365,7 @@ model GradeSubject {
   assessments Assessment[]
 
   // Users (teachers or students) who have selected this subject
-  selectedByUsers User[] @relation("UserSelectedSubjects")
+  selectedByUsers Profile[] @relation("UserSelectedSubjects")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

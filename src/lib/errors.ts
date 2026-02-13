@@ -331,7 +331,7 @@ export function createAppError(
  * Type-safe catch: normalizes error and runs handler. Use in async routes.
  *
  * @example
- * const result = await normalizeCatch(async () => await prisma.profile.findMany());
+ * const result = await normalizeCatch(async () => await prisma.user.findMany());
  * if (!result.ok) return Response.json({ error: result.error.message }, { status: result.error.statusCode });
  */
 export async function normalizeCatch<T>(
