@@ -133,7 +133,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { ManageSubjectsClient } from "@/components/subjects/manage-subjects-client";
-import {  Role } from "@/generated/prisma/enums";
+import {  Role } from "../../../../generated/prisma/enums";
 import { Prisma } from "@/generated/prisma/client";
 
 type PageProps = {

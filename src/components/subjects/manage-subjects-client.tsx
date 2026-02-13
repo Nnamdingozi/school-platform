@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { Role } from "@/generated/prisma/enums";
+import { Role } from "../../generated/prisma/enums";
 import { toggleSubjectEnrollment } from "@/app/actions/enrollment";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
