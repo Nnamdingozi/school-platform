@@ -18,6 +18,27 @@ export default function TeacherDashboard() {
       <SidebarInset>
         <DashboardHeader />
         <main className="flex-1 overflow-auto p-4 md:p-6">
+
+          {/* Subject Management Link */}
+          <section>
+              <Card className="border-dashed">
+                <CardHeader>
+                  <CardTitle>Manage Your Subjects</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Choose which grades and subjects you actively teach. This
+                    helps personalize your dashboard and planning tools.
+                  </p>
+                  <Button asChild>
+                    <Link href="/subjects/manage?role=teacher">
+                      Open Subject Management
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </section>
+            
           <div className="mx-auto max-w-7xl space-y-6">
             {/* Active Topic Section */}
             <section>
@@ -36,26 +57,6 @@ export default function TeacherDashboard() {
             <section className="grid gap-6 lg:grid-cols-2">
               <AILessonPlanner />
               <WhatsAppStatus />
-            </section>
-
-            {/* Subject Management Link */}
-            <section>
-              <Card className="border-dashed">
-                <CardHeader>
-                  <CardTitle>Manage Your Subjects</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    Choose which grades and subjects you actively teach. This
-                    helps personalize your dashboard and planning tools.
-                  </p>
-                  <Button asChild>
-                    <Link href="/subjects/manage?role=teacher">
-                      Open Subject Management
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
             </section>
           </div>
         </main>
