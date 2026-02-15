@@ -41,7 +41,7 @@ const studentsNeedingAttention = [
 
 export function PerformanceCharts() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 h-[350px] w-full min-h-[350px]">
       {/* Bar Chart - Average Score per Topic */}
       <Card className="md:col-span-2 lg:col-span-1">
         <CardHeader className="pb-2">

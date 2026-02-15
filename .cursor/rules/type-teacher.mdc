@@ -1,0 +1,52 @@
+---
+alwaysApply: true
+---
+
+type TeacherProfile = Prisma.ProfileGetPayload<typeof teacherQuery>;
+
+/**
+ * 2. DASHBOARD PAGE COMPONENT
+ */
+export default async function TeacherDashboard() {
+  // A. Fetch the Teacher Data
+  const teacherEmail = "teacher@lagosacademy.test";
+  const teacher = (await prisma.profile.findUnique({
+    where: { email: teacherEmail },
+    include: teacherQuery.include,
+  })) as TeacherProfile | null;
+
+  // B. Handle "Not Found" State
+  if (!teacher) {
+    return <div className="p-10 text-center">Teacher profile not found. Please run seed.</div>;
+  }
+
+  // C. Prepare data for the Header
+  const teacherName = teacher.name ?? "Teacher";
+  const headerSubjects = teacher.selectedSubjects.map((gs) => ({
+    id: gs.id,
+    displayName: `${gs.grade.displayName} ${gs.subject.name}`,
+    studentCount: gs.enrollments?.length ?? 0,
+  }));
+
+  // D. LOGIC FOR THE ACTIVE TOPIC CARD
+  // We check if the teacher has any subjects first to avoid crashes
+  const firstSubject = teacher.selectedSubjects[0];
+  
+  let activeTopicData = null;
+
+  if (firstSubject) {
+    // We fetch the first topic (Week 1) for their first assigned subject
+    const activeTopic = await prisma.topic.findFirst({
+      where: {
+        gradeSubjectId: firstSubject.id,
+        weekNumber: 1, 
+      },
+      include: {
+        lessons: true, 
+      }
+    });
+
+    if (activeTopic) {
+      activeTopicData = {
+        topicId: activeTopic.id,
+        topicTitle: activeTopic.title,
