@@ -1,5 +1,5 @@
-import { PrismaClient } from "../src/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "../src/generated/prisma/umuse";
+import { PrismaClient } from "../src/generated/prisma/client";import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import * as dotenv from "dotenv";
 import { Role } from "../src/generated/prisma/enums";

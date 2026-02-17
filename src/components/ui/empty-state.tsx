@@ -41,17 +41,17 @@ export function EmptyState({
         aria-busy="true"
         aria-label="Loading"
       >
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" />
         </div>
         <div className="flex w-full max-w-xs flex-col gap-2">
-          <Skeleton className="mx-auto h-5 w-48" />
-          <Skeleton className="mx-auto h-4 w-64" />
-          <Skeleton className="mx-auto h-4 w-56" />
+          <Skeleton className="mx-auto h-5 w-48 bg-amber-500" />
+          <Skeleton className="mx-auto h-4 w-64 bg-amber-500" />
+          <Skeleton className="mx-auto h-4 w-56 bg-amber-500" />
         </div>
         <div className="mt-2 flex gap-2">
-          <Skeleton className="h-9 w-24 rounded-md" />
-          <Skeleton className="h-9 w-20 rounded-md" />
+          <Skeleton className="h-9 w-24 rounded-md bg-amber-500" />
+          <Skeleton className="h-9 w-20 rounded-md bg-amber-500" />
         </div>
       </div>
     );
@@ -60,7 +60,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-4 rounded-lg border border-border/50 bg-card/50 p-8 text-center",
+        "flex flex-col items-center justify-center gap-4 rounded-lg bg-card/50 bg-amber-50 p-8 text-center",
         size === "sm" && "p-6",
         size === "lg" && "p-12",
         className
