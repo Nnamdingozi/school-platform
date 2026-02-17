@@ -20,7 +20,6 @@
     "@vercel/blob": "^2.2.0",
     "add": "^2.0.6",
     "ai": "^6.0.86",
-    "amqplib": "^0.10.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
