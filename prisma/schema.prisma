@@ -41,7 +41,7 @@ model School {
   users     Profile[]
   classes   Class[]
   curricula Curriculum[] @relation("SchoolCurriculum")
-
+  whatsappCredits  Int          @default(0)
   grades           Grade[]
   terms            Term[]
   subjects         Subject[]
@@ -65,7 +65,7 @@ model Profile {
   // Tenancy
   schoolId String?
   school   School? @relation(fields: [schoolId], references: [id])
-
+  notifications Notification[]
   // Every user has a curriculum
   curriculumId String
   curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
@@ -379,4 +379,17 @@ model GradeSubject {
   assessments Assessment[]
 
   @@unique([gradeId, subjectId])
+}
+
+model Notification { 
+  id        String   @id @default(uuid())
+  userId    String
+  user      Profile  @relation(fields: [userId], references: [id])
+  message   String   @db.Text
+  link      String?  // Optional: URL to navigate to when clicked (e.g., /dashboard/lessons/abc)
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, read]) // For quick lookup of user's notifications, especially unread ones
 }

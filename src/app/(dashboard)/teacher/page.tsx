@@ -162,7 +162,7 @@ import { ActiveTopicCard } from "@/components/TeacherDashboard/active-topic-card
 import { PerformanceCharts } from "@/components/TeacherDashboard/performance-charts";
 import { AILessonPlanner } from "@/components/TeacherDashboard/ai-learning-planner";
 import { WhatsAppStatus } from "@/components/TeacherDashboard/whatsapp-status";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
