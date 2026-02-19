@@ -2,10 +2,16 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Settings2, Check, Loader2, ChevronRight } from "lucide-react";
+import { Settings2, Check, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 interface ActiveTopicCardProps {
@@ -14,7 +20,6 @@ interface ActiveTopicCardProps {
   selectedTermId?: string;
   selectedWeek?: string;
 }
-
 
 export function ActiveTopicCard({ 
   activeSubject, 
@@ -29,7 +34,6 @@ export function ActiveTopicCard({
   const topics = activeSubject?.topics ?? [];
   const terms = Array.from(new Map(topics.map((t: any) => [t.term.id, t.term])).values());
 
-  // These values come from the URL props
   const currentTermId = selectedTermId;
   const currentWeek = selectedWeek;
 
@@ -38,7 +42,6 @@ export function ActiveTopicCard({
     Object.entries(updates).forEach(([k, v]) => (v ? params.set(k, v) : params.delete(k)));
     
     startTransition(() => {
-      // Use replace to avoid clumping browser history
       router.replace(`?${params.toString()}`, { scroll: false });
     });
   };
@@ -51,8 +54,12 @@ export function ActiveTopicCard({
     t.termId === currentTermId && String(t.weekNumber) === currentWeek
   );
 
+  // Common styles for the dropdown items to override the default green/accent
+  const itemStyles = "focus:bg-white focus:text-amber-600 cursor-pointer transition-colors";
+  const contentStyles = "bg-amber-700 border-amber-500 text-white";
+
   return (
-    <Card className="relative border-none shadow-xl bg-gradient-to-br from-amber-500 to-amber-600 text-white overflow-hidden transition-all">
+    <Card className="relative border-none shadow-xl bg-linear-to-br from-amber-500 to-amber-600 text-white overflow-hidden transition-all">
       {/* Loading Blur Overlay */}
       {isPending && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-amber-600/10 backdrop-blur-[1px]">
@@ -69,14 +76,13 @@ export function ActiveTopicCard({
             </h2>
           </div>
           
-          {/* DONE BUTTON: The only way to exit editing mode */}
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => setIsEditing(!isEditing)} 
             className={cn(
                 "transition-all border-none", 
-                isEditing ? "bg-white text-amber-600 hover:bg-white/90 font-bold" : "bg-white/10 text-white"
+                isEditing ? "bg-white text-amber-600 hover:bg-white/90 font-bold" : "bg-white/10 text-white hover:bg-white"
             )}
           >
             {isEditing ? (
@@ -101,8 +107,12 @@ export function ActiveTopicCard({
                 <SelectTrigger className="bg-white/10 border-white/10 text-white font-medium">
                   <SelectValue placeholder="Select Term" />
                 </SelectTrigger>
-                <SelectContent>
-                  {terms.map((t: any) => <SelectItem key={t.id} value={t.id}>{t.displayName}</SelectItem>)}
+                <SelectContent className={contentStyles}>
+                  {terms.map((t: any) => (
+                    <SelectItem key={t.id} value={t.id} className={itemStyles}>
+                      {t.displayName}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -118,8 +128,12 @@ export function ActiveTopicCard({
                 <SelectTrigger className="bg-white/10 border-white/10 text-white font-medium">
                   <SelectValue placeholder="Select Week" />
                 </SelectTrigger>
-                <SelectContent>
-                  {availableWeeks.map((w: any) => <SelectItem key={w} value={String(w)}>Week {w}</SelectItem>)}
+                <SelectContent className={contentStyles}>
+                  {availableWeeks.map((w: any) => (
+                    <SelectItem key={w} value={String(w)} className={itemStyles}>
+                      Week {w}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -130,14 +144,17 @@ export function ActiveTopicCard({
               <Select 
                 value={activeTopic?.id} 
                 disabled={!currentWeek} 
-                // REMOVED setIsEditing(false) from here so it stays open
                 onValueChange={(v) => updateUrl({ topicId: v })}
               >
                 <SelectTrigger className="bg-white/20 border-white/20 font-bold text-white">
                   <SelectValue placeholder="Select Topic" />
                 </SelectTrigger>
-                <SelectContent>
-                  {availableTopics.map((t: any) => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                <SelectContent className={contentStyles}>
+                  {availableTopics.map((t: any) => (
+                    <SelectItem key={t.id} value={t.id} className={itemStyles}>
+                      {t.title}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
