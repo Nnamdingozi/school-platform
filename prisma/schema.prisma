@@ -26,6 +26,17 @@ model School {
   terms            Term[]
   topics           Topic[]
   users            Profile[]
+  subscription     Subscription?
+}
+
+model Subscription {
+  id               String   @id @default(uuid())
+  schoolId         String   @unique
+  plan             String   // "starter" | "pro" | "enterprise"
+  status           String   // "active" | "canceled" | "past_due"
+  stripeCustomerId String?  @unique
+  currentPeriodEnd DateTime
+  school           School   @relation(fields: [schoolId], references: [id])
 }
 
 model Profile {
