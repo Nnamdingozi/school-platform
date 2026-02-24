@@ -453,7 +453,7 @@ import {
 } from "@/components/ui/chart"
 import { AlertCircle, CheckCircle2, UserCircle2, Loader2 } from "lucide-react"
 // REMOVED: import { getPerformanceDashboardData, PerformanceDashboardData } from "@/app/actions/performance-data"
-import type { PerformanceDashboardData } from "@/app/actions/performance-data" // <--- Import only the TYPE
+ import type {PerformanceDashboardData } from "@/types/performanceData" // <--- Import only the TYPE
 import { toast } from "sonner"
 
 interface PerformanceChartsProps {
@@ -519,7 +519,11 @@ export function PerformanceCharts({
 
   if (isLoading) { /* ... */ }
   if (error) { /* ... */ }
-  if (!data || (data.topicScores.length === 0 && data.studentsNeedingAttention.length === 0 && data.curriculumCompletion.totalTopics === 0)) { /* ... */ }
+  if (!data || (
+    (data.topicScores?.length ?? 0) === 0 && 
+    (data.studentsNeedingAttention?.length ?? 0) === 0 && 
+    (data.curriculumCompletion?.totalTopics ?? 0) === 0
+)) {
 
   const topicScores = data?.topicScores || [];
   const completionData = data?.curriculumCompletion?.completionData || [];
@@ -670,4 +674,5 @@ export function PerformanceCharts({
       </Card>
     </div>
   )
+}
 }
