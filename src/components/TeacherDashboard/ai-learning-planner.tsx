@@ -474,6 +474,15 @@ export function AILessonPlanner({ topicId, lessonId, topicTitle, initialData }: 
   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({})
 
   // Effect to reset component state when topicId or initialData changes
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}, [activeTab]); // or whatever state drives the content change
+
+useEffect(() => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}, [activeTab]); // or whatever state drives the content change
+
   useEffect(() => {
     setData(initialData || null)
     setActiveTab("explanation")

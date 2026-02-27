@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ClipboardCheck,MessageSquare,FileText,UserPlus,Bell,LogIn,Settings,Download,Eye,Send,User} from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -161,6 +161,9 @@ const getActivityColor = (type: string) => {
 
 export function ActivityFeed() {
   const [activeTab, setActiveTab] = useState("my")
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}, [activeTab]); // or whatever state drives the content change
 
   return (
     <Card className="h-full">
