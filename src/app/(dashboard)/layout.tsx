@@ -461,43 +461,114 @@
 // }
 
 
+// // app/(dashboard)/layout.tsx
+// import { getTeacherData } from "@/app/actions/teacherData";
+// import { SchoolProvider } from "@/context/schoolProvider";
+// import { AppSidebar } from "@/components/app-sidebar";
+// import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+// import { ProfileInStore, SidebarProfileData } from "@/types/profile";
+
+// export default async function DashboardLayout({
+//     children,
+// }: {
+//     children: React.ReactNode;
+// }) {
+//     const email = "teacher@lagosacademy.test";
+//     const profile = await getTeacherData(email) as ProfileInStore | null;
+
+//     const sidebarData: SidebarProfileData | null = profile ? {
+//         name: profile.name ?? "Unknown",
+//         email: profile.email,
+//         role: profile.role,
+//         schoolName: profile.school?.name ?? "EduAI Academy",
+//         primarySubject: profile.selectedSubjects?.[0]?.subject?.name ?? "Not Assigned",
+//     } : null;
+
+//     return (
+//         // SchoolProvider receives initialProfile and internally calls setProfile
+//         // in a useEffect — this is how the store gets initialized for all
+//         // dashboard pages and their components
+//         <SchoolProvider initialProfile={profile}>
+//             <SidebarProvider>
+//                 <div className="flex min-h-screen w-full">
+//                     {sidebarData && <AppSidebar teacher={sidebarData} />}
+//                     <SidebarInset className="overflow-y-auto overflow-x-hidden">
+//     <header className="flex h-12 items-center gap-2 px-4 border-b sm:hidden">
+//         <SidebarTrigger />
+//     </header>
+//     {children}
+// </SidebarInset>
+//                 </div>
+//             </SidebarProvider>
+//         </SchoolProvider>
+//     );
+// }
+
 // app/(dashboard)/layout.tsx
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { createServerClient } from '@supabase/ssr';
 import { getTeacherData } from "@/app/actions/teacherData";
 import { SchoolProvider } from "@/context/schoolProvider";
-import { AppSidebar } from "@/components/TeacherDashboard/app-sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { ProfileInitializer } from "@/components/profileInitializer";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { ProfileInStore, SidebarProfileData } from "@/types/profile";
+import { ProfileInStore } from "@/types/profile";
 
 export default async function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const email = "teacher@lagosacademy.test";
-    const profile = await getTeacherData(email) as ProfileInStore | null;
+    const cookieStore = await cookies();
 
-    const sidebarData: SidebarProfileData | null = profile ? {
-        name: profile.name ?? "Unknown",
-        email: profile.email,
-        role: profile.role,
-        schoolName: profile.school?.name ?? "EduAI Academy",
-        primarySubject: profile.selectedSubjects?.[0]?.subject?.name ?? "Not Assigned",
-    } : null;
+    // ✅ Read actual logged-in user from session cookie
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll: () => cookieStore.getAll(),
+                setAll: () => {}, // read-only in layout
+            },
+        }
+    );
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // ✅ Server-side auth guard
+    if (!user?.email) {
+        redirect('/login');
+    }
+
+    // ✅ Fetch real profile using real email
+    const profile = await getTeacherData(user.email) as ProfileInStore | null;
+
+    // ✅ Role guard
+    const allowedRoles = ['SCHOOL_ADMIN', 'SUPER_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'];
+    if (!profile || !allowedRoles.includes(profile.role)) {
+        redirect('/login');
+    }
 
     return (
-        // SchoolProvider receives initialProfile and internally calls setProfile
-        // in a useEffect — this is how the store gets initialized for all
-        // dashboard pages and their components
         <SchoolProvider initialProfile={profile}>
+            {/*
+                ✅ ProfileInitializer ensures the Zustand store is hydrated
+                with the real server-fetched profile on every dashboard load.
+                Without this, the store only gets set when SchoolProvider's
+                useEffect fires — which can lag behind the first render.
+            */}
+            <ProfileInitializer profile={profile} />
             <SidebarProvider>
                 <div className="flex min-h-screen w-full">
-                    {sidebarData && <AppSidebar teacher={sidebarData} />}
+                    {/* ✅ No props — AppSidebar reads from store directly */}
+                    <AppSidebar />
                     <SidebarInset className="overflow-y-auto overflow-x-hidden">
-    <header className="flex h-12 items-center gap-2 px-4 border-b sm:hidden">
-        <SidebarTrigger />
-    </header>
-    {children}
-</SidebarInset>
+                        <header className="flex h-12 items-center gap-2 px-4 border-b sm:hidden">
+                            <SidebarTrigger />
+                        </header>
+                        {children}
+                    </SidebarInset>
                 </div>
             </SidebarProvider>
         </SchoolProvider>

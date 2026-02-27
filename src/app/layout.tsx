@@ -645,20 +645,73 @@
 
 
 
-// app/layout.tsx
+// // app/layout.tsx
+// import { Inter } from "next/font/google";
+// import "./globals.css";
+// import { prisma } from "@/lib/prisma";
+// import { SchoolProvider } from "@/context/schoolProvider";
+// import { ProfileInitializer } from "@/components/profileInitializer";
+// import { cookies } from 'next/headers';
+// import { comprehensiveProfileInclude, ProfileInStore } from '@/types/profile';
+// import { Toaster } from "@/components/ui/sonner"
+// import { getTeacherData } from "./actions/teacherData";
+// import { Profile } from "@/generated/prisma/client";
+// import { useProfileStore } from "@/store/profileStore"; // Import useProfileStore
+// import { DashboardChecker } from '@/app/(dashboard)/dashBoardChecker';
+// import { Footer } from "@/components/landing/footer";
+// import { Navbar } from "@/components/landing/navbar";
+// import { ScrollToTop } from '@/components/scroll-to-top';
+
+// const inter = Inter({ subsets: ["latin"] });
+
+// export default async function RootLayout({
+//     children,
+// }: Readonly<{
+//     children: React.ReactNode;
+// }>) {
+//     const cookieStore = await cookies();
+
+   
+
+//     const { data: { user } } = await supabase.auth.getUser();
+//     // let email = "teacher@lagosacademy.test"
+
+//     // Fetch the profile and set it to the store
+//     let profile: ProfileInStore | null = null;
+//     if (user?.email) {
+//         const teacher = await getTeacherData(user.email);
+//         console.log('teacher in layout for store update:', teacher)
+//         profile = teacher as ProfileInStore | null;
+//         useProfileStore.getState().setProfile(profile); // Set in store
+//     }
+
+//     return (
+//         <html lang="en">
+//             <body className={inter.className}>
+//             <ScrollToTop />
+//                 <Toaster />
+//                 <Navbar />
+//                 {/* <DashboardChecker>{children}</DashboardChecker> */}
+//                 <SchoolProvider initialProfile={profile}>
+//     {children}
+// </SchoolProvider>
+// <Footer />
+//             </body>
+//         </html>
+//     );
+// }
+
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { prisma } from "@/lib/prisma";
 import { SchoolProvider } from "@/context/schoolProvider";
 import { ProfileInitializer } from "@/components/profileInitializer";
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { comprehensiveProfileInclude, ProfileInStore } from '@/types/profile';
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
+import { ScrollToTop } from '@/components/scroll-to-top';
 import { getTeacherData } from "./actions/teacherData";
-import { Profile } from "@/generated/prisma/client";
-import { useProfileStore } from "@/store/profileStore"; // Import useProfileStore
-import { DashboardChecker } from '@/app/(dashboard)/dashBoardChecker';
+import { comprehensiveProfileInclude, ProfileInStore } from '@/types/profile';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default async function RootLayout({
@@ -668,43 +721,52 @@ export default async function RootLayout({
 }>) {
     const cookieStore = await cookies();
 
+    // ✅ Create supabase client correctly in a Server Component
+    // Only reads cookies here — never writes, so no error
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
             cookies: {
-                get: (name: string) => cookieStore.get(name)?.value,
-                set: (name: string, value: string, options: CookieOptions) => {
-                    cookieStore.set({ name, value, ...options });
-                },
-                remove: (name: string, options: CookieOptions) => { // Corrected
-                    cookieStore.delete({ name, ...options });  // Corrected
-                },
+                getAll: () => cookieStore.getAll(),
+                // ✅ setAll is a no-op in layout — middleware handles writing
+                setAll: () => {},
             },
         }
     );
 
+    const { data: { user } } = await supabase.auth.getUser();
 
-    // const { data: { user } } = await supabase.auth.getUser();
-    let email = "teacher@lagosacademy.test"
-
-    // Fetch the profile and set it to the store
+    // Fetch profile server-side to pass as initial value to client store
     let profile: ProfileInStore | null = null;
-    if (email) {
-        const teacher = await getTeacherData(email);
-        console.log('teacher in layout for store update:', teacher)
+    if (user?.email) {
+        const teacher = await getTeacherData(user.email);
         profile = teacher as ProfileInStore | null;
-        useProfileStore.getState().setProfile(profile); // Set in store
     }
 
     return (
         <html lang="en">
             <body className={inter.className}>
+                <ScrollToTop />
                 <Toaster />
-                {/* <DashboardChecker>{children}</DashboardChecker> */}
+                {/*
+                    ✅ No Navbar/Footer here — they belong in specific layouts:
+                    - app/(landing)/layout.tsx  → shows Navbar + Footer on public pages
+                    - app/(dashboard)/layout.tsx → shows Sidebar + Header
+                    - app/onboarding/layout.tsx  → no nav at all
+                    
+                    Putting them here shows them on EVERY page including
+                    onboarding, dashboard, auth pages etc.
+                */}
                 <SchoolProvider initialProfile={profile}>
-    {children}
-</SchoolProvider>
+                    {/*
+                        ✅ ProfileInitializer hydrates the client-side Zustand store
+                        with the server-fetched profile — replaces useProfileStore.getState().setProfile()
+                        which cannot be called in a Server Component
+                    */}
+                    <ProfileInitializer profile={profile} />
+                    {children}
+                </SchoolProvider>
             </body>
         </html>
     );
