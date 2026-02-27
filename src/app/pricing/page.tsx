@@ -271,7 +271,7 @@ export default function PricingPage() {
                     <CardDescription className="text-sm leading-relaxed min-h-[40px]">{plan.description}</CardDescription>
                   </CardHeader>
 
-                  <CardContent className="flex-grow text-left">
+                  <CardContent className="grow text-left">
                     <div className="mb-8 h-20 flex flex-col justify-end">
                       <AnimatePresence mode="wait">
                         <motion.div

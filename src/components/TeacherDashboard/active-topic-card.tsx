@@ -900,8 +900,7 @@
 // }
 
 
-"use client";
-
+"use client"
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Settings2, Check, Loader2 } from "lucide-react";
@@ -962,7 +961,7 @@ export function ActiveTopicCard({
   const isEmpty = topics.length === 0 || !activeTopic;
 
   return (
-    <Card className="relative border-none shadow-xl bg-gradient-to-br from-school-primary to-school-primary-600 text-school-secondary-950 overflow-hidden transition-all w-full min-w-0">
+    <Card className="relative border-none shadow-xl bg-linear-to-br from-school-primary to-school-primary-600 text-school-secondary-950 overflow-hidden transition-all w-full min-w-0">
       {isPending && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-school-primary-600/10 backdrop-blur-[1px]">
           <Loader2 className="h-6 w-6 animate-spin text-school-secondary-950/50" />
