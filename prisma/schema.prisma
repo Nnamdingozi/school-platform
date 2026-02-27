@@ -7,37 +7,8 @@ datasource db {
   provider = "postgresql"
 }
 
-model School {
-  id               String            @id @default(uuid())
-  name             String
-  curriculumId     String
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  assessments      Assessment[]
-  classes          Class[]
-  classEnrollments ClassEnrollment[]
-  curricula        Curriculum[]      @relation("SchoolCurriculum")
-  feedbacks        Feedback[]
-  grades           Grade[]
-  gradeSubjects    GradeSubject[]
-  lessons          Lesson[]
-  curriculum       Curriculum        @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
-  subjects         Subject[]
-  terms            Term[]
-  topics           Topic[]
-  users            Profile[]
-  subscription     Subscription?
-}
 
-model Subscription {
-  id               String   @id @default(uuid())
-  schoolId         String   @unique
-  plan             String   // "starter" | "pro" | "enterprise"
-  status           String   // "active" | "canceled" | "past_due"
-  stripeCustomerId String?  @unique
-  currentPeriodEnd DateTime
-  school           School   @relation(fields: [schoolId], references: [id])
-}
+
 
 
 enum Role {
@@ -79,7 +50,7 @@ model School {
   gradeSubjects    GradeSubject[]
  primaryColor   String   @default("#f59e0b") // Main brand color
   secondaryColor String   @default("#1e293b") // Contrast color
-
+  subscription     Subscription?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -420,4 +391,13 @@ model Notification {
   updatedAt DateTime @updatedAt
 
   @@index([userId, read]) // For quick lookup of user's notifications, especially unread ones
+}
+model Subscription {
+  id               String   @id @default(uuid())
+  schoolId         String   @unique
+  plan             String   // "starter" | "pro" | "enterprise"
+  status           String   // "active" | "canceled" | "past_due"
+  stripeCustomerId String?  @unique
+  currentPeriodEnd DateTime
+  school           School   @relation(fields: [schoolId], references: [id])
 }

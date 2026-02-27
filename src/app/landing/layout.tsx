@@ -1,0 +1,13 @@
+// src/app/(landing)/layout.tsx
+import { Navbar } from "@/components/landing/navbar";
+import { Footer } from "@/components/landing/footer";
+
+export default function LandingLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <>
+            <Navbar />
+            {children}
+            <Footer />
+        </>
+    );
+}

@@ -153,8 +153,259 @@
 
 
 // src/types/profile.ts
-import { GradeSubject, School, Curriculum } from '@/generated/prisma/client';
+// import { GradeSubject, School, Curriculum } from '@/generated/prisma/client';
+// import { Role } from '@/generated/prisma/client';
+
+// export interface ProfileInStore {
+//     id: string;
+//     email: string;
+//     name?: string | null;
+//     role: Role;
+//     schoolId: string | null;
+//     curriculumId: string;
+//     school?: School | null;
+//     curriculum: Curriculum;
+//     selectedSubjects: (GradeSubject & {
+//         grade: { displayName: string; };
+//         subject: { name: string; };
+//         topics: {
+//             id: string;
+//             termId: string;
+//             term: { id: string; displayName: string; } | null;
+//             weekNumber: number | null;
+//             lessons: { id?: string; aiContent: any; }[];
+//             title: string;
+//             description?: string | null;
+//         }[];
+//         enrollments: any[];
+//     })[];
+//     createdAt: Date;
+//     updatedAt: Date;
+//     taughtClasses?: { id: string; name: string; }[];
+// }
+
+// export const comprehensiveProfileInclude = {
+//     school: {
+//         include: {
+//             curriculum: true,
+//         },
+//     },
+//     curriculum: true,
+//     selectedSubjects: {
+//         include: {
+//             grade: true,
+//             subject: true,
+//             topics: {
+//                 include: {
+//                     term: true,
+//                     lessons: true,
+//                 },
+//             },
+//             enrollments: true,
+//         },
+//     },
+// };
+
+// export interface SidebarProfileData {
+//     name: string;
+//     email: string;
+//     role: Role;
+//     schoolName?: string;
+//     primarySubject?: string;
+// }
+
+
+// import { GradeSubject, School, Curriculum, Notification } from '@/generated/prisma/client';
+// import { Role } from '@/generated/prisma/client';
+
+// export interface ProfileInStore {
+//     id: string;
+//     email: string;
+//     name?: string | null;
+//     role: Role;
+//     schoolId: string | null;
+//     curriculumId: string;
+//     school?: School | null;
+//     curriculum: Curriculum;
+//     selectedSubjects: (GradeSubject & {
+//         grade: { displayName: string; };
+//         subject: { name: string; };
+//         topics: {
+//             id: string;
+//             termId: string;
+//             term: { id: string; displayName: string; } | null;
+//             weekNumber: number | null;
+//             lessons: { id?: string; aiContent: any; }[];
+//             title: string;
+//             description?: string | null;
+//         }[];
+//         enrollments: any[];
+//     })[];
+//     notifications: Notification[]; // ✅ real Notification model from Prisma
+//     createdAt: Date;
+//     updatedAt: Date;
+//     taughtClasses?: { id: string; name: string; }[];
+// }
+
+// export const comprehensiveProfileInclude = {
+//     school: {
+//         include: {
+//             curriculum: true,
+//             classEnrollments: true,   // ← for student count
+//             classes: true,             // ← for teacher count
+//             assessments: true,         // ← for completion rate
+//             feedbacks: true,           // ← for WhatsApp count
+//         },
+//     },
+//     curriculum: true,
+//     selectedSubjects: {
+//         include: {
+//             grade: true,
+//             subject: true,
+//             topics: {
+//                 include: {
+//                     term: true,
+//                     lessons: true,
+//                 },
+//             },
+//             enrollments: true,
+//         },
+//     },
+//     notifications: {
+//         orderBy: { createdAt: 'desc' as const }, // ✅ newest first
+//         take: 20,                                 // ✅ cap at 20 to avoid over-fetching
+//     },
+// };
+
+// export interface SidebarProfileData {
+//     name: string;
+//     email: string;
+//     role: Role;
+//     schoolName?: string;
+//     primarySubject?: string;
+// }
+
+
+// import { Curriculum, Notification, GradeSubject } from '@/generated/prisma/client';
+// import { Role } from '@/generated/prisma/client';
+
+// // ── Richer School type that includes the relations we actually use ──────────
+// export interface SchoolWithRelations {
+//     id: string;
+//     name: string;
+//     curriculumId: string;
+//     primaryColor: string;
+//     secondaryColor: string;
+//     whatsappCredits: number;
+//     createdAt: Date;
+//     updatedAt: Date;
+//     curriculum: Curriculum;
+//     // Relations included via comprehensiveProfileInclude
+//     classEnrollments: { id: string }[];
+//     classes: { id: string; name: string; teacherId: string }[];
+//     assessments: { id: string; score: number | null }[];
+//     feedbacks: { id: string; sentAt: Date | null }[];
+// }
+
+// export interface ProfileInStore {
+//     id: string;
+//     email: string;
+//     name?: string | null;
+//     role: Role;
+//     schoolId: string | null;
+//     curriculumId: string;
+//     school?: SchoolWithRelations | null; // ✅ richer type, not bare School
+//     curriculum: Curriculum;
+//     selectedSubjects: (GradeSubject & {
+//         grade: { displayName: string };
+//         subject: { name: string };
+//         topics: {
+//             id: string;
+//             termId: string;
+//             term: { id: string; displayName: string } | null;
+//             weekNumber: number | null;
+//             lessons: { id?: string; aiContent: any }[];
+//             title: string;
+//             description?: string | null;
+//         }[];
+//         enrollments: any[];
+//     })[];
+//     notifications: Notification[];
+//     createdAt: Date;
+//     updatedAt: Date;
+//     taughtClasses?: { id: string; name: string }[];
+// }
+
+// export const comprehensiveProfileInclude = {
+//     school: {
+//         include: {
+//             curriculum: true,
+//             classEnrollments: true,  // → totalStudents
+//             classes: true,           // → activeTeachers
+//             assessments: true,       // → completionRate
+//             feedbacks: true,         // → whatsappSent
+//         },
+//     },
+//     curriculum: true,
+//     selectedSubjects: {
+//         include: {
+//             grade: true,
+//             subject: true,
+//             topics: {
+//                 include: {
+//                     term: true,
+//                     lessons: true,
+//                 },
+//             },
+//             enrollments: true,
+//         },
+//     },
+//     notifications: {
+//         orderBy: { createdAt: 'desc' as const },
+//         take: 20,
+//     },
+// };
+
+// export interface SidebarProfileData {
+//     name: string;
+//     email: string;
+//     role: Role;
+//     schoolName?: string;
+//     primarySubject?: string;
+// }
+
+
+import { Curriculum, Notification, GradeSubject } from '@/generated/prisma/client';
 import { Role } from '@/generated/prisma/client';
+
+export interface SchoolWithRelations {
+    id: string;
+    name: string;
+    curriculumId: string;
+    primaryColor: string;
+    secondaryColor: string;
+    whatsappCredits: number;
+    createdAt: Date;
+    updatedAt: Date;
+    curriculum: Curriculum;
+    classEnrollments: {
+        id: string;
+        classId: string | null; // ✅ explicitly typed so filter works
+    }[];
+    classes: {
+        id: string;
+        name: string;
+        teacherId: string;
+    }[];
+    assessments: {
+        id: string;
+        score: number | null;
+    }[];
+    feedbacks: {
+        id: string;
+        sentAt: Date | null;
+    }[];
+}
 
 export interface ProfileInStore {
     id: string;
@@ -163,31 +414,57 @@ export interface ProfileInStore {
     role: Role;
     schoolId: string | null;
     curriculumId: string;
-    school?: School | null;
+    school?: SchoolWithRelations | null;
     curriculum: Curriculum;
     selectedSubjects: (GradeSubject & {
-        grade: { displayName: string; };
-        subject: { name: string; };
+        grade: { displayName: string };
+        subject: { name: string };
         topics: {
             id: string;
             termId: string;
-            term: { id: string; displayName: string; } | null;
+            term: { id: string; displayName: string } | null;
             weekNumber: number | null;
-            lessons: { id?: string; aiContent: any; }[];
+            lessons: { id?: string; aiContent: any }[];
             title: string;
             description?: string | null;
         }[];
         enrollments: any[];
     })[];
+    notifications: Notification[];
     createdAt: Date;
     updatedAt: Date;
-    taughtClasses?: { id: string; name: string; }[];
+    taughtClasses?: { id: string; name: string }[];
 }
 
 export const comprehensiveProfileInclude = {
     school: {
         include: {
             curriculum: true,
+            classEnrollments: {
+                select: {
+                    id: true,
+                    classId: true, // ✅ required for per-class student count
+                },
+            },
+            classes: {
+                select: {
+                    id: true,
+                    name: true,
+                    teacherId: true, // ✅ required for active teacher count
+                },
+            },
+            assessments: {
+                select: {
+                    id: true,
+                    score: true, // ✅ required for completion rate
+                },
+            },
+            feedbacks: {
+                select: {
+                    id: true,
+                    sentAt: true, // ✅ required for WhatsApp sent count
+                },
+            },
         },
     },
     curriculum: true,
@@ -203,6 +480,10 @@ export const comprehensiveProfileInclude = {
             },
             enrollments: true,
         },
+    },
+    notifications: {
+        orderBy: { createdAt: 'desc' as const },
+        take: 20,
     },
 };
 
