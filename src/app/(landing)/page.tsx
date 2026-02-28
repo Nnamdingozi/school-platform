@@ -1,4 +1,3 @@
-
 import { Hero } from "@/components/landing/hero";
 import { Pillars } from "@/components/landing/pillars";
 import { Curriculums } from "@/components/landing/curriculum";

@@ -1,14 +1,14 @@
 "use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 const navLinks = [
   { label: "Features", href: "#features" },
   { label: "Curriculums", href: "#curriculums" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Pricing", href: "/pricing" },
 ];
 
 export function Navbar() {
@@ -88,10 +88,14 @@ export function Navbar() {
                 </a>
               ))}
               <div className="flex flex-col gap-2 pt-2">
-                <Button variant="outline" size="sm" className="bg-transparent">
-                  School Login
-                </Button>
-                <Button size="sm">Start Learning</Button>
+                <Link href="/login">
+                  <Button variant="outline" size="sm" className="bg-transparent">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/onboarding">
+                  <Button size="sm">Get Started</Button>
+                </Link>
               </div>
             </div>
           </motion.div>

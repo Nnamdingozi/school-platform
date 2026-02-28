@@ -7,10 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
-
-
-
 enum Role {
   SUPER_ADMIN
   SCHOOL_ADMIN
