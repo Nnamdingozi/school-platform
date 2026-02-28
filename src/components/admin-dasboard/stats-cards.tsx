@@ -486,7 +486,7 @@ export function StatsCards() {
                 value: totalStudents > 0 ? totalStudents.toLocaleString() : null,
                 icon: Users,
                 trend: totalStudents > 0 ? "up" : null,
-                ctaHref: "/invite-users",
+                ctaHref: "/admin/invite-users",
                 // Empty state copy
                 emptyHeadline: "No students enrolled yet",
                 emptyBody: "Invite students or ask teachers to add class enrollments. Enrolled students will appear here.",
