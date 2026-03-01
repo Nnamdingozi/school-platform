@@ -14,7 +14,7 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.29",
     "@hookform/resolvers": "^5.2.2",
-    "@prisma/client": "^7.4.0",
+    "@prisma/client": "6.19.2", 
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.93.3",
     "@vercel/blob": "^2.2.0",
