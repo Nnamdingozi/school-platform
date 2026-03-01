@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 
-import Link from "next/link";
 
 
 const containerVariants: Variants = {
