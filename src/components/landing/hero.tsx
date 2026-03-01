@@ -2,7 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { motion, Variants} from "framer-motion";
+import { motion, Variants } from "framer-motion";
+import Link from "next/link";
+
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -14,21 +16,21 @@ const containerVariants: Variants = {
 
 const fadeUpZoom: Variants = {
   hidden: { opacity: 0, y: 20, scale: 0.95 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
+  visible: {
+    opacity: 1,
+    y: 0,
     scale: 1,
-    transition: { duration: 0.5, ease: "easeOut" } 
+    transition: { duration: 0.5, ease: "easeOut" }
   },
 };
 
 const scaleIn: Variants = {
   hidden: { opacity: 0, scale: 0.8, rotateX: -10 },
-  visible: { 
-    opacity: 1, 
-    scale: 1, 
+  visible: {
+    opacity: 1,
+    scale: 1,
     rotateX: 0,
-    transition: { duration: 0.8, ease: "backOut" } 
+    transition: { duration: 0.8, ease: "backOut" }
   },
 };
 
@@ -41,7 +43,7 @@ export function Hero() {
 
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
-          
+
           {/* LEFT COLUMN: TEXT CONTENT */}
           <motion.div
             className="text-center lg:text-left"
@@ -80,20 +82,26 @@ export function Hero() {
               variants={fadeUpZoom}
               className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start"
             >
-              <Button 
-                size="lg" 
-                className="group gap-2 bg-amber-500 px-8 text-base font-semibold text-white hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 shadow-lg shadow-amber-500/20"
-              >
-                Register Your School
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 border-amber-200 bg-transparent px-8 text-base hover:bg-amber-50 hover:text-amber-600 transition-colors"
-              >
-                Join as a Student
-              </Button>
+              <Link href="/onboarding">
+                <Button
+                  size="lg"
+                  className="group gap-2 bg-amber-500 px-8 text-base font-semibold text-white hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 shadow-lg shadow-amber-500/20"
+                >
+                  Register Your School
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+
+              <Link href="/onboarding">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="gap-2 border-amber-200 bg-transparent px-8 text-base hover:bg-amber-50 hover:text-amber-600 transition-colors"
+                >
+                  Join as a Student
+                </Button>
+              </Link>
+
             </motion.div>
           </motion.div>
 
@@ -124,30 +132,30 @@ export function Hero() {
                 alt="AI Dashboard Mockup"
                 className="relative z-10 h-auto w-full rounded-xl shadow-inner"
               />
-              
-          {/* Floating Badge 1 - Moved INWARD from the left */}
-<motion.div
-  className="absolute left-6 bottom-12 z-20 hidden rounded-xl border border-white/40 bg-white/70 px-4 py-3 shadow-lg backdrop-blur-md lg:flex"
-  animate={{ y: [0, -10, 0] }}
-  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
->
-  <div className="flex items-center gap-2">
-    <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-    <span className="text-xs font-bold text-slate-800">AI Lesson Generated</span>
-  </div>
-</motion.div>
 
-{/* Floating Badge 2 - Moved INWARD from the right */}
-<motion.div
-  className="absolute right-6 top-12 z-20 hidden rounded-xl border border-white/40 bg-white/70 px-4 py-3 shadow-lg backdrop-blur-md lg:flex"
-  animate={{ y: [0, -12, 0] }}
-  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
->
-  <div className="flex items-center gap-2">
-    <div className="h-2.5 w-2.5 rounded-full bg-amber-500 animate-pulse" />
-    <span className="text-xs font-bold text-slate-800">98% Mastery Rate</span>
-  </div>
-</motion.div>
+              {/* Floating Badge 1 - Moved INWARD from the left */}
+              <motion.div
+                className="absolute left-6 bottom-12 z-20 hidden rounded-xl border border-white/40 bg-white/70 px-4 py-3 shadow-lg backdrop-blur-md lg:flex"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-xs font-bold text-slate-800">AI Lesson Generated</span>
+                </div>
+              </motion.div>
+
+              {/* Floating Badge 2 - Moved INWARD from the right */}
+              <motion.div
+                className="absolute right-6 top-12 z-20 hidden rounded-xl border border-white/40 bg-white/70 px-4 py-3 shadow-lg backdrop-blur-md lg:flex"
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="h-2.5 w-2.5 rounded-full bg-amber-500 animate-pulse" />
+                  <span className="text-xs font-bold text-slate-800">98% Mastery Rate</span>
+                </div>
+              </motion.div>
             </motion.div>
           </motion.div>
 

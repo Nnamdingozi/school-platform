@@ -218,7 +218,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-20 px-4">
       <div className="max-w-7xl mx-auto text-center">
-        <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-4 leading-tight">
+        <h1 className="text-lg md:text-4xl font-black text-slate-900 mb-4 leading-tight">
           Flexible plans for <span className="text-amber-600">modern education.</span>
         </h1>
         

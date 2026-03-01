@@ -267,7 +267,7 @@ export function AdminStep() {
                 <h1 className="text-3xl font-black text-school-secondary-100 tracking-tight">
                     Create your account
                 </h1>
-                <p className="text-school-secondary-100/50 mt-2 text-sm">
+                <p className="text-school-secondary-100 mt-2 text-sm">
                     You'll be the administrator of your school workspace.
                 </p>
             </div>
@@ -428,7 +428,7 @@ export function AdminStep() {
                     )}
                 </Button>
 
-                <p className="text-center text-xs text-school-secondary-100/30">
+                <p className="text-center text-xs text-school-secondary-100">
                     Already have an account?{' '}
                     <a href="/login" className="text-school-primary hover:underline">Sign in</a>
                 </p>
