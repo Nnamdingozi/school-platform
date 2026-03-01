@@ -1,8 +1,9 @@
 "use client";
-
+import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion, Variants } from "framer-motion";
+
 import Link from "next/link";
 
 
@@ -64,7 +65,7 @@ export function Hero() {
               className="text-balance text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl"
             >
               The Future of Education,{" "}
-              <span className="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
+              <span className="bg-linear-to-r from-amber-400 via-amber-500 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
                 Powered by AI.
               </span>
             </motion.h1>
@@ -92,7 +93,9 @@ export function Hero() {
                 </Button>
               </Link>
 
+
               <Link href="/onboarding">
+
                 <Button
                   variant="outline"
                   size="lg"
@@ -114,7 +117,7 @@ export function Hero() {
             style={{ perspective: 1200 }}
           >
             {/* Glow effect behind the image */}
-            <div className="pointer-events-none absolute -inset-8 -z-10 rounded-[2rem] bg-gradient-to-br from-amber-500/20 to-primary/10 blur-3xl" />
+            <div className="pointer-events-none absolute -inset-8 -z-10 rounded-4xl bg-linear-to-br from-amber-500/20 to-primary/10 blur-3xl" />
 
             {/* 3D Tilted Card */}
             <motion.div
