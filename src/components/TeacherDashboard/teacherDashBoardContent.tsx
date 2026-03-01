@@ -157,7 +157,7 @@
 // export const dynamic = "force-dynamic";
 
 // interface TeacherDashboardContentProps {
-   
+
 //     searchParams: {
 //         subjectId?: string;
 //         topicId?: string;
@@ -789,7 +789,7 @@ function TeacherDashboardContent({ teacher }: TeacherDashboardContentProps) {
                 subjects={subjectsForHeader}
                 activeSubjectId={activeSubject.id}
             />
-    
+
             <main className="flex-1 p-4 md:p-6 space-y-6 w-full overflow-x-hidden">
                 <section>
                     <Card className="border-dashed bg-muted/30">
@@ -803,7 +803,7 @@ function TeacherDashboardContent({ teacher }: TeacherDashboardContentProps) {
                         </CardContent>
                     </Card>
                 </section>
-    
+
                 {/* Constrain max width and allow vertical scroll */}
                 <div className="w-full max-w-7xl mx-auto space-y-6">
                     <section className="w-full">
@@ -815,7 +815,7 @@ function TeacherDashboardContent({ teacher }: TeacherDashboardContentProps) {
                             selectedWeek={week || String(activeTopic?.weekNumber)}
                         />
                     </section>
-    
+
                     <section className="w-full">
                         <AILessonPlanner
                             topicId={activeTopic?.id ?? ""}
@@ -824,16 +824,17 @@ function TeacherDashboardContent({ teacher }: TeacherDashboardContentProps) {
                             initialData={activeTopic?.lessons?.[0]?.aiContent as any}
                         />
                     </section>
-    
+
                     <section className="w-full">
                         <PerformanceCharts
                             gradeSubjectId={activeSubject.id}
                             schoolId={school.id}
-                            initialPerformanceData={null}
-                            initialPerformanceError={null}
+                            // Pass the fetched data down
+                            initialPerformanceData={performanceResult.data}
+                            initialPerformanceError={performanceResult.error}
                         />
                     </section>
-    
+
                     <section className="w-full">
                         <WhatsAppStatus />
                     </section>
