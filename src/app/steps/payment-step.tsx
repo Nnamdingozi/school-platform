@@ -1690,11 +1690,34 @@ const PAYMENT_PROVIDERS = [
     },
 ];
 
+interface PaystackResponse {
+    reference: string;
+    status?: string;
+    message?: string;
+}
+
+interface PaystackOptions {
+    key: string | undefined;
+    email: string;
+    amount: number;
+    currency: string;
+    metadata: Record<string, unknown>;
+    callback: (response: PaystackResponse) => void;
+    onClose: () => void;
+}
+
+interface PaystackPop {
+    setup(options: PaystackOptions): {
+        openIframe(): void;
+    };
+}
+
 declare global {
     interface Window {
-        PaystackPop: any;
+        PaystackPop: PaystackPop; // ✅ Use the interface instead of 'any'
     }
 }
+
 
 export function PaymentStep() {
     const { nextStep, prevStep, adminData, setPaymentData, setLoading, setError, isLoading, error } = useOnboardingStore();
@@ -1728,7 +1751,8 @@ export function PaymentStep() {
 
     // Use useCallback to prevent unnecessary recreation of the function
    // Use useCallback to prevent unnecessary recreation of the function
-   const handlePaystack = useCallback(() => {
+   // ✅ FIX 2: Correct types in the handlePaystack function
+const handlePaystack = useCallback(() => {
     if (!adminData) {
         setError("Missing admin data required for payment.");
         return;
@@ -1746,15 +1770,13 @@ export function PaymentStep() {
         const handler = window.PaystackPop.setup({
             key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
             email: adminData.email,
-            amount: amount * 100, // Paystack expects kobo
+            amount: amount * 100, 
             currency: currency.toUpperCase(),
             metadata: { 
                 plan: selectedPlan, 
                 name: adminData.name 
             },
-            // FIX: Removed the "async" keyword here
-            callback: function(response: { reference: string }) {
-                // FIX: Wrapped the async logic inside a standard function
+            callback: function(response: PaystackResponse) { // ✅ Use typed response
                 const processPayment = async () => {
                     try {
                         const result = await verifyPaystackPayment(response.reference);
@@ -1775,27 +1797,23 @@ export function PaymentStep() {
                         toast.success('Payment confirmed!');
                         setLoading(false); 
                         nextStep();
-                    } catch (err) {
+                    } catch (err: unknown) { // ✅ Use unknown instead of any
                         setLoading(false);
-                        setError('An error occurred while verifying the payment.');
-                        console.error('Verification error:', err);
+                        const msg = typeof err === 'string' ? err : 'Verification failed.';
+                        setError(msg);
                     }
                 };
-
-                // Execute the async function
                 processPayment();
             },
             onClose: function() {
-                // This runs if the user CLOSES the Paystack UI without completing payment
                 setLoading(false);
                 toast.info('Payment window closed.');
             },
         });
 
-        // Open the iframe
         handler.openIframe();
         
-    } catch (err) {
+    } catch (err: unknown) { // ✅ Use unknown instead of any
         setLoading(false);
         setError("Failed to initialize payment gateway.");
         console.error("Paystack initialization error:", err);
@@ -2022,3 +2040,6 @@ export function PaymentStep() {
         </div>
     );
 }
+
+
+

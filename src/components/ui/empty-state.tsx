@@ -60,7 +60,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-4 rounded-lg bg-card/50 bg-amber-50 p-8 text-center",
+        "flex flex-col items-center justify-center gap-4 rounded-lg  bg-amber-50 p-8 text-center",
         size === "sm" && "p-6",
         size === "lg" && "p-12",
         className

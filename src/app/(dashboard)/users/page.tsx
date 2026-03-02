@@ -9,7 +9,6 @@ import {
   UserCircle,
   Download,
   Filter,
-  MoreHorizontal
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,8 +28,8 @@ export default function UserManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Mock IDs - these should come from your Auth Context/Session
-  const schoolId = "school-uuid-123";
-  const curriculumId = "british-curriculum-id";
+  // const schoolId = "school-uuid-123";
+  // const curriculumId = "british-curriculum-id";
 
   return (
     <div className="p-6 md:p-10 space-y-8 max-w-7xl mx-auto">

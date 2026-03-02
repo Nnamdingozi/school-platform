@@ -1120,7 +1120,6 @@ import {
     GraduationCap,
     BarChart2,
     Users,
-    Settings,
     Loader2,
     Bell,
     BookMarked,

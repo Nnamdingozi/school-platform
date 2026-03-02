@@ -540,12 +540,231 @@
 
 
 
+// 'use client';
+
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2 } from 'lucide-react';
+
+// export default function ConfirmPage() {
+//     const router = useRouter();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState('Confirming your account...');
+
+//     useEffect(() => {
+//         async function confirm() {
+//             const supabase = createClient();
+
+//             console.log('✅ Confirm page hit');
+//             console.log('URL:', window.location.href);
+
+//             const params = new URLSearchParams(window.location.search);
+//             const token_hash = params.get('token_hash');
+//             const type = params.get('type');
+
+//             console.log('token_hash:', token_hash ? 'present' : 'missing');
+//             console.log('type:', type);
+
+//             if (!token_hash || !type) {
+//                 console.error('❌ Missing params');
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             setMessage('Verifying your email...');
+
+//             const { error, data } = await supabase.auth.verifyOtp({
+//                 type: type as any,
+//                 token_hash,
+//             });
+
+//             console.log('verifyOtp:', {
+//                 error: error?.message ?? null,
+//                 userId: data?.user?.id ?? null,
+//                 email: data?.user?.email ?? null,
+//             });
+
+//             if (error) {
+//                 console.error('❌ verifyOtp failed:', error.message);
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             if (type === 'invite') {
+//                 router.replace('/auth/set-password');
+//                 return;
+//             }
+
+//             // ✅ Email confirmed — send to login with success message
+//             // Login handles profile fetch and role-based redirect
+//             setMessage('Confirmed! Redirecting to login...');
+//             await new Promise(r => setTimeout(r, 800));
+//             router.replace('/login?confirmed=true');
+//         }
+
+//         confirm();
+//     }, [router]);
+
+//     if (status === 'error') {
+//         return (
+//             <div style={{
+//                 minHeight: '100vh',
+//                 display: 'flex',
+//                 flexDirection: 'column',
+//                 alignItems: 'center',
+//                 justifyContent: 'center',
+//                 background: '#0f172a',
+//                 gap: '16px',
+//             }}>
+//                 <p style={{ color: '#f87171', fontWeight: 600, fontSize: '18px' }}>
+//                     Confirmation failed
+//                 </p>
+//                 <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', maxWidth: '320px', textAlign: 'center' }}>
+//                     This link may have expired or already been used.
+//                     Try logging in directly or use Forgot Password.
+//                 </p>
+//                 <a href="/login" style={{ color: '#f59e0b', fontSize: '14px' }}>
+//                     Go to login
+//                 </a>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div style={{
+//             minHeight: '100vh',
+//             display: 'flex',
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//             justifyContent: 'center',
+//             background: '#0f172a',
+//             gap: '16px',
+//         }}>
+//             <Loader2 style={{
+//                 width: 32,
+//                 height: 32,
+//                 color: '#f59e0b',
+//                 animation: 'spin 1s linear infinite'
+//             }} />
+//             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px' }}>
+//                 {message}
+//             </p>
+//         </div>
+//     );
+// }
+
+
+// 'use client';
+
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2 } from 'lucide-react';
+// // ✅ Fix 1: Import the correct type for the OTP verification
+// import type { EmailOtpType } from '@supabase/supabase-js';
+
+// export default function ConfirmPage() {
+//     const router = useRouter();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState('Confirming your account...');
+
+//     useEffect(() => {
+//         async function confirm() {
+//             const supabase = createClient();
+
+//             const params = new URLSearchParams(window.location.search);
+//             const token_hash = params.get('token_hash');
+//             const type = params.get('type');
+
+//             if (!token_hash || !type) {
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             setMessage('Verifying your email...');
+
+//             // ✅ Fix 2: Cast 'type' to EmailOtpType instead of any
+//             const { error, data } = await supabase.auth.verifyOtp({
+//                 type: type as EmailOtpType,
+//                 token_hash,
+//             });
+
+//             if (error) {
+//                 console.error('❌ verifyOtp failed:', error.message);
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             if (type === 'invite') {
+//                 router.replace('/auth/set-password');
+//                 return;
+//             }
+
+//             setMessage('Confirmed! Redirecting to login...');
+//             await new Promise(r => setTimeout(r, 800));
+//             router.replace('/login?confirmed=true');
+//         }
+
+//         confirm();
+//     }, [router]); // ✅ Fix 3: 'router' is now correctly included in dependencies
+
+//     if (status === 'error') {
+//         return (
+//             <div style={{
+//                 minHeight: '100vh',
+//                 display: 'flex',
+//                 flexDirection: 'column',
+//                 alignItems: 'center',
+//                 justifyContent: 'center',
+//                 background: '#0f172a',
+//                 gap: '16px',
+//             }}>
+//                 <p style={{ color: '#f87171', fontWeight: 600, fontSize: '18px' }}>
+//                     Confirmation failed
+//                 </p>
+//                 <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', maxWidth: '320px', textAlign: 'center' }}>
+//                     This link may have expired or already been used.
+//                     Try logging in directly or use Forgot Password.
+//                 </p>
+//                 <a href="/login" style={{ color: '#f59e0b', fontSize: '14px' }}>
+//                     Go to login
+//                 </a>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div style={{
+//             minHeight: '100vh',
+//             display: 'flex',
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//             justifyContent: 'center',
+//             background: '#0f172a',
+//             gap: '16px',
+//         }}>
+//             <Loader2 style={{
+//                 width: 32,
+//                 height: 32,
+//                 color: '#f59e0b',
+//                 animation: 'spin 1s linear infinite'
+//             }} />
+//             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px' }}>
+//                 {message}
+//             </p>
+//         </div>
+//     );
+// }
+
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
+import type { EmailOtpType } from '@supabase/supabase-js';
 
 export default function ConfirmPage() {
     const router = useRouter();
@@ -556,33 +775,21 @@ export default function ConfirmPage() {
         async function confirm() {
             const supabase = createClient();
 
-            console.log('✅ Confirm page hit');
-            console.log('URL:', window.location.href);
-
             const params = new URLSearchParams(window.location.search);
             const token_hash = params.get('token_hash');
             const type = params.get('type');
 
-            console.log('token_hash:', token_hash ? 'present' : 'missing');
-            console.log('type:', type);
-
             if (!token_hash || !type) {
-                console.error('❌ Missing params');
                 setStatus('error');
                 return;
             }
 
             setMessage('Verifying your email...');
 
-            const { error, data } = await supabase.auth.verifyOtp({
-                type: type as any,
+            // ✅ FIX: Removed 'data' because it was unused
+            const { error } = await supabase.auth.verifyOtp({
+                type: type as EmailOtpType,
                 token_hash,
-            });
-
-            console.log('verifyOtp:', {
-                error: error?.message ?? null,
-                userId: data?.user?.id ?? null,
-                email: data?.user?.email ?? null,
             });
 
             if (error) {
@@ -596,15 +803,13 @@ export default function ConfirmPage() {
                 return;
             }
 
-            // ✅ Email confirmed — send to login with success message
-            // Login handles profile fetch and role-based redirect
             setMessage('Confirmed! Redirecting to login...');
             await new Promise(r => setTimeout(r, 800));
             router.replace('/login?confirmed=true');
         }
 
         confirm();
-    }, []);
+    }, [router]);
 
     if (status === 'error') {
         return (

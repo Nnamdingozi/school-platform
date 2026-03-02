@@ -38,7 +38,7 @@ export default function SetPasswordPage() {
             setIsCheckingSession(false);
         }
         checkSession();
-    }, []);
+    }, [router, supabase.auth]);
 
     // ── Password rules ─────────────────────────────────────────────────────
     const rules = [

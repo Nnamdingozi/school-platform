@@ -203,7 +203,6 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useProfileStore } from "@/store/profileStore"
 import { useSchool } from "@/context/schoolProvider"

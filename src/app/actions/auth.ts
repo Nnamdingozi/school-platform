@@ -51,11 +51,62 @@
 
 
 
+// 'use server';
+
+// import { createServerClient } from '@supabase/ssr';
+// import { cookies } from 'next/headers';
+
+// import { Role } from "@prisma/client";
+
+// export async function registerUser(data: {
+//     email: string;
+//     password: string;
+//     name: string;
+//     role: Role;
+//     schoolId?: string;
+//     curriculumId?: string;
+// }) {
+//     const cookieStore = await cookies();
+
+//     const supabase = createServerClient(
+//         process.env.NEXT_PUBLIC_SUPABASE_URL!,
+//         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+//         {
+//             cookies: {
+//                 getAll: () => cookieStore.getAll(),
+//                 setAll: (cookiesToSet) => {
+//                     cookiesToSet.forEach(({ name, value, options }) => {
+//                         cookieStore.set(name, value, options);
+//                     });
+//                 },
+//             },
+//         }
+//     );
+
+//     const { data: authData, error } = await supabase.auth.signUp({
+//         email: data.email,
+//         password: data.password,
+//         options: {
+//             data: {
+//                 name: data.name,
+//                 role: data.role,
+//                 schoolId: data.schoolId,
+//                 curriculumId: data.curriculumId,
+//             },
+//         },
+//     });
+
+//     if (error) return { error: error.message };
+//     return { user: authData.user };
+// }
+
+
+
 'use server';
 
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, type CookieOptions } from '@supabase/ssr'; // Added CookieOptions
 import { cookies } from 'next/headers';
-import { Role } from '@/generated/prisma/client';
+import { Role } from "@prisma/client";
 
 export async function registerUser(data: {
     email: string;
@@ -67,21 +118,27 @@ export async function registerUser(data: {
 }) {
     const cookieStore = await cookies();
 
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                getAll: () => cookieStore.getAll(),
-                setAll: (cookiesToSet) => {
-                    cookiesToSet.forEach(({ name, value, options }) => {
-                        cookieStore.set(name, value, options);
-                    });
-                },
+const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+        cookies: {
+            getAll() {
+                return cookieStore.getAll()
             },
-        }
-    );
-
+            // ✅ Fix: Added explicit types to cookiesToSet and destructuring
+            setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+                try {
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        cookieStore.set(name, value, options)
+                    })
+                } catch {
+                    // This can be ignored if middleware is handling session refreshes
+                }
+            },
+        },
+    }
+)
     const { data: authData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
