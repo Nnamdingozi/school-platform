@@ -758,103 +758,199 @@
 // }
 
 
+// 'use client';
+
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2 } from 'lucide-react';
+// import type { EmailOtpType } from '@supabase/supabase-js';
+
+// export default function ConfirmPage() {
+//     const router = useRouter();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState('Confirming your account...');
+
+//     useEffect(() => {
+//         async function confirm() {
+//             const supabase = createClient();
+
+//             const params = new URLSearchParams(window.location.search);
+//             const token_hash = params.get('token_hash');
+//             const type = params.get('type');
+
+//             if (!token_hash || !type) {
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             setMessage('Verifying your email...');
+
+//             // ✅ FIX: Removed 'data' because it was unused
+//             const { error } = await supabase.auth.verifyOtp({
+//                 type: type as EmailOtpType,
+//                 token_hash,
+//             });
+
+//             if (error) {
+//                 console.error('❌ verifyOtp failed:', error.message);
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             if (type === 'invite') {
+//                 router.replace('/set-password');
+//                 return;
+//             }
+
+//             setMessage('Confirmed! Redirecting to login...');
+//             await new Promise(r => setTimeout(r, 800));
+//             router.replace('/login?confirmed=true');
+//         }
+
+//         confirm();
+//     }, [router]);
+
+//     if (status === 'error') {
+//         return (
+//             <div style={{
+//                 minHeight: '100vh',
+//                 display: 'flex',
+//                 flexDirection: 'column',
+//                 alignItems: 'center',
+//                 justifyContent: 'center',
+//                 background: '#0f172a',
+//                 gap: '16px',
+//             }}>
+//                 <p style={{ color: '#f87171', fontWeight: 600, fontSize: '18px' }}>
+//                     Confirmation failed
+//                 </p>
+//                 <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', maxWidth: '320px', textAlign: 'center' }}>
+//                     This link may have expired or already been used.
+//                     Try logging in directly or use Forgot Password.
+//                 </p>
+//                 <a href="/login" style={{ color: '#f59e0b', fontSize: '14px' }}>
+//                     Go to login
+//                 </a>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div style={{
+//             minHeight: '100vh',
+//             display: 'flex',
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//             justifyContent: 'center',
+//             background: '#0f172a',
+//             gap: '16px',
+//         }}>
+//             <Loader2 style={{
+//                 width: 32,
+//                 height: 32,
+//                 color: '#f59e0b',
+//                 animation: 'spin 1s linear infinite'
+//             }} />
+//             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px' }}>
+//                 {message}
+//             </p>
+//         </div>
+//     );
+// }
+
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Loader2 } from 'lucide-react';
-import type { EmailOtpType } from '@supabase/supabase-js';
+import { Loader2, AlertCircle } from 'lucide-react';
 
 export default function ConfirmPage() {
     const router = useRouter();
     const [status, setStatus] = useState<'loading' | 'error'>('loading');
-    const [message, setMessage] = useState('Confirming your account...');
+    const [message, setMessage] = useState('Verifying your invitation...');
 
     useEffect(() => {
-        async function confirm() {
-            const supabase = createClient();
+        const supabase = createClient();
 
-            const params = new URLSearchParams(window.location.search);
-            const token_hash = params.get('token_hash');
-            const type = params.get('type');
+        // 1. Listen for the auth state change
+        // Supabase Client automatically parses the #access_token from the URL
+        // and triggers 'SIGNED_IN'.
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log("Auth Event:", event);
 
-            if (!token_hash || !type) {
-                setStatus('error');
-                return;
+            if (event === 'SIGNED_IN' && session) {
+                handleRedirection(session);
+            } else if (event === 'INITIAL_SESSION') {
+                // If the session was already parsed before the listener attached
+                if (session) {
+                    handleRedirection(session);
+                } else {
+                    // Give it a tiny bit of time to parse the hash
+                    setTimeout(async () => {
+                        const { data } = await supabase.auth.getSession();
+                        if (data.session) {
+                            handleRedirection(data.session);
+                        } else {
+                            // If after 2 seconds no session is found, it's an error
+                            setStatus('error');
+                            setMessage('Invalid or expired invitation link.');
+                        }
+                    }, 2000);
+                }
             }
+        });
 
-            setMessage('Verifying your email...');
+        const handleRedirection = (session: any) => {
+            // Check if this was an invite
+            // Method A: Check URL for "type=invite" (even if it's in the hash)
+            const isInvite = window.location.href.includes('type=invite');
+            
+            // Method B: Check if user has a password (invited users don't)
+            // Or use the metadata you sent during the invite
+            const role = session.user.user_metadata?.role;
 
-            // ✅ FIX: Removed 'data' because it was unused
-            const { error } = await supabase.auth.verifyOtp({
-                type: type as EmailOtpType,
-                token_hash,
-            });
-
-            if (error) {
-                console.error('❌ verifyOtp failed:', error.message);
-                setStatus('error');
-                return;
-            }
-
-            if (type === 'invite') {
+            if (isInvite || role) {
+                setMessage('Invitation accepted! Redirecting to set your password...');
                 router.replace('/set-password');
-                return;
+            } else {
+                setMessage('Success! Redirecting to dashboard...');
+                router.replace('/');
             }
+        };
 
-            setMessage('Confirmed! Redirecting to login...');
-            await new Promise(r => setTimeout(r, 800));
-            router.replace('/login?confirmed=true');
-        }
-
-        confirm();
+        return () => {
+            subscription.unsubscribe();
+        };
     }, [router]);
 
     if (status === 'error') {
         return (
-            <div style={{
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: '#0f172a',
-                gap: '16px',
-            }}>
-                <p style={{ color: '#f87171', fontWeight: 600, fontSize: '18px' }}>
-                    Confirmation failed
-                </p>
-                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', maxWidth: '320px', textAlign: 'center' }}>
-                    This link may have expired or already been used.
-                    Try logging in directly or use Forgot Password.
-                </p>
-                <a href="/login" style={{ color: '#f59e0b', fontSize: '14px' }}>
-                    Go to login
-                </a>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] p-6 text-center">
+                <div className="bg-red-500/10 p-4 rounded-full mb-4">
+                    <AlertCircle className="w-8 h-8 text-red-500" />
+                </div>
+                <h1 className="text-xl font-bold text-white mb-2">Confirmation Failed</h1>
+                <p className="text-slate-400 text-sm max-w-xs mb-6">{message}</p>
+                <button 
+                    onClick={() => router.push('/login')}
+                    className="text-[#f59e0b] text-sm font-medium hover:underline"
+                >
+                    Back to login
+                </button>
             </div>
         );
     }
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: '#0f172a',
-            gap: '16px',
-        }}>
-            <Loader2 style={{
-                width: 32,
-                height: 32,
-                color: '#f59e0b',
-                animation: 'spin 1s linear infinite'
-            }} />
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px' }}>
-                {message}
-            </p>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] gap-4">
+            <Loader2 className="w-10 h-10 text-[#f59e0b] animate-spin" />
+            <div className="space-y-1 text-center">
+                <p className="text-white font-medium text-lg">Accepting Invite</p>
+                <p className="text-slate-400 text-sm">{message}</p>
+            </div>
         </div>
     );
 }
