@@ -860,71 +860,212 @@
 // }
 
 
+// 'use client';
+
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2, AlertCircle } from 'lucide-react';
+
+// export default function ConfirmPage() {
+//     const router = useRouter();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState('Verifying your invitation...');
+
+//     useEffect(() => {
+//         const supabase = createClient();
+
+//         // 1. Listen for the auth state change
+//         // Supabase Client automatically parses the #access_token from the URL
+//         // and triggers 'SIGNED_IN'.
+//         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+//             console.log("Auth Event:", event);
+
+//             if (event === 'SIGNED_IN' && session) {
+//                 handleRedirection(session);
+//             } else if (event === 'INITIAL_SESSION') {
+//                 // If the session was already parsed before the listener attached
+//                 if (session) {
+//                     handleRedirection(session);
+//                 } else {
+//                     // Give it a tiny bit of time to parse the hash
+//                     setTimeout(async () => {
+//                         const { data } = await supabase.auth.getSession();
+//                         if (data.session) {
+//                             handleRedirection(data.session);
+//                         } else {
+//                             // If after 2 seconds no session is found, it's an error
+//                             setStatus('error');
+//                             setMessage('Invalid or expired invitation link.');
+//                         }
+//                     }, 2000);
+//                 }
+//             }
+//         });
+
+//         const handleRedirection = (session: any) => {
+//             // Check if this was an invite
+//             // Method A: Check URL for "type=invite" (even if it's in the hash)
+//             const isInvite = window.location.href.includes('type=invite');
+            
+//             // Method B: Check if user has a password (invited users don't)
+//             // Or use the metadata you sent during the invite
+//             const role = session.user.user_metadata?.role;
+
+//             if (isInvite || role) {
+//                 setMessage('Invitation accepted! Redirecting to set your password...');
+//                 router.replace('/set-password');
+//             } else {
+//                 setMessage('Success! Redirecting to dashboard...');
+//                 router.replace('/');
+//             }
+//         };
+
+//         return () => {
+//             subscription.unsubscribe();
+//         };
+//     }, [router]);
+
+//     if (status === 'error') {
+//         return (
+//             <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] p-6 text-center">
+//                 <div className="bg-red-500/10 p-4 rounded-full mb-4">
+//                     <AlertCircle className="w-8 h-8 text-red-500" />
+//                 </div>
+//                 <h1 className="text-xl font-bold text-white mb-2">Confirmation Failed</h1>
+//                 <p className="text-slate-400 text-sm max-w-xs mb-6">{message}</p>
+//                 <button 
+//                     onClick={() => router.push('/login')}
+//                     className="text-[#f59e0b] text-sm font-medium hover:underline"
+//                 >
+//                     Back to login
+//                 </button>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] gap-4">
+//             <Loader2 className="w-10 h-10 text-[#f59e0b] animate-spin" />
+//             <div className="space-y-1 text-center">
+//                 <p className="text-white font-medium text-lg">Accepting Invite</p>
+//                 <p className="text-slate-400 text-sm">{message}</p>
+//             </div>
+//         </div>
+//     );
+// }
+
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Loader2, AlertCircle } from 'lucide-react';
+// Import Prisma Role for strict switch-case typing
+import { Role } from '@prisma/client';
+// Import Supabase types for event handling
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+// Import your custom error handler
+import { getErrorMessage } from '@/lib/error-handler';
 
 export default function ConfirmPage() {
     const router = useRouter();
     const [status, setStatus] = useState<'loading' | 'error'>('loading');
-    const [message, setMessage] = useState('Verifying your invitation...');
+    const [message, setMessage] = useState<string>('Verifying your account...');
+
+    /**
+     * Handles routing logic based on user session and URL metadata
+     * Wrapped in useCallback to maintain a stable reference for useEffect
+     */
+    const handleRedirection = useCallback((session: Session) => {
+        const url = typeof window !== 'undefined' ? window.location.href : '';
+        
+        // 1. Identify if they need to set a password (Invites or Password Resets)
+        const isInvite = url.includes('type=invite');
+        const isRecovery = url.includes('type=recovery');
+
+        if (isInvite || isRecovery) {
+            setMessage('Accepting invite... redirecting to set password.');
+            router.replace('/set-password');
+            return;
+        }
+
+        // 2. Identify their Role from Supabase Metadata (typed as Prisma Role)
+        const userRole = session.user.user_metadata?.role as Role | undefined;
+        
+        setMessage(`Welcome! Redirecting to your dashboard...`);
+
+        // Strict Switch Case using Prisma Enum values
+        switch (userRole) {
+            case Role.SUPER_ADMIN:
+            case Role.SCHOOL_ADMIN:
+                router.replace('/admin');
+                break;
+            case Role.TEACHER:
+                router.replace('/teacher');
+                break;
+            case Role.STUDENT:
+                router.replace('/students');
+                break;
+            case Role.PARENT:
+                router.replace('/parents');
+                break;
+            case Role.INDIVIDUAL_LEARNER:
+                router.replace('/dashboard'); // Adjusted for your specific route if needed
+                break;
+            default:
+                // If role is missing or unrecognized, send to login
+                router.replace('/login');
+                break;
+        }
+    }, [router]);
 
     useEffect(() => {
         const supabase = createClient();
+        let timeoutId: NodeJS.Timeout;
 
-        // 1. Listen for the auth state change
-        // Supabase Client automatically parses the #access_token from the URL
-        // and triggers 'SIGNED_IN'.
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log("Auth Event:", event);
-
-            if (event === 'SIGNED_IN' && session) {
-                handleRedirection(session);
-            } else if (event === 'INITIAL_SESSION') {
-                // If the session was already parsed before the listener attached
-                if (session) {
-                    handleRedirection(session);
-                } else {
-                    // Give it a tiny bit of time to parse the hash
-                    setTimeout(async () => {
-                        const { data } = await supabase.auth.getSession();
-                        if (data.session) {
-                            handleRedirection(data.session);
+        // Listen for the session being established via Hash or Cookie
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            async (event: AuthChangeEvent, session: Session | null) => {
+                try {
+                    if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session) {
+                        handleRedirection(session);
+                    } else if (event === 'INITIAL_SESSION') {
+                        if (session) {
+                            handleRedirection(session);
                         } else {
-                            // If after 2 seconds no session is found, it's an error
-                            setStatus('error');
-                            setMessage('Invalid or expired invitation link.');
+                            // Fallback: If no session immediately, wait for fragment parsing
+                            timeoutId = setTimeout(async () => {
+                                try {
+                                    const { data, error } = await supabase.auth.getSession();
+                                    if (error) throw error;
+
+                                    if (data.session) {
+                                        handleRedirection(data.session);
+                                    } else {
+                                        // If still no session after 2.5s, the link is likely dead
+                                        setStatus('error');
+                                        setMessage('Invalid or expired invitation link.');
+                                    }
+                                } catch (innerErr) {
+                                    setStatus('error');
+                                    setMessage(getErrorMessage(innerErr));
+                                }
+                            }, 2500);
                         }
-                    }, 2000);
+                    }
+                } catch (outerErr) {
+                    setStatus('error');
+                    setMessage(getErrorMessage(outerErr));
                 }
             }
-        });
-
-        const handleRedirection = (session: any) => {
-            // Check if this was an invite
-            // Method A: Check URL for "type=invite" (even if it's in the hash)
-            const isInvite = window.location.href.includes('type=invite');
-            
-            // Method B: Check if user has a password (invited users don't)
-            // Or use the metadata you sent during the invite
-            const role = session.user.user_metadata?.role;
-
-            if (isInvite || role) {
-                setMessage('Invitation accepted! Redirecting to set your password...');
-                router.replace('/set-password');
-            } else {
-                setMessage('Success! Redirecting to dashboard...');
-                router.replace('/');
-            }
-        };
+        );
 
         return () => {
             subscription.unsubscribe();
+            if (timeoutId) clearTimeout(timeoutId);
         };
-    }, [router]);
+    }, [handleRedirection]);
 
     if (status === 'error') {
         return (
@@ -933,10 +1074,12 @@ export default function ConfirmPage() {
                     <AlertCircle className="w-8 h-8 text-red-500" />
                 </div>
                 <h1 className="text-xl font-bold text-white mb-2">Confirmation Failed</h1>
-                <p className="text-slate-400 text-sm max-w-xs mb-6">{message}</p>
+                <p className="text-slate-400 text-sm max-w-xs mb-6">
+                    {message}
+                </p>
                 <button 
                     onClick={() => router.push('/login')}
-                    className="text-[#f59e0b] text-sm font-medium hover:underline"
+                    className="text-[#f59e0b] text-sm font-medium hover:underline transition-all"
                 >
                     Back to login
                 </button>
@@ -948,7 +1091,7 @@ export default function ConfirmPage() {
         <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] gap-4">
             <Loader2 className="w-10 h-10 text-[#f59e0b] animate-spin" />
             <div className="space-y-1 text-center">
-                <p className="text-white font-medium text-lg">Accepting Invite</p>
+                <p className="text-white font-medium text-lg">Just a moment</p>
                 <p className="text-slate-400 text-sm">{message}</p>
             </div>
         </div>
