@@ -799,7 +799,7 @@ export default function ConfirmPage() {
             }
 
             if (type === 'invite') {
-                router.replace('/auth/set-password');
+                router.replace('/set-password');
                 return;
             }
 
