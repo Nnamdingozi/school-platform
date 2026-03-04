@@ -957,30 +957,24 @@
 
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation'; // Added useSearchParams
 import { createClient } from '@/lib/supabase/client';
 import { Loader2, AlertCircle } from 'lucide-react';
-// Import Prisma Role for strict switch-case typing
 import { Role } from '@prisma/client';
-// Import Supabase types for event handling
-import { AuthChangeEvent, Session } from '@supabase/supabase-js';
-// Import your custom error handler
+import { AuthChangeEvent, Session, EmailOtpType } from '@supabase/supabase-js'; // Added EmailOtpType
 import { getErrorMessage } from '@/lib/error-handler';
 
 export default function ConfirmPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [status, setStatus] = useState<'loading' | 'error'>('loading');
     const [message, setMessage] = useState<string>('Verifying your account...');
+    const verificationStarted = useRef(false); // Prevent double-execution in StrictMode
 
-    /**
-     * Handles routing logic based on user session and URL metadata
-     * Wrapped in useCallback to maintain a stable reference for useEffect
-     */
     const handleRedirection = useCallback((session: Session) => {
         const url = typeof window !== 'undefined' ? window.location.href : '';
         
-        // 1. Identify if they need to set a password (Invites or Password Resets)
         const isInvite = url.includes('type=invite');
         const isRecovery = url.includes('type=recovery');
 
@@ -990,12 +984,9 @@ export default function ConfirmPage() {
             return;
         }
 
-        // 2. Identify their Role from Supabase Metadata (typed as Prisma Role)
         const userRole = session.user.user_metadata?.role as Role | undefined;
-        
         setMessage(`Welcome! Redirecting to your dashboard...`);
 
-        // Strict Switch Case using Prisma Enum values
         switch (userRole) {
             case Role.SUPER_ADMIN:
             case Role.SCHOOL_ADMIN:
@@ -1005,16 +996,15 @@ export default function ConfirmPage() {
                 router.replace('/teacher');
                 break;
             case Role.STUDENT:
-                router.replace('/students');
+                router.replace('/student');
                 break;
             case Role.PARENT:
-                router.replace('/parents');
+                router.replace('/parent');
                 break;
             case Role.INDIVIDUAL_LEARNER:
-                router.replace('/dashboard'); // Adjusted for your specific route if needed
+                router.replace('/individual-student');
                 break;
             default:
-                // If role is missing or unrecognized, send to login
                 router.replace('/login');
                 break;
         }
@@ -1022,50 +1012,59 @@ export default function ConfirmPage() {
 
     useEffect(() => {
         const supabase = createClient();
-        let timeoutId: NodeJS.Timeout;
 
-        // Listen for the session being established via Hash or Cookie
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-            async (event: AuthChangeEvent, session: Session | null) => {
-                try {
-                    if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session) {
-                        handleRedirection(session);
-                    } else if (event === 'INITIAL_SESSION') {
-                        if (session) {
+        const performVerification = async () => {
+            if (verificationStarted.current) return;
+            verificationStarted.current = true;
+
+            try {
+                // 1. Check for token_hash in the URL (Admin Signup Flow)
+                const tokenHash = searchParams.get('token_hash');
+                const type = searchParams.get('type') as EmailOtpType | null;
+
+                if (tokenHash && type) {
+                    setMessage('Exchanging token for session...');
+                    const { data, error } = await supabase.auth.verifyOtp({
+                        token_hash: tokenHash,
+                        type: type,
+                    });
+
+                    if (error) throw error;
+                    if (data.session) {
+                        handleRedirection(data.session);
+                        return;
+                    }
+                }
+
+                // 2. Fallback: Listen for Hash-based session (Invite Flow)
+                const { data: { subscription } } = supabase.auth.onAuthStateChange(
+                    async (event: AuthChangeEvent, session: Session | null) => {
+                        if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session) {
                             handleRedirection(session);
-                        } else {
-                            // Fallback: If no session immediately, wait for fragment parsing
-                            timeoutId = setTimeout(async () => {
-                                try {
-                                    const { data, error } = await supabase.auth.getSession();
-                                    if (error) throw error;
-
-                                    if (data.session) {
-                                        handleRedirection(data.session);
-                                    } else {
-                                        // If still no session after 2.5s, the link is likely dead
-                                        setStatus('error');
-                                        setMessage('Invalid or expired invitation link.');
-                                    }
-                                } catch (innerErr) {
+                        } else if (event === 'INITIAL_SESSION' && !session && !tokenHash) {
+                            // If no session and no token_hash, wait 2.5s for fragment parsing
+                            setTimeout(async () => {
+                                const { data } = await supabase.auth.getSession();
+                                if (data.session) {
+                                    handleRedirection(data.session);
+                                } else {
                                     setStatus('error');
-                                    setMessage(getErrorMessage(innerErr));
+                                    setMessage('Invalid or expired invitation link.');
                                 }
                             }, 2500);
                         }
                     }
-                } catch (outerErr) {
-                    setStatus('error');
-                    setMessage(getErrorMessage(outerErr));
-                }
-            }
-        );
+                );
 
-        return () => {
-            subscription.unsubscribe();
-            if (timeoutId) clearTimeout(timeoutId);
+                return () => subscription.unsubscribe();
+            } catch (err) {
+                setStatus('error');
+                setMessage(getErrorMessage(err));
+            }
         };
-    }, [handleRedirection]);
+
+        performVerification();
+    }, [handleRedirection, searchParams]);
 
     if (status === 'error') {
         return (
@@ -1074,9 +1073,7 @@ export default function ConfirmPage() {
                     <AlertCircle className="w-8 h-8 text-red-500" />
                 </div>
                 <h1 className="text-xl font-bold text-white mb-2">Confirmation Failed</h1>
-                <p className="text-slate-400 text-sm max-w-xs mb-6">
-                    {message}
-                </p>
+                <p className="text-slate-400 text-sm max-w-xs mb-6">{message}</p>
                 <button 
                     onClick={() => router.push('/login')}
                     className="text-[#f59e0b] text-sm font-medium hover:underline transition-all"
