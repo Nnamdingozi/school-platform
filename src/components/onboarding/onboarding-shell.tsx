@@ -192,7 +192,7 @@ import { useOnboardingStore } from '@/store/onboardingStore';
 import { useEffect } from 'react';
 import { AdminStep } from '@/app/steps/admin-step';
 import { PaymentStep } from '@/app/steps/payment-step';
-import  SchoolStep  from '@/app/steps/school-step';
+import { SchoolStep } from '@/app/steps/school-step';
 import { ConfirmationScreen } from '@/app/steps/confrimation-screen';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
