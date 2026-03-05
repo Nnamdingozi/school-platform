@@ -1096,6 +1096,185 @@
 // }
 
 
+// 'use client';
+
+// import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
+// import { useRouter, useSearchParams } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2, AlertCircle } from 'lucide-react';
+// import { Role } from '@prisma/client';
+// import { Session, EmailOtpType } from '@supabase/supabase-js';
+// import { getErrorMessage } from '@/lib/error-handler';
+
+// function ConfirmContent() {
+//     const router = useRouter();
+//     const searchParams = useSearchParams();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState<string>('Verifying your account...');
+//     const verificationStarted = useRef(false);
+
+//     const handleRedirection = useCallback((session: Session) => {
+//         const url = typeof window !== 'undefined' ? window.location.href : '';
+        
+//         // Detect if this is an invitation or password recovery
+//         const isInvite = url.includes('type=invite');
+//         const isRecovery = url.includes('type=recovery');
+
+//         if (isInvite || isRecovery) {
+//             setMessage('Accepting invite... redirecting to set password.');
+//             router.replace('/set-password');
+//             return;
+//         }
+
+//         // Standard redirect based on role
+//         const userRole = session.user.user_metadata?.role as Role | undefined;
+//         setMessage(`Welcome! Redirecting to your dashboard...`);
+// console.log('user role in confirm page', userRole)
+
+//         switch (userRole) {
+//             case Role.SUPER_ADMIN:
+//             case Role.SCHOOL_ADMIN:
+//                 router.replace('/admin');
+//                 break;
+//             case Role.TEACHER:
+//                 router.replace('/teacher');
+//                 break;
+//             case Role.STUDENT:
+//                 router.replace('/students');
+//                 break;
+//             case Role.PARENT:
+//                 router.replace('/parents');
+//                 break;
+//             case Role.INDIVIDUAL_LEARNER:
+//                 router.replace('/individual-student');
+//                 break;
+//             default:
+//                 router.replace('/login');
+//                 break;
+//         }
+//     }, [router]);
+    
+
+//     useEffect(() => {
+//         const supabase = createClient();
+//         let isMounted = true;
+
+//         const performVerification = async () => {
+//             // Prevent double execution in React Strict Mode
+//             if (verificationStarted.current) return;
+//             verificationStarted.current = true;
+
+//             try {
+//                 // 1. Handle PKCE Flow (?code=...) - Most common in newer Supabase setups
+//                 const code = searchParams.get('code');
+//                 if (code) {
+//                     setMessage('Exchanging code for session...');
+//                     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+//                     if (error) throw error;
+//                     if (data.session && isMounted) {
+//                         handleRedirection(data.session);
+//                         return;
+//                     }
+//                 }
+
+//                 // 2. Handle OTP Flow (?token_hash=...)
+//                 const tokenHash = searchParams.get('token_hash');
+//                 const type = searchParams.get('type') as EmailOtpType | null;
+//                 if (tokenHash && type) {
+//                     setMessage('Verifying security token...');
+//                     const { data, error } = await supabase.auth.verifyOtp({
+//                         token_hash: tokenHash,
+//                         type: type,
+//                     });
+//                     if (error) throw error;
+//                     if (data.session && isMounted) {
+//                         handleRedirection(data.session);
+//                         return;
+//                     }
+//                 }
+
+//                 // 3. Check for existing session (Fragment Flow / Already logged in)
+//                 const { data: { session: existingSession } } = await supabase.auth.getSession();
+//                 if (existingSession && isMounted) {
+//                     handleRedirection(existingSession);
+//                     return;
+//                 }
+
+//                 // 4. Fallback: Catch session if it arrives via fragment (#access_token=...)
+//                 const { data: { subscription } } = supabase.auth.onAuthStateChange(
+//                     async (event, session) => {
+//                         if (session && isMounted) {
+//                             handleRedirection(session);
+//                         }
+//                     }
+//                 );
+
+//                 // Final Timeout: If no session is found after 3 seconds
+//                 setTimeout(async () => {
+//                     if (isMounted) {
+//                         const { data } = await supabase.auth.getSession();
+//                         if (!data.session) {
+//                             setStatus('error');
+//                             setMessage('The link has expired or is invalid.');
+//                         }
+//                     }
+//                 }, 3000);
+
+//                 return () => {
+//                     subscription.unsubscribe();
+//                 };
+//             } catch (err) {
+//                 if (isMounted) {
+//                     setStatus('error');
+//                     setMessage(getErrorMessage(err));
+//                 }
+//             }
+//         };
+
+//         performVerification();
+
+//         return () => {
+//             isMounted = false;
+//         };
+//     }, [handleRedirection, searchParams]);
+
+//     if (status === 'error') {
+//         return (
+//             <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] p-6 text-center">
+//                 <div className="bg-red-500/10 p-4 rounded-full mb-4">
+//                     <AlertCircle className="w-8 h-8 text-red-500" />
+//                 </div>
+//                 <h1 className="text-xl font-bold text-white mb-2">Confirmation Failed</h1>
+//                 <p className="text-slate-400 text-sm max-w-xs mb-6">{message}</p>
+//                 <button 
+//                     onClick={() => router.push('/login')}
+//                     className="text-[#f59e0b] text-sm font-medium hover:underline transition-all"
+//                 >
+//                     Back to login
+//                 </button>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] gap-4">
+//             <Loader2 className="w-10 h-10 text-[#f59e0b] animate-spin" />
+//             <div className="space-y-1 text-center">
+//                 <p className="text-white font-medium text-lg">Verifying account</p>
+//                 <p className="text-slate-400 text-sm">{message}</p>
+//             </div>
+//         </div>
+//     );
+// }
+
+// export default function ConfirmPage() {
+//     return (
+//         <Suspense fallback={null}>
+//             <ConfirmContent />
+//         </Suspense>
+//     );
+// }
+
 'use client';
 
 import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
@@ -1112,24 +1291,34 @@ function ConfirmContent() {
     const [status, setStatus] = useState<'loading' | 'error'>('loading');
     const [message, setMessage] = useState<string>('Verifying your account...');
     const verificationStarted = useRef(false);
+    const sessionHandled = useRef(false); // Prevent double-handling
 
     const handleRedirection = useCallback((session: Session) => {
-        const url = typeof window !== 'undefined' ? window.location.href : '';
-        
-        // Detect if this is an invitation or password recovery
-        const isInvite = url.includes('type=invite');
-        const isRecovery = url.includes('type=recovery');
+        // Prevent handling the same session twice
+        if (sessionHandled.current) return;
+        sessionHandled.current = true;
+
+        // Check fragment AND search params for invite/recovery type
+        const fullUrl = typeof window !== 'undefined'
+            ? window.location.href
+            : '';
+        const fragmentType = new URLSearchParams(
+            fullUrl.includes('#') ? fullUrl.split('#')[1] : ''
+        ).get('type');
+        const queryType = searchParams.get('type');
+        const type = fragmentType || queryType;
+
+        const isInvite = type === 'invite';
+        const isRecovery = type === 'recovery';
 
         if (isInvite || isRecovery) {
-            setMessage('Accepting invite... redirecting to set password.');
+            setMessage('Redirecting to set your password...');
             router.replace('/set-password');
             return;
         }
 
-        // Standard redirect based on role
         const userRole = session.user.user_metadata?.role as Role | undefined;
         setMessage(`Welcome! Redirecting to your dashboard...`);
-console.log('user role in confirm page', userRole)
 
         switch (userRole) {
             case Role.SUPER_ADMIN:
@@ -1152,20 +1341,29 @@ console.log('user role in confirm page', userRole)
                 router.replace('/login');
                 break;
         }
-    }, [router]);
-    
+    }, [router, searchParams]);
 
     useEffect(() => {
         const supabase = createClient();
         let isMounted = true;
 
         const performVerification = async () => {
-            // Prevent double execution in React Strict Mode
             if (verificationStarted.current) return;
             verificationStarted.current = true;
 
+            // STEP 1: Set up onAuthStateChange FIRST to catch fragment-based tokens
+            // (#access_token=...) — these are processed by Supabase client automatically
+            const { data: { subscription } } = supabase.auth.onAuthStateChange(
+                (event, session) => {
+                    if (!isMounted) return;
+                    if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
+                        handleRedirection(session);
+                    }
+                }
+            );
+
             try {
-                // 1. Handle PKCE Flow (?code=...) - Most common in newer Supabase setups
+                // STEP 2: Handle PKCE flow (?code=...)
                 const code = searchParams.get('code');
                 if (code) {
                     setMessage('Exchanging code for session...');
@@ -1177,7 +1375,7 @@ console.log('user role in confirm page', userRole)
                     }
                 }
 
-                // 2. Handle OTP Flow (?token_hash=...)
+                // STEP 3: Handle OTP flow (?token_hash=...)
                 const tokenHash = searchParams.get('token_hash');
                 const type = searchParams.get('type') as EmailOtpType | null;
                 if (tokenHash && type) {
@@ -1193,34 +1391,27 @@ console.log('user role in confirm page', userRole)
                     }
                 }
 
-                // 3. Check for existing session (Fragment Flow / Already logged in)
+                // STEP 4: Check for an already-existing session
                 const { data: { session: existingSession } } = await supabase.auth.getSession();
                 if (existingSession && isMounted) {
                     handleRedirection(existingSession);
                     return;
                 }
 
-                // 4. Fallback: Catch session if it arrives via fragment (#access_token=...)
-                const { data: { subscription } } = supabase.auth.onAuthStateChange(
-                    async (event, session) => {
-                        if (session && isMounted) {
-                            handleRedirection(session);
-                        }
+                // STEP 5: If we have a fragment URL, Supabase JS client will
+                // auto-parse it and fire onAuthStateChange — just wait for it.
+                // Timeout fallback if nothing fires after 5 seconds.
+                const timeout = setTimeout(async () => {
+                    if (!isMounted) return;
+                    const { data } = await supabase.auth.getSession();
+                    if (!data.session) {
+                        setStatus('error');
+                        setMessage('The link has expired or is invalid. Please request a new invite.');
                     }
-                );
-
-                // Final Timeout: If no session is found after 3 seconds
-                setTimeout(async () => {
-                    if (isMounted) {
-                        const { data } = await supabase.auth.getSession();
-                        if (!data.session) {
-                            setStatus('error');
-                            setMessage('The link has expired or is invalid.');
-                        }
-                    }
-                }, 3000);
+                }, 5000);
 
                 return () => {
+                    clearTimeout(timeout);
                     subscription.unsubscribe();
                 };
             } catch (err) {
@@ -1231,10 +1422,11 @@ console.log('user role in confirm page', userRole)
             }
         };
 
-        performVerification();
+        const cleanup = performVerification();
 
         return () => {
             isMounted = false;
+            cleanup?.then(fn => fn?.());
         };
     }, [handleRedirection, searchParams]);
 
@@ -1246,7 +1438,7 @@ console.log('user role in confirm page', userRole)
                 </div>
                 <h1 className="text-xl font-bold text-white mb-2">Confirmation Failed</h1>
                 <p className="text-slate-400 text-sm max-w-xs mb-6">{message}</p>
-                <button 
+                <button
                     onClick={() => router.push('/login')}
                     className="text-[#f59e0b] text-sm font-medium hover:underline transition-all"
                 >
