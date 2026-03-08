@@ -7,7 +7,9 @@ import {
     UserPlus, Upload, Trash2, Send, CheckCircle2,
     XCircle, Loader2, AlertCircle, Plus, X, Download
 } from 'lucide-react'
-import Papa from 'papaparse'
+import Papa, { ParseResult } from 'papaparse'
+import { getErrorMessage } from '@/lib/error-handler'
+import { useProfileStore } from '@/store/profileStore'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 type InviteRole = 'TEACHER' | 'STUDENT' | 'PARENT'
@@ -21,11 +23,25 @@ interface InviteRow {
     error?: string
 }
 
+interface CSVRow {
+    email?: string
+    Email?: string
+    name?: string
+    Name?: string
+    role?: string
+    Role?: string
+}
+
 const ROLES: { value: InviteRole; label: string }[] = [
     { value: 'TEACHER', label: 'Teacher' },
     { value: 'STUDENT', label: 'Student' },
     { value: 'PARENT', label: 'Parent' },
 ]
+
+const VALID_ROLES = new Set<InviteRole>(['TEACHER', 'STUDENT', 'PARENT'])
+
+const isValidInviteRole = (value: string): value is InviteRole =>
+    VALID_ROLES.has(value as InviteRole)
 
 const makeRow = (
     email = '',
@@ -39,6 +55,8 @@ const makeRow = (
     status: 'idle',
 })
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function InviteUsersPage() {
     const [rows, setRows] = useState<InviteRow[]>([makeRow()])
@@ -46,11 +64,8 @@ export default function InviteUsersPage() {
     const [dragOver, setDragOver] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    // Get schoolId from your profile store / context
-    // Replace with however you access it in your app
-    // const { profile } = useProfileStore()
-    // const schoolId = profile?.schoolId ?? ''
-    const schoolId = '' // ← replace with real schoolId
+    const { profile } = useProfileStore()
+    const schoolId = profile?.schoolId ?? ''
 
     // ── Row helpers ────────────────────────────────────────────────────────────
     const updateRow = (id: string, patch: Partial<InviteRow>) =>
@@ -65,23 +80,23 @@ export default function InviteUsersPage() {
 
     // ── CSV parsing ────────────────────────────────────────────────────────────
     const parseCSV = useCallback((file: File) => {
-        Papa.parse(file, {
+        Papa.parse<CSVRow>(file, {
             header: true,
             skipEmptyLines: true,
-            complete: (results) => {
-                const parsed = (results.data as any[]).map(row => {
-                    const role = String(row.role ?? row.Role ?? 'TEACHER')
-                        .toUpperCase() as InviteRole
-                    return makeRow(
-                        String(row.email ?? row.Email ?? '').trim(),
-                        ROLES.find(r => r.value === role) ? role : 'TEACHER',
-                        String(row.name ?? row.Name ?? '').trim(),
-                    )
-                }).filter(r => r.email)
+            complete: (results: ParseResult<CSVRow>) => {
+                const parsed = results.data
+                    .map((row): InviteRow => {
+                        const rawRole = String(row.role ?? row.Role ?? 'TEACHER').toUpperCase()
+                        const role: InviteRole = isValidInviteRole(rawRole) ? rawRole : 'TEACHER'
+                        return makeRow(
+                            String(row.email ?? row.Email ?? '').trim(),
+                            role,
+                            String(row.name ?? row.Name ?? '').trim(),
+                        )
+                    })
+                    .filter((r): boolean => r.email.length > 0)
 
-                if (parsed.length > 0) {
-                    setRows(parsed)
-                }
+                if (parsed.length > 0) setRows(parsed)
             },
             error: () => alert('Failed to parse CSV. Please check the format.'),
         })
@@ -115,31 +130,30 @@ export default function InviteUsersPage() {
     // ── Send invites ───────────────────────────────────────────────────────────
     const handleSendAll = async () => {
         // Validate all rows first
-        const hasErrors = rows.some(r => {
-            if (!r.email.trim()) return true
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            return !emailRegex.test(r.email)
-        })
+        const hasErrors = rows.some(r =>
+            !r.email.trim() || !EMAIL_REGEX.test(r.email)
+        )
+
         if (hasErrors) {
-            setRows(prev => prev.map(r => ({
-                ...r,
-                status: !r.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email)
-                    ? 'error'
-                    : r.status,
-                error: !r.email.trim()
-                    ? 'Email is required'
-                    : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email)
-                    ? 'Invalid email'
-                    : r.error,
-            })))
+            setRows(prev => prev.map((r): InviteRow => {
+                const isEmpty = !r.email.trim()
+                const isInvalid = !isEmpty && !EMAIL_REGEX.test(r.email)
+                if (isEmpty || isInvalid) {
+                    return {
+                        ...r,
+                        status: 'error',
+                        error: isEmpty ? 'Email is required' : 'Invalid email address',
+                    }
+                }
+                return r
+            }))
             return
         }
 
         setSending(true)
 
-        // Send one at a time to show per-row status
         for (const row of rows) {
-            if (row.status === 'sent') continue // skip already sent
+            if (row.status === 'sent') continue
 
             updateRow(row.id, { status: 'sending', error: undefined })
 
@@ -150,15 +164,15 @@ export default function InviteUsersPage() {
                     schoolId,
                 })
                 updateRow(row.id, { status: 'sent' })
-            } catch (err: any) {
+            } catch (err: unknown) {
                 updateRow(row.id, {
                     status: 'error',
-                    error: err.message ?? 'Failed to send invite'
+                    error: getErrorMessage(err),
                 })
             }
 
             // Small delay to avoid rate limits
-            await new Promise(r => setTimeout(r, 300))
+            await new Promise<void>(resolve => setTimeout(resolve, 300))
         }
 
         setSending(false)
@@ -169,8 +183,11 @@ export default function InviteUsersPage() {
         try {
             await resendInviteAction(row.email)
             updateRow(row.id, { status: 'sent' })
-        } catch (err: any) {
-            updateRow(row.id, { status: 'error', error: err.message })
+        } catch (err: unknown) {
+            updateRow(row.id, {
+                status: 'error',
+                error: getErrorMessage(err),
+            })
         }
     }
 
@@ -195,7 +212,6 @@ export default function InviteUsersPage() {
                             Invite teachers, students, or parents to your school.
                         </p>
                     </div>
-
                     {rows.length > 1 && (
                         <button
                             onClick={clearAll}
@@ -206,7 +222,7 @@ export default function InviteUsersPage() {
                     )}
                 </div>
 
-                {/* ── Summary bar (shows after sending) ── */}
+                {/* ── Summary bar ── */}
                 {(sentCount > 0 || errorCount > 0) && (
                     <div className="flex items-center gap-3 flex-wrap">
                         {sentCount > 0 && (
@@ -278,7 +294,6 @@ export default function InviteUsersPage() {
 
                 {/* ── Invite rows ── */}
                 <div className="space-y-3">
-                    {/* Column headers */}
                     <div className="hidden sm:grid sm:grid-cols-[1fr_160px_36px] gap-3 px-1">
                         <div className="grid grid-cols-2 gap-3">
                             <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
@@ -306,7 +321,7 @@ export default function InviteUsersPage() {
                     ))}
                 </div>
 
-                {/* ── Add row button ── */}
+                {/* ── Add row ── */}
                 {!allSent && (
                     <button
                         onClick={addRow}
