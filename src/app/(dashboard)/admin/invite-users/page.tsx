@@ -308,11 +308,10 @@ export default function InviteUsersPage() {
                         </p>
                     </div>
 
-                    {rows.map((row, index) => (
+                    {rows.map((row) => (
                         <InviteRowItem
                             key={row.id}
                             row={row}
-                            index={index}
                             totalRows={rows.length}
                             onUpdate={patch => updateRow(row.id, patch)}
                             onRemove={() => removeRow(row.id)}
@@ -383,7 +382,6 @@ export default function InviteUsersPage() {
 // ── Individual row component ───────────────────────────────────────────────────
 interface InviteRowItemProps {
     row: InviteRow
-    index: number
     totalRows: number
     onUpdate: (patch: Partial<InviteRow>) => void
     onRemove: () => void
@@ -391,7 +389,7 @@ interface InviteRowItemProps {
 }
 
 function InviteRowItem({
-    row, index, totalRows, onUpdate, onRemove, onResend
+    row, totalRows, onUpdate, onRemove, onResend
 }: InviteRowItemProps) {
     const isSent = row.status === 'sent'
     const isError = row.status === 'error'
