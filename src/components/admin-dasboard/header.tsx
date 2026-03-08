@@ -42,225 +42,6 @@
 //         : "user"
 //     const schoolName = school?.name ?? profile?.school?.name ?? "EduAI"
 
-//     // Initials for avatar fallback
-//     const initials = displayName
-//         .split(' ')
-//         .map((n) => n[0])
-//         .slice(0, 2)
-//         .join('')
-//         .toUpperCase()
-
-//     // ── Notifications from DB ──────────────────────────────────────────────
-//     // Using profile.notifications from the store (already included in
-//     // comprehensiveProfileInclude via the Notification model relation)
-//     const notifications = profile?.notifications ?? []
-//     const unreadCount = notifications.filter((n) => !n.read).length
-
-//     // ── Logout ─────────────────────────────────────────────────────────────
-//     async function handleLogout() {
-//         setIsLoggingOut(true)
-//         const supabase = createClient()
-//         const { error } = await supabase.auth.signOut()
-//         if (error) {
-//             toast.error("Failed to log out. Please try again.")
-//             setIsLoggingOut(false)
-//             return
-//         }
-//         useProfileStore.getState().clearProfile()
-//         router.replace("/login")
-//     }
-
-//     return (
-//         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-school-secondary-800 bg-school-secondary-950 px-6">
-
-//             {/* School Name + Search */}
-//             <div className="flex items-center gap-6">
-//                 <h1 className="text-lg font-bold text-school-primary truncate max-w-[200px]">
-//                     {schoolName}
-//                 </h1>
-//                 <div className="relative hidden md:block">
-//                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-school-secondary-100" />
-//                     <Input
-//                         type="search"
-//                         placeholder="Search students, teachers, classes..."
-//                         value={searchQuery}
-//                         onChange={(e) => setSearchQuery(e.target.value)}
-//                         className="w-80 pl-10 bg-school-secondary-900 border-school-secondary-700 text-school-secondary-100 placeholder:text-school-secondary-100 focus:border-school-primary"
-//                     />
-//                 </div>
-//             </div>
-
-//             {/* Actions */}
-//             <div className="flex items-center gap-2">
-
-//                 {/* Mobile Search */}
-//                 <Button
-//                     variant="ghost"
-//                     size="icon"
-//                     className="md:hidden text-school-secondary-200 bg-school-secondary-800 hover:text-school-primary hover:bg-school-secondary-800"
-//                 >
-//                     <Search className="h-5 w-5" />
-//                     <span className="sr-only">Search</span>
-//                 </Button>
-
-//                 {/* Notifications */}
-//                 <Popover>
-//                     <PopoverTrigger asChild>
-//                         <Button
-//                             variant="ghost"
-//                             size="icon"
-//                             className="relative text-school-secondary-100 hover:text-school-primary hover:bg-school-secondary-800"
-//                         >
-//                             <Bell className="h-5 w-5" />
-//                             {unreadCount > 0 && (
-//                                 <span className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-school-primary text-school-secondary-950 text-[10px] font-black flex items-center justify-center">
-//                                     {unreadCount > 9 ? '9+' : unreadCount}
-//                                 </span>
-//                             )}
-//                             <span className="sr-only">Notifications</span>
-//                         </Button>
-//                     </PopoverTrigger>
-//                     <PopoverContent
-//                         className="w-80 p-0 bg-school-secondary-900 border-school-secondary-700"
-//                         align="end"
-//                     >
-//                         <div className="flex items-center justify-between border-b border-school-secondary-700 px-4 py-3">
-//                             <h3 className="font-bold text-school-secondary-100">Notifications</h3>
-//                             {unreadCount > 0 && (
-//                                 <span className="text-xs px-2 py-0.5 rounded-full bg-school-primary/10 text-school-primary font-semibold">
-//                                     {unreadCount} new
-//                                 </span>
-//                             )}
-//                         </div>
-
-//                         <ScrollArea className="h-80">
-//                             {notifications.length === 0 ? (
-//                                 <div className="flex flex-col items-center justify-center h-32 text-school-secondary-100">
-//                                     <Bell className="h-8 w-8 mb-2" />
-//                                     <p className="text-sm">No notifications yet</p>
-//                                 </div>
-//                             ) : (
-//                                 <div className="space-y-0.5 p-2">
-//                                     {notifications.slice(0, 10).map((notification) => (
-//                                         <div
-//                                             key={notification.id}
-//                                             className={`flex items-start gap-3 rounded-lg p-3 transition-colors cursor-pointer
-//                                                 hover:bg-school-secondary-800
-//                                                 ${!notification.read ? "bg-school-secondary-800" : ""}
-//                                             `}
-//                                         >
-//                                             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-school-primary">
-//                                                 <MessageCircle className="h-4 w-4 text-school-primary" />
-//                                             </div>
-//                                             <div className="flex-1 space-y-0.5 min-w-0">
-//                                                 <p className="text-sm font-semibold text-school-secondary-100 leading-snug truncate">
-//                                                     {notification.message}
-//                                                 </p>
-//                                                 <p className="text-xs text-school-secondary-100">
-//                                                     {new Date(notification.createdAt).toLocaleDateString('en-GB', {
-//                                                         day: 'numeric',
-//                                                         month: 'short',
-//                                                         hour: '2-digit',
-//                                                         minute: '2-digit',
-//                                                     })}
-//                                                 </p>
-//                                             </div>
-//                                             {!notification.read && (
-//                                                 <div className="h-2 w-2 rounded-full bg-school-primary shrink-0 mt-1" />
-//                                             )}
-//                                         </div>
-//                                     ))}
-//                                 </div>
-//                             )}
-//                         </ScrollArea>
-
-//                         <div className="border-t border-school-secondary-700 p-2">
-//                             <Button
-//                                 variant="ghost"
-//                                 className="w-full text-sm text-school-primary hover:bg-school-secondary-800"
-//                                 onClick={() => router.push('/notifications')}
-//                             >
-//                                 View all notifications
-//                             </Button>
-//                         </div>
-//                     </PopoverContent>
-//                 </Popover>
-
-//                 {/* User Menu */}
-//                 <DropdownMenu>
-//                     <DropdownMenuTrigger asChild>
-//                         <Button
-//                             variant="ghost"
-//                             className="flex items-center gap-2 pl-2 pr-1 hover:bg-school-secondary-800"
-//                         >
-//                             <Avatar className="h-8 w-8">
-//                                 <AvatarFallback className="bg-school-primary text-school-secondary-950 text-sm font-black">
-//                                     {initials}
-//                                 </AvatarFallback>
-//                             </Avatar>
-//                             <div className="hidden flex-col items-start text-left lg:flex">
-//                                 <span className="text-sm font-semibold text-school-secondary-100 max-w-[120px] truncate">
-//                                     {displayName}
-//                                 </span>
-//                                 <span className="text-xs text-school-secondary-100 capitalize">
-//                                     {displayRole}
-//                                 </span>
-//                             </div>
-//                             <ChevronDown className="ml-1 h-4 w-4 text-school-secondary-100" />
-//                         </Button>
-//                     </DropdownMenuTrigger>
-//                     <DropdownMenuContent
-//                         align="end"
-//                         className="w-56 bg-school-secondary-900 border-school-secondary-700"
-//                     >
-//                         {/* Account info */}
-//                         <DropdownMenuLabel className="font-normal">
-//                             <div className="flex flex-col space-y-1">
-//                                 <p className="text-sm font-semibold text-school-secondary-100">
-//                                     {displayName}
-//                                 </p>
-//                                 <p className="text-xs text-school-secondary-100 truncate">
-//                                     {displayEmail}
-//                                 </p>
-//                             </div>
-//                         </DropdownMenuLabel>
-//                         <DropdownMenuSeparator className="bg-school-secondary-700" />
-
-//                         <DropdownMenuItem
-//                             className="text-school-secondary-100 hover:text-school-secondary-100 hover:bg-school-secondary-800 cursor-pointer"
-//                             onClick={() => router.push('/settings/profile')}
-//                         >
-//                             <User className="mr-2 h-4 w-4" />
-//                             Profile
-//                         </DropdownMenuItem>
-//                         <DropdownMenuItem
-//                             className="text-school-secondary-100hover:text-school-secondary-100 hover:bg-school-secondary-800 cursor-pointer"
-//                             onClick={() => router.push('/settings')}
-//                         >
-//                             <Settings className="mr-2 h-4 w-4" />
-//                             Settings
-//                         </DropdownMenuItem>
-
-//                         <DropdownMenuSeparator className="bg-school-secondary-700" />
-
-//                         <DropdownMenuItem
-//                             className="text-red-400 hover:text-red-300 hover:bg-school-secondary-800 cursor-pointer"
-//                             onClick={handleLogout}
-//                             disabled={isLoggingOut}
-//                         >
-//                             <LogOut className="mr-2 h-4 w-4" />
-//                             {isLoggingOut ? "Logging out..." : "Log out"}
-//                         </DropdownMenuItem>
-//                     </DropdownMenuContent>
-//                 </DropdownMenu>
-
-//             </div>
-//         </header>
-//     )
-// }
-
-
-
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
@@ -307,8 +88,8 @@ interface SearchCategory<T> {
 interface SearchResults {
     teachers: SearchCategory<ProfileResult>
     students: SearchCategory<ProfileResult>
-    parents:  SearchCategory<ProfileResult>
-    classes:  SearchCategory<ClassResult>
+    parents: SearchCategory<ProfileResult>
+    classes: SearchCategory<ClassResult>
 }
 
 type SearchState = 'idle' | 'searching' | 'done' | 'error'
@@ -355,13 +136,13 @@ export function Header() {
     const [isLoggingOut, setIsLoggingOut] = useState(false)
 
     // ── Derived values ─────────────────────────────────────────────────────
-    const displayName  = profile?.name  ?? 'User'
+    const displayName = profile?.name ?? 'User'
     const displayEmail = profile?.email ?? ''
-    const displayRole  = profile?.role
+    const displayRole = profile?.role
         ? profile.role.toLowerCase().replace(/_/g, ' ')
         : 'user'
     const schoolName = school?.name ?? profile?.school?.name ?? 'EduAI'
-    const schoolId   = profile?.schoolId ?? ''
+    const schoolId = profile?.schoolId ?? ''
 
     const initials = displayName
         .split(' ')
@@ -371,7 +152,7 @@ export function Header() {
         .toUpperCase()
 
     const notifications = profile?.notifications ?? []
-    const unreadCount   = notifications.filter((n) => !n.read).length
+    const unreadCount = notifications.filter((n) => !n.read).length
 
     // ── Search fetch ───────────────────────────────────────────────────────
     const performSearch = useCallback(async (q: string) => {
@@ -507,7 +288,7 @@ export function Header() {
                             {searchState === 'done' && !hasAnyResults(results) && (
                                 <div className="py-6 text-center space-y-1">
                                     <p className="text-sm text-white font-medium">
-                                    No results for &ldquo;{query}&rdquo;
+                                        No results for &ldquo;{query}&rdquo;
                                     </p>
                                     <p className="text-xs text-school-secondary-400">
                                         Try a different name or email
@@ -648,7 +429,7 @@ export function Header() {
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                        className="w-80 p-0 bg-school-secondary-900 border-school-secondary-700"
+                        className="w-80 p-0 bg-popover border-school-secondary-700 shadow-2xl"
                         align="end"
                     >
                         <div className="flex items-center justify-between border-b border-school-secondary-700 px-4 py-3">
@@ -731,7 +512,7 @@ export function Header() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                         align="end"
-                        className="w-56 bg-school-secondary-900 border-school-secondary-700"
+                        className="w-56 bg-popover border-school-secondary-700 shadow-2xl"
                     >
                         <DropdownMenuLabel className="font-normal">
                             <div className="flex flex-col space-y-1">
