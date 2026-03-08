@@ -2,9 +2,10 @@
 
 import { prisma } from '@/lib/prisma'
 import { supabase as supabaseAdmin } from '@/lib/supabase/supabaseClient'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server' // ← was 'client', must be 'server'
 import { Role } from '@prisma/client'
 import { randomBytes } from 'crypto'
+import { getErrorMessage } from '@/lib/error-handler'
 
 interface SendInviteParams {
     email: string
@@ -12,134 +13,163 @@ interface SendInviteParams {
     schoolId?: string
 }
 
-// ── Send Invite ───────────────────────────────────────────────────────────────c
-export async function sendInviteAction({ email, role, schoolId }: SendInviteParams) {
-    // 1. Auth check — only admins can invite
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Unauthorized')
+interface ActionResult {
+    success: boolean
+    error?: string
+}
 
-    // 2. Get curriculumId from the admin's school
-    //    (so it's automatic — admin doesn't need to provide it)
-    const school = await prisma.school.findUnique({
-        where: { id: schoolId },
-        select: { curriculumId: true }
-    })
-    if (!school) throw new Error('School not found.')
-    const curriculumId = school.curriculumId
+// ── Send Invite ────────────────────────────────────────────────────────────────
+export async function sendInviteAction({
+    email, role, schoolId
+}: SendInviteParams): Promise<ActionResult> {
+    try {
+        // 1. Auth check
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return { success: false, error: 'Unauthorized.' }
 
-    // 3. Check if user already has an active account
-    const { data: { users } } = await supabaseAdmin.auth.admin.listUsers()
-    const existingAuthUser = users.find(u => u.email === email)
-    if (existingAuthUser?.last_sign_in_at) {
-        throw new Error('A user with this email already has an active account.')
-    }
-
-    // 4. Delete any previous pending invite for this email (enables resend)
-    await prisma.invitation.deleteMany({
-        where: { email, acceptedAt: null }
-    })
-
-    // 5. Create our own token in DB
-    const token = randomBytes(32).toString('hex')
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48) // 48 hours
-
-    await prisma.invitation.create({
-        data: {
-            email,
-            role,
-            schoolId,
-            curriculumId,
-            token,
-            expiresAt,
-            invitedBy: user.id,
+        // 2. Validate inputs
+        if (!email || !role || !schoolId) {
+            return { success: false, error: 'Email, role and schoolId are required.' }
         }
-    })
 
-    // 6. Supabase sends the email with our custom token embedded
-    const { error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/accept-invite`,
-        data: {
-            custom_token: token,
-            role,
-            schoolId,
+        // 3. Get curriculumId from school
+        const school = await prisma.school.findUnique({
+            where: { id: schoolId },
+            select: { curriculumId: true }
+        })
+        if (!school) return { success: false, error: 'School not found.' }
+
+        // 4. Check if already has active account
+        const { data: { users }, error: listError } =
+            await supabaseAdmin.auth.admin.listUsers()
+        if (listError) return { success: false, error: 'Failed to check existing users.' }
+
+        const existingAuthUser = users.find(u => u.email === email)
+        if (existingAuthUser?.last_sign_in_at) {
+            return { success: false, error: 'A user with this email already has an active account.' }
         }
-    })
 
-    if (error) {
-        // Rollback invitation row if email sending failed
-        await prisma.invitation.deleteMany({ where: { token } })
-        throw new Error(error.message)
+        // 5. Delete any previous pending invite
+        await prisma.invitation.deleteMany({
+            where: { email, acceptedAt: null }
+        })
+
+        // 6. Create invitation row with our own token
+        const token = randomBytes(32).toString('hex')
+        const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48)
+
+        await prisma.invitation.create({
+            data: {
+                email,
+                role,
+                schoolId,
+                curriculumId: school.curriculumId,
+                token,
+                expiresAt,
+                invitedBy: user.id,
+            }
+        })
+
+        // 7. Supabase sends email with our token embedded
+        const { error: inviteError } =
+            await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/accept-invite`,
+                data: { custom_token: token, role, schoolId },
+            })
+
+        if (inviteError) {
+            // Rollback invitation row
+            await prisma.invitation.deleteMany({ where: { token } })
+            return { success: false, error: inviteError.message }
+        }
+
+        return { success: true }
+
+    } catch (err: unknown) {
+        console.error('sendInviteAction error:', err)
+        return { success: false, error: getErrorMessage(err) }
     }
-
-    return { success: true }
 }
 
 // ── Resend Invite ──────────────────────────────────────────────────────────────
-export async function resendInviteAction(email: string) {
-    // 1. Auth check
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Unauthorized')
+export async function resendInviteAction(email: string): Promise<ActionResult> {
+    try {
+        // 1. Auth check
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return { success: false, error: 'Unauthorized.' }
 
-    // 2. Find existing pending invite to preserve role/schoolId/curriculumId
-    const existing = await prisma.invitation.findFirst({
-        where: { email, acceptedAt: null },
-        orderBy: { createdAt: 'desc' }
-    })
-    if (!existing) throw new Error('No pending invite found for this email.')
+        // 2. Find existing pending invite
+        const existing = await prisma.invitation.findFirst({
+            where: { email, acceptedAt: null },
+            orderBy: { createdAt: 'desc' }
+        })
+        if (!existing) return { success: false, error: 'No pending invite found for this email.' }
 
-    // 3. Delete old unconfirmed Supabase auth user so inviteUserByEmail works again
-    const { data: { users } } = await supabaseAdmin.auth.admin.listUsers()
-    const existingAuthUser = users.find(u => u.email === email)
+        // 3. Delete old unconfirmed Supabase auth user
+        const { data: { users }, error: listError } =
+            await supabaseAdmin.auth.admin.listUsers()
+        if (listError) return { success: false, error: 'Failed to check existing users.' }
 
-    if (existingAuthUser) {
-        if (existingAuthUser.last_sign_in_at) {
-            throw new Error('This user has already accepted their invite.')
+        const existingAuthUser = users.find(u => u.email === email)
+        if (existingAuthUser) {
+            if (existingAuthUser.last_sign_in_at) {
+                return { success: false, error: 'This user has already accepted their invite.' }
+            }
+            await supabaseAdmin.auth.admin.deleteUser(existingAuthUser.id)
         }
-        await supabaseAdmin.auth.admin.deleteUser(existingAuthUser.id)
+
+        // 4. Refresh token and expiry
+        const token = randomBytes(32).toString('hex')
+        const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48)
+
+        await prisma.invitation.update({
+            where: { id: existing.id },
+            data: { token, expiresAt }
+        })
+
+        // 5. Resend via Supabase
+        const { error: inviteError } =
+            await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/accept-invite`,
+                data: {
+                    custom_token: token,
+                    role: existing.role,
+                    schoolId: existing.schoolId,
+                },
+            })
+
+        if (inviteError) return { success: false, error: inviteError.message }
+        return { success: true }
+
+    } catch (err: unknown) {
+        console.error('resendInviteAction error:', err)
+        return { success: false, error: getErrorMessage(err) }
     }
-
-    // 4. Refresh token and expiry on the existing invitation row
-    const token = randomBytes(32).toString('hex')
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48)
-
-    await prisma.invitation.update({
-        where: { id: existing.id },
-        data: { token, expiresAt }
-    })
-
-    // 5. Resend via Supabase
-    const { error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/accept-invite`,
-        data: {
-            custom_token: token,
-            role: existing.role,
-            schoolId: existing.schoolId,
-        }
-    })
-
-    if (error) throw new Error(error.message)
-    return { success: true }
 }
 
 // ── Cancel Invite ──────────────────────────────────────────────────────────────
-export async function cancelInviteAction(email: string) {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Unauthorized')
+export async function cancelInviteAction(email: string): Promise<ActionResult> {
+    try {
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return { success: false, error: 'Unauthorized.' }
 
-    // Delete pending invite from DB
-    await prisma.invitation.deleteMany({
-        where: { email, acceptedAt: null }
-    })
+        await prisma.invitation.deleteMany({
+            where: { email, acceptedAt: null }
+        })
 
-    // Delete unconfirmed Supabase auth user if exists
-    const { data: { users } } = await supabaseAdmin.auth.admin.listUsers()
-    const existingAuthUser = users.find(u => u.email === email)
-    if (existingAuthUser && !existingAuthUser.last_sign_in_at) {
-        await supabaseAdmin.auth.admin.deleteUser(existingAuthUser.id)
+        const { data: { users } } = await supabaseAdmin.auth.admin.listUsers()
+        const existingAuthUser = users.find(u => u.email === email)
+        if (existingAuthUser && !existingAuthUser.last_sign_in_at) {
+            await supabaseAdmin.auth.admin.deleteUser(existingAuthUser.id)
+        }
+
+        return { success: true }
+
+    } catch (err: unknown) {
+        console.error('cancelInviteAction error:', err)
+        return { success: false, error: getErrorMessage(err) }
     }
-
-    return { success: true }
 }
