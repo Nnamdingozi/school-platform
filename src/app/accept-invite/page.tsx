@@ -110,7 +110,7 @@ function AcceptInviteContent() {
             }
 
             // 3. Redirect based on role
-            router.replace(data.redirectTo)
+            window.location.href = data.redirectTo
 
         } catch {
             setFormError('Something went wrong. Please try again.')
