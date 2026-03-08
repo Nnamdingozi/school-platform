@@ -309,6 +309,7 @@ import {
     // ✅ FIX 1: Removed 'EnrollmentTrendChart' (was unused)
     StatusDistributionChart
 } from "@/components/admin-dasboard/analitcs-charts"
+import { Header } from "@/components/admin-dasboard/header"
 
 // ✅ FIX 2: Ensure 'Header' is not imported if it isn't used
 
@@ -335,21 +336,10 @@ export default function Dashboard() {
                 <div className="mx-auto max-w-7xl space-y-6">
 
                     <div>
-                        <h2 className="text-2xl font-bold text-foreground tracking-tight">
-                            {profile.school?.name
-                                ? `${profile.school.name} Dashboard`
-                                : "Dashboard Overview"}
-                        </h2>
-                        
-                        <p className="text-muted-foreground">
-                            Welcome back,{' '}
-                            <span className="font-semibold text-foreground">
-                                {profile.name || 'Admin'}
-                            </span>
-                            {/* ✅ FIX 3: Escaped apostrophes using {" "} */}
-                            {"! Here's what's happening at your school today."}
-                        </p>
+                  
+                        <Header />
                     </div>
+                
 
                     <StatsCards />
 

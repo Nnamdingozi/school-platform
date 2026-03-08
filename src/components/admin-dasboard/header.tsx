@@ -261,13 +261,13 @@ export function Header() {
                     {schoolName}
                 </h1>
                 <div className="relative hidden md:block">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-school-secondary-100/30" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-school-secondary-100" />
                     <Input
                         type="search"
                         placeholder="Search students, teachers, classes..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-80 pl-10 bg-school-secondary-900 border-school-secondary-700 text-school-secondary-100 placeholder:text-school-secondary-100/20 focus:border-school-primary"
+                        className="w-80 pl-10 bg-school-secondary-900 border-school-secondary-700 text-school-secondary-100 placeholder:text-school-secondary-100 focus:border-school-primary"
                     />
                 </div>
             </div>
@@ -279,7 +279,7 @@ export function Header() {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="md:hidden text-school-secondary-100/50 hover:text-school-primary hover:bg-school-secondary-800"
+                    className="md:hidden text-school-secondary-200 bg-school-secondary-800 hover:text-school-primary hover:bg-school-secondary-800"
                 >
                     <Search className="h-5 w-5" />
                     <span className="sr-only">Search</span>
@@ -291,7 +291,7 @@ export function Header() {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="relative text-school-secondary-100/50 hover:text-school-primary hover:bg-school-secondary-800"
+                            className="relative text-school-secondary-100 hover:text-school-primary hover:bg-school-secondary-800"
                         >
                             <Bell className="h-5 w-5" />
                             {unreadCount > 0 && (
@@ -317,7 +317,7 @@ export function Header() {
 
                         <ScrollArea className="h-80">
                             {notifications.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center h-32 text-school-secondary-100/30">
+                                <div className="flex flex-col items-center justify-center h-32 text-school-secondary-100">
                                     <Bell className="h-8 w-8 mb-2" />
                                     <p className="text-sm">No notifications yet</p>
                                 </div>
@@ -328,17 +328,17 @@ export function Header() {
                                             key={notification.id}
                                             className={`flex items-start gap-3 rounded-lg p-3 transition-colors cursor-pointer
                                                 hover:bg-school-secondary-800
-                                                ${!notification.read ? "bg-school-secondary-800/50" : ""}
+                                                ${!notification.read ? "bg-school-secondary-800" : ""}
                                             `}
                                         >
-                                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-school-primary/10">
+                                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-school-primary">
                                                 <MessageCircle className="h-4 w-4 text-school-primary" />
                                             </div>
                                             <div className="flex-1 space-y-0.5 min-w-0">
                                                 <p className="text-sm font-semibold text-school-secondary-100 leading-snug truncate">
                                                     {notification.message}
                                                 </p>
-                                                <p className="text-xs text-school-secondary-100/40">
+                                                <p className="text-xs text-school-secondary-100">
                                                     {new Date(notification.createdAt).toLocaleDateString('en-GB', {
                                                         day: 'numeric',
                                                         month: 'short',
@@ -384,11 +384,11 @@ export function Header() {
                                 <span className="text-sm font-semibold text-school-secondary-100 max-w-[120px] truncate">
                                     {displayName}
                                 </span>
-                                <span className="text-xs text-school-secondary-100/50 capitalize">
+                                <span className="text-xs text-school-secondary-100 capitalize">
                                     {displayRole}
                                 </span>
                             </div>
-                            <ChevronDown className="ml-1 h-4 w-4 text-school-secondary-100/40" />
+                            <ChevronDown className="ml-1 h-4 w-4 text-school-secondary-100" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
@@ -401,7 +401,7 @@ export function Header() {
                                 <p className="text-sm font-semibold text-school-secondary-100">
                                     {displayName}
                                 </p>
-                                <p className="text-xs text-school-secondary-100/50 truncate">
+                                <p className="text-xs text-school-secondary-100 truncate">
                                     {displayEmail}
                                 </p>
                             </div>
@@ -409,14 +409,14 @@ export function Header() {
                         <DropdownMenuSeparator className="bg-school-secondary-700" />
 
                         <DropdownMenuItem
-                            className="text-school-secondary-100/70 hover:text-school-secondary-100 hover:bg-school-secondary-800 cursor-pointer"
+                            className="text-school-secondary-100 hover:text-school-secondary-100 hover:bg-school-secondary-800 cursor-pointer"
                             onClick={() => router.push('/settings/profile')}
                         >
                             <User className="mr-2 h-4 w-4" />
                             Profile
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            className="text-school-secondary-100/70 hover:text-school-secondary-100 hover:bg-school-secondary-800 cursor-pointer"
+                            className="text-school-secondary-100hover:text-school-secondary-100 hover:bg-school-secondary-800 cursor-pointer"
                             onClick={() => router.push('/settings')}
                         >
                             <Settings className="mr-2 h-4 w-4" />
