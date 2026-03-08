@@ -45,10 +45,10 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Button variant="outline" size="sm" className="bg-transparent">
-            School Login
+          <Button variant="outline" size="sm" className="bg-transparent ">
+             Login
           </Button>
-          <Button size="sm">Start Learning</Button>
+          <Button size="sm">Get Started</Button>
         </div>
 
         {/* Mobile Toggle */}
@@ -88,13 +88,13 @@ export function Navbar() {
                 </a>
               ))}
               <div className="flex flex-col gap-2 pt-2">
-                <Link href="/login">
-                  <Button variant="outline" size="sm" className="bg-transparent">
-                    Login
-                  </Button>
+               <Link href="/login"> <Button variant="outline" size="sm" className="bg-transparent">
+                   Login
+                </Button>
                 </Link>
+
                 <Link href="/onboarding">
-                  <Button size="sm">Get Started</Button>
+                <Button size="sm">Get Started</Button>
                 </Link>
               </div>
             </div>

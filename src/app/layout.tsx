@@ -701,6 +701,66 @@
 //     );
 // }
 
+
+
+// // app/layout.tsx
+// import { Inter } from "next/font/google";
+// import "./globals.css";
+// import { prisma } from "@/lib/prisma";
+// import { SchoolProvider } from "@/context/schoolProvider";
+// import { ProfileInitializer } from "@/components/profileInitializer";
+// import { cookies } from 'next/headers';
+// import { comprehensiveProfileInclude, ProfileInStore } from '@/types/profile';
+// import { Toaster } from "@/components/ui/sonner"
+// import { getTeacherData } from "./actions/teacherData";
+// import { Profile } from "@/generated/prisma/client";
+// import { useProfileStore } from "@/store/profileStore"; // Import useProfileStore
+// import { DashboardChecker } from '@/app/(dashboard)/dashBoardChecker';
+// import { Footer } from "@/components/landing/footer";
+// import { Navbar } from "@/components/landing/navbar";
+// import { ScrollToTop } from '@/components/scroll-to-top';
+
+// const inter = Inter({ subsets: ["latin"] });
+
+// export default async function RootLayout({
+//     children,
+// }: Readonly<{
+//     children: React.ReactNode;
+// }>) {
+//     const cookieStore = await cookies();
+
+   
+
+//     const { data: { user } } = await supabase.auth.getUser();
+//     // let email = "teacher@lagosacademy.test"
+
+//     // Fetch the profile and set it to the store
+//     let profile: ProfileInStore | null = null;
+//     if (user?.email) {
+//         const teacher = await getTeacherData(user.email);
+//         console.log('teacher in layout for store update:', teacher)
+//         profile = teacher as ProfileInStore | null;
+//         useProfileStore.getState().setProfile(profile); // Set in store
+//     }
+
+//     return (
+//         <html lang="en">
+//             <body className={inter.className}>
+//             <ScrollToTop />
+//                 <Toaster />
+//                 <Navbar />
+//                 {/* <DashboardChecker>{children}</DashboardChecker> */}
+//                 <SchoolProvider initialProfile={profile}>
+//     {children}
+// </SchoolProvider>
+// <Footer />
+//             </body>
+//         </html>
+//     );
+// }
+
+
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SchoolProvider } from "@/context/schoolProvider";
@@ -708,7 +768,7 @@ import { ProfileInitializer } from "@/components/profileInitializer";
 import { Toaster } from "@/components/ui/sonner";
 import { ScrollToTop } from '@/components/scroll-to-top';
 import { getTeacherData } from "./actions/teacherData";
-import { comprehensiveProfileInclude, ProfileInStore } from '@/types/profile';
+import { ProfileInStore } from '@/types/profile';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
@@ -721,23 +781,20 @@ export default async function RootLayout({
 }>) {
     const cookieStore = await cookies();
 
-    // ✅ Create supabase client correctly in a Server Component
-    // Only reads cookies here — never writes, so no error
+    // ✅ Supabase client — reads session from cookies
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
             cookies: {
                 getAll: () => cookieStore.getAll(),
-                // ✅ setAll is a no-op in layout — middleware handles writing
-                setAll: () => {},
+                setAll: () => {}, // no-op — middleware handles writing
             },
         }
     );
 
     const { data: { user } } = await supabase.auth.getUser();
 
-    // Fetch profile server-side to pass as initial value to client store
     let profile: ProfileInStore | null = null;
     if (user?.email) {
         const teacher = await getTeacherData(user.email);
@@ -751,19 +808,12 @@ export default async function RootLayout({
                 <Toaster />
                 {/*
                     ✅ No Navbar/Footer here — they belong in specific layouts:
-                    - app/(landing)/layout.tsx  → shows Navbar + Footer on public pages
-                    - app/(dashboard)/layout.tsx → shows Sidebar + Header
-                    - app/onboarding/layout.tsx  → no nav at all
-                    
-                    Putting them here shows them on EVERY page including
-                    onboarding, dashboard, auth pages etc.
+                    - app/(landing)/layout.tsx  → Navbar + Footer on public pages
+                    - app/(dashboard)/layout.tsx → Sidebar + Header
+                    - app/onboarding/            → no nav
+                    Adding them here puts them on EVERY page
                 */}
                 <SchoolProvider initialProfile={profile}>
-                    {/*
-                        ✅ ProfileInitializer hydrates the client-side Zustand store
-                        with the server-fetched profile — replaces useProfileStore.getState().setProfile()
-                        which cannot be called in a Server Component
-                    */}
                     <ProfileInitializer profile={profile} />
                     {children}
                 </SchoolProvider>

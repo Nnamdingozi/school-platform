@@ -206,6 +206,25 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-24 px-6 overflow-hidden">
       <div className="max-w-7xl mx-auto text-center">
+
+        <h1 className="text-lg md:text-4xl font-black text-slate-900 mb-4 leading-tight">
+          Flexible plans for <span className="text-amber-600">modern education.</span>
+        </h1>
+        
+        {/* Billing Toggle */}
+        <div className="flex items-center justify-center gap-4 mb-12 mt-8">
+          <span className={cn("text-sm font-bold", billingCycle === "monthly" ? "text-slate-900" : "text-slate-400")}>Monthly</span>
+          <button 
+            onClick={() => setBillingCycle(billingCycle === "monthly" ? "annually" : "monthly")}
+            className="w-12 h-6 bg-slate-200 rounded-full relative focus:outline-none ring-2 ring-amber-500 ring-offset-2"
+          >
+            <div className={cn("absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-200", billingCycle === "annually" ? "translate-x-6 bg-amber-600" : "")} />
+          </button>
+          <span className={cn("text-sm font-bold", billingCycle === "annually" ? "text-slate-900" : "text-slate-400")}>
+            Annually <span className="text-green-600 text-[10px] bg-green-100 px-2 py-0.5 rounded-full ml-1 font-black uppercase">-20%</span>
+          </span>
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -233,6 +252,7 @@ export default function PricingPage() {
             </span>
           </div>
         </motion.div>
+
 
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"

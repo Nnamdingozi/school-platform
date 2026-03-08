@@ -460,7 +460,7 @@ export function SchoolStep() {
 
        // // 1. Fix the TypeScript Error by ensuring password exists
         if (!adminData || !paymentData || !adminData.password) {
-            setError('Missing required account data (like password). Please go back to step 1.');
+            setError('Missing required account data . Please go back to step 1.');
             return;
         }
 
@@ -661,7 +661,7 @@ export function SchoolStep() {
                     {/* Custom pickers */}
                     <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
-                            <p className="text-[10px] text-school-secondary-100/40 uppercase tracking-wider">
+                            <p className="text-[10px] text-school-secondary-100 uppercase tracking-wider">
                                 Primary
                             </p>
                             <div className="flex items-center gap-2 bg-school-secondary-800 border border-school-secondary-700 rounded-lg p-2">
@@ -677,7 +677,7 @@ export function SchoolStep() {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <p className="text-[10px] text-school-secondary-100/40 uppercase tracking-wider">
+                            <p className="text-[10px] text-school-secondary-100 uppercase tracking-wider">
                                 Secondary
                             </p>
                             <div className="flex items-center gap-2 bg-school-secondary-800 border border-school-secondary-700 rounded-lg p-2">
@@ -716,7 +716,7 @@ export function SchoolStep() {
 
                 {/* Error */}
                 {error && (
-                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                    <div className="p-3 rounded-lg bg-red-500 border border-red-500/20 text-red-400 text-sm">
                         {error}
                     </div>
                 )}

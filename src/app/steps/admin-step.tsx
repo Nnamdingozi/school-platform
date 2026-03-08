@@ -428,7 +428,7 @@ export function AdminStep() {
                     )}
                 </Button>
 
-                <p className="text-center text-sm text-school-secondary-100">
+                <p className="text-center text-xs text-school-secondary-100">
                     Already have an account?{' '}
                     <a href="/login" className="text-school-primary hover:underline">Sign in</a>
                 </p>

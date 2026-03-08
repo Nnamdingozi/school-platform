@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 import { Loader2, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -20,6 +22,17 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
 
     const supabase = createClient();
+    const searchParams = useSearchParams();
+
+useEffect(() => {
+    if (searchParams.get('confirmed') === 'true') {
+        toast.success('Email confirmed! Please log in to access your dashboard.');
+    }
+    if (searchParams.get('error') === 'confirmation_failed') {
+        toast.error('Confirmation link expired. Please try logging in or use Forgot Password.');
+    }
+}, []);
+
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
