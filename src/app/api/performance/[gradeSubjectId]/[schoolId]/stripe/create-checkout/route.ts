@@ -1,5 +1,6 @@
 // app/api/stripe/create-checkout/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { getErrorMessage } from '@/lib/error-handler';
 
 const STRIPE_PRICE_IDS: Record<string, Record<string, string>> = {
     starter: {
@@ -50,8 +51,12 @@ export async function POST(req: NextRequest) {
         }
 
         return NextResponse.json({ url: session.url });
-    } catch (err: any) {
-        console.error('Stripe checkout error:', err);
-        return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+    } catch (error: unknown) { // ✅ FIX: Change 'any' to 'unknown'
+        const message = getErrorMessage(error);
+        console.error('API Error fetching performance data:', message);
+        return NextResponse.json(
+            { error: message },
+            { status: 500 }
+        );
     }
 }

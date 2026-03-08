@@ -1,17 +1,8 @@
-/* /* @import "tailwindcss";
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
-
- 
-
 /* 1. IMPORTS FIRST */
 @import "tailwindcss";
-@import "tw-animate-css";
+@plugin "tailwindcss-animate";
 
-@custom-variant dark (&:is(.dark *));
-
-/* 2. THEME REGISTRATION (Tell Tailwind the names of your colors) */
+/* 2. THEME REGISTRATION */
 @theme {
   /* Mapping standard Shadcn variables */
   --color-background: var(--background);
@@ -31,10 +22,8 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   
-  /* ✅ THIS LINE FIXES YOUR ERROR */
-  /* It tells Tailwind that 'border-border' utility should exist */
+  /* Mapping for @apply border-border */
   --color-border: var(--border);
-  
   --color-input: var(--input);
   --color-ring: var(--ring);
 
@@ -51,12 +40,13 @@
   --color-school-secondary-800: var(--school-secondary-800);
   --color-school-secondary-950: var(--school-secondary-950);
 
+  /* Radius mapping */
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 }
 
-/* 3. VARIABLE DEFINITIONS (Set the actual values) */
+/* 3. VARIABLE DEFINITIONS */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
@@ -75,9 +65,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(1 0 0);
   
-  /* The value for your border */
   --border: oklch(0.929 0.013 255.508);
-  
   --input: oklch(0.929 0.013 255.508);
   --ring: oklch(0.704 0.04 256.788);
   --radius: 0.625rem;
@@ -97,13 +85,15 @@
   --school-secondary-950: color-mix(in srgb, var(--school-secondary), black 85%);
 }
 
-/* 4. BASE LAYER (Use @apply LAST) */
+/* 4. BASE LAYER */
 @layer base {
   * {
-    /* Now Tailwind knows what 'border-border' means! */
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground antialiased;
   }
 }
+
+/* Helper to handle dark mode */
+@custom-variant dark (&:is(.dark *));

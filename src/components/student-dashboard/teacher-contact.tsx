@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Phone, MessageSquare, User } from "lucide-react"
+import { Mail, MessageSquare, User } from "lucide-react"
 
 interface Teacher {
   name: string

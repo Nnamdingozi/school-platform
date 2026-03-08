@@ -11,12 +11,12 @@ interface SubjectCardProps {
   color: 'blue' | 'cyan' | 'pink' | 'yellow'
 }
 
-const colorClasses = {
-  blue: 'from-blue-400 to-blue-600',
-  cyan: 'from-cyan-400 to-cyan-600',
-  pink: 'from-pink-400 to-pink-600',
-  yellow: 'from-yellow-400 to-yellow-600',
-}
+// const colorClasses = {
+//   blue: 'from-blue-400 to-blue-600',
+//   cyan: 'from-cyan-400 to-cyan-600',
+//   pink: 'from-pink-400 to-pink-600',
+//   yellow: 'from-yellow-400 to-yellow-600',
+// }
 
 const bgColorClasses = {
   blue: 'bg-blue-50 dark:bg-blue-950',

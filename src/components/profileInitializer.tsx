@@ -97,6 +97,8 @@
 
 
 // components/profileInitializer.tsx
+
+
 'use client';
 
 import { useEffect } from 'react';
@@ -116,3 +118,5 @@ export function ProfileInitializer({ profile }: Props) {
 
     return null; // renders nothing, just initializes store
 }
+
+

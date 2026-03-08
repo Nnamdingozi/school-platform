@@ -1,9 +1,11 @@
+// 
+
 "use client"
 
 import { useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useProfileStore } from "@/store/profileStore"
-import { Layers, Users, ArrowRight, GraduationCap } from "lucide-react"
+import { Layers, Users, ArrowRight } from "lucide-react" // ✅ FIX 1: Removed unused 'GraduationCap'
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 
@@ -19,15 +21,12 @@ export function StudentsPerClassTable() {
 
         return classes
             .map((cls) => {
-                // Count enrollments belonging to this class
+                // ✅ FIX 2: Typed 'e' as an object with classId to avoid 'any'
                 const studentCount = enrollments.filter(
-                    (e: any) => e.classId === cls.id
+                    (e: { classId: string | null }) => e.classId === cls.id
                 ).length
 
-                // Find teacher name from profile relations
-                const teacher = profile.school?.classes?.find(
-                    (c) => c.teacherId === cls.teacherId
-                )
+                // ✅ FIX 3: Removed the unused 'teacher' variable lookup logic
 
                 return {
                     id: cls.id,
@@ -76,7 +75,6 @@ export function StudentsPerClassTable() {
 
             <CardContent className="p-0">
                 {isEmpty ? (
-                    /* ── Empty State ──────────────────────────────────────── */
                     <div className="flex flex-col items-center justify-center py-12 px-6 text-center space-y-3">
                         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-school-secondary-800 border border-school-secondary-700">
                             <Layers className="h-7 w-7 text-school-secondary-100/20" />
@@ -98,9 +96,7 @@ export function StudentsPerClassTable() {
                         </Link>
                     </div>
                 ) : (
-                    /* ── Table ────────────────────────────────────────────── */
                     <div className="divide-y divide-school-secondary-700/50">
-                        {/* Header row */}
                         <div className="grid grid-cols-12 px-4 py-2">
                             <p className="col-span-6 text-[10px] font-bold uppercase tracking-widest text-school-secondary-100/30">
                                 Class
@@ -114,8 +110,8 @@ export function StudentsPerClassTable() {
                         </div>
 
                         {classRows.map((cls, index) => {
-                            const isFull = cls.studentCount >= 40  // arbitrary threshold
-                            const isEmpty = cls.studentCount === 0
+                            const isFull = cls.studentCount >= 40  
+                            const isClassEmpty = cls.studentCount === 0
                             const barWidth = totalStudents > 0
                                 ? Math.max((cls.studentCount / totalStudents) * 100, 2)
                                 : 0
@@ -125,7 +121,6 @@ export function StudentsPerClassTable() {
                                     key={cls.id}
                                     className="grid grid-cols-12 items-center px-4 py-3 hover:bg-school-secondary-800/50 transition-colors group"
                                 >
-                                    {/* Class name + rank */}
                                     <div className="col-span-6 flex items-center gap-2.5 min-w-0">
                                         <span className="text-[10px] font-black text-school-secondary-100/20 w-4 shrink-0">
                                             {index + 1}
@@ -134,7 +129,7 @@ export function StudentsPerClassTable() {
                                             <p className="text-sm font-semibold text-school-secondary-100 truncate">
                                                 {cls.name}
                                             </p>
-                                            {isEmpty && (
+                                            {isClassEmpty && (
                                                 <p className="text-[10px] text-school-secondary-100/30 italic">
                                                     No students enrolled
                                                 </p>
@@ -142,7 +137,6 @@ export function StudentsPerClassTable() {
                                         </div>
                                     </div>
 
-                                    {/* Student count + bar */}
                                     <div className="col-span-4 space-y-1.5">
                                         <div className="flex items-center gap-2">
                                             <Users className="h-3 w-3 text-school-secondary-100/30 shrink-0" />
@@ -150,7 +144,6 @@ export function StudentsPerClassTable() {
                                                 {cls.studentCount}
                                             </span>
                                         </div>
-                                        {/* Mini bar */}
                                         <div className="h-1 w-full rounded-full bg-school-secondary-700 overflow-hidden">
                                             <div
                                                 className="h-full rounded-full bg-school-primary transition-all duration-500"
@@ -159,9 +152,8 @@ export function StudentsPerClassTable() {
                                         </div>
                                     </div>
 
-                                    {/* Status badge */}
                                     <div className="col-span-2 flex justify-end">
-                                        {isEmpty ? (
+                                        {isClassEmpty ? (
                                             <Badge className="text-[9px] bg-school-secondary-700 text-school-secondary-100/40 border-0 px-1.5 py-0.5">
                                                 Empty
                                             </Badge>
@@ -179,7 +171,6 @@ export function StudentsPerClassTable() {
                             )
                         })}
 
-                        {/* Summary footer */}
                         <div className="grid grid-cols-12 items-center px-4 py-3 bg-school-secondary-800/30">
                             <div className="col-span-6 flex items-center gap-2.5">
                                 <span className="w-4 shrink-0" />

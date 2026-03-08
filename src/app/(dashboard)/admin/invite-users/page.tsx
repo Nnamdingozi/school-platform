@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { useRouter } from "next/navigation"
 import { useProfileStore } from "@/store/profileStore"
 import { useSchool } from "@/context/schoolProvider"
 import { inviteUser } from "@/app/actions/invites"
@@ -9,14 +8,13 @@ import { toast } from "sonner"
 import {
     Users, GraduationCap, UserCircle, Plus, Trash2,
     Upload, Send, Loader2, CheckCircle2, XCircle,
-    ChevronDown, ArrowLeft, Mail, X
+    ArrowLeft, Mail, X
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
-import { Role } from "@/generated/prisma/client"
+
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -83,7 +81,6 @@ function parseCSV(text: string): InviteRow[] {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function InviteUsersPage() {
-    const router = useRouter()
     const { profile } = useProfileStore()
     const { school } = useSchool()
 
