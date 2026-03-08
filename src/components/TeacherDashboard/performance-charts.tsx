@@ -431,6 +431,499 @@
 // }
 
 // components/TeacherDashboard/performance-charts.tsx
+// "use client"
+
+// import { useState, useEffect } from "react"
+// import {
+//   Bar,
+//   BarChart,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   ResponsiveContainer,
+//   PieChart,
+//   Pie,
+//   Cell,
+// } from "recharts"
+// import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+// import {
+//   ChartContainer,
+//   ChartTooltip,
+//   ChartTooltipContent,
+// } from "@/components/ui/chart"
+// import { AlertCircle, CheckCircle2, UserCircle2, Loader2 } from "lucide-react"
+// // REMOVED: import { getPerformanceDashboardData, PerformanceDashboardData } from "@/app/actions/performance-data"
+//  import type {PerformanceDashboardData } from "@/types/performanceData" // <--- Import only the TYPE
+// import { toast } from "sonner"
+
+// interface PerformanceChartsProps {
+//   gradeSubjectId: string;
+//   schoolId: string;
+//   initialPerformanceData?: PerformanceDashboardData | null;
+//   initialPerformanceError?: string | null;
+// }
+
+// export function PerformanceCharts({ 
+//   gradeSubjectId, 
+//   schoolId, 
+//   initialPerformanceData,
+//   initialPerformanceError
+// }: PerformanceChartsProps) {
+//   const [data, setData] = useState<PerformanceDashboardData | null>(initialPerformanceData || null);
+//   const [isLoading, setIsLoading] = useState(!initialPerformanceData && !initialPerformanceError);
+//   const [error, setError] = useState<string | null>(initialPerformanceError || null);
+
+//   useEffect(() => {
+//     if (initialPerformanceData || initialPerformanceError) {
+//       setIsLoading(false);
+//       return;
+//     }
+
+//     const fetchData = async () => {
+//       setIsLoading(true);
+//       setError(null);
+//       try {
+//         if (!gradeSubjectId || !schoolId) {
+//           throw new Error("Missing gradeSubjectId or schoolId to fetch data.");
+//         }
+
+//         // --- NEW: Call the API Route instead of the server action directly ---
+//         const response = await fetch(`/api/performance/${gradeSubjectId}/${schoolId}`);
+//         if (!response.ok) {
+//           const errorData = await response.json();
+//           throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+//         }
+//         const resultData: PerformanceDashboardData = await response.json();
+//         // --- END NEW ---
+
+//         setData(resultData); // Directly set the data from the API
+        
+//       } catch (err: any) { // Type 'any' for unknown error object
+//         console.error("Error fetching performance data:", err);
+//         setError(err.message || "An unexpected error occurred while fetching data.");
+//         toast.error(err.message || "An unexpected error occurred.");
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
+
+//     if (gradeSubjectId && schoolId && !initialPerformanceData && !initialPerformanceError) { 
+//       fetchData();
+//     } else if (!gradeSubjectId || !schoolId) {
+//       setIsLoading(false);
+//       setError("Please select a Grade and Subject to view performance.");
+//     }
+//   }, [gradeSubjectId, schoolId, initialPerformanceData, initialPerformanceError]);
+
+//   // ... (rest of the component remains the same) ...
+
+//   if (isLoading) { /* ... */ }
+//   if (error) { /* ... */ }
+//   if (!data || (
+//     (data.topicScores?.length ?? 0) === 0 && 
+//     (data.studentsNeedingAttention?.length ?? 0) === 0 && 
+//     (data.curriculumCompletion?.totalTopics ?? 0) === 0
+// )) {
+
+//   const topicScores = data?.topicScores || [];
+//   const completionData = data?.curriculumCompletion?.completionData || [];
+//   const studentsNeedingAttention = data?.studentsNeedingAttention || [];
+//   const curriculumPercentage = data?.curriculumCompletion?.percentage || 0;
+//   const completedTopicsCount = data?.curriculumCompletion?.completedTopics || 0;
+//   const totalTopicsCount = data?.curriculumCompletion?.totalTopics || 0;
+
+//   const PIE_COLORS = ["#10b981", "#e5e7eb"];
+
+//   return (
+//     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 h-[350px] w-full min-h-[350px]">
+//       {/* Bar Chart - Average Score per Topic */}
+//       <Card className="md:col-span-2 lg:col-span-1">
+//         <CardHeader className="pb-2">
+//           <CardTitle className="text-base font-semibold">Average Score per Topic</CardTitle>
+//           <CardDescription>Performance across curriculum topics</CardDescription>
+//         </CardHeader>
+//         <CardContent>
+//           {topicScores.length > 0 ? (
+//             <ChartContainer
+//               config={{
+//                 score: {
+//                   label: "Score",
+//                   color: "#10b981",
+//                 },
+//               }}
+//               className="h-50 w-full"
+//             >
+//               <ResponsiveContainer width="100%" height="100%">
+//                 <BarChart data={topicScores} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+//                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+//                   <XAxis 
+//                     dataKey="topic" 
+//                     tick={{ fontSize: 11, fill: "#6b7280" }}
+//                     axisLine={false}
+//                     tickLine={false}
+//                   />
+//                   <YAxis 
+//                     tick={{ fontSize: 11, fill: "#6b7280" }}
+//                     axisLine={false}
+//                     tickLine={false}
+//                     domain={[0, 100]}
+//                   />
+//                   <ChartTooltip content={<ChartTooltipContent />} />
+//                   <Bar 
+//                     dataKey="score" 
+//                     fill="#10b981"
+//                     radius={[4, 4, 0, 0]}
+//                   />
+//                 </BarChart>
+//               </ResponsiveContainer>
+//             </ChartContainer>
+//           ) : (
+//             <div className="flex flex-col items-center justify-center h-[200px] text-slate-500">
+//               <AlertCircle className="h-6 w-6 mb-2" />
+//               <p className="text-sm">No topic scores available.</p>
+//             </div>
+//           )}
+//         </CardContent>
+//       </Card>
+
+//       {/* Pie Chart - Curriculum Completion */}
+//       <Card>
+//         <CardHeader className="pb-2">
+//           <CardTitle className="text-base font-semibold">Curriculum Completion</CardTitle>
+//           <CardDescription>Overall progress in this subject</CardDescription>
+//         </CardHeader>
+//         <CardContent className="flex flex-col items-center">
+//           {totalTopicsCount > 0 ? (
+//             <>
+//               <div className="relative h-40 w-40">
+//                 <ResponsiveContainer width="100%" height="100%">
+//                   <PieChart>
+//                     <Pie
+//                       data={completionData}
+//                       cx="50%"
+//                       cy="50%"
+//                       innerRadius={50}
+//                       outerRadius={70}
+//                       paddingAngle={2}
+//                       dataKey="value"
+//                       startAngle={90}
+//                       endAngle={-270}
+//                     >
+//                       {completionData.map((entry, index) => (
+//                         <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+//                       ))}
+//                     </Pie>
+//                   </PieChart>
+//                 </ResponsiveContainer>
+//                 <div className="absolute inset-0 flex flex-col items-center justify-center">
+//                   <span className="text-3xl font-bold text-foreground">{curriculumPercentage}%</span>
+//                   <span className="text-xs text-muted-foreground">Complete</span>
+//                 </div>
+//               </div>
+//               <div className="mt-2 flex items-center gap-4 text-sm">
+//                 <div className="flex items-center gap-1.5">
+//                   <div className="h-3 w-3 rounded-full bg-primary" />
+//                   <span className="text-muted-foreground">{completedTopicsCount} of {totalTopicsCount} topics</span>
+//                 </div>
+//               </div>
+//             </>
+//           ) : (
+//             <div className="flex flex-col items-center justify-center h-[200px] text-slate-500">
+//               <AlertCircle className="h-6 w-6 mb-2" />
+//               <p className="text-sm">No topics defined for this subject.</p>
+//             </div>
+//           )}
+//         </CardContent>
+//       </Card>
+
+//       {/* Students Needing Attention */}
+//       <Card>
+//         <CardHeader className="pb-2">
+//           <div className="flex items-center gap-2">
+//             <AlertCircle className="h-4 w-4 text-amber-500" />
+//             <CardTitle className="text-base font-semibold">Students Needing Attention</CardTitle>
+//           </div>
+//           <CardDescription>Lowest performing students in this subject</CardDescription>
+//         </CardHeader>
+//         <CardContent>
+//           {studentsNeedingAttention.length > 0 ? (
+//             <div className="space-y-3">
+//               {studentsNeedingAttention.map((student) => (
+//                 <div key={student.name} className="flex items-center justify-between">
+//                   <div className="flex items-center gap-3">
+//                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
+//                       {student.name.split(" ")[0][0]}{student.name.split(" ").length > 1 ? student.name.split(" ")[1][0] : ''}
+//                     </div>
+//                     <span className="text-sm font-medium text-foreground">{student.name}</span>
+//                   </div>
+//                   <div className="flex items-center gap-2">
+//                     <span className={`text-sm font-semibold ${student.score < 50 ? "text-red-500" : "text-amber-500"}`}>
+//                       {student.score}%
+//                     </span>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           ) : (
+//             <div className="flex flex-col items-center justify-center h-[200px] text-slate-500">
+//               <CheckCircle2 className="h-6 w-6 mb-2 text-emerald-500" />
+//               <p className="text-sm">All students performing well or no assessments yet!</p>
+//             </div>
+//           )}
+//         </CardContent>
+//       </Card>
+//     </div>
+//   )
+// }
+// }
+
+
+
+// "use client"
+
+// import { useState, useEffect } from "react"
+// import {
+//   Bar,
+//   BarChart,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   ResponsiveContainer,
+//   PieChart,
+//   Pie,
+//   Cell,
+// } from "recharts"
+// import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+// import {
+//   ChartContainer,
+//   ChartTooltip,
+//   ChartTooltipContent,
+// } from "@/components/ui/chart"
+// import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
+// import type { PerformanceDashboardData } from "@/types/performanceData"
+// import { toast } from "sonner"
+
+// interface PerformanceChartsProps {
+//   gradeSubjectId: string;
+//   schoolId: string;
+//   initialPerformanceData?: PerformanceDashboardData | null;
+//   initialPerformanceError?: string | null;
+// }
+
+// export function PerformanceCharts({ 
+//   gradeSubjectId, 
+//   schoolId, 
+//   initialPerformanceData,
+//   initialPerformanceError
+// }: PerformanceChartsProps) {
+//   // Initialize state with props if available
+//   const [data, setData] = useState<PerformanceDashboardData | null>(initialPerformanceData || null);
+//   const [isLoading, setIsLoading] = useState(!initialPerformanceData && !initialPerformanceError);
+//   const [error, setError] = useState<string | null>(initialPerformanceError || null);
+
+//   useEffect(() => {
+//     // If data was provided via props, don't fetch
+//     if (initialPerformanceData) {
+//       setData(initialPerformanceData);
+//       setIsLoading(false);
+//       return;
+//     }
+    
+//     if (initialPerformanceError) {
+//       setError(initialPerformanceError);
+//       setIsLoading(false);
+//       return;
+//     }
+
+//     const fetchData = async () => {
+//       if (!gradeSubjectId || !schoolId) return;
+      
+//       setIsLoading(true);
+//       setError(null);
+//       try {
+//         const response = await fetch(`/api/performance/${gradeSubjectId}/${schoolId}`);
+//         if (!response.ok) {
+//           const errorData = await response.json();
+//           throw new Error(errorData.error || `Error: ${response.status}`);
+//         }
+//         const resultData: PerformanceDashboardData = await response.json();
+//         setData(resultData);
+//       } catch (err: any) {
+//         console.error("Error fetching performance data:", err);
+//         setError(err.message || "An unexpected error occurred.");
+//         toast.error("Could not load performance stats.");
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
+
+//     fetchData();
+//   }, [gradeSubjectId, schoolId, initialPerformanceData, initialPerformanceError]);
+
+//   // 1. Handle Loading State
+//   if (isLoading) {
+//     return (
+//       <div className="flex items-center justify-center h-[350px] w-full border rounded-xl bg-muted/10">
+//         <div className="flex flex-col items-center gap-2">
+//           <Loader2 className="h-8 w-8 animate-spin text-primary" />
+//           <p className="text-sm text-muted-foreground">Loading performance data...</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   // 2. Handle Error State
+//   if (error) {
+//     return (
+//       <div className="flex items-center justify-center h-[350px] w-full border border-destructive/20 rounded-xl bg-destructive/5">
+//         <div className="flex flex-col items-center gap-2 text-destructive">
+//           <AlertCircle className="h-8 w-8" />
+//           <p className="text-sm font-medium">{error}</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   // 3. Handle Empty/Null Data State (Verified Fix)
+//   const isDataEmpty = !data || (
+//     (data.topicScores?.length ?? 0) === 0 && 
+//     (data.studentsNeedingAttention?.length ?? 0) === 0 && 
+//     (data.curriculumCompletion?.totalTopics ?? 0) === 0
+//   );
+
+//   if (isDataEmpty) {
+//     return (
+//       <Card className="flex items-center justify-center h-[350px] w-full border-dashed">
+//         <div className="text-center p-6">
+//           <AlertCircle className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+//           <h3 className="text-lg font-medium text-foreground">No Assessment Data</h3>
+//           <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+//             We couldn't find any performance records for this subject yet. 
+//             Once you grade assessments, the charts will appear here.
+//           </p>
+//         </div>
+//       </Card>
+//     );
+//   }
+
+//   // Now we can safely assume 'data' is not null
+//   const topicScores = data.topicScores || [];
+//   const completionData = data.curriculumCompletion?.completionData || [];
+//   const studentsNeedingAttention = data.studentsNeedingAttention || [];
+//   const curriculumPercentage = data.curriculumCompletion?.percentage || 0;
+//   const completedTopicsCount = data.curriculumCompletion?.completedTopics || 0;
+//   const totalTopicsCount = data.curriculumCompletion?.totalTopics || 0;
+
+//   const PIE_COLORS = ["#10b981", "#e5e7eb"];
+
+//   return (
+//     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 min-h-[350px]">
+//       {/* Bar Chart - Average Score per Topic */}
+//       <Card className="md:col-span-2 lg:col-span-1">
+//         <CardHeader className="pb-2">
+//           <CardTitle className="text-base font-semibold">Average Score per Topic</CardTitle>
+//           <CardDescription>Performance across curriculum topics</CardDescription>
+//         </CardHeader>
+//         <CardContent>
+//           {topicScores.length > 0 ? (
+//             <div className="h-[200px] w-full">
+//               <ChartContainer config={{ score: { label: "Score", color: "#10b981" } }}>
+//                 <ResponsiveContainer width="100%" height="100%">
+//                   <BarChart data={topicScores} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+//                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+//                     <XAxis dataKey="topic" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+//                     <YAxis tick={{ fontSize: 11 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+//                     <ChartTooltip content={<ChartTooltipContent />} />
+//                     <Bar dataKey="score" fill="#10b981" radius={[4, 4, 0, 0]} />
+//                   </BarChart>
+//                 </ResponsiveContainer>
+//               </ChartContainer>
+//             </div>
+//           ) : (
+//             <div className="flex items-center justify-center h-[200px] text-muted-foreground text-sm">
+//               No topic scores available
+//             </div>
+//           )}
+//         </CardContent>
+//       </Card>
+
+//       {/* Pie Chart - Curriculum Completion */}
+//       <Card>
+//         <CardHeader className="pb-2">
+//           <CardTitle className="text-base font-semibold">Curriculum Completion</CardTitle>
+//           <CardDescription>Overall progress</CardDescription>
+//         </CardHeader>
+//         <CardContent className="flex flex-col items-center">
+//           <div className="relative h-40 w-40">
+//             <ResponsiveContainer width="100%" height="100%">
+//               <PieChart>
+//                 <Pie
+//                   data={completionData}
+//                   cx="50%"
+//                   cy="50%"
+//                   innerRadius={50}
+//                   outerRadius={70}
+//                   paddingAngle={2}
+//                   dataKey="value"
+//                   startAngle={90}
+//                   endAngle={-270}
+//                 >
+//                   {completionData.map((_, index) => (
+//                     <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+//                   ))}
+//                 </Pie>
+//               </PieChart>
+//             </ResponsiveContainer>
+//             <div className="absolute inset-0 flex flex-col items-center justify-center">
+//               <span className="text-2xl font-bold">{curriculumPercentage}%</span>
+//               <span className="text-[10px] uppercase text-muted-foreground">Done</span>
+//             </div>
+//           </div>
+//           <p className="mt-2 text-xs text-muted-foreground font-medium">
+//             {completedTopicsCount} of {totalTopicsCount} topics completed
+//           </p>
+//         </CardContent>
+//       </Card>
+
+//       {/* Students Needing Attention */}
+//       <Card>
+//         <CardHeader className="pb-2">
+//           <div className="flex items-center gap-2">
+//             <AlertCircle className="h-4 w-4 text-amber-500" />
+//             <CardTitle className="text-base font-semibold">Attention Needed</CardTitle>
+//           </div>
+//           <CardDescription>Lowest performing students</CardDescription>
+//         </CardHeader>
+//         <CardContent>
+//           <div className="space-y-4">
+//             {studentsNeedingAttention.length > 0 ? (
+//               studentsNeedingAttention.map((student) => (
+//                 <div key={student.name} className="flex items-center justify-between">
+//                   <div className="flex items-center gap-3">
+//                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+//                       {student.name.charAt(0)}
+//                     </div>
+//                     <span className="text-sm font-medium truncate max-w-[120px]">{student.name}</span>
+//                   </div>
+//                   <span className={`text-sm font-bold ${student.score < 50 ? "text-red-500" : "text-amber-500"}`}>
+//                     {student.score}%
+//                   </span>
+//                 </div>
+//               ))
+//             ) : (
+//               <div className="flex flex-col items-center justify-center pt-4 text-center">
+//                 <CheckCircle2 className="h-8 w-8 text-emerald-500 mb-2" />
+//                 <p className="text-xs text-muted-foreground">All students are performing well!</p>
+//               </div>
+//             )}
+//           </div>
+//         </CardContent>
+//       </Card>
+//     </div>
+//   )
+// }
+
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -451,10 +944,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { AlertCircle, CheckCircle2, UserCircle2, Loader2 } from "lucide-react"
-// REMOVED: import { getPerformanceDashboardData, PerformanceDashboardData } from "@/app/actions/performance-data"
- import type {PerformanceDashboardData } from "@/types/performanceData" // <--- Import only the TYPE
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
+import type { PerformanceDashboardData } from "@/types/performanceData"
 import { toast } from "sonner"
+// ✅ Import your error utility
+import { getErrorMessage } from "@/lib/error-handler"
 
 interface PerformanceChartsProps {
   gradeSubjectId: string;
@@ -474,69 +968,98 @@ export function PerformanceCharts({
   const [error, setError] = useState<string | null>(initialPerformanceError || null);
 
   useEffect(() => {
-    if (initialPerformanceData || initialPerformanceError) {
+    if (initialPerformanceData) {
+      setData(initialPerformanceData);
+      setIsLoading(false);
+      return;
+    }
+    
+    if (initialPerformanceError) {
+      setError(initialPerformanceError);
       setIsLoading(false);
       return;
     }
 
     const fetchData = async () => {
+      if (!gradeSubjectId || !schoolId) return;
+      
       setIsLoading(true);
       setError(null);
       try {
-        if (!gradeSubjectId || !schoolId) {
-          throw new Error("Missing gradeSubjectId or schoolId to fetch data.");
-        }
-
-        // --- NEW: Call the API Route instead of the server action directly ---
         const response = await fetch(`/api/performance/${gradeSubjectId}/${schoolId}`);
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+          throw new Error(errorData.error || `Error: ${response.status}`);
         }
         const resultData: PerformanceDashboardData = await response.json();
-        // --- END NEW ---
-
-        setData(resultData); // Directly set the data from the API
-        
-      } catch (err: any) { // Type 'any' for unknown error object
-        console.error("Error fetching performance data:", err);
-        setError(err.message || "An unexpected error occurred while fetching data.");
-        toast.error(err.message || "An unexpected error occurred.");
+        setData(resultData);
+      } catch (err: unknown) { // ✅ FIX 1: Changed 'any' to 'unknown'
+        const message = getErrorMessage(err);
+        console.error("Error fetching performance data:", message);
+        setError(message);
+        toast.error("Could not load performance stats.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (gradeSubjectId && schoolId && !initialPerformanceData && !initialPerformanceError) { 
-      fetchData();
-    } else if (!gradeSubjectId || !schoolId) {
-      setIsLoading(false);
-      setError("Please select a Grade and Subject to view performance.");
-    }
+    fetchData();
   }, [gradeSubjectId, schoolId, initialPerformanceData, initialPerformanceError]);
 
-  // ... (rest of the component remains the same) ...
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[350px] w-full border rounded-xl bg-muted/10">
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Loading performance data...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (isLoading) { /* ... */ }
-  if (error) { /* ... */ }
-  if (!data || (
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-[350px] w-full border border-destructive/20 rounded-xl bg-destructive/5">
+        <div className="flex flex-col items-center gap-2 text-destructive">
+          <AlertCircle className="h-8 w-8" />
+          <p className="text-sm font-medium">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isDataEmpty = !data || (
     (data.topicScores?.length ?? 0) === 0 && 
     (data.studentsNeedingAttention?.length ?? 0) === 0 && 
     (data.curriculumCompletion?.totalTopics ?? 0) === 0
-)) {
+  );
 
-  const topicScores = data?.topicScores || [];
-  const completionData = data?.curriculumCompletion?.completionData || [];
-  const studentsNeedingAttention = data?.studentsNeedingAttention || [];
-  const curriculumPercentage = data?.curriculumCompletion?.percentage || 0;
-  const completedTopicsCount = data?.curriculumCompletion?.completedTopics || 0;
-  const totalTopicsCount = data?.curriculumCompletion?.totalTopics || 0;
+  if (isDataEmpty) {
+    return (
+      <Card className="flex items-center justify-center h-[350px] w-full border-dashed">
+        <div className="text-center p-6">
+          <AlertCircle className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+          <h3 className="text-lg font-medium text-foreground">No Assessment Data</h3>
+          {/* ✅ FIX 2: Wrapped text in curly braces to escape the apostrophe */}
+          <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+            {"We couldn't find any performance records for this subject yet. Once you grade assessments, the charts will appear here."}
+          </p>
+        </div>
+      </Card>
+    );
+  }
+
+  const topicScores = data.topicScores || [];
+  const completionData = data.curriculumCompletion?.completionData || [];
+  const studentsNeedingAttention = data.studentsNeedingAttention || [];
+  const curriculumPercentage = data.curriculumCompletion?.percentage || 0;
+  const completedTopicsCount = data.curriculumCompletion?.completedTopics || 0;
+  const totalTopicsCount = data.curriculumCompletion?.totalTopics || 0;
 
   const PIE_COLORS = ["#10b981", "#e5e7eb"];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 h-[350px] w-full min-h-[350px]">
-      {/* Bar Chart - Average Score per Topic */}
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 min-h-[350px]">
       <Card className="md:col-span-2 lg:col-span-1">
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-semibold">Average Score per Topic</CardTitle>
@@ -544,135 +1067,97 @@ export function PerformanceCharts({
         </CardHeader>
         <CardContent>
           {topicScores.length > 0 ? (
-            <ChartContainer
-              config={{
-                score: {
-                  label: "Score",
-                  color: "#10b981",
-                },
-              }}
-              className="h-50 w-full"
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={topicScores} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-                  <XAxis 
-                    dataKey="topic" 
-                    tick={{ fontSize: 11, fill: "#6b7280" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 11, fill: "#6b7280" }}
-                    axisLine={false}
-                    tickLine={false}
-                    domain={[0, 100]}
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar 
-                    dataKey="score" 
-                    fill="#10b981"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <div className="h-[200px] w-full">
+              <ChartContainer config={{ score: { label: "Score", color: "#10b981" } }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={topicScores} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                    <XAxis dataKey="topic" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 11 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="score" fill="#10b981" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-[200px] text-slate-500">
-              <AlertCircle className="h-6 w-6 mb-2" />
-              <p className="text-sm">No topic scores available.</p>
+            <div className="flex items-center justify-center h-[200px] text-muted-foreground text-sm">
+              No topic scores available
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Pie Chart - Curriculum Completion */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-semibold">Curriculum Completion</CardTitle>
-          <CardDescription>Overall progress in this subject</CardDescription>
+          <CardDescription>Overall progress</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center">
-          {totalTopicsCount > 0 ? (
-            <>
-              <div className="relative h-40 w-40">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={completionData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={70}
-                      paddingAngle={2}
-                      dataKey="value"
-                      startAngle={90}
-                      endAngle={-270}
-                    >
-                      {completionData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-3xl font-bold text-foreground">{curriculumPercentage}%</span>
-                  <span className="text-xs text-muted-foreground">Complete</span>
-                </div>
-              </div>
-              <div className="mt-2 flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-1.5">
-                  <div className="h-3 w-3 rounded-full bg-primary" />
-                  <span className="text-muted-foreground">{completedTopicsCount} of {totalTopicsCount} topics</span>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-[200px] text-slate-500">
-              <AlertCircle className="h-6 w-6 mb-2" />
-              <p className="text-sm">No topics defined for this subject.</p>
+          <div className="relative h-40 w-40">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={completionData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={70}
+                  paddingAngle={2}
+                  dataKey="value"
+                  startAngle={90}
+                  endAngle={-270}
+                >
+                  {completionData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-2xl font-bold">{curriculumPercentage}%</span>
+              <span className="text-[10px] uppercase text-muted-foreground">Done</span>
             </div>
-          )}
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground font-medium">
+            {completedTopicsCount} of {totalTopicsCount} topics completed
+          </p>
         </CardContent>
       </Card>
 
-      {/* Students Needing Attention */}
       <Card>
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <AlertCircle className="h-4 w-4 text-amber-500" />
-            <CardTitle className="text-base font-semibold">Students Needing Attention</CardTitle>
+            <CardTitle className="text-base font-semibold">Attention Needed</CardTitle>
           </div>
-          <CardDescription>Lowest performing students in this subject</CardDescription>
+          <CardDescription>Lowest performing students</CardDescription>
         </CardHeader>
         <CardContent>
-          {studentsNeedingAttention.length > 0 ? (
-            <div className="space-y-3">
-              {studentsNeedingAttention.map((student) => (
+          <div className="space-y-4">
+            {studentsNeedingAttention.length > 0 ? (
+              studentsNeedingAttention.map((student) => (
                 <div key={student.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
-                      {student.name.split(" ")[0][0]}{student.name.split(" ").length > 1 ? student.name.split(" ")[1][0] : ''}
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+                      {student.name.charAt(0)}
                     </div>
-                    <span className="text-sm font-medium text-foreground">{student.name}</span>
+                    <span className="text-sm font-medium truncate max-w-[120px]">{student.name}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-sm font-semibold ${student.score < 50 ? "text-red-500" : "text-amber-500"}`}>
-                      {student.score}%
-                    </span>
-                  </div>
+                  <span className={`text-sm font-bold ${student.score < 50 ? "text-red-500" : "text-amber-500"}`}>
+                    {student.score}%
+                  </span>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-[200px] text-slate-500">
-              <CheckCircle2 className="h-6 w-6 mb-2 text-emerald-500" />
-              <p className="text-sm">All students performing well or no assessments yet!</p>
-            </div>
-          )}
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center pt-4 text-center">
+                <CheckCircle2 className="h-8 w-8 text-emerald-500 mb-2" />
+                <p className="text-xs text-muted-foreground">All students are performing well!</p>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
   )
-}
 }

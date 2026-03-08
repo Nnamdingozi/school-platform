@@ -540,116 +540,929 @@
 
 
 
+// 'use client';
+
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2 } from 'lucide-react';
+
+// export default function ConfirmPage() {
+//     const router = useRouter();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState('Confirming your account...');
+
+//     useEffect(() => {
+//         async function confirm() {
+//             const supabase = createClient();
+
+//             console.log('✅ Confirm page hit');
+//             console.log('URL:', window.location.href);
+
+//             const params = new URLSearchParams(window.location.search);
+//             const token_hash = params.get('token_hash');
+//             const type = params.get('type');
+
+//             console.log('token_hash:', token_hash ? 'present' : 'missing');
+//             console.log('type:', type);
+
+//             if (!token_hash || !type) {
+//                 console.error('❌ Missing params');
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             setMessage('Verifying your email...');
+
+//             const { error, data } = await supabase.auth.verifyOtp({
+//                 type: type as any,
+//                 token_hash,
+//             });
+
+//             console.log('verifyOtp:', {
+//                 error: error?.message ?? null,
+//                 userId: data?.user?.id ?? null,
+//                 email: data?.user?.email ?? null,
+//             });
+
+//             if (error) {
+//                 console.error('❌ verifyOtp failed:', error.message);
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             if (type === 'invite') {
+//                 router.replace('/auth/set-password');
+//                 return;
+//             }
+
+//             // ✅ Email confirmed — send to login with success message
+//             // Login handles profile fetch and role-based redirect
+//             setMessage('Confirmed! Redirecting to login...');
+//             await new Promise(r => setTimeout(r, 800));
+//             router.replace('/login?confirmed=true');
+//         }
+
+//         confirm();
+//     }, [router]);
+
+//     if (status === 'error') {
+//         return (
+//             <div style={{
+//                 minHeight: '100vh',
+//                 display: 'flex',
+//                 flexDirection: 'column',
+//                 alignItems: 'center',
+//                 justifyContent: 'center',
+//                 background: '#0f172a',
+//                 gap: '16px',
+//             }}>
+//                 <p style={{ color: '#f87171', fontWeight: 600, fontSize: '18px' }}>
+//                     Confirmation failed
+//                 </p>
+//                 <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', maxWidth: '320px', textAlign: 'center' }}>
+//                     This link may have expired or already been used.
+//                     Try logging in directly or use Forgot Password.
+//                 </p>
+//                 <a href="/login" style={{ color: '#f59e0b', fontSize: '14px' }}>
+//                     Go to login
+//                 </a>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div style={{
+//             minHeight: '100vh',
+//             display: 'flex',
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//             justifyContent: 'center',
+//             background: '#0f172a',
+//             gap: '16px',
+//         }}>
+//             <Loader2 style={{
+//                 width: 32,
+//                 height: 32,
+//                 color: '#f59e0b',
+//                 animation: 'spin 1s linear infinite'
+//             }} />
+//             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px' }}>
+//                 {message}
+//             </p>
+//         </div>
+//     );
+// }
+
+
+// 'use client';
+
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2 } from 'lucide-react';
+// // ✅ Fix 1: Import the correct type for the OTP verification
+// import type { EmailOtpType } from '@supabase/supabase-js';
+
+// export default function ConfirmPage() {
+//     const router = useRouter();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState('Confirming your account...');
+
+//     useEffect(() => {
+//         async function confirm() {
+//             const supabase = createClient();
+
+//             const params = new URLSearchParams(window.location.search);
+//             const token_hash = params.get('token_hash');
+//             const type = params.get('type');
+
+//             if (!token_hash || !type) {
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             setMessage('Verifying your email...');
+
+//             // ✅ Fix 2: Cast 'type' to EmailOtpType instead of any
+//             const { error, data } = await supabase.auth.verifyOtp({
+//                 type: type as EmailOtpType,
+//                 token_hash,
+//             });
+
+//             if (error) {
+//                 console.error('❌ verifyOtp failed:', error.message);
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             if (type === 'invite') {
+//                 router.replace('/auth/set-password');
+//                 return;
+//             }
+
+//             setMessage('Confirmed! Redirecting to login...');
+//             await new Promise(r => setTimeout(r, 800));
+//             router.replace('/login?confirmed=true');
+//         }
+
+//         confirm();
+//     }, [router]); // ✅ Fix 3: 'router' is now correctly included in dependencies
+
+//     if (status === 'error') {
+//         return (
+//             <div style={{
+//                 minHeight: '100vh',
+//                 display: 'flex',
+//                 flexDirection: 'column',
+//                 alignItems: 'center',
+//                 justifyContent: 'center',
+//                 background: '#0f172a',
+//                 gap: '16px',
+//             }}>
+//                 <p style={{ color: '#f87171', fontWeight: 600, fontSize: '18px' }}>
+//                     Confirmation failed
+//                 </p>
+//                 <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', maxWidth: '320px', textAlign: 'center' }}>
+//                     This link may have expired or already been used.
+//                     Try logging in directly or use Forgot Password.
+//                 </p>
+//                 <a href="/login" style={{ color: '#f59e0b', fontSize: '14px' }}>
+//                     Go to login
+//                 </a>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div style={{
+//             minHeight: '100vh',
+//             display: 'flex',
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//             justifyContent: 'center',
+//             background: '#0f172a',
+//             gap: '16px',
+//         }}>
+//             <Loader2 style={{
+//                 width: 32,
+//                 height: 32,
+//                 color: '#f59e0b',
+//                 animation: 'spin 1s linear infinite'
+//             }} />
+//             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px' }}>
+//                 {message}
+//             </p>
+//         </div>
+//     );
+// }
+
+
+// 'use client';
+
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2 } from 'lucide-react';
+// import type { EmailOtpType } from '@supabase/supabase-js';
+
+// export default function ConfirmPage() {
+//     const router = useRouter();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState('Confirming your account...');
+
+//     useEffect(() => {
+//         async function confirm() {
+//             const supabase = createClient();
+
+//             const params = new URLSearchParams(window.location.search);
+//             const token_hash = params.get('token_hash');
+//             const type = params.get('type');
+
+//             if (!token_hash || !type) {
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             setMessage('Verifying your email...');
+
+//             // ✅ FIX: Removed 'data' because it was unused
+//             const { error } = await supabase.auth.verifyOtp({
+//                 type: type as EmailOtpType,
+//                 token_hash,
+//             });
+
+//             if (error) {
+//                 console.error('❌ verifyOtp failed:', error.message);
+//                 setStatus('error');
+//                 return;
+//             }
+
+//             if (type === 'invite') {
+//                 router.replace('/set-password');
+//                 return;
+//             }
+
+//             setMessage('Confirmed! Redirecting to login...');
+//             await new Promise(r => setTimeout(r, 800));
+//             router.replace('/login?confirmed=true');
+//         }
+
+//         confirm();
+//     }, [router]);
+
+//     if (status === 'error') {
+//         return (
+//             <div style={{
+//                 minHeight: '100vh',
+//                 display: 'flex',
+//                 flexDirection: 'column',
+//                 alignItems: 'center',
+//                 justifyContent: 'center',
+//                 background: '#0f172a',
+//                 gap: '16px',
+//             }}>
+//                 <p style={{ color: '#f87171', fontWeight: 600, fontSize: '18px' }}>
+//                     Confirmation failed
+//                 </p>
+//                 <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', maxWidth: '320px', textAlign: 'center' }}>
+//                     This link may have expired or already been used.
+//                     Try logging in directly or use Forgot Password.
+//                 </p>
+//                 <a href="/login" style={{ color: '#f59e0b', fontSize: '14px' }}>
+//                     Go to login
+//                 </a>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div style={{
+//             minHeight: '100vh',
+//             display: 'flex',
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//             justifyContent: 'center',
+//             background: '#0f172a',
+//             gap: '16px',
+//         }}>
+//             <Loader2 style={{
+//                 width: 32,
+//                 height: 32,
+//                 color: '#f59e0b',
+//                 animation: 'spin 1s linear infinite'
+//             }} />
+//             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px' }}>
+//                 {message}
+//             </p>
+//         </div>
+//     );
+// }
+
+
+// 'use client';
+
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2, AlertCircle } from 'lucide-react';
+
+// export default function ConfirmPage() {
+//     const router = useRouter();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState('Verifying your invitation...');
+
+//     useEffect(() => {
+//         const supabase = createClient();
+
+//         // 1. Listen for the auth state change
+//         // Supabase Client automatically parses the #access_token from the URL
+//         // and triggers 'SIGNED_IN'.
+//         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+//             console.log("Auth Event:", event);
+
+//             if (event === 'SIGNED_IN' && session) {
+//                 handleRedirection(session);
+//             } else if (event === 'INITIAL_SESSION') {
+//                 // If the session was already parsed before the listener attached
+//                 if (session) {
+//                     handleRedirection(session);
+//                 } else {
+//                     // Give it a tiny bit of time to parse the hash
+//                     setTimeout(async () => {
+//                         const { data } = await supabase.auth.getSession();
+//                         if (data.session) {
+//                             handleRedirection(data.session);
+//                         } else {
+//                             // If after 2 seconds no session is found, it's an error
+//                             setStatus('error');
+//                             setMessage('Invalid or expired invitation link.');
+//                         }
+//                     }, 2000);
+//                 }
+//             }
+//         });
+
+//         const handleRedirection = (session: any) => {
+//             // Check if this was an invite
+//             // Method A: Check URL for "type=invite" (even if it's in the hash)
+//             const isInvite = window.location.href.includes('type=invite');
+            
+//             // Method B: Check if user has a password (invited users don't)
+//             // Or use the metadata you sent during the invite
+//             const role = session.user.user_metadata?.role;
+
+//             if (isInvite || role) {
+//                 setMessage('Invitation accepted! Redirecting to set your password...');
+//                 router.replace('/set-password');
+//             } else {
+//                 setMessage('Success! Redirecting to dashboard...');
+//                 router.replace('/');
+//             }
+//         };
+
+//         return () => {
+//             subscription.unsubscribe();
+//         };
+//     }, [router]);
+
+//     if (status === 'error') {
+//         return (
+//             <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] p-6 text-center">
+//                 <div className="bg-red-500/10 p-4 rounded-full mb-4">
+//                     <AlertCircle className="w-8 h-8 text-red-500" />
+//                 </div>
+//                 <h1 className="text-xl font-bold text-white mb-2">Confirmation Failed</h1>
+//                 <p className="text-slate-400 text-sm max-w-xs mb-6">{message}</p>
+//                 <button 
+//                     onClick={() => router.push('/login')}
+//                     className="text-[#f59e0b] text-sm font-medium hover:underline"
+//                 >
+//                     Back to login
+//                 </button>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] gap-4">
+//             <Loader2 className="w-10 h-10 text-[#f59e0b] animate-spin" />
+//             <div className="space-y-1 text-center">
+//                 <p className="text-white font-medium text-lg">Accepting Invite</p>
+//                 <p className="text-slate-400 text-sm">{message}</p>
+//             </div>
+//         </div>
+//     );
+// }
+
+// 'use client';
+
+// import { useEffect, useState, useCallback, useRef } from 'react';
+// import { useRouter, useSearchParams } from 'next/navigation'; // Added useSearchParams
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2, AlertCircle } from 'lucide-react';
+// import { Role } from '@prisma/client';
+// import { AuthChangeEvent, Session, EmailOtpType } from '@supabase/supabase-js'; // Added EmailOtpType
+// import { getErrorMessage } from '@/lib/error-handler';
+
+// export default function ConfirmPage() {
+//     const router = useRouter();
+//     const searchParams = useSearchParams();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState<string>('Verifying your account...');
+//     const verificationStarted = useRef(false); // Prevent double-execution in StrictMode
+
+//     const handleRedirection = useCallback((session: Session) => {
+//         const url = typeof window !== 'undefined' ? window.location.href : '';
+        
+//         const isInvite = url.includes('type=invite');
+//         const isRecovery = url.includes('type=recovery');
+
+//         if (isInvite || isRecovery) {
+//             setMessage('Accepting invite... redirecting to set password.');
+//             router.replace('/set-password');
+//             return;
+//         }
+
+//         const userRole = session.user.user_metadata?.role as Role | undefined;
+//         setMessage(`Welcome! Redirecting to your dashboard...`);
+
+//         switch (userRole) {
+//             case Role.SUPER_ADMIN:
+//             case Role.SCHOOL_ADMIN:
+//                 router.replace('/admin');
+//                 break;
+//             case Role.TEACHER:
+//                 router.replace('/teacher');
+//                 break;
+//             case Role.STUDENT:
+//                 router.replace('/student');
+//                 break;
+//             case Role.PARENT:
+//                 router.replace('/parent');
+//                 break;
+//             case Role.INDIVIDUAL_LEARNER:
+//                 router.replace('/individual-student');
+//                 break;
+//             default:
+//                 router.replace('/login');
+//                 break;
+//         }
+//     }, [router]);
+
+//     useEffect(() => {
+//         const supabase = createClient();
+
+//         const performVerification = async () => {
+//             if (verificationStarted.current) return;
+//             verificationStarted.current = true;
+
+//             try {
+//                 // 1. Check for token_hash in the URL (Admin Signup Flow)
+//                 const tokenHash = searchParams.get('token_hash');
+//                 const type = searchParams.get('type') as EmailOtpType | null;
+
+//                 if (tokenHash && type) {
+//                     setMessage('Exchanging token for session...');
+//                     const { data, error } = await supabase.auth.verifyOtp({
+//                         token_hash: tokenHash,
+//                         type: type,
+//                     });
+
+//                     if (error) throw error;
+//                     if (data.session) {
+//                         handleRedirection(data.session);
+//                         return;
+//                     }
+//                 }
+
+//                 // 2. Fallback: Listen for Hash-based session (Invite Flow)
+//                 const { data: { subscription } } = supabase.auth.onAuthStateChange(
+//                     async (event: AuthChangeEvent, session: Session | null) => {
+//                         if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session) {
+//                             handleRedirection(session);
+//                         } else if (event === 'INITIAL_SESSION' && !session && !tokenHash) {
+//                             // If no session and no token_hash, wait 2.5s for fragment parsing
+//                             setTimeout(async () => {
+//                                 const { data } = await supabase.auth.getSession();
+//                                 if (data.session) {
+//                                     handleRedirection(data.session);
+//                                 } else {
+//                                     setStatus('error');
+//                                     setMessage('Invalid or expired invitation link.');
+//                                 }
+//                             }, 2500);
+//                         }
+//                     }
+//                 );
+
+//                 return () => subscription.unsubscribe();
+//             } catch (err) {
+//                 setStatus('error');
+//                 setMessage(getErrorMessage(err));
+//             }
+//         };
+
+//         performVerification();
+//     }, [handleRedirection, searchParams]);
+
+//     if (status === 'error') {
+//         return (
+//             <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] p-6 text-center">
+//                 <div className="bg-red-500/10 p-4 rounded-full mb-4">
+//                     <AlertCircle className="w-8 h-8 text-red-500" />
+//                 </div>
+//                 <h1 className="text-xl font-bold text-white mb-2">Confirmation Failed</h1>
+//                 <p className="text-slate-400 text-sm max-w-xs mb-6">{message}</p>
+//                 <button 
+//                     onClick={() => router.push('/login')}
+//                     className="text-[#f59e0b] text-sm font-medium hover:underline transition-all"
+//                 >
+//                     Back to login
+//                 </button>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] gap-4">
+//             <Loader2 className="w-10 h-10 text-[#f59e0b] animate-spin" />
+//             <div className="space-y-1 text-center">
+//                 <p className="text-white font-medium text-lg">Just a moment</p>
+//                 <p className="text-slate-400 text-sm">{message}</p>
+//             </div>
+//         </div>
+//     );
+// }
+
+
+// 'use client';
+
+// import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
+// import { useRouter, useSearchParams } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { Loader2, AlertCircle } from 'lucide-react';
+// import { Role } from '@prisma/client';
+// import { Session, EmailOtpType } from '@supabase/supabase-js';
+// import { getErrorMessage } from '@/lib/error-handler';
+
+// function ConfirmContent() {
+//     const router = useRouter();
+//     const searchParams = useSearchParams();
+//     const [status, setStatus] = useState<'loading' | 'error'>('loading');
+//     const [message, setMessage] = useState<string>('Verifying your account...');
+//     const verificationStarted = useRef(false);
+
+//     const handleRedirection = useCallback((session: Session) => {
+//         const url = typeof window !== 'undefined' ? window.location.href : '';
+        
+//         // Detect if this is an invitation or password recovery
+//         const isInvite = url.includes('type=invite');
+//         const isRecovery = url.includes('type=recovery');
+
+//         if (isInvite || isRecovery) {
+//             setMessage('Accepting invite... redirecting to set password.');
+//             router.replace('/set-password');
+//             return;
+//         }
+
+//         // Standard redirect based on role
+//         const userRole = session.user.user_metadata?.role as Role | undefined;
+//         setMessage(`Welcome! Redirecting to your dashboard...`);
+// console.log('user role in confirm page', userRole)
+
+//         switch (userRole) {
+//             case Role.SUPER_ADMIN:
+//             case Role.SCHOOL_ADMIN:
+//                 router.replace('/admin');
+//                 break;
+//             case Role.TEACHER:
+//                 router.replace('/teacher');
+//                 break;
+//             case Role.STUDENT:
+//                 router.replace('/students');
+//                 break;
+//             case Role.PARENT:
+//                 router.replace('/parents');
+//                 break;
+//             case Role.INDIVIDUAL_LEARNER:
+//                 router.replace('/individual-student');
+//                 break;
+//             default:
+//                 router.replace('/login');
+//                 break;
+//         }
+//     }, [router]);
+    
+
+//     useEffect(() => {
+//         const supabase = createClient();
+//         let isMounted = true;
+
+//         const performVerification = async () => {
+//             // Prevent double execution in React Strict Mode
+//             if (verificationStarted.current) return;
+//             verificationStarted.current = true;
+
+//             try {
+//                 // 1. Handle PKCE Flow (?code=...) - Most common in newer Supabase setups
+//                 const code = searchParams.get('code');
+//                 if (code) {
+//                     setMessage('Exchanging code for session...');
+//                     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+//                     if (error) throw error;
+//                     if (data.session && isMounted) {
+//                         handleRedirection(data.session);
+//                         return;
+//                     }
+//                 }
+
+//                 // 2. Handle OTP Flow (?token_hash=...)
+//                 const tokenHash = searchParams.get('token_hash');
+//                 const type = searchParams.get('type') as EmailOtpType | null;
+//                 if (tokenHash && type) {
+//                     setMessage('Verifying security token...');
+//                     const { data, error } = await supabase.auth.verifyOtp({
+//                         token_hash: tokenHash,
+//                         type: type,
+//                     });
+//                     if (error) throw error;
+//                     if (data.session && isMounted) {
+//                         handleRedirection(data.session);
+//                         return;
+//                     }
+//                 }
+
+//                 // 3. Check for existing session (Fragment Flow / Already logged in)
+//                 const { data: { session: existingSession } } = await supabase.auth.getSession();
+//                 if (existingSession && isMounted) {
+//                     handleRedirection(existingSession);
+//                     return;
+//                 }
+
+//                 // 4. Fallback: Catch session if it arrives via fragment (#access_token=...)
+//                 const { data: { subscription } } = supabase.auth.onAuthStateChange(
+//                     async (event, session) => {
+//                         if (session && isMounted) {
+//                             handleRedirection(session);
+//                         }
+//                     }
+//                 );
+
+//                 // Final Timeout: If no session is found after 3 seconds
+//                 setTimeout(async () => {
+//                     if (isMounted) {
+//                         const { data } = await supabase.auth.getSession();
+//                         if (!data.session) {
+//                             setStatus('error');
+//                             setMessage('The link has expired or is invalid.');
+//                         }
+//                     }
+//                 }, 3000);
+
+//                 return () => {
+//                     subscription.unsubscribe();
+//                 };
+//             } catch (err) {
+//                 if (isMounted) {
+//                     setStatus('error');
+//                     setMessage(getErrorMessage(err));
+//                 }
+//             }
+//         };
+
+//         performVerification();
+
+//         return () => {
+//             isMounted = false;
+//         };
+//     }, [handleRedirection, searchParams]);
+
+//     if (status === 'error') {
+//         return (
+//             <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] p-6 text-center">
+//                 <div className="bg-red-500/10 p-4 rounded-full mb-4">
+//                     <AlertCircle className="w-8 h-8 text-red-500" />
+//                 </div>
+//                 <h1 className="text-xl font-bold text-white mb-2">Confirmation Failed</h1>
+//                 <p className="text-slate-400 text-sm max-w-xs mb-6">{message}</p>
+//                 <button 
+//                     onClick={() => router.push('/login')}
+//                     className="text-[#f59e0b] text-sm font-medium hover:underline transition-all"
+//                 >
+//                     Back to login
+//                 </button>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] gap-4">
+//             <Loader2 className="w-10 h-10 text-[#f59e0b] animate-spin" />
+//             <div className="space-y-1 text-center">
+//                 <p className="text-white font-medium text-lg">Verifying account</p>
+//                 <p className="text-slate-400 text-sm">{message}</p>
+//             </div>
+//         </div>
+//     );
+// }
+
+// export default function ConfirmPage() {
+//     return (
+//         <Suspense fallback={null}>
+//             <ConfirmContent />
+//         </Suspense>
+//     );
+// }
+
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
+import { Role } from '@prisma/client';
+import { Session, EmailOtpType } from '@supabase/supabase-js';
+import { getErrorMessage } from '@/lib/error-handler';
 
-export default function ConfirmPage() {
+function ConfirmContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [status, setStatus] = useState<'loading' | 'error'>('loading');
-    const [message, setMessage] = useState('Confirming your account...');
+    const [message, setMessage] = useState<string>('Verifying your account...');
+    const verificationStarted = useRef(false);
+    const sessionHandled = useRef(false); // Prevent double-handling
 
-    useEffect(() => {
-        async function confirm() {
-            const supabase = createClient();
+    const handleRedirection = useCallback((session: Session) => {
+        // Prevent handling the same session twice
+        if (sessionHandled.current) return;
+        sessionHandled.current = true;
 
-            console.log('✅ Confirm page hit');
-            console.log('URL:', window.location.href);
+        // Check fragment AND search params for invite/recovery type
+        const fullUrl = typeof window !== 'undefined'
+            ? window.location.href
+            : '';
+        const fragmentType = new URLSearchParams(
+            fullUrl.includes('#') ? fullUrl.split('#')[1] : ''
+        ).get('type');
+        const queryType = searchParams.get('type');
+        const type = fragmentType || queryType;
 
-            const params = new URLSearchParams(window.location.search);
-            const token_hash = params.get('token_hash');
-            const type = params.get('type');
+        const isInvite = type === 'invite';
+        const isRecovery = type === 'recovery';
 
-            console.log('token_hash:', token_hash ? 'present' : 'missing');
-            console.log('type:', type);
-
-            if (!token_hash || !type) {
-                console.error('❌ Missing params');
-                setStatus('error');
-                return;
-            }
-
-            setMessage('Verifying your email...');
-
-            const { error, data } = await supabase.auth.verifyOtp({
-                type: type as any,
-                token_hash,
-            });
-
-            console.log('verifyOtp:', {
-                error: error?.message ?? null,
-                userId: data?.user?.id ?? null,
-                email: data?.user?.email ?? null,
-            });
-
-            if (error) {
-                console.error('❌ verifyOtp failed:', error.message);
-                setStatus('error');
-                return;
-            }
-
-            if (type === 'invite') {
-                router.replace('/auth/set-password');
-                return;
-            }
-
-            // ✅ Email confirmed — send to login with success message
-            // Login handles profile fetch and role-based redirect
-            setMessage('Confirmed! Redirecting to login...');
-            await new Promise(r => setTimeout(r, 800));
-            router.replace('/login?confirmed=true');
+        if (isInvite || isRecovery) {
+            setMessage('Redirecting to set your password...');
+            router.replace('/set-password');
+            return;
         }
 
-        confirm();
-    }, []);
+        const userRole = session.user.user_metadata?.role as Role | undefined;
+        setMessage(`Welcome! Redirecting to your dashboard...`);
+
+        switch (userRole) {
+            case Role.SUPER_ADMIN:
+            case Role.SCHOOL_ADMIN:
+                router.replace('/admin');
+                break;
+            case Role.TEACHER:
+                router.replace('/teacher');
+                break;
+            case Role.STUDENT:
+                router.replace('/students');
+                break;
+            case Role.PARENT:
+                router.replace('/parents');
+                break;
+            case Role.INDIVIDUAL_LEARNER:
+                router.replace('/individual-student');
+                break;
+            default:
+                router.replace('/login');
+                break;
+        }
+    }, [router, searchParams]);
+
+    useEffect(() => {
+        const supabase = createClient();
+        let isMounted = true;
+
+        const performVerification = async () => {
+            if (verificationStarted.current) return;
+            verificationStarted.current = true;
+
+            // STEP 1: Set up onAuthStateChange FIRST to catch fragment-based tokens
+            // (#access_token=...) — these are processed by Supabase client automatically
+            const { data: { subscription } } = supabase.auth.onAuthStateChange(
+                (event, session) => {
+                    if (!isMounted) return;
+                    if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
+                        handleRedirection(session);
+                    }
+                }
+            );
+
+            try {
+                // STEP 2: Handle PKCE flow (?code=...)
+                const code = searchParams.get('code');
+                if (code) {
+                    setMessage('Exchanging code for session...');
+                    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+                    if (error) throw error;
+                    if (data.session && isMounted) {
+                        handleRedirection(data.session);
+                        return;
+                    }
+                }
+
+                // STEP 3: Handle OTP flow (?token_hash=...)
+                const tokenHash = searchParams.get('token_hash');
+                const type = searchParams.get('type') as EmailOtpType | null;
+                if (tokenHash && type) {
+                    setMessage('Verifying security token...');
+                    const { data, error } = await supabase.auth.verifyOtp({
+                        token_hash: tokenHash,
+                        type: type,
+                    });
+                    if (error) throw error;
+                    if (data.session && isMounted) {
+                        handleRedirection(data.session);
+                        return;
+                    }
+                }
+
+                // STEP 4: Check for an already-existing session
+                const { data: { session: existingSession } } = await supabase.auth.getSession();
+                if (existingSession && isMounted) {
+                    handleRedirection(existingSession);
+                    return;
+                }
+
+                // STEP 5: If we have a fragment URL, Supabase JS client will
+                // auto-parse it and fire onAuthStateChange — just wait for it.
+                // Timeout fallback if nothing fires after 5 seconds.
+                const timeout = setTimeout(async () => {
+                    if (!isMounted) return;
+                    const { data } = await supabase.auth.getSession();
+                    if (!data.session) {
+                        setStatus('error');
+                        setMessage('The link has expired or is invalid. Please request a new invite.');
+                    }
+                }, 5000);
+
+                return () => {
+                    clearTimeout(timeout);
+                    subscription.unsubscribe();
+                };
+            } catch (err) {
+                if (isMounted) {
+                    setStatus('error');
+                    setMessage(getErrorMessage(err));
+                }
+            }
+        };
+
+        const cleanup = performVerification();
+
+        return () => {
+            isMounted = false;
+            cleanup?.then(fn => fn?.());
+        };
+    }, [handleRedirection, searchParams]);
 
     if (status === 'error') {
         return (
-            <div style={{
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: '#0f172a',
-                gap: '16px',
-            }}>
-                <p style={{ color: '#f87171', fontWeight: 600, fontSize: '18px' }}>
-                    Confirmation failed
-                </p>
-                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', maxWidth: '320px', textAlign: 'center' }}>
-                    This link may have expired or already been used.
-                    Try logging in directly or use Forgot Password.
-                </p>
-                <a href="/login" style={{ color: '#f59e0b', fontSize: '14px' }}>
-                    Go to login
-                </a>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] p-6 text-center">
+                <div className="bg-red-500/10 p-4 rounded-full mb-4">
+                    <AlertCircle className="w-8 h-8 text-red-500" />
+                </div>
+                <h1 className="text-xl font-bold text-white mb-2">Confirmation Failed</h1>
+                <p className="text-slate-400 text-sm max-w-xs mb-6">{message}</p>
+                <button
+                    onClick={() => router.push('/login')}
+                    className="text-[#f59e0b] text-sm font-medium hover:underline transition-all"
+                >
+                    Back to login
+                </button>
             </div>
         );
     }
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: '#0f172a',
-            gap: '16px',
-        }}>
-            <Loader2 style={{
-                width: 32,
-                height: 32,
-                color: '#f59e0b',
-                animation: 'spin 1s linear infinite'
-            }} />
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px' }}>
-                {message}
-            </p>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] gap-4">
+            <Loader2 className="w-10 h-10 text-[#f59e0b] animate-spin" />
+            <div className="space-y-1 text-center">
+                <p className="text-white font-medium text-lg">Verifying account</p>
+                <p className="text-slate-400 text-sm">{message}</p>
+            </div>
         </div>
+    );
+}
+
+export default function ConfirmPage() {
+    return (
+        <Suspense fallback={null}>
+            <ConfirmContent />
+        </Suspense>
     );
 }

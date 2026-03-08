@@ -1,5 +1,5 @@
 'use client'
-import { ChevronRight, Play } from 'lucide-react'
+import { Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
@@ -9,7 +9,7 @@ interface ContinueLearningCardProps {
   subject: string
   progress: number
   nextUp: string
-  image?: string
+  // image?: string
 }
 
 export function ContinueLearningCard({
@@ -17,7 +17,7 @@ export function ContinueLearningCard({
   subject,
   progress,
   nextUp,
-  image,
+  // image,
 }: ContinueLearningCardProps) {
   return (
     <Card className="overflow-hidden border-0 bg-linaer-to-br from-blue-500 via-blue-600 to-cyan-500 shadow-lg">

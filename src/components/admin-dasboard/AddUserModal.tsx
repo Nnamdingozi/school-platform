@@ -1,13 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { createUsers } from "@/app/actions/users"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select } from "@/components/ui/select" 
+
 // import { parse } from "papaparse" // npm install papaparse
 
-export function AddUserModal({ schoolId, curriculumId }: { schoolId: string, curriculumId: string }) {
+export function AddUserModal() {
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
 

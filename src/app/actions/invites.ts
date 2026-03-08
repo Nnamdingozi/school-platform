@@ -355,7 +355,8 @@
 
 import { supabase as supabaseAdmin } from '@/lib/supabase/supabaseClient';
 import { prisma } from '@/lib/prisma';
-import { Role } from '@/generated/prisma/client';
+import { Role } from "@prisma/client";
+import { getErrorMessage } from "@/lib/error-handler";
 
 interface InviteUserParams {
     email: string;
@@ -386,7 +387,6 @@ export async function inviteUser(params: InviteUserParams): Promise<InviteResult
             where: { email },
             select: { id: true, schoolId: true },
         });
-
         if (existing) {
             if (existing.schoolId === schoolId) {
                 return { success: false, error: 'This user is already in your school.' };
@@ -438,9 +438,12 @@ export async function inviteUser(params: InviteUserParams): Promise<InviteResult
 
         return { success: true };
 
-    } catch (err: any) {
+    } catch (err: unknown) { // ✅ Change to unknown
+        // ✅ Use the helper to get a safe, descriptive message
+        const errorMessage = getErrorMessage(err);
+        
         console.error('inviteUser error:', err);
-        return { success: false, error: 'An unexpected error occurred.' };
+        return { success: false, error: errorMessage };
     }
 }
 

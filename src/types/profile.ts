@@ -375,8 +375,135 @@
 // }
 
 
-import { Curriculum, Notification, GradeSubject } from '@/generated/prisma/client';
-import { Role } from '@/generated/prisma/client';
+// import { Curriculum, Notification, GradeSubject } from '@prisma/client';
+// import { Role } from '@prisma/client';
+
+// export interface SchoolWithRelations {
+//     id: string;
+//     name: string;
+//     curriculumId: string;
+//     primaryColor: string;
+//     secondaryColor: string;
+//     whatsappCredits: number;
+//     createdAt: Date;
+//     updatedAt: Date;
+//     curriculum: Curriculum;
+//     classEnrollments: {
+//         id: string;
+//         classId: string | null; // ✅ explicitly typed so filter works
+//     }[];
+//     classes: {
+//         id: string;
+//         name: string;
+//         teacherId: string;
+//     }[];
+//     assessments: {
+//         id: string;
+//         score: number | null;
+//     }[];
+//     feedbacks: {
+//         id: string;
+//         sentAt: Date | null;
+//     }[];
+// }
+
+// export interface ProfileInStore {
+//     id: string;
+//     email: string;
+//     name?: string | null;
+//     role: Role;
+//     schoolId: string | null;
+//     curriculumId: string;
+//     school?: SchoolWithRelations | null;
+//     curriculum: Curriculum;
+//     selectedSubjects: (GradeSubject & {
+//         grade: { displayName: string };
+//         subject: { name: string };
+//         topics: {
+//             id: string;
+//             termId: string;
+//             term: { id: string; displayName: string } | null;
+//             weekNumber: number | null;
+//             lessons: { id?: string; aiContent: any }[];
+//             title: string;
+//             description?: string | null;
+//         }[];
+//         enrollments: any[];
+//     })[];
+//     notifications: Notification[];
+//     createdAt: Date;
+//     updatedAt: Date;
+//     taughtClasses?: { id: string; name: string }[];
+// }
+
+// export const comprehensiveProfileInclude = {
+//     school: {
+//         include: {
+//             curriculum: true,
+//             classEnrollments: {
+//                 select: {
+//                     id: true,
+//                     classId: true, // ✅ required for per-class student count
+//                 },
+//             },
+//             classes: {
+//                 select: {
+//                     id: true,
+//                     name: true,
+//                     teacherId: true, // ✅ required for active teacher count
+//                 },
+//             },
+//             assessments: {
+//                 select: {
+//                     id: true,
+//                     score: true, // ✅ required for completion rate
+//                 },
+//             },
+//             feedbacks: {
+//                 select: {
+//                     id: true,
+//                     sentAt: true, // ✅ required for WhatsApp sent count
+//                 },
+//             },
+//         },
+//     },
+//     curriculum: true,
+//     selectedSubjects: {
+//         include: {
+//             grade: true,
+//             subject: true,
+//             topics: {
+//                 include: {
+//                     term: true,
+//                     lessons: true,
+//                 },
+//             },
+//             enrollments: true,
+//         },
+//     },
+//     notifications: {
+//         orderBy: { createdAt: 'desc' as const },
+//         take: 20,
+//     },
+// };
+
+// export interface SidebarProfileData {
+//     name: string;
+//     email: string;
+//     role: Role;
+//     schoolName?: string;
+//     primarySubject?: string;
+// }
+
+
+import { 
+    Curriculum, 
+    Notification, 
+    GradeSubject, 
+    Role, 
+    Prisma, 
+    ClassEnrollment 
+} from '@prisma/client'; // ✅ Consolidated imports
 
 export interface SchoolWithRelations {
     id: string;
@@ -390,7 +517,7 @@ export interface SchoolWithRelations {
     curriculum: Curriculum;
     classEnrollments: {
         id: string;
-        classId: string | null; // ✅ explicitly typed so filter works
+        classId: string | null;
     }[];
     classes: {
         id: string;
@@ -424,11 +551,13 @@ export interface ProfileInStore {
             termId: string;
             term: { id: string; displayName: string } | null;
             weekNumber: number | null;
-            lessons: { id?: string; aiContent: any }[];
+            // ✅ FIX 1: Replaced 'any' with Prisma.JsonValue
+            lessons: { id?: string; aiContent: Prisma.JsonValue }[];
             title: string;
             description?: string | null;
         }[];
-        enrollments: any[];
+        // ✅ FIX 2: Replaced 'any[]' with ClassEnrollment[]
+        enrollments: ClassEnrollment[];
     })[];
     notifications: Notification[];
     createdAt: Date;
@@ -443,26 +572,26 @@ export const comprehensiveProfileInclude = {
             classEnrollments: {
                 select: {
                     id: true,
-                    classId: true, // ✅ required for per-class student count
+                    classId: true,
                 },
             },
             classes: {
                 select: {
                     id: true,
                     name: true,
-                    teacherId: true, // ✅ required for active teacher count
+                    teacherId: true,
                 },
             },
             assessments: {
                 select: {
                     id: true,
-                    score: true, // ✅ required for completion rate
+                    score: true,
                 },
             },
             feedbacks: {
                 select: {
                     id: true,
-                    sentAt: true, // ✅ required for WhatsApp sent count
+                    sentAt: true,
                 },
             },
         },
@@ -485,7 +614,7 @@ export const comprehensiveProfileInclude = {
         orderBy: { createdAt: 'desc' as const },
         take: 20,
     },
-};
+} satisfies Prisma.ProfileInclude; // ✅ Added satisfies for better type safety
 
 export interface SidebarProfileData {
     name: string;

@@ -198,23 +198,131 @@
 // }  
 
 
-// src/app/actions/performance-data.ts
+// // src/app/actions/performance-data.ts
+// 'use server';
+
+// import { prisma } from "@/lib/prisma";
+
+// export const getPerformanceDashboardData = async (gradeSubjectId: string, schoolId: string) => {
+//     try {
+//         const data = await prisma.assessment.findMany({
+//             where: {
+//                 gradeSubjectId: gradeSubjectId,
+//                 schoolId: schoolId,
+//             },
+//             // Add any necessary selections or includes
+//         });
+//         return { data: data, error: null };
+//     } catch (error) {
+//         console.error("Error fetching performance data:", error);
+//         return { data: [], error: "Failed to load performance data" };
+//     }
+// };
+
+
 'use server';
 
 import { prisma } from "@/lib/prisma";
+import { PerformanceDashboardData } from "@/types/performanceData";
 
-export const getPerformanceDashboardData = async (gradeSubjectId: string, schoolId: string) => {
+export const getPerformanceDashboardData = async (
+    gradeSubjectId: string, 
+    schoolId: string
+): Promise<{ data: PerformanceDashboardData | null; error: string | null }> => {
     try {
-        const data = await prisma.assessment.findMany({
-            where: {
-                gradeSubjectId: gradeSubjectId,
-                schoolId: schoolId,
-            },
-            // Add any necessary selections or includes
+        // 1. Fetch all assessments for this subject
+        const assessments = await prisma.assessment.findMany({
+            where: { gradeSubjectId, schoolId },
+            include: {
+                student: true,
+                topic: true,
+            }
         });
-        return { data: data, error: null };
+
+        // 2. Fetch all topics to calculate curriculum completion
+        const totalTopics = await prisma.topic.count({
+            where: { gradeSubjectId }
+        });
+
+        if (assessments.length === 0) {
+            return {
+                data: {
+                    topicScores: [],
+                    studentsNeedingAttention: [],
+                    curriculumCompletion: {
+                        percentage: 0,
+                        completedTopics: 0,
+                        totalTopics,
+                        completionData: [
+                            { name: "Completed", value: 0 },
+                            { name: "Remaining", value: totalTopics }
+                        ]
+                    }
+                },
+                error: null
+            };
+        }
+
+        // --- Calculate Topic Scores ---
+        const topicMap: Record<string, { total: number; count: number }> = {};
+        assessments.forEach(a => {
+            if (a.topic && a.score !== null && a.maxScore) {
+                const percentage = (a.score / a.maxScore) * 100;
+                const title = a.topic.title;
+                if (!topicMap[title]) topicMap[title] = { total: 0, count: 0 };
+                topicMap[title].total += percentage;
+                topicMap[title].count += 1;
+            }
+        });
+
+        const topicScores = Object.entries(topicMap).map(([topic, data]) => ({
+            topic,
+            score: Math.round(data.total / data.count)
+        }));
+
+        // --- Calculate Students Needing Attention (< 50% average) ---
+        const studentMap: Record<string, { name: string; total: number; count: number }> = {};
+        assessments.forEach(a => {
+            if (a.score !== null && a.maxScore) {
+                const percentage = (a.score / a.maxScore) * 100;
+                const sId = a.studentId;
+                if (!studentMap[sId]) studentMap[sId] = { name: a.student.name || "Unknown", total: 0, count: 0 };
+                studentMap[sId].total += percentage;
+                studentMap[sId].count += 1;
+            }
+        });
+
+        const studentsNeedingAttention = Object.values(studentMap)
+            .map(s => ({ name: s.name, score: Math.round(s.total / s.count) }))
+            .filter(s => s.score < 50)
+            .sort((a, b) => a.score - b.score);
+
+        // --- Calculate Curriculum Completion ---
+        const uniqueAssessedTopicIds = new Set(assessments.map(a => a.topicId).filter(Boolean));
+        const completedTopicsCount = uniqueAssessedTopicIds.size;
+        const completionPercentage = totalTopics > 0 ? Math.round((completedTopicsCount / totalTopics) * 100) : 0;
+
+        const curriculumCompletion = {
+            percentage: completionPercentage,
+            completedTopics: completedTopicsCount,
+            totalTopics,
+            completionData: [
+                { name: "Completed", value: completedTopicsCount },
+                { name: "Remaining", value: Math.max(0, totalTopics - completedTopicsCount) }
+            ]
+        };
+
+        return {
+            data: {
+                topicScores,
+                studentsNeedingAttention,
+                curriculumCompletion
+            },
+            error: null
+        };
+
     } catch (error) {
         console.error("Error fetching performance data:", error);
-        return { data: [], error: "Failed to load performance data" };
+        return { data: null, error: "Failed to load performance data" };
     }
 };
