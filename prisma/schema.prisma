@@ -237,7 +237,7 @@ model ClassEnrollment {
   studentId String
   student   Profile @relation(fields: [studentId], references: [id])
 
-  // ✅ 2. THE LINK BACK: 
+  // ✅ 2. THE LINK BACK:
   // Each enrollment record points to a specific GradeSubject
   gradeSubjectId String
   gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
@@ -356,7 +356,7 @@ model GradeSubject {
   grade     Grade   @relation(fields: [gradeId], references: [id])
   subject   Subject @relation(fields: [subjectId], references: [id])
 
-  // ✅ 1. THE OPPOSITE RELATION: 
+  // ✅ 1. THE OPPOSITE RELATION:
   // A GradeSubject (JSS 1 Math) has a list of students enrolled in it.
   enrollments ClassEnrollment[]
 
@@ -380,7 +380,7 @@ model GradeSubject {
   @@unique([gradeId, subjectId])
 }
 
-model Notification { 
+model Notification {
   id        String   @id @default(uuid())
   userId    String
   user      Profile  @relation(fields: [userId], references: [id])
