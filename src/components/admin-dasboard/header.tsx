@@ -1,207 +1,63 @@
+
+
 // "use client"
+
 // import { useState } from "react"
+// import { useRouter } from "next/navigation"
 // import { Bell, Search, ChevronDown, User, Settings, LogOut, MessageCircle } from "lucide-react"
 // import { Input } from "@/components/ui/input"
 // import { Button } from "@/components/ui/button"
 // import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuLabel,
-//   DropdownMenuSeparator,
-//   DropdownMenuTrigger,
+//     DropdownMenu,
+//     DropdownMenuContent,
+//     DropdownMenuItem,
+//     DropdownMenuLabel,
+//     DropdownMenuSeparator,
+//     DropdownMenuTrigger,
 // } from "@/components/ui/dropdown-menu"
 // import {
-//   Popover,
-//   PopoverContent,
-//   PopoverTrigger,
+//     Popover,
+//     PopoverContent,
+//     PopoverTrigger,
 // } from "@/components/ui/popover"
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-// import { Badge } from "@/components/ui/badge"
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 // import { ScrollArea } from "@/components/ui/scroll-area"
-
-// const notifications = [
-//   {
-//     id: 1,
-//     title: "Parent Feedback Received",
-//     message: "Mrs. Johnson sent feedback about JSS 2 Math results",
-//     time: "2 min ago",
-//     unread: true,
-//   },
-//   {
-//     id: 2,
-//     title: "Assessment Complete",
-//     message: "SSS 1 Chemistry exam has been graded",
-//     time: "15 min ago",
-//     unread: true,
-//   },
-//   {
-//     id: 3,
-//     title: "New Teacher Registration",
-//     message: "Mr. Okonkwo has been added to the system",
-//     time: "1 hour ago",
-//     unread: false,
-//   },
-//   {
-//     id: 4,
-//     title: "WhatsApp Alert Sent",
-//     message: "Report cards sent to 45 parents via WhatsApp",
-//     time: "3 hours ago",
-//     unread: false,
-//   },
-// ]
+// import { useProfileStore } from "@/store/profileStore"
+// import { useSchool } from "@/context/schoolProvider"
+// import { createClient } from "@/lib/supabase/client"
+// import { toast } from "sonner"
 
 // export function Header() {
-//   const [searchQuery, setSearchQuery] = useState("")
-//   const unreadCount = notifications.filter((n) => n.unread).length
+//     const router = useRouter()
+//     const { profile } = useProfileStore()
+//     const { school } = useSchool()
+//     const [searchQuery, setSearchQuery] = useState("")
+//     const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-//   return (
-//     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-card px-6">
-//       {/* School Name & Search */}
-//       <div className="flex items-center gap-6">
-//         <h1 className="text-lg font-semibold text-foreground">Greenfield Academy</h1>
-//         <div className="relative hidden md:block">
-//           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-//           <Input
-//             type="search"
-//             placeholder="Search students, teachers, classes..."
-//             value={searchQuery}
-//             onChange={(e) => setSearchQuery(e.target.value)}
-//             className="w-80 pl-10 bg-background"
-//           />
-//         </div>
-//       </div>
-
-//       {/* Actions */}
-//       <div className="flex items-center gap-2">
-//         {/* Mobile Search */}
-//         <Button variant="ghost" size="icon" className="md:hidden">
-//           <Search className="h-5 w-5" />
-//           <span className="sr-only">Search</span>
-//         </Button>
-
-//         {/* Notifications */}
-//         <Popover>
-//           <PopoverTrigger asChild>
-//             <Button variant="ghost" size="icon" className="relative">
-//               <Bell className="h-5 w-5" />
-//               {unreadCount > 0 && (
-//                 <Badge
-//                   variant="destructive"
-//                   className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
-//                 >
-//                   {unreadCount}
-//                 </Badge>
-//               )}
-//               <span className="sr-only">Notifications</span>
-//             </Button>
-//           </PopoverTrigger>
-//           <PopoverContent className="w-80 p-0" align="end">
-//             <div className="flex items-center justify-between border-b border-border px-4 py-3">
-//               <h3 className="font-semibold text-foreground">Notifications</h3>
-//               <Badge variant="secondary" className="text-xs">
-//                 {unreadCount} new
-//               </Badge>
-//             </div>
-//             <ScrollArea className="h-80">
-//               <div className="space-y-1 p-2">
-//                 {notifications.map((notification) => (
-//                   <div
-//                     key={notification.id}
-//                     className={`flex items-start gap-3 rounded-lg p-3 transition-colors hover:bg-muted ${
-//                       notification.unread ? "bg-muted/50" : ""
-//                     }`}
-//                   >
-//                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
-//                       <MessageCircle className="h-4 w-4 text-primary" />
-//                     </div>
-//                     <div className="flex-1 space-y-1">
-//                       <p className="text-sm font-medium text-foreground leading-none">
-//                         {notification.title}
-//                       </p>
-//                       <p className="text-xs text-muted-foreground">
-//                         {notification.message}
-//                       </p>
-//                       <p className="text-xs text-muted-foreground/70">
-//                         {notification.time}
-//                       </p>
-//                     </div>
-//                     {notification.unread && (
-//                       <div className="h-2 w-2 rounded-full bg-primary" />
-//                     )}
-//                   </div>
-//                 ))}
-//               </div>
-//             </ScrollArea>
-//             <div className="border-t border-border p-2">
-//               <Button variant="ghost" className="w-full text-sm text-primary">
-//                 View all notifications
-//               </Button>
-//             </div>
-//           </PopoverContent>
-//         </Popover>
-
-//         {/* User Menu */}
-//         <DropdownMenu>
-//           <DropdownMenuTrigger asChild>
-//             <Button variant="ghost" className="flex items-center gap-2 pl-2 pr-1">
-//               <Avatar className="h-8 w-8">
-//                 <AvatarImage src="/placeholder-avatar.jpg" alt="Admin" />
-//                 <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-//                   AD
-//                 </AvatarFallback>
-//               </Avatar>
-//               <div className="hidden flex-col items-start text-left lg:flex">
-//                 <span className="text-sm font-medium text-foreground">Admin User</span>
-//                 <span className="text-xs text-muted-foreground">School Admin</span>
-//               </div>
-//               <ChevronDown className="ml-1 h-4 w-4 text-muted-foreground" />
-//             </Button>
-//           </DropdownMenuTrigger>
-//           <DropdownMenuContent align="end" className="w-56">
-//             <DropdownMenuLabel>My Account</DropdownMenuLabel>
-//             <DropdownMenuSeparator />
-//             <DropdownMenuItem>
-//               <User className="mr-2 h-4 w-4" />
-//               Profile
-//             </DropdownMenuItem>
-//             <DropdownMenuItem>
-//               <Settings className="mr-2 h-4 w-4" />
-//               Settings
-//             </DropdownMenuItem>
-//             <DropdownMenuSeparator />
-//             <DropdownMenuItem className="text-destructive">
-//               <LogOut className="mr-2 h-4 w-4" />
-//               Log out
-//             </DropdownMenuItem>
-//           </DropdownMenuContent>
-//         </DropdownMenu>
-//       </div>
-//     </header>
-//   )
-// }
-
+//     // ── Derived display values ─────────────────────────────────────────────
+//     const displayName = profile?.name ?? "User"
+//     const displayEmail = profile?.email ?? ""
+//     const displayRole = profile?.role
+//         ? profile.role.toLowerCase().replace(/_/g, ' ')
+//         : "user"
+//     const schoolName = school?.name ?? profile?.school?.name ?? "EduAI"
 
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { Bell, Search, ChevronDown, User, Settings, LogOut, MessageCircle } from "lucide-react"
+import {
+    Bell, Search, ChevronDown, User, Settings,
+    LogOut, MessageCircle, GraduationCap, Users,
+    BookOpen, X, Loader2,
+} from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+    DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+    DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useProfileStore } from "@/store/profileStore"
@@ -209,22 +65,85 @@ import { useSchool } from "@/context/schoolProvider"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 
+// ── Types ──────────────────────────────────────────────────────────────────────
+interface ProfileResult {
+    id: string
+    name: string | null
+    email: string
+    role: 'TEACHER' | 'STUDENT' | 'PARENT'
+}
+
+interface ClassResult {
+    id: string
+    name: string
+    grade: { displayName: string }
+    teacher: { name: string | null }
+}
+
+interface SearchCategory<T> {
+    data: T[]
+    total: number
+}
+
+interface SearchResults {
+    teachers: SearchCategory<ProfileResult>
+    students: SearchCategory<ProfileResult>
+    parents: SearchCategory<ProfileResult>
+    classes: SearchCategory<ClassResult>
+}
+
+type SearchState = 'idle' | 'searching' | 'done' | 'error'
+
+const MIN_QUERY_LENGTH = 3
+const DEBOUNCE_MS = 300
+
+// ── Debounce hook ──────────────────────────────────────────────────────────────
+function useDebounce<T>(value: T, delay: number): T {
+    const [debounced, setDebounced] = useState<T>(value)
+    useEffect(() => {
+        const timer = setTimeout(() => setDebounced(value), delay)
+        return () => clearTimeout(timer)
+    }, [value, delay])
+    return debounced
+}
+
+// ── Result count helper ────────────────────────────────────────────────────────
+function hasAnyResults(results: SearchResults | null): boolean {
+    if (!results) return false
+    return (
+        results.teachers.total > 0 ||
+        results.students.total > 0 ||
+        results.parents.total > 0 ||
+        results.classes.total > 0
+    )
+}
+
+// ── Main Component ─────────────────────────────────────────────────────────────
 export function Header() {
     const router = useRouter()
     const { profile } = useProfileStore()
     const { school } = useSchool()
-    const [searchQuery, setSearchQuery] = useState("")
+
+    // ── Search state ───────────────────────────────────────────────────────
+    const [query, setQuery] = useState('')
+    const [results, setResults] = useState<SearchResults | null>(null)
+    const [searchState, setSearchState] = useState<SearchState>('idle')
+    const [showDropdown, setShowDropdown] = useState(false)
+    const searchRef = useRef<HTMLDivElement>(null)
+    const debouncedQuery = useDebounce(query, DEBOUNCE_MS)
+
+    // ── Auth state ─────────────────────────────────────────────────────────
     const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-    // ── Derived display values ─────────────────────────────────────────────
-    const displayName = profile?.name ?? "User"
-    const displayEmail = profile?.email ?? ""
+    // ── Derived values ─────────────────────────────────────────────────────
+    const displayName = profile?.name ?? 'User'
+    const displayEmail = profile?.email ?? ''
     const displayRole = profile?.role
         ? profile.role.toLowerCase().replace(/_/g, ' ')
-        : "user"
-    const schoolName = school?.name ?? profile?.school?.name ?? "EduAI"
+        : 'user'
+    const schoolName = school?.name ?? profile?.school?.name ?? 'EduAI'
+    const schoolId = profile?.schoolId ?? ''
 
-    // Initials for avatar fallback
     const initials = displayName
         .split(' ')
         .map((n) => n[0])
@@ -232,57 +151,265 @@ export function Header() {
         .join('')
         .toUpperCase()
 
-    // ── Notifications from DB ──────────────────────────────────────────────
-    // Using profile.notifications from the store (already included in
-    // comprehensiveProfileInclude via the Notification model relation)
     const notifications = profile?.notifications ?? []
     const unreadCount = notifications.filter((n) => !n.read).length
 
-    // ── Logout ─────────────────────────────────────────────────────────────
+    // ── Search fetch ───────────────────────────────────────────────────────
+    const performSearch = useCallback(async (q: string) => {
+        if (q.length < MIN_QUERY_LENGTH || !schoolId) {
+            setResults(null)
+            setSearchState('idle')
+            setShowDropdown(false)
+            return
+        }
+
+        setSearchState('searching')
+        setShowDropdown(true)
+
+        try {
+            const res = await fetch(
+                `/api/search?q=${encodeURIComponent(q)}&schoolId=${encodeURIComponent(schoolId)}`
+            )
+            if (!res.ok) throw new Error('Search request failed')
+            const json = await res.json() as { results: SearchResults | null }
+            setResults(json.results)
+            setSearchState('done')
+        } catch {
+            setResults(null)
+            setSearchState('error')
+        }
+    }, [schoolId])
+
+    useEffect(() => {
+        performSearch(debouncedQuery)
+    }, [debouncedQuery, performSearch])
+
+    // ── Close dropdown on outside click ───────────────────────────────────
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+                setShowDropdown(false)
+            }
+        }
+        document.addEventListener('mousedown', handler)
+        return () => document.removeEventListener('mousedown', handler)
+    }, [])
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+    const clearSearch = () => {
+        setQuery('')
+        setResults(null)
+        setSearchState('idle')
+        setShowDropdown(false)
+    }
+
+    const handleResultClick = (type: 'user' | 'class', id: string) => {
+        clearSearch()
+        router.push(type === 'class' ? `/admin/classes/${id}` : `/admin/users/${id}`)
+    }
+
     async function handleLogout() {
         setIsLoggingOut(true)
         const supabase = createClient()
         const { error } = await supabase.auth.signOut()
         if (error) {
-            toast.error("Failed to log out. Please try again.")
+            toast.error('Failed to log out. Please try again.')
             setIsLoggingOut(false)
             return
         }
         useProfileStore.getState().clearProfile()
-        router.replace("/login")
+        router.replace('/login')
     }
 
+    // ── Render ─────────────────────────────────────────────────────────────
     return (
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-school-secondary-800 bg-school-secondary-950 px-6">
 
-            {/* School Name + Search */}
+            {/* Left: School name + Search */}
             <div className="flex items-center gap-6">
                 <h1 className="text-lg font-bold text-school-primary truncate max-w-[200px]">
                     {schoolName}
                 </h1>
-                <div className="relative hidden md:block">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-school-secondary-100/30" />
+
+                {/* Search */}
+                <div ref={searchRef} className="relative hidden md:block">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-school-secondary-100 z-10 pointer-events-none" />
+
                     <Input
-                        type="search"
-                        placeholder="Search students, teachers, classes..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-80 pl-10 bg-school-secondary-900 border-school-secondary-700 text-school-secondary-100 placeholder:text-school-secondary-100/20 focus:border-school-primary"
+                        type="text"
+                        placeholder="Search by name or email..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onFocus={() => {
+                            if (query.length >= MIN_QUERY_LENGTH) setShowDropdown(true)
+                        }}
+                        className="w-80 pl-10 pr-8 bg-school-secondary-900 border-school-secondary-700 text-school-secondary-100 placeholder:text-school-secondary-400 focus:border-school-primary"
                     />
+
+                    {/* Clear button */}
+                    {query.length > 0 && (
+                        <button
+                            onClick={clearSearch}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-school-secondary-400 hover:text-white transition-colors"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                        </button>
+                    )}
+
+                    {/* Min chars hint */}
+                    {query.length > 0 && query.length < MIN_QUERY_LENGTH && (
+                        <div className="absolute top-full left-0 mt-1 w-80 rounded-xl border border-school-secondary-700 bg-school-secondary-900 px-4 py-3">
+                            <p className="text-xs text-school-secondary-400">
+                                Type {MIN_QUERY_LENGTH - query.length} more character{MIN_QUERY_LENGTH - query.length !== 1 ? 's' : ''} to search...
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Results dropdown */}
+                    {showDropdown && query.length >= MIN_QUERY_LENGTH && (
+                        <div className="absolute top-full left-0 mt-1 w-80 rounded-xl border border-school-secondary-700 bg-school-secondary-900 shadow-2xl z-50 overflow-hidden">
+
+                            {/* Searching */}
+                            {searchState === 'searching' && (
+                                <div className="flex items-center justify-center gap-2 py-6 text-school-secondary-400">
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    <span className="text-sm">Searching...</span>
+                                </div>
+                            )}
+
+                            {/* Error */}
+                            {searchState === 'error' && (
+                                <div className="py-6 text-center text-sm text-red-400">
+                                    Search failed. Please try again.
+                                </div>
+                            )}
+
+                            {/* No results */}
+                            {searchState === 'done' && !hasAnyResults(results) && (
+                                <div className="py-6 text-center space-y-1">
+                                    <p className="text-sm text-white font-medium">
+                                        No results for &ldquo;{query}&rdquo;
+                                    </p>
+                                    <p className="text-xs text-school-secondary-400">
+                                        Try a different name or email
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Results */}
+                            {searchState === 'done' && hasAnyResults(results) && results && (
+                                <ScrollArea className="max-h-[420px]">
+
+                                    {/* Teachers */}
+                                    {results.teachers.total > 0 && (
+                                        <ResultSection
+                                            label="Teachers"
+                                            total={results.teachers.total}
+                                            icon={
+                                                <GraduationCap className="h-3.5 w-3.5 text-blue-400" />
+                                            }
+                                            iconBg="bg-blue-500/20"
+                                        >
+                                            {results.teachers.data.map(t => (
+                                                <ProfileResultRow
+                                                    key={t.id}
+                                                    item={t}
+                                                    iconBg="bg-blue-500/20"
+                                                    icon={<GraduationCap className="h-3.5 w-3.5 text-blue-400" />}
+                                                    onClick={() => handleResultClick('user', t.id)}
+                                                />
+                                            ))}
+                                        </ResultSection>
+                                    )}
+
+                                    {/* Students */}
+                                    {results.students.total > 0 && (
+                                        <ResultSection
+                                            label="Students"
+                                            total={results.students.total}
+                                            icon={<Users className="h-3.5 w-3.5 text-green-400" />}
+                                            iconBg="bg-green-500/20"
+                                        >
+                                            {results.students.data.map(s => (
+                                                <ProfileResultRow
+                                                    key={s.id}
+                                                    item={s}
+                                                    iconBg="bg-green-500/20"
+                                                    icon={<Users className="h-3.5 w-3.5 text-green-400" />}
+                                                    onClick={() => handleResultClick('user', s.id)}
+                                                />
+                                            ))}
+                                        </ResultSection>
+                                    )}
+
+                                    {/* Parents */}
+                                    {results.parents.total > 0 && (
+                                        <ResultSection
+                                            label="Parents"
+                                            total={results.parents.total}
+                                            icon={<User className="h-3.5 w-3.5 text-purple-400" />}
+                                            iconBg="bg-purple-500/20"
+                                        >
+                                            {results.parents.data.map(p => (
+                                                <ProfileResultRow
+                                                    key={p.id}
+                                                    item={p}
+                                                    iconBg="bg-purple-500/20"
+                                                    icon={<User className="h-3.5 w-3.5 text-purple-400" />}
+                                                    onClick={() => handleResultClick('user', p.id)}
+                                                />
+                                            ))}
+                                        </ResultSection>
+                                    )}
+
+                                    {/* Classes */}
+                                    {results.classes.total > 0 && (
+                                        <ResultSection
+                                            label="Classes"
+                                            total={results.classes.total}
+                                            icon={<BookOpen className="h-3.5 w-3.5 text-amber-400" />}
+                                            iconBg="bg-amber-500/20"
+                                        >
+                                            {results.classes.data.map(c => (
+                                                <button
+                                                    key={c.id}
+                                                    onClick={() => handleResultClick('class', c.id)}
+                                                    className="flex w-full items-center gap-3 px-3 py-2 hover:bg-school-secondary-800 transition-colors"
+                                                >
+                                                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500/20">
+                                                        <BookOpen className="h-3.5 w-3.5 text-amber-400" />
+                                                    </div>
+                                                    <div className="text-left min-w-0">
+                                                        <p className="text-sm font-medium text-white truncate">
+                                                            {c.name}
+                                                        </p>
+                                                        <p className="text-xs text-school-secondary-400 truncate">
+                                                            {c.grade.displayName}
+                                                            {c.teacher.name ? ` · ${c.teacher.name}` : ''}
+                                                        </p>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </ResultSection>
+                                    )}
+
+                                </ScrollArea>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* Actions */}
+            {/* Right: Actions */}
             <div className="flex items-center gap-2">
 
-                {/* Mobile Search */}
+                {/* Mobile search button */}
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="md:hidden text-school-secondary-100/50 hover:text-school-primary hover:bg-school-secondary-800"
+                    className="md:hidden text-school-secondary-200 bg-school-secondary-800 hover:text-school-primary hover:bg-school-secondary-800"
                 >
                     <Search className="h-5 w-5" />
-                    <span className="sr-only">Search</span>
                 </Button>
 
                 {/* Notifications */}
@@ -291,7 +418,7 @@ export function Header() {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="relative text-school-secondary-100/50 hover:text-school-primary hover:bg-school-secondary-800"
+                            className="relative text-school-secondary-100 hover:text-school-primary hover:bg-school-secondary-800"
                         >
                             <Bell className="h-5 w-5" />
                             {unreadCount > 0 && (
@@ -299,11 +426,10 @@ export function Header() {
                                     {unreadCount > 9 ? '9+' : unreadCount}
                                 </span>
                             )}
-                            <span className="sr-only">Notifications</span>
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                        className="w-80 p-0 bg-school-secondary-900 border-school-secondary-700"
+                        className="w-80 p-0 bg-school-secondary-950 border-school-secondary-700 shadow-2xl"
                         align="end"
                     >
                         <div className="flex items-center justify-between border-b border-school-secondary-700 px-4 py-3">
@@ -314,10 +440,9 @@ export function Header() {
                                 </span>
                             )}
                         </div>
-
                         <ScrollArea className="h-80">
                             {notifications.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center h-32 text-school-secondary-100/30">
+                                <div className="flex flex-col items-center justify-center h-32 text-school-secondary-100">
                                     <Bell className="h-8 w-8 mb-2" />
                                     <p className="text-sm">No notifications yet</p>
                                 </div>
@@ -326,24 +451,19 @@ export function Header() {
                                     {notifications.slice(0, 10).map((notification) => (
                                         <div
                                             key={notification.id}
-                                            className={`flex items-start gap-3 rounded-lg p-3 transition-colors cursor-pointer
-                                                hover:bg-school-secondary-800
-                                                ${!notification.read ? "bg-school-secondary-800/50" : ""}
-                                            `}
+                                            className={`flex items-start gap-3 rounded-lg p-3 transition-colors cursor-pointer hover:bg-school-secondary-800 ${!notification.read ? 'bg-school-secondary-800' : ''}`}
                                         >
-                                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-school-primary/10">
+                                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-school-primary/20">
                                                 <MessageCircle className="h-4 w-4 text-school-primary" />
                                             </div>
                                             <div className="flex-1 space-y-0.5 min-w-0">
                                                 <p className="text-sm font-semibold text-school-secondary-100 leading-snug truncate">
                                                     {notification.message}
                                                 </p>
-                                                <p className="text-xs text-school-secondary-100/40">
+                                                <p className="text-xs text-school-secondary-400">
                                                     {new Date(notification.createdAt).toLocaleDateString('en-GB', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
+                                                        day: 'numeric', month: 'short',
+                                                        hour: '2-digit', minute: '2-digit',
                                                     })}
                                                 </p>
                                             </div>
@@ -355,7 +475,6 @@ export function Header() {
                                 </div>
                             )}
                         </ScrollArea>
-
                         <div className="border-t border-school-secondary-700 p-2">
                             <Button
                                 variant="ghost"
@@ -368,7 +487,7 @@ export function Header() {
                     </PopoverContent>
                 </Popover>
 
-                {/* User Menu */}
+                {/* User menu */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button
@@ -384,59 +503,113 @@ export function Header() {
                                 <span className="text-sm font-semibold text-school-secondary-100 max-w-[120px] truncate">
                                     {displayName}
                                 </span>
-                                <span className="text-xs text-school-secondary-100/50 capitalize">
+                                <span className="text-xs text-school-secondary-400 capitalize">
                                     {displayRole}
                                 </span>
                             </div>
-                            <ChevronDown className="ml-1 h-4 w-4 text-school-secondary-100/40" />
+                            <ChevronDown className="ml-1 h-4 w-4 text-school-secondary-400" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                         align="end"
-                        className="w-56 bg-school-secondary-900 border-school-secondary-700"
+                        className="w-56 bg-school-secondary-950 border-school-secondary-700 shadow-2xl"
                     >
-                        {/* Account info */}
                         <DropdownMenuLabel className="font-normal">
                             <div className="flex flex-col space-y-1">
                                 <p className="text-sm font-semibold text-school-secondary-100">
                                     {displayName}
                                 </p>
-                                <p className="text-xs text-school-secondary-100/50 truncate">
+                                <p className="text-xs text-school-secondary-400 truncate">
                                     {displayEmail}
                                 </p>
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator className="bg-school-secondary-700" />
-
                         <DropdownMenuItem
-                            className="text-school-secondary-100/70 hover:text-school-secondary-100 hover:bg-school-secondary-800 cursor-pointer"
+                            className="text-school-secondary-100 hover:text-white hover:bg-school-secondary-800 cursor-pointer"
                             onClick={() => router.push('/settings/profile')}
                         >
                             <User className="mr-2 h-4 w-4" />
                             Profile
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            className="text-school-secondary-100/70 hover:text-school-secondary-100 hover:bg-school-secondary-800 cursor-pointer"
+                            className="text-school-secondary-100 hover:text-white hover:bg-school-secondary-800 cursor-pointer"
                             onClick={() => router.push('/settings')}
                         >
                             <Settings className="mr-2 h-4 w-4" />
                             Settings
                         </DropdownMenuItem>
-
                         <DropdownMenuSeparator className="bg-school-secondary-700" />
-
                         <DropdownMenuItem
                             className="text-red-400 hover:text-red-300 hover:bg-school-secondary-800 cursor-pointer"
                             onClick={handleLogout}
                             disabled={isLoggingOut}
                         >
                             <LogOut className="mr-2 h-4 w-4" />
-                            {isLoggingOut ? "Logging out..." : "Log out"}
+                            {isLoggingOut ? 'Logging out...' : 'Log out'}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
 
             </div>
         </header>
+    )
+}
+
+// ── Sub-components ─────────────────────────────────────────────────────────────
+interface ResultSectionProps {
+    label: string
+    total: number
+    icon: React.ReactNode
+    iconBg: string
+    children: React.ReactNode
+}
+
+function ResultSection({ label, total, children }: ResultSectionProps) {
+    const TAKE = 5
+    return (
+        <div>
+            <div className="flex items-center justify-between px-3 pt-3 pb-1">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-school-secondary-400">
+                    {label}
+                </p>
+                {total > TAKE && (
+                    <p className="text-[10px] text-school-secondary-400">
+                        Showing {TAKE} of {total} — refine your search
+                    </p>
+                )}
+            </div>
+            {children}
+        </div>
+    )
+}
+
+interface ProfileResultRowProps {
+    item: ProfileResult
+    icon: React.ReactNode
+    iconBg: string
+    onClick: () => void
+}
+
+function ProfileResultRow({ item, icon, iconBg, onClick }: ProfileResultRowProps) {
+    return (
+        <button
+            onClick={onClick}
+            className="flex w-full items-center gap-3 px-3 py-2 hover:bg-school-secondary-800 transition-colors"
+        >
+            <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${iconBg}`}>
+                {icon}
+            </div>
+            <div className="text-left min-w-0">
+                <p className="text-sm font-medium text-white truncate">
+                    {item.name ?? item.email}
+                </p>
+                {item.name && (
+                    <p className="text-xs text-school-secondary-400 truncate">
+                        {item.email}
+                    </p>
+                )}
+            </div>
+        </button>
     )
 }

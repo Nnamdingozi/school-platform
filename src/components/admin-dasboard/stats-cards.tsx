@@ -567,7 +567,7 @@ export function StatsCards() {
                         className="relative overflow-hidden bg-school-secondary-900 border-school-secondary-700 hover:border-school-primary/30 transition-all duration-200 group"
                     >
                         {/* Top glow edge */}
-                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-school-primary/30 to-transparent" />
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-school-primary to-transparent" />
 
                         <CardContent className="p-5 sm:p-6">
                             {isEmpty ? (
@@ -575,25 +575,25 @@ export function StatsCards() {
                                 <div className="space-y-3">
                                     {/* Header row */}
                                     <div className="flex items-center justify-between">
-                                        <p className="text-xs font-semibold uppercase tracking-wider text-school-secondary-100/40">
+                                        <p className="text-xs font-semibold uppercase tracking-wider text-school-secondary-300">
                                             {stat.title}
                                         </p>
                                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-school-secondary-800 border border-school-secondary-700">
-                                            <Icon className="h-4 w-4 text-school-secondary-100/30" />
+                                            <Icon className="h-4 w-4 text-school-secondary-100" />
                                         </div>
                                     </div>
 
                                     {/* Zero value */}
-                                    <p className="text-3xl font-black text-school-secondary-100/20 tracking-tight">
+                                    <p className="text-3xl font-black text-school-secondary-300 tracking-tight">
                                         0
                                     </p>
 
                                     {/* Guidance text */}
-                                    <div className="space-y-1 border-t border-school-secondary-700/50 pt-3">
-                                        <p className="text-xs font-semibold text-school-secondary-100/50">
+                                    <div className="space-y-1 border-t border-school-secondary-700 pt-3">
+                                        <p className="text-xs font-semibold text-school-secondary-200">
                                             {stat.emptyHeadline}
                                         </p>
-                                        <p className="text-[11px] text-school-secondary-100/30 leading-relaxed">
+                                        <p className="text-[11px] text-school-secondary-300/10 leading-relaxed">
                                             {stat.emptyBody}
                                         </p>
                                     </div>
@@ -601,7 +601,7 @@ export function StatsCards() {
                                     {/* CTA */}
                                     <Link
                                         href={stat.ctaHref}
-                                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-school-primary hover:text-school-primary/80 transition-colors"
+                                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-school-primary hover:text-school-primary transition-colors"
                                     >
                                         {stat.emptyAction}
                                         <ArrowRight className="h-3 w-3" />
@@ -611,7 +611,7 @@ export function StatsCards() {
                                 /* ── Populated State ─────────────────────────── */
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="space-y-2 min-w-0 flex-1">
-                                        <p className="text-xs font-semibold uppercase tracking-wider text-school-secondary-100/40 truncate">
+                                        <p className="text-xs font-semibold uppercase tracking-wider text-school-secondary-100 truncate">
                                             {stat.title}
                                         </p>
 
@@ -629,19 +629,19 @@ export function StatsCards() {
                                             {stat.trend === "neutral" && (
                                                 <Minus className="h-3 w-3 text-amber-400 shrink-0" />
                                             )}
-                                            <span className="text-xs text-school-secondary-100/50 leading-relaxed">
+                                            <span className="text-xs text-school-secondary-100 leading-relaxed">
                                                 {stat.populatedDescription}
                                             </span>
                                         </div>
 
                                         {stat.extra && (
-                                            <p className="text-[10px] font-medium text-school-primary/70">
+                                            <p className="text-[10px] font-medium text-school-primary">
                                                 {stat.extra}
                                             </p>
                                         )}
                                     </div>
 
-                                    <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-school-primary/10 border border-school-primary/20">
+                                    <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-school-primary border border-school-primary/20">
                                         <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-school-primary" />
                                     </div>
                                 </div>

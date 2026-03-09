@@ -58,6 +58,7 @@ model Profile {
   email String  @unique
   name  String?
   role  Role
+  phone     String?  
 
   // Tenancy
   schoolId String?
@@ -398,4 +399,20 @@ model Subscription {
   stripeCustomerId String?  @unique
   currentPeriodEnd DateTime
   school           School   @relation(fields: [schoolId], references: [id])
+}
+
+model Invitation {
+  id          String    @id @default(uuid())
+  email       String
+  role        Role
+  schoolId    String?
+  curriculumId String 
+  token       String    @unique
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  invitedBy   String    // userId of admin who sent it
+  createdAt   DateTime  @default(now())
+
+  @@index([token])
+  @@index([email])
 }
