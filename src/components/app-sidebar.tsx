@@ -1201,7 +1201,7 @@ export function AppSidebar() {
     // Dashboard href varies by role
     const dashboardHref =
         isAdmin ? "/admin" :
-        isTeacher ? "/dashboard" :
+        isTeacher ? "/teacher" :
         isStudent ? "/student" :
         isParent ? "/parent" : "/";
 
