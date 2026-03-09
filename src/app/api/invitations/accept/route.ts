@@ -123,6 +123,43 @@ export async function POST(req: Request) {
         console.error('Failed to mark invite as accepted:', err)
     }
 
+    // 6. Fire-and-forget notifications
+    try {
+        const redirectTo = roleRedirects[invite.role] ?? '/login'
+
+        // 6a. Welcome notification for the new user
+        await prisma.notification.create({
+            data: {
+                userId: authData.user.id,
+                message: `Welcome to EduAI! Your ${invite.role.toLowerCase().replace(/_/g, ' ')} account has been activated.`,
+                link: redirectTo,
+            },
+        })
+
+        // 6b. Notify school admins about the new user
+        if (invite.schoolId) {
+            const adminProfiles = await prisma.profile.findMany({
+                where: {
+                    schoolId: invite.schoolId,
+                    role: { in: [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN] },
+                },
+                select: { id: true },
+            })
+
+            if (adminProfiles.length > 0) {
+                await prisma.notification.createMany({
+                    data: adminProfiles.map((admin) => ({
+                        userId: admin.id,
+                        message: `New ${invite.role.toLowerCase().replace(/_/g, ' ')} joined: ${invite.email}.`,
+                        link: '/admin/users',
+                    })),
+                })
+            }
+        }
+    } catch (notifyErr) {
+        console.error('Failed to create invite-accept notifications:', notifyErr)
+    }
+
     return NextResponse.json({
         success: true,
         email: invite.email,

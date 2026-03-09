@@ -328,6 +328,31 @@ export async function sendInviteAction({
             return { success: false, error: inviteError.message }
         }
 
+        // 8. Fire-and-forget notification for inviter
+        try {
+            const inviterProfile = await prisma.profile.findUnique({
+                where: { id: user.id },
+                select: { id: true, school: { select: { name: true } } },
+            })
+
+            if (inviterProfile) {
+                const roleLabel = role.toString().toLowerCase().replace(/_/g, ' ')
+                const schoolLabel = inviterProfile.school?.name
+                    ? ` at ${inviterProfile.school.name}`
+                    : ''
+
+                await prisma.notification.create({
+                    data: {
+                        userId: inviterProfile.id,
+                        message: `Invitation sent to ${email.trim()} as ${roleLabel}${schoolLabel}.`,
+                        link: '/admin/invite-users',
+                    },
+                })
+            }
+        } catch (notifyErr) {
+            console.error('Failed to create inviter notification:', notifyErr)
+        }
+
         return { success: true }
 
     } catch (err: unknown) {
@@ -404,6 +429,34 @@ export async function resendInviteAction(email: string): Promise<ActionResult> {
         if (inviteError) {
             console.error('inviteUserByEmail error:', inviteError)
             return { success: false, error: inviteError.message }
+        }
+
+        // 6. Fire-and-forget notification for inviter on resend
+        try {
+            const user = await getAuthUser()
+            if (user) {
+                const inviterProfile = await prisma.profile.findUnique({
+                    where: { id: user.id },
+                    select: { id: true, school: { select: { name: true } } },
+                })
+
+                if (inviterProfile) {
+                    const roleLabel = existing.role.toString().toLowerCase().replace(/_/g, ' ')
+                    const schoolLabel = inviterProfile.school?.name
+                        ? ` at ${inviterProfile.school.name}`
+                        : ''
+
+                    await prisma.notification.create({
+                        data: {
+                            userId: inviterProfile.id,
+                            message: `Invite link resent to ${email.trim()} as ${roleLabel}${schoolLabel}.`,
+                            link: '/admin/invite-users',
+                        },
+                    })
+                }
+            }
+        } catch (notifyErr) {
+            console.error('Failed to create inviter notification (resend):', notifyErr)
         }
 
         return { success: true }

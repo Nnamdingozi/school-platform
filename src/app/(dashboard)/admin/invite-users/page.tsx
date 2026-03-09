@@ -158,12 +158,19 @@ export default function InviteUsersPage() {
             updateRow(row.id, { status: 'sending', error: undefined })
 
             try {
-                await sendInviteAction({
+                const result = await sendInviteAction({
                     email: row.email.trim(),
                     role: row.role as Role,
                     schoolId,
                 })
-                updateRow(row.id, { status: 'sent' })
+                if (result.success) {
+                    updateRow(row.id, { status: 'sent' })
+                } else {
+                    updateRow(row.id, {
+                        status: 'error',
+                        error: result.error ?? 'Failed to send invite.',
+                    })
+                }
             } catch (err: unknown) {
                 updateRow(row.id, {
                     status: 'error',
@@ -181,8 +188,15 @@ export default function InviteUsersPage() {
     const handleResend = async (row: InviteRow) => {
         updateRow(row.id, { status: 'sending', error: undefined })
         try {
-            await resendInviteAction(row.email)
-            updateRow(row.id, { status: 'sent' })
+            const result = await resendInviteAction(row.email)
+            if (result.success) {
+                updateRow(row.id, { status: 'sent' })
+            } else {
+                updateRow(row.id, {
+                    status: 'error',
+                    error: result.error ?? 'Failed to resend invite.',
+                })
+            }
         } catch (err: unknown) {
             updateRow(row.id, {
                 status: 'error',
