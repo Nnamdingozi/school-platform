@@ -33,24 +33,25 @@ model School {
   curriculumId String
   curriculum   Curriculum @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
 
-  users     Profile[]
-  classes   Class[]
-  curricula Curriculum[] @relation("SchoolCurriculum")
-  whatsappCredits  Int          @default(0)
-  grades           Grade[]
-  terms            Term[]
-  subjects         Subject[]
-  topics           Topic[]
+  users           Profile[]
+  classes         Class[]
+  curricula       Curriculum[] @relation("SchoolCurriculum")
+  whatsappCredits Int          @default(0)
+  grades          Grade[]
+  terms           Term[]
+  subjects        Subject[]
+  topics          Topic[]
   classEnrollments ClassEnrollment[]
-  assessments      Assessment[]
-  lessons          Lesson[]
-  feedbacks        Feedback[]
-  gradeSubjects    GradeSubject[]
- primaryColor   String   @default("#f59e0b") // Main brand color
-  secondaryColor String   @default("#1e293b") // Contrast color
-  subscription     Subscription?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  assessments     Assessment[]
+  lessons         Lesson[]
+  feedbacks       Feedback[]
+  gradeSubjects   GradeSubject[]
+  parentStudents  ParentStudent[]
+  primaryColor    String   @default("#f59e0b") // Main brand color
+  secondaryColor  String   @default("#1e293b") // Contrast color
+  subscription    Subscription?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Profile {
@@ -72,6 +73,8 @@ model Profile {
   assessments         Assessment[]      @relation("StudentAssessments")
   gradeSubjectsTaught GradeSubject[]    @relation("TeacherGradeSubjects")
   classEnrollments    ClassEnrollment[]
+  children            ParentStudent[]   @relation("ParentChildren")
+  parents             ParentStudent[]   @relation("StudentParents")
 
   // Dynamic subject selections (many-to-many with GradeSubject)
   selectedSubjects   GradeSubject[] @relation("UserSelectedSubjects")
@@ -83,6 +86,26 @@ model Profile {
   @@index([schoolId])
   @@index([curriculumId])
   @@map("profiles")
+}
+
+model ParentStudent {
+  id        String  @id @default(uuid())
+
+  parentId  String
+  parent    Profile @relation("ParentChildren", fields: [parentId], references: [id])
+
+  studentId String
+  student   Profile @relation("StudentParents", fields: [studentId], references: [id])
+
+  schoolId  String?
+  school    School? @relation(fields: [schoolId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([parentId, studentId])
+  @@index([schoolId])
+  @@index([parentId])
+  @@index([studentId])
 }
 
 // ---------------- Curriculum Hierarchy ----------------
