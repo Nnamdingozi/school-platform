@@ -313,9 +313,11 @@ export async function sendInviteAction({
             return { success: false, error: 'NEXT_PUBLIC_SITE_URL is not configured.' }
         }
 
+        const inviteUrl = `${siteUrl}/accept-invite?token=${token}`
+
         const { error: inviteError } =
             await supabaseAdmin.auth.admin.inviteUserByEmail(email.trim(), {
-                redirectTo: `${siteUrl}/accept-invite`,
+                redirectTo: inviteUrl,
                 data: { custom_token: token, role, schoolId },
             })
 
@@ -387,9 +389,11 @@ export async function resendInviteAction(email: string): Promise<ActionResult> {
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
         if (!siteUrl) return { success: false, error: 'NEXT_PUBLIC_SITE_URL is not configured.' }
 
+        const inviteUrl = `${siteUrl}/accept-invite?token=${token}`
+
         const { error: inviteError } =
             await supabaseAdmin.auth.admin.inviteUserByEmail(email.trim(), {
-                redirectTo: `${siteUrl}/accept-invite`,
+                redirectTo: inviteUrl,
                 data: {
                     custom_token: token,
                     role:         existing.role,
