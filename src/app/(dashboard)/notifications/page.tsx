@@ -4,6 +4,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Bell, CheckCircle2, MessageCircle, Inbox } from 'lucide-react'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 async function markAllReadFormAction(_formData: FormData) {
     'use server'
     await markAllNotificationsReadAction()
