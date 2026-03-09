@@ -258,7 +258,7 @@ export function Header() {
 
                     {/* Min chars hint */}
                     {query.length > 0 && query.length < MIN_QUERY_LENGTH && (
-                        <div className="absolute top-full left-0 mt-1 w-80 rounded-xl border border-school-secondary-700 bg-school-secondary-900 px-4 py-3">
+                        <div className="absolute top-full left-0 mt-1 w-80 rounded-xl border border-school-secondary-700 bg-school-secondary-950 px-4 py-3">
                             <p className="text-xs text-school-secondary-400">
                                 Type {MIN_QUERY_LENGTH - query.length} more character{MIN_QUERY_LENGTH - query.length !== 1 ? 's' : ''} to search...
                             </p>
@@ -267,7 +267,7 @@ export function Header() {
 
                     {/* Results dropdown */}
                     {showDropdown && query.length >= MIN_QUERY_LENGTH && (
-                        <div className="absolute top-full left-0 mt-1 w-80 rounded-xl border border-school-secondary-700 bg-school-secondary-900 shadow-2xl z-50 overflow-hidden">
+                        <div className="absolute top-full left-0 mt-1 w-80 rounded-xl border border-school-secondary-700 bg-school-secondary-950 shadow-2xl z-50 overflow-hidden">
 
                             {/* Searching */}
                             {searchState === 'searching' && (
@@ -429,10 +429,10 @@ export function Header() {
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                        className="w-80 p-0 bg-school-secondary-950 border-school-secondary-700 shadow-2xl"
+                        className="w-80 p-0 bg-school-secondary-950 border-school-secondary-800 shadow-2xl"
                         align="end"
                     >
-                        <div className="flex items-center justify-between border-b border-school-secondary-700 px-4 py-3">
+                        <div className="flex items-center justify-between border-b border-school-secondary-800 px-4 py-3">
                             <h3 className="font-bold text-school-secondary-100">Notifications</h3>
                             {unreadCount > 0 && (
                                 <span className="text-xs px-2 py-0.5 rounded-full bg-school-primary/10 text-school-primary font-semibold">
