@@ -148,7 +148,7 @@ export function ParentDashboardClient({
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-[var(--color-primary)]/20 flex items-center justify-center text-[var(--color-primary)] font-semibold">
+            <div className="h-9 w-9 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-semibold">
               {schoolName.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -162,7 +162,7 @@ export function ParentDashboardClient({
                 {parentName ?? 'Parent'}
               </div>
             </div>
-            <span className="rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-[var(--color-primary)] border border-[var(--color-primary)]/40">
+            <span className="rounded-full bg-slate-800 px-3 py-1 text-xs font-medium primary border border-primary/40">
               {role}
             </span>
             <button
@@ -191,7 +191,7 @@ export function ParentDashboardClient({
                 />
               </svg>
               {unreadCount > 0 && (
-                <span className="absolute -right-1 -top-1 inline-flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[var(--color-primary)] px-1.5 text-[10px] font-semibold text-slate-950">
+                <span className="absolute -right-1 -top-1 inline-flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-slate-950">
                   {unreadCount}
                 </span>
               )}
@@ -218,7 +218,7 @@ export function ParentDashboardClient({
                   {currentNotifications.map((n) => (
                     <li
                       key={n.id}
-                      className="cursor-pointer rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 hover:border-[var(--color-primary)]/60 hover:bg-slate-900/80 transition"
+                      className="cursor-pointer rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 hover:border-primary/60 hover:bg-slate-900/80 transition"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-slate-100">{n.message}</p>
@@ -257,7 +257,7 @@ export function ParentDashboardClient({
                   onClick={() => setSelectedChildId(child.id)}
                   className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                     child.id === currentChild?.id
-                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]'
+                      ? 'border-primary bg-primary/15 text-primary'
                       : 'border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-500'
                   }`}
                 >
@@ -304,7 +304,7 @@ export function ParentDashboardClient({
                           cx="24"
                           cy="24"
                           r="18"
-                          className="stroke-[var(--color-primary)]"
+                          className="stroke-primary"
                           strokeWidth="6"
                           fill="none"
                           strokeDasharray={2 * Math.PI * 18}
@@ -380,13 +380,13 @@ export function ParentDashboardClient({
                       onClick={() => setTab(key)}
                       className={`relative py-2 capitalize ${
                         tab === key
-                          ? 'text-[var(--color-primary)]'
+                          ? 'text-primary'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
                       {key}
                       {tab === key && (
-                        <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[var(--color-primary)] rounded-full" />
+                        <span className="absolute inset-x-0 -bottom-px h-0.5 bg-primary rounded-full" />
                       )}
                     </button>
                   ),
@@ -429,7 +429,7 @@ export function ParentDashboardClient({
                           <div className="w-32">
                             <div className="h-1.5 w-full rounded-full bg-slate-800">
                               <div
-                                className="h-1.5 rounded-full bg-[var(--color-primary)]"
+                                className="h-1.5 rounded-full bg-primary"
                                 style={{ width: `${pct}%` }}
                               />
                             </div>
@@ -500,7 +500,7 @@ export function ParentDashboardClient({
                                   cx="24"
                                   cy="24"
                                   r="18"
-                                  className="stroke-[var(--color-primary)]"
+                                  className="stroke-primary"
                                   strokeWidth="5"
                                   fill="none"
                                   strokeDasharray={2 * Math.PI * 18}
@@ -606,7 +606,7 @@ export function ParentDashboardClient({
                         <span className="text-slate-200">{s.name}</span>
                         <span className="h-1 w-14 overflow-hidden rounded-full bg-slate-800">
                           <span
-                            className="block h-1 rounded-full bg-[var(--color-primary)]"
+                            className="block h-1 rounded-full bg-primary"
                             style={{ width: `${Math.round(s.avg)}%` }}
                           />
                         </span>
@@ -677,7 +677,7 @@ export function ParentDashboardClient({
                         )}
                       </div>
                       {a.comments && (
-                        <div className="mt-2 border-l-2 border-[var(--color-primary)]/70 pl-3 text-[11px] italic text-slate-200">
+                        <div className="mt-2 border-l-2 border-primary/70 pl-3 text-[11px] italic text-slate-200">
                           {a.comments}
                         </div>
                       )}
@@ -686,7 +686,7 @@ export function ParentDashboardClient({
                           {a.feedbacks.map((f, idx) => (
                             <div
                               key={idx}
-                              className="border-l-2 border-[var(--color-primary)]/40 pl-3 text-[11px] italic text-slate-300"
+                              className="border-l-2 border-primary/40 pl-3 text-[11px] italic text-slate-300"
                             >
                               {f.message}
                             </div>
