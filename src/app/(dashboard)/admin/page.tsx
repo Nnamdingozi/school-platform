@@ -306,12 +306,10 @@ import { StudentsPerClassTable } from "@/components/admin-dasboard/students-per-
 import {
     GradeDistributionChart,
     AssessmentScoresChart,
-    // ✅ FIX 1: Removed 'EnrollmentTrendChart' (was unused)
     StatusDistributionChart
 } from "@/components/admin-dasboard/analitcs-charts"
 import { Header } from "@/components/admin-dasboard/header"
-
-// ✅ FIX 2: Ensure 'Header' is not imported if it isn't used
+import { ParentChildLinker } from "@/components/admin-dasboard/parent-child-linker"
 
 export default function Dashboard() {
     const { profile, isLoading: isProfileLoading } = useProfileStore()
@@ -336,10 +334,8 @@ export default function Dashboard() {
                 <div className="mx-auto max-w-7xl space-y-6">
 
                     <div>
-                  
                         <Header />
                     </div>
-                
 
                     <StatsCards />
 
@@ -361,6 +357,8 @@ export default function Dashboard() {
                             <ActivityFeed />
                         </div>
                     </div>
+
+                    <ParentChildLinker />
 
                 </div>
             </main>
