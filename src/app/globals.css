@@ -65,11 +65,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(1 0 0);
 
-  --popover: color-mix(in srgb, var(--school-secondary), black 50%); /* same as school-secondary-950 */
-  --popover-foreground: color-mix(in srgb, var(--school-secondary), white 85%); /* same as school-secondary-100 */
-  --card: color-mix(in srgb, var(--school-secondary), black 50%);
-  --card-foreground: color-mix(in srgb, var(--school-secondary), white 85%);
-  
+
   --border: oklch(0.929 0.013 255.508);
   --input: oklch(0.929 0.013 255.508);
   --ring: oklch(0.704 0.04 256.788);

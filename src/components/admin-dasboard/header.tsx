@@ -429,7 +429,7 @@ export function Header() {
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                        className="w-80 p-0 bg-popover border-school-secondary-700 shadow-2xl"
+                        className="w-80 p-0 bg-school-secondary-950 border-school-secondary-700 shadow-2xl"
                         align="end"
                     >
                         <div className="flex items-center justify-between border-b border-school-secondary-700 px-4 py-3">
@@ -512,7 +512,7 @@ export function Header() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                         align="end"
-                        className="w-56 bg-popover border-school-secondary-700 shadow-2xl"
+                        className="w-56 bg-school-secondary-950 border-school-secondary-700 shadow-2xl"
                     >
                         <DropdownMenuLabel className="font-normal">
                             <div className="flex flex-col space-y-1">
