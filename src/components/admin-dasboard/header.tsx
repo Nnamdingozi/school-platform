@@ -42,6 +42,9 @@
 //         : "user"
 //     const schoolName = school?.name ?? profile?.school?.name ?? "EduAI"
 
+
+
+
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
@@ -243,7 +246,7 @@ export function Header() {
                         onFocus={() => {
                             if (query.length >= MIN_QUERY_LENGTH) setShowDropdown(true)
                         }}
-                        className="w-80 pl-10 pr-8 bg-school-secondary-900 border-school-secondary-700 text-school-secondary-100 placeholder:text-school-secondary-400 focus:border-school-primary"
+                        className="w-80 pl-10 pr-8 bg-school-secondary-700 border-school-secondary-700 text-school-secondary-100 placeholder:text-school-secondary-400 focus:border-school-primary"
                     />
 
                     {/* Clear button */}
@@ -258,7 +261,7 @@ export function Header() {
 
                     {/* Min chars hint */}
                     {query.length > 0 && query.length < MIN_QUERY_LENGTH && (
-                        <div className="absolute top-full left-0 mt-1 w-80 rounded-xl border border-school-secondary-700 bg-school-secondary-950 px-4 py-3">
+                        <div className="absolute top-full left-0 mt-1 w-80 rounded-xl border border-school-secondary-700 bg-gray-600 px-4 py-3 text-gray-100">
                             <p className="text-xs text-school-secondary-400">
                                 Type {MIN_QUERY_LENGTH - query.length} more character{MIN_QUERY_LENGTH - query.length !== 1 ? 's' : ''} to search...
                             </p>
@@ -267,7 +270,7 @@ export function Header() {
 
                     {/* Results dropdown */}
                     {showDropdown && query.length >= MIN_QUERY_LENGTH && (
-                        <div className="absolute top-full left-0 mt-1 w-80 rounded-xl border border-school-secondary-700 bg-school-secondary-950 shadow-2xl z-50 overflow-hidden">
+                        <div className="absolute top-full left-0 mt-1 w-80 rounded-xl border border-school-secondary-700 bg-gray-600 text-gray-100 shadow-2xl z-50 overflow-hidden">
 
                             {/* Searching */}
                             {searchState === 'searching' && (
@@ -314,8 +317,8 @@ export function Header() {
                                                 <ProfileResultRow
                                                     key={t.id}
                                                     item={t}
-                                                    iconBg="bg-blue-500/20"
-                                                    icon={<GraduationCap className="h-3.5 w-3.5 text-blue-400" />}
+                                                    iconBg="bg-blue-500"
+                                                    icon={<GraduationCap className="h-3.5 w-3.5 text-blue-100" />}
                                                     onClick={() => handleResultClick('user', t.id)}
                                                 />
                                             ))}
@@ -327,15 +330,15 @@ export function Header() {
                                         <ResultSection
                                             label="Students"
                                             total={results.students.total}
-                                            icon={<Users className="h-3.5 w-3.5 text-green-400" />}
-                                            iconBg="bg-green-500/20"
+                                            icon={<Users className="h-3.5 w-3.5 text-green-100" />}
+                                            iconBg="bg-green-500"
                                         >
                                             {results.students.data.map(s => (
                                                 <ProfileResultRow
                                                     key={s.id}
                                                     item={s}
-                                                    iconBg="bg-green-500/20"
-                                                    icon={<Users className="h-3.5 w-3.5 text-green-400" />}
+                                                    iconBg="bg-green-500"
+                                                    icon={<Users className="h-3.5 w-3.5 text-green-100" />}
                                                     onClick={() => handleResultClick('user', s.id)}
                                                 />
                                             ))}
@@ -347,15 +350,15 @@ export function Header() {
                                         <ResultSection
                                             label="Parents"
                                             total={results.parents.total}
-                                            icon={<User className="h-3.5 w-3.5 text-purple-400" />}
-                                            iconBg="bg-purple-500/20"
+                                            icon={<User className="h-3.5 w-3.5 text-purple-100" />}
+                                            iconBg="bg-purple-500"
                                         >
                                             {results.parents.data.map(p => (
                                                 <ProfileResultRow
                                                     key={p.id}
                                                     item={p}
-                                                    iconBg="bg-purple-500/20"
-                                                    icon={<User className="h-3.5 w-3.5 text-purple-400" />}
+                                                    iconBg="bg-purple-500"
+                                                    icon={<User className="h-3.5 w-3.5 text-purple-100" />}
                                                     onClick={() => handleResultClick('user', p.id)}
                                                 />
                                             ))}
@@ -367,8 +370,8 @@ export function Header() {
                                         <ResultSection
                                             label="Classes"
                                             total={results.classes.total}
-                                            icon={<BookOpen className="h-3.5 w-3.5 text-amber-400" />}
-                                            iconBg="bg-amber-500/20"
+                                            icon={<BookOpen className="h-3.5 w-3.5 text-amber-100" />}
+                                            iconBg="bg-amber-500"
                                         >
                                             {results.classes.data.map(c => (
                                                 <button
@@ -376,8 +379,8 @@ export function Header() {
                                                     onClick={() => handleResultClick('class', c.id)}
                                                     className="flex w-full items-center gap-3 px-3 py-2 hover:bg-school-secondary-800 transition-colors"
                                                 >
-                                                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500/20">
-                                                        <BookOpen className="h-3.5 w-3.5 text-amber-400" />
+                                                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500">
+                                                        <BookOpen className="h-3.5 w-3.5 text-amber-100" />
                                                     </div>
                                                     <div className="text-left min-w-0">
                                                         <p className="text-sm font-medium text-white truncate">
@@ -429,13 +432,13 @@ export function Header() {
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                        className="w-80 p-0 bg-school-secondary-950 border-school-secondary-800 shadow-2xl"
+                        className="w-80 p-0 bg-gray-600 border-school-secondary-800 shadow-2xl text-gray-100"
                         align="end"
                     >
                         <div className="flex items-center justify-between border-b border-school-secondary-800 px-4 py-3">
                             <h3 className="font-bold text-school-secondary-100">Notifications</h3>
                             {unreadCount > 0 && (
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-school-primary/10 text-school-primary font-semibold">
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-school-primary text-school-primary font-semibold">
                                     {unreadCount} new
                                 </span>
                             )}
@@ -512,7 +515,7 @@ export function Header() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                         align="end"
-                        className="w-56 bg-school-secondary-950 border-school-secondary-700 shadow-2xl"
+                        className="w-56 bg-slate-600 border-school-secondary-700 shadow-2xl text-slate-100"
                     >
                         <DropdownMenuLabel className="font-normal">
                             <div className="flex flex-col space-y-1">
