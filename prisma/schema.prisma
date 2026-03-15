@@ -74,24 +74,22 @@ model Profile {
   @@index([curriculumId])
   @@map("profiles")
 }
+
 model ParentStudent {
-  id        String  @id @default(uuid())
-
+  id        String   @id @default(uuid())
   parentId  String
-  parent    Profile @relation("ParentChildren", fields: [parentId], references: [id])
-
   studentId String
-  student   Profile @relation("StudentParents", fields: [studentId], references: [id])
-
   schoolId  String?
-  school    School? @relation(fields: [schoolId], references: [id])
-
   createdAt DateTime @default(now())
 
+  parent  Profile  @relation("ParentStudent_parentIdToprofiles", fields: [parentId], references: [id])
+  student Profile  @relation("ParentStudent_studentIdToprofiles", fields: [studentId], references: [id])
+  school  School?  @relation(fields: [schoolId], references: [id])
+
   @@unique([parentId, studentId])
-  @@index([schoolId])
   @@index([parentId])
   @@index([studentId])
+  @@index([schoolId])
 }
 
 // ---------------- Curriculum Hierarchy ----------------
@@ -345,21 +343,7 @@ model Invitation {
   @@index([email])
 }
 
-model ParentStudent {
-  id                                         String   @id
-  parentId                                   String
-  studentId                                  String
-  schoolId                                   String?
-  createdAt                                  DateTime @default(now())
-  profiles_ParentStudent_parentIdToprofiles  Profile  @relation("ParentStudent_parentIdToprofiles", fields: [parentId], references: [id])
-  School                                     School?  @relation(fields: [schoolId], references: [id])
-  profiles_ParentStudent_studentIdToprofiles Profile  @relation("ParentStudent_studentIdToprofiles", fields: [studentId], references: [id])
 
-  @@unique([parentId, studentId])
-  @@index([parentId])
-  @@index([schoolId])
-  @@index([studentId])
-}
 
 enum Role {
   SUPER_ADMIN
