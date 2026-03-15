@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 import Papa, { ParseResult } from 'papaparse';
+import { toast } from 'sonner'
 import {
   CheckCircle2,
   Download,
@@ -98,8 +99,7 @@ export function ParentChildLinker() {
         }
       },
       error: () => {
-        // eslint-disable-next-line no-alert
-        alert('Failed to parse CSV. Please check the format.');
+       toast.error('Failed to parse CSV. Please check the format.')
       },
     });
   }, []);
@@ -110,7 +110,6 @@ export function ParentChildLinker() {
       parseCsv(file);
     }
     // reset input so selecting the same file again still fires change
-    // eslint-disable-next-line no-param-reassign
     event.target.value = '';
   };
 
