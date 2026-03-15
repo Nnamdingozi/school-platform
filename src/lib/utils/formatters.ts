@@ -13,3 +13,12 @@ export const formatRole = (role: string): string =>
 
 export const formatPhone = (phone: string): string =>
     phone.trim().replace(/\s+/g, ' ')
+
+export function letterFromPercentage(pct: number | null): string {
+    if (pct == null) return '-';
+    if (pct >= 85)   return 'A';
+    if (pct >= 70)   return 'B';
+    if (pct >= 55)   return 'C';
+    if (pct >= 40)   return 'D';
+    return 'E';
+}

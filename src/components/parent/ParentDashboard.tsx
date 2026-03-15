@@ -17,9 +17,8 @@ type ParentDashboardProps = {
   schoolName: string;
   primaryColor: string;
   secondaryColor: string;
-  parentId: string;
   schoolId: string;
-  children: ChildProfile[];
+  childrenOfParent: ChildProfile[];
 };
 
 export async function ParentDashboard({
@@ -28,16 +27,15 @@ export async function ParentDashboard({
   schoolName,
   primaryColor,
   secondaryColor,
-  parentId,
   schoolId,
-  children,
+ childrenOfParent,
 }: ParentDashboardProps) {
   const subjectsByChild: Record<string, SubjectProgress[]> = {};
   const assessmentsByChild: Record<string, AssessmentRecord[]> = {};
   const notificationsByChild: Record<string, Notification[]> = {};
 
   await Promise.all(
-    children.map(async (child) => {
+childrenOfParent.map(async (child) => {
       const [subjects, assessments, notifications] = await Promise.all([
         getChildSubjectsAndProgress(child.id, schoolId),
         getChildAssessmentHistory(child.id, schoolId),
@@ -57,7 +55,7 @@ export async function ParentDashboard({
       schoolName={schoolName}
       primaryColor={primaryColor}
       secondaryColor={secondaryColor}
-      children={children}
+      childrenOfParent={childrenOfParent}
       subjectsByChild={subjectsByChild}
       assessmentsByChild={assessmentsByChild}
       notificationsByChild={notificationsByChild}
