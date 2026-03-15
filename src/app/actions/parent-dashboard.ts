@@ -17,7 +17,7 @@ function safePercentage(score: number | null, maxScore: number | null): number |
   return (score / maxScore) * 100;
 }
 
-function letterFromPercentage(pct: number | null): string {
+export function letterFromPercentage(pct: number | null): string {
   if (pct == null) return '-';
   if (pct >= 85) return 'A';
   if (pct >= 70) return 'B';
