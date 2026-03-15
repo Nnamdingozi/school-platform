@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { Role } from '@prisma/client';
+import { getErrorMessage } from '@/lib/error-handler'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -141,8 +142,8 @@ async function linkSinglePair(
       parentEmail,
       childEmail,
       success: false,
-      message: 'Unexpected error while linking parent and child.',
-    };
+      message: getErrorMessage(error),  // ← now error is used
+    }
   }
 }
 
