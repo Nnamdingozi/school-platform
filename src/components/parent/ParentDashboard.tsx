@@ -17,7 +17,6 @@ type ParentDashboardProps = {
   schoolName: string;
   primaryColor: string;
   secondaryColor: string;
-  parentId: string;
   schoolId: string;
   childrenOfParent: ChildProfile[];
 };
@@ -28,7 +27,6 @@ export async function ParentDashboard({
   schoolName,
   primaryColor,
   secondaryColor,
-  parentId,
   schoolId,
  childrenOfParent,
 }: ParentDashboardProps) {
