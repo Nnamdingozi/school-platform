@@ -40,7 +40,7 @@ export default async function ParentDashboardPage() {
     redirect('/login');
   }
 
-  const parentId = profile.id;
+  const parentId = profile.id
   const schoolId = profile.schoolId!;
 
   const childrenOfParent = await getParentChildren(parentId, schoolId);
@@ -52,7 +52,6 @@ export default async function ParentDashboardPage() {
       schoolName={profile.school.name}
       primaryColor={profile.school.primaryColor}
       secondaryColor={profile.school.secondaryColor}
-      parentId={parentId}
       schoolId={schoolId}
       childrenOfParent={childrenOfParent}
     />
