@@ -957,13 +957,12 @@ function TeacherDashboardContent({ teacher }: TeacherDashboardContentProps) {
                     </section>
 
                     <section className="w-full">
-                        <AILessonPlanner
-                            topicId={activeTopic?.id ?? ""}
-                            lessonId={activeTopic?.lessons?.[0]?.id ?? ""}
-                            topicTitle={activeTopic?.title ?? "General Subject"}
-                            // ✅ FIX 4: Replaced 'any' with the actual type cast
-                            initialData={activeTopic?.lessons?.[0]?.aiContent as unknown as EnhancedLessonContent}
-                        />
+                    <AILessonPlanner
+    topicId={activeTopic?.id ?? ""}
+    lessonId={activeTopic?.lessons?.id ?? ""}
+    topicTitle={activeTopic?.title ?? "General Subject"}
+    initialData={activeTopic?.lessons?.aiContent as unknown as EnhancedLessonContent}
+/>
                     </section>
 
                     <section className="w-full">
