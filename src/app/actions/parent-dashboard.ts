@@ -27,7 +27,7 @@ export async function getParentChildren(
     const links = await prisma.parentStudent.findMany({
         where: { parentId, schoolId },
         include: {
-            profiles_ParentStudent_studentIdToprofiles: {
+            student: {                    // ✅ matches field name in merged schema
                 include: {
                     curriculum:       true,
                     classEnrollments: {
@@ -46,23 +46,22 @@ export async function getParentChildren(
     })
 
     return links
-        .map((link) => link.profiles_ParentStudent_studentIdToprofiles)
+        .map((link) => link.student)     // ✅ matches field name
         .filter((student): student is NonNullable<typeof student> => Boolean(student))
         .map((student) => {
             const firstEnrollment  = student.classEnrollments[0]
             const gradeDisplayName = firstEnrollment?.gradeSubject.grade.displayName ?? 'Unassigned'
 
             return {
-                id:        student.id,
-                name:      student.name ?? null,
-                email:     student.email,
-                grade:     gradeDisplayName,
+                id:         student.id,
+                name:       student.name ?? null,
+                email:      student.email,
+                grade:      gradeDisplayName,
                 curriculum: student.curriculum.name,
                 termLabel:  student.curriculum.termLabel,
             }
         })
 }
-
 // ── Get child subjects and progress ───────────────────────────────────────────
 
 export async function getChildSubjectsAndProgress(
