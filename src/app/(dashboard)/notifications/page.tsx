@@ -226,9 +226,22 @@ export default async function NotificationsPage() {
                 </div>
 
                 {/* Summary (Same as before) */}
-                <div className="flex items-center gap-4 rounded-2xl border border-school-secondary-800 bg-school-secondary-900/60 px-4 py-3 text-sm text-school-secondary-100 shadow-sm">
-                   {/* ... inbox and unread counts ... */}
-                </div>
+               {/* Summary */}
+<div className="flex items-center gap-4 rounded-2xl border border-school-secondary-800 bg-school-secondary-900/60 px-4 py-3 text-sm text-school-secondary-100 shadow-sm">
+    <div className="flex items-center gap-2">
+        <Inbox className="h-4 w-4 text-school-secondary-400" />
+        <span className="text-school-secondary-300">
+            {notifications.length} total
+        </span>
+    </div>
+    <div className="h-4 w-px bg-school-secondary-700" />
+    <div className="flex items-center gap-2">
+        <span className={`h-2 w-2 rounded-full ${unreadCount > 0 ? 'bg-school-primary' : 'bg-school-secondary-500'}`} />
+        <span className={unreadCount > 0 ? 'text-school-primary font-semibold' : 'text-school-secondary-300'}>
+            {unreadCount} unread
+        </span>
+    </div>
+</div>
 
                 {/* List */}
                 <div className="overflow-hidden rounded-2xl border border-school-secondary-800 bg-school-secondary-900/60 shadow-sm">

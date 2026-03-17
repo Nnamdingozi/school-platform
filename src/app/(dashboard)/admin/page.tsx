@@ -15,6 +15,7 @@ import {
 } from "@/components/admin-dasboard/analitcs-charts"
 import {UnassignedStudentsAlert} from "@/components/admin-dasboard/unassigned-students-alert"
 import { Header } from "@/components/admin-dasboard/header"
+import { ParentChildLinker } from "@/components/admin-dasboard/parent-child-linker"
 
 export default function Dashboard() {
     const { profile, isLoading: isProfileLoading } = useProfileStore()
@@ -69,6 +70,8 @@ export default function Dashboard() {
                         </div>
 
                     </div>
+
+                    <ParentChildLinker />
 
                 </div>
             </main>

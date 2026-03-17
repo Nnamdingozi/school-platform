@@ -14,7 +14,6 @@ export const formatRole = (role: string): string =>
 export const formatPhone = (phone: string): string =>
     phone.trim().replace(/\s+/g, ' ')
 
-// src/lib/utils/formatters.ts — add this function
 export function letterFromPercentage(pct: number | null): string {
     if (pct == null) return '-';
     if (pct >= 85)   return 'A';

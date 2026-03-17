@@ -1,0 +1,65 @@
+import { ParentDashboardClient } from './ParentDashboardClient';
+import {
+  getChildAssessmentHistory,
+  getChildNotifications,
+  getChildSubjectsAndProgress,
+} from '@/app/actions/parent-dashboard';
+import type {
+  AssessmentRecord,
+  ChildProfile,
+  SubjectProgress,
+} from '@/types/parent-dashboard';
+import type { Notification } from '@prisma/client';
+
+type ParentDashboardProps = {
+  parentName: string | null;
+  role: string;
+  schoolName: string;
+  primaryColor: string;
+  secondaryColor: string;
+  schoolId: string;
+  childrenOfParent: ChildProfile[];
+};
+
+export async function ParentDashboard({
+  parentName,
+  role,
+  schoolName,
+  primaryColor,
+  secondaryColor,
+  schoolId,
+ childrenOfParent,
+}: ParentDashboardProps) {
+  const subjectsByChild: Record<string, SubjectProgress[]> = {};
+  const assessmentsByChild: Record<string, AssessmentRecord[]> = {};
+  const notificationsByChild: Record<string, Notification[]> = {};
+
+  await Promise.all(
+childrenOfParent.map(async (child) => {
+      const [subjects, assessments, notifications] = await Promise.all([
+        getChildSubjectsAndProgress(child.id, schoolId),
+        getChildAssessmentHistory(child.id, schoolId),
+        getChildNotifications(child.id, schoolId),
+      ]);
+
+      subjectsByChild[child.id] = subjects;
+      assessmentsByChild[child.id] = assessments;
+      notificationsByChild[child.id] = notifications;
+    }),
+  );
+
+  return (
+    <ParentDashboardClient
+      parentName={parentName}
+      role={role}
+      schoolName={schoolName}
+      primaryColor={primaryColor}
+      secondaryColor={secondaryColor}
+      childrenOfParent={childrenOfParent}
+      subjectsByChild={subjectsByChild}
+      assessmentsByChild={assessmentsByChild}
+      notificationsByChild={notificationsByChild}
+    />
+  );
+}
+
