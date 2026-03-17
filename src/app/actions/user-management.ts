@@ -154,6 +154,7 @@ export async function getStudentsBySchool(
 }
 
 // ── Get Parents ────────────────────────────────────────────────────────────────
+// ── Get Parents ────────────────────────────────────────────────────────────────
 export async function getParentsBySchool(
     schoolId: string
 ): Promise<UserListItem[]> {
@@ -167,10 +168,11 @@ export async function getParentsBySchool(
                 email: true,
                 phone: true,
                 role:  true,
-                // Parents linked to students via ParentStudent
+                // This is the relation name from the Profile model
                 ParentStudent_ParentStudent_parentIdToprofiles: {
                     select: {
-                        profiles_ParentStudent_studentIdToprofiles: {
+                        // ✅ FIX: Use 'student' (the field name in ParentStudent model)
+                        student: { 
                             select: {
                                 classEnrollments: {
                                     select: {
@@ -194,11 +196,13 @@ export async function getParentsBySchool(
             // Flatten all classes from all linked students
             const classes = p.ParentStudent_ParentStudent_parentIdToprofiles
                 .flatMap(ps =>
-                    ps.profiles_ParentStudent_studentIdToprofiles
+                    // ✅ FIX: Use .student here as well
+                    ps.student
                         .classEnrollments
                         .filter(e => e.class !== null)
                         .map(e => e.class!)
                 )
+            
             // Deduplicate by class id
             const unique = Array.from(
                 new Map(classes.map(c => [c.id, c])).values()
@@ -217,7 +221,6 @@ export async function getParentsBySchool(
         return []
     }
 }
-
 // ── Get User By ID ─────────────────────────────────────────────────────────────
 export async function getUserById(id: string): Promise<UserDetail | null> {
     try {

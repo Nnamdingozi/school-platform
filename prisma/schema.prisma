@@ -32,6 +32,11 @@ model School {
   ParentStudent    ParentStudent[]
   subscription     Subscription?
   activityLogs     ActivityLog[]
+  assessments      Assessment[]    
+  primaryColor   String @default("#f59e0b")
+  secondaryColor String @default("#1e293b")
+    createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Profile {
@@ -73,9 +78,8 @@ model Profile {
   // Notifications
   notifications Notification[]
 
-  subscription Subscription?
+  subscription Subscription? @relation("ProfileSubscription") 
   activityLogs  ActivityLog[]
-
   @@index([schoolId])
   @@index([curriculumId])
   @@map("profiles")
@@ -329,10 +333,13 @@ model Subscription {
   id               String   @id @default(uuid())
   schoolId         String   @unique
   plan             String
+  profileId        String?  @unique 
   status           String
   stripeCustomerId String?  @unique
   currentPeriodEnd DateTime
   school           School   @relation(fields: [schoolId], references: [id])
+  profile          Profile? @relation("ProfileSubscription", fields: [profileId], references: [id]) 
+
 }
 
 model Invitation {
