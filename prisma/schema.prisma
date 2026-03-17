@@ -33,6 +33,7 @@ model School {
   terms            Term[]
   topics           Topic[]
   users            Profile[]
+ activityLogs ActivityLog[]
 }
 
 model Profile {
@@ -56,6 +57,7 @@ model Profile {
   school                                          School?           @relation(fields: [schoolId], references: [id])
   gradeSubjectsTaught                             GradeSubject[]    @relation("TeacherGradeSubjects")
   selectedSubjects                                GradeSubject[]    @relation("UserSelectedSubjects")
+  activityLogs ActivityLog[]
 
   @@index([schoolId])
   @@index([curriculumId])
@@ -107,6 +109,8 @@ model Term {
   displayName String
   gradeId     String
   schoolId    String?
+  startDate DateTime?
+  endDate   DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   grade       Grade    @relation(fields: [gradeId], references: [id])
@@ -325,6 +329,46 @@ model ParentStudent {
   @@index([parentId])
   @@index([schoolId])
   @@index([studentId])
+}
+
+model ActivityLog {
+  id          String       @id @default(uuid())
+  schoolId    String
+  actorId     String
+  actorName   String?
+  actorRole   String?
+  type        ActivityType
+  title       String
+  description String
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+
+  school School  @relation(fields: [schoolId], references: [id])
+  actor  Profile @relation(fields: [actorId], references: [id])
+
+  @@index([schoolId])
+  @@index([actorId])
+  @@index([createdAt])
+}
+
+enum ActivityType {
+  ASSESSMENT_CREATED
+  ASSESSMENT_GRADED
+  STUDENT_ENROLLED
+  STUDENT_ASSIGNED
+  TEACHER_ASSIGNED
+  USER_INVITED
+  USER_DEACTIVATED
+  USER_DELETED
+  USER_REACTIVATED
+  CLASS_CREATED
+  SETTINGS_UPDATED
+  CURRICULUM_UPDATED
+  TERM_DATES_UPDATED
+  WHATSAPP_SENT
+  LOGIN
+  LOGOUT
+  REPORT_GENERATED
 }
 
 enum Role {
