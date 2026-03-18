@@ -40,6 +40,22 @@
   --color-school-secondary-800: var(--school-secondary-800);
   --color-school-secondary-950: var(--school-secondary-950);
 
+  --color-school-primary-200: var(--school-primary-200);
+--color-school-primary-300: var(--school-primary-300);
+--color-school-primary-500: var(--school-primary-500);
+--color-school-primary-700: var(--school-primary-700);
+--color-school-primary-800: var(--school-primary-800);
+--color-school-primary-950: var(--school-primary-950);
+
+/* Missing school-secondary registrations */
+--color-school-secondary-200: var(--school-secondary-200);
+--color-school-secondary-300: var(--school-secondary-300);
+--color-school-secondary-400: var(--school-secondary-400);
+--color-school-secondary-500: var(--school-secondary-500);
+--color-school-secondary-600: var(--school-secondary-600);
+--color-school-secondary-700: var(--school-secondary-700);
+--color-school-secondary-900: var(--school-secondary-900);
+
   /* Radius mapping */
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -84,6 +100,23 @@
   --school-secondary-100: color-mix(in srgb, var(--school-secondary), white 85%);
   --school-secondary-800: color-mix(in srgb, var(--school-secondary), black 40%);
   --school-secondary-950: color-mix(in srgb, var(--school-secondary), black 85%);
+
+ /* Missing school-primary shades */
+--school-primary-200: color-mix(in srgb, var(--school-primary), white 70%);
+--school-primary-300: color-mix(in srgb, var(--school-primary), white 50%);
+--school-primary-500: color-mix(in srgb, var(--school-primary), black 5%);
+--school-primary-700: color-mix(in srgb, var(--school-primary), black 25%);
+--school-primary-800: color-mix(in srgb, var(--school-primary), black 40%);
+--school-primary-950: color-mix(in srgb, var(--school-primary), black 90%);
+
+/* Missing school-secondary shades */
+--school-secondary-200: color-mix(in srgb, var(--school-secondary), white 75%);
+--school-secondary-300: color-mix(in srgb, var(--school-secondary), white 60%);
+--school-secondary-400: color-mix(in srgb, var(--school-secondary), white 45%);
+--school-secondary-500: color-mix(in srgb, var(--school-secondary), white 25%);
+--school-secondary-600: color-mix(in srgb, var(--school-secondary), black 15%);
+--school-secondary-700: color-mix(in srgb, var(--school-secondary), black 25%);
+--school-secondary-900: color-mix(in srgb, var(--school-secondary), black 55%);
 }
 
 /* 4. BASE LAYER */
