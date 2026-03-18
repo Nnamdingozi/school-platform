@@ -140,7 +140,7 @@ export function AppSidebar() {
                     <>
                         <NavGroup label="School Management">
                             {/* School model → name, colors, curriculum */}
-                            <NavItem href="/admin/school" icon={School} label="School Settings" />
+                            <NavItem href="/admin/settings" icon={School} label="School Settings" />
                             {/* Profile model → all users in school */}
                             <NavItem href="/admin/users" icon={Users} label="Users & Roles" />
                             {/* Manage parent → child relationships */}

@@ -15,41 +15,49 @@ model School {
   curriculumId String
   curriculum   Curriculum @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
 
-  users           Profile[]
-  classes         Class[]
-  curricula       Curriculum[] @relation("SchoolCurriculum")
-  whatsappCredits Int          @default(0)
-  grades          Grade[]
-  terms           Term[]
-  subjects        Subject[]
-  topics          Topic[]
+  whatsappCredits Int @default(0)
+
+  // Relations
+  users            Profile[]
+  classes          Class[]
+  curricula        Curriculum[]      @relation("SchoolCurriculum")
+  grades           Grade[]
+  terms            Term[]
+  subjects         Subject[]
+  topics           Topic[]
   classEnrollments ClassEnrollment[]
-  assessments     Assessment[]
-  lessons         Lesson[]
-  feedbacks       Feedback[]
-  gradeSubjects   GradeSubject[]
-  parentStudents  ParentStudent[]
-  primaryColor    String   @default("#f59e0b") // Main brand color
-  secondaryColor  String   @default("#1e293b") // Contrast color
-  subscription    Subscription?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  feedbacks        Feedback[]
+  gradeSubjects    GradeSubject[]
+  lessons          Lesson[]
+  ParentStudent    ParentStudent[]
+  subscription     Subscription?
+  activityLogs     ActivityLog[]
+  assessments      Assessment[]    
+  primaryColor   String @default("#f59e0b")
+  secondaryColor String @default("#1e293b")
+    createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Profile {
-  id           String  @id @default(uuid())
-  email        String  @unique
+  id           String @id @default(uuid())
+  email        String @unique
   name         String?
   role         Role
   phone        String?
   schoolId     String?
   curriculumId String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+
+  // Branding
+  primaryColor   String @default("#f59e0b")
+  secondaryColor String @default("#1e293b")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  school       School?    @relation(fields: [schoolId], references: [id])
-  curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
+  school     School?    @relation(fields: [schoolId], references: [id])
+  curriculum Curriculum @relation(fields: [curriculumId], references: [id])
 
   // Classes
   taughtClasses    Class[]           @relation("TeacherClasses")
@@ -70,6 +78,8 @@ model Profile {
   // Notifications
   notifications Notification[]
 
+  subscription Subscription? @relation("ProfileSubscription") 
+  activityLogs  ActivityLog[]
   @@index([schoolId])
   @@index([curriculumId])
   @@map("profiles")
@@ -139,6 +149,8 @@ model Term {
   displayName String
   gradeId     String
   schoolId    String?
+  startDate DateTime?
+  endDate   DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   grade       Grade    @relation(fields: [gradeId], references: [id])
@@ -321,10 +333,13 @@ model Subscription {
   id               String   @id @default(uuid())
   schoolId         String   @unique
   plan             String
+  profileId        String?  @unique 
   status           String
   stripeCustomerId String?  @unique
   currentPeriodEnd DateTime
   school           School   @relation(fields: [schoolId], references: [id])
+  profile          Profile? @relation("ProfileSubscription", fields: [profileId], references: [id]) 
+
 }
 
 model Invitation {
@@ -344,6 +359,46 @@ model Invitation {
 }
 
 
+
+model ActivityLog {
+  id          String       @id @default(uuid())
+  schoolId    String
+  actorId     String
+  actorName   String?
+  actorRole   String?
+  type        ActivityType
+  title       String
+  description String
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+
+  school School  @relation(fields: [schoolId], references: [id])
+  actor  Profile @relation(fields: [actorId], references: [id])
+
+  @@index([schoolId])
+  @@index([actorId])
+  @@index([createdAt])
+}
+
+enum ActivityType {
+  ASSESSMENT_CREATED
+  ASSESSMENT_GRADED
+  STUDENT_ENROLLED
+  STUDENT_ASSIGNED
+  TEACHER_ASSIGNED
+  USER_INVITED
+  USER_DEACTIVATED
+  USER_DELETED
+  USER_REACTIVATED
+  CLASS_CREATED
+  SETTINGS_UPDATED
+  CURRICULUM_UPDATED
+  TERM_DATES_UPDATED
+  WHATSAPP_SENT
+  LOGIN
+  LOGOUT
+  REPORT_GENERATED
+}
 
 enum Role {
   SUPER_ADMIN
