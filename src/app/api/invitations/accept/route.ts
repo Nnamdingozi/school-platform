@@ -84,19 +84,37 @@ export async function POST(req: Request) {
         )
     }
 
-    // 4. Create profile in DB — roll back auth update if this fails
+    // 4. Create or update profile in DB — roll back auth update if this fails
+    let profileId: string
     try {
-        await prisma.profile.create({
-            data: {
-                id: authData.user.id,
-                email: invite.email,
-                name: fullName ? toTitleCase(fullName) : null,
-                phone: phone ? formatPhone(phone) : null,
-                role: invite.role,
-                schoolId: invite.schoolId,
-                curriculumId: invite.curriculumId,
-            },
+        const existingProfile = await prisma.profile.findUnique({
+            where: { email: invite.email },
         })
+
+        const baseData = {
+            email: invite.email,
+            name: fullName ? toTitleCase(fullName) : null,
+            phone: phone ? formatPhone(phone) : null,
+            role: invite.role,
+            schoolId: invite.schoolId,
+            curriculumId: invite.curriculumId,
+        }
+
+        if (existingProfile) {
+            const updated = await prisma.profile.update({
+                where: { email: invite.email },
+                data: baseData,
+            })
+            profileId = updated.id
+        } else {
+            const created = await prisma.profile.create({
+                data: {
+                    id: authData.user.id,
+                    ...baseData,
+                },
+            })
+            profileId = created.id
+        }
     } catch (profileError) {
         console.error('Profile creation failed:', profileError)
 
@@ -130,7 +148,7 @@ export async function POST(req: Request) {
         // 6a. Welcome notification for the new user
         await prisma.notification.create({
             data: {
-                userId: authData.user.id,
+                userId: profileId,
                 message: `Welcome to EduAI! Your ${invite.role.toLowerCase().replace(/_/g, ' ')} account has been activated.`,
                 link: redirectTo,
             },
