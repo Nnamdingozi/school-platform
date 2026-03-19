@@ -10,76 +10,60 @@ datasource db {
 }
 
 model School {
-  id           String     @id @default(uuid())
-  name         String
-  curriculumId String
-  curriculum   Curriculum @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
-
-  whatsappCredits Int @default(0)
-
-  // Relations
-  users            Profile[]
+  id               String            @id @default(uuid())
+  name             String
+  curriculumId     String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  primaryColor     String            @default("#f59e0b")
+  secondaryColor   String            @default("#1e293b")
+  whatsappCredits  Int               @default(0)
+  activityLogs     ActivityLog[]
+  assessments      Assessment[]
   classes          Class[]
-  curricula        Curriculum[]      @relation("SchoolCurriculum")
-  grades           Grade[]
-  terms            Term[]
-  subjects         Subject[]
-  topics           Topic[]
   classEnrollments ClassEnrollment[]
+  curricula        Curriculum[]      @relation("SchoolCurriculum")
   feedbacks        Feedback[]
+  grades           Grade[]
   gradeSubjects    GradeSubject[]
   lessons          Lesson[]
   ParentStudent    ParentStudent[]
+  curriculum       Curriculum        @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
+  studentSubjects  StudentSubject[]
+  subjects         Subject[]
   subscription     Subscription?
-  activityLogs     ActivityLog[]
-  assessments      Assessment[]    
-  primaryColor   String @default("#f59e0b")
-  secondaryColor String @default("#1e293b")
-    createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  terms            Term[]
+  topics           Topic[]
+  users            Profile[]
 }
 
 model Profile {
-  id           String @id @default(uuid())
-  email        String @unique
-  name         String?
-  role         Role
-  phone        String?
-  schoolId     String?
-  curriculumId String
+  id                                              String            @id @default(uuid())
+  email                                           String            @unique
+  name                                            String?
+  role                                            Role
+  schoolId                                        String?
+  curriculumId                                    String
+  createdAt                                       DateTime          @default(now())
+  updatedAt                                       DateTime          @updatedAt
+  phone                                           String?
+  primaryColor                                    String            @default("#f59e0b")
+  secondaryColor                                  String            @default("#1e293b")
+  activityLogs                                    ActivityLog[]
+  assessments                                     Assessment[]      @relation("StudentAssessments")
+  taughtClasses                                   Class[]           @relation("TeacherClasses")
+  classEnrollments                                ClassEnrollment[]
+  ownedGradeSubjects                              GradeSubject[]    @relation("ProfileToGradeSubject")
+  notifications                                   Notification[]
+  ParentStudent_ParentStudent_parentIdToprofiles  ParentStudent[]   @relation("ParentStudent_parentIdToprofiles")
+  ParentStudent_ParentStudent_studentIdToprofiles ParentStudent[]   @relation("ParentStudent_studentIdToprofiles")
+  studentSubjects                                 StudentSubject[]
+  subscription                                    Subscription?     @relation("ProfileSubscription")
+  curriculum                                      Curriculum        @relation(fields: [curriculumId], references: [id])
+  school                                          School?           @relation(fields: [schoolId], references: [id])
+  gradeSubjectsTaught                             GradeSubject[]    @relation("TeacherGradeSubjects")
+  selectedSubjects                                GradeSubject[]    @relation("UserSelectedSubjects")
 
-  // Branding
-  primaryColor   String @default("#f59e0b")
-  secondaryColor String @default("#1e293b")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  school     School?    @relation(fields: [schoolId], references: [id])
-  curriculum Curriculum @relation(fields: [curriculumId], references: [id])
-
-  // Classes
-  taughtClasses    Class[]           @relation("TeacherClasses")
-  classEnrollments ClassEnrollment[]
-
-  // Assessments
-  assessments Assessment[] @relation("StudentAssessments")
-
-  // Grade subjects
-  gradeSubjectsTaught GradeSubject[] @relation("TeacherGradeSubjects")
-  selectedSubjects    GradeSubject[] @relation("UserSelectedSubjects")
-  ownedGradeSubjects  GradeSubject[] @relation("ProfileToGradeSubject")
-
-  // Parent ↔ Student
-  ParentStudent_ParentStudent_parentIdToprofiles  ParentStudent[] @relation("ParentStudent_parentIdToprofiles")
-  ParentStudent_ParentStudent_studentIdToprofiles ParentStudent[] @relation("ParentStudent_studentIdToprofiles")
-
-  // Notifications
-  notifications Notification[]
-
-  subscription Subscription? @relation("ProfileSubscription") 
-  activityLogs  ActivityLog[]
   @@index([schoolId])
   @@index([curriculumId])
   @@map("profiles")
@@ -91,18 +75,15 @@ model ParentStudent {
   studentId String
   schoolId  String?
   createdAt DateTime @default(now())
-
-  parent  Profile  @relation("ParentStudent_parentIdToprofiles", fields: [parentId], references: [id])
-  student Profile  @relation("ParentStudent_studentIdToprofiles", fields: [studentId], references: [id])
-  school  School?  @relation(fields: [schoolId], references: [id])
+  parent    Profile  @relation("ParentStudent_parentIdToprofiles", fields: [parentId], references: [id])
+  school    School?  @relation(fields: [schoolId], references: [id])
+  student   Profile  @relation("ParentStudent_studentIdToprofiles", fields: [studentId], references: [id])
 
   @@unique([parentId, studentId])
   @@index([parentId])
   @@index([studentId])
   @@index([schoolId])
 }
-
-// ---------------- Curriculum Hierarchy ----------------
 
 model Curriculum {
   id             String    @id @default(uuid())
@@ -144,17 +125,17 @@ model Grade {
 }
 
 model Term {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   index       Int
   displayName String
   gradeId     String
   schoolId    String?
-  startDate DateTime?
-  endDate   DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  grade       Grade    @relation(fields: [gradeId], references: [id])
-  school      School?  @relation(fields: [schoolId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  endDate     DateTime?
+  startDate   DateTime?
+  grade       Grade     @relation(fields: [gradeId], references: [id])
+  school      School?   @relation(fields: [schoolId], references: [id])
   topics      Topic[]
 
   @@unique([gradeId, index])
@@ -212,17 +193,29 @@ model Class {
 }
 
 model ClassEnrollment {
-  id             String       @id @default(uuid())
-  classId        String?
+  id        String   @id @default(uuid())
+  classId   String?
+  studentId String
+  schoolId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  class     Class?   @relation(fields: [classId], references: [id])
+  school    School   @relation(fields: [schoolId], references: [id])
+  student   Profile  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model StudentSubject {
+  id             String           @id @default(uuid())
   studentId      String
-  schoolId       String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
   gradeSubjectId String
-  class          Class?       @relation(fields: [classId], references: [id])
-  gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
-  school         School?      @relation(fields: [schoolId], references: [id])
-  student        Profile      @relation(fields: [studentId], references: [id])
+  schoolId       String
+  status         EnrollmentStatus @default(APPROVED)
+  isCompulsory   Boolean          @default(true)
+  gradeSubject   GradeSubject     @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
+  school         School           @relation(fields: [schoolId], references: [id])
+  student        Profile          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, gradeSubjectId])
 }
 
 model Assessment {
@@ -296,22 +289,22 @@ model Feedback {
 }
 
 model GradeSubject {
-  id              String            @id @default(uuid())
+  id              String           @id @default(uuid())
   gradeId         String
   subjectId       String
   schoolId        String?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
   profileId       String?
   assessments     Assessment[]
-  enrollments     ClassEnrollment[]
-  grade           Grade             @relation(fields: [gradeId], references: [id])
-  profile         Profile?          @relation("ProfileToGradeSubject", fields: [profileId], references: [id])
-  school          School?           @relation(fields: [schoolId], references: [id])
-  subject         Subject           @relation(fields: [subjectId], references: [id])
+  grade           Grade            @relation(fields: [gradeId], references: [id])
+  profile         Profile?         @relation("ProfileToGradeSubject", fields: [profileId], references: [id])
+  school          School?          @relation(fields: [schoolId], references: [id])
+  subject         Subject          @relation(fields: [subjectId], references: [id])
+  studentSubjects StudentSubject[]
   topics          Topic[]
-  teachers        Profile[]         @relation("TeacherGradeSubjects")
-  selectedByUsers Profile[]         @relation("UserSelectedSubjects")
+  teachers        Profile[]        @relation("TeacherGradeSubjects")
+  selectedByUsers Profile[]        @relation("UserSelectedSubjects")
 
   @@unique([gradeId, subjectId])
 }
@@ -333,13 +326,12 @@ model Subscription {
   id               String   @id @default(uuid())
   schoolId         String   @unique
   plan             String
-  profileId        String?  @unique 
   status           String
   stripeCustomerId String?  @unique
   currentPeriodEnd DateTime
+  profileId        String?  @unique
+  profile          Profile? @relation("ProfileSubscription", fields: [profileId], references: [id])
   school           School   @relation(fields: [schoolId], references: [id])
-  profile          Profile? @relation("ProfileSubscription", fields: [profileId], references: [id]) 
-
 }
 
 model Invitation {
@@ -358,8 +350,6 @@ model Invitation {
   @@index([email])
 }
 
-
-
 model ActivityLog {
   id          String       @id @default(uuid())
   schoolId    String
@@ -371,9 +361,8 @@ model ActivityLog {
   description String
   metadata    Json?
   createdAt   DateTime     @default(now())
-
-  school School  @relation(fields: [schoolId], references: [id])
-  actor  Profile @relation(fields: [actorId], references: [id])
+  actor       Profile      @relation(fields: [actorId], references: [id])
+  school      School       @relation(fields: [schoolId], references: [id])
 
   @@index([schoolId])
   @@index([actorId])
@@ -414,4 +403,10 @@ enum AssessmentType {
   WEEKLY
   TERMLY
   YEARLY
+}
+
+enum EnrollmentStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
