@@ -234,40 +234,124 @@
 
 
 
-import { PrismaClient, Role } from "@prisma/client";
-import * as dotenv from "dotenv";
+// import { PrismaClient, Role } from "@prisma/client";
+// import * as dotenv from "dotenv";
 
-dotenv.config();
+// dotenv.config();
 
-// Standard initialization (automatically uses DATABASE_URL from .env)
-const prisma = new PrismaClient();
+// // Standard initialization (automatically uses DATABASE_URL from .env)
+// const prisma = new PrismaClient();
+
+// async function main() {
+//   console.log("🚀 Starting targeted user seeding...");
+
+//   // 1. Ensure the parent Curriculum exists
+//   const curriculum = await prisma.curriculum.upsert({
+//     where: { id: "nigerian-national-curriculum" },
+//     update: {},
+//     create: {
+//       id: "nigerian-national-curriculum",
+//       name: "Nigerian National Curriculum",
+//       yearLabel: "Grade",
+//       termLabel: "Term",
+//       subjectLabel: "Subject",
+//     },
+//   });
+
+//   // ... rest of your logic remains exactly the same ...
+
+//   console.log("✅ Seeding complete.");
+// }
+
+// main()
+//   .catch((e) => {
+//     console.error(e);
+//     process.exit(1);
+//   })
+//   .finally(async () => {
+//     await prisma.$disconnect();
+//   });
+
+
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+
+const NGN_RATE = 1600
+
+const plans = [
+    {
+        name:         'Monthly',
+        slug:         'monthly',
+        priceUSD:     29,
+        priceNGN:     Math.round(29 * NGN_RATE),
+        priceKobo:    Math.round(29 * NGN_RATE * 100),
+        durationDays: 30,
+        description:  'Flexible monthly billing',
+        popular:      false,
+        sortOrder:    1,
+        features: [
+            'Unlimited students',
+            'WhatsApp parent notifications',
+            'AI lesson planner',
+            'Assessment management',
+            'Priority support',
+        ],
+    },
+    {
+        name:         'Per Term',
+        slug:         'termly',
+        priceUSD:     75,
+        priceNGN:     Math.round(75 * NGN_RATE),
+        priceKobo:    Math.round(75 * NGN_RATE * 100),
+        durationDays: 90,
+        description:  'Pay once per school term',
+        popular:      true,
+        sortOrder:    2,
+        features: [
+            'Everything in Monthly',
+            'Save 14% vs monthly',
+            'Term-based billing',
+            'Dedicated onboarding',
+            'Priority support',
+        ],
+    },
+    {
+        name:         'Annual',
+        slug:         'annual',
+        priceUSD:     249,
+        priceNGN:     Math.round(249 * NGN_RATE),
+        priceKobo:    Math.round(249 * NGN_RATE * 100),
+        durationDays: 365,
+        description:  'Best value — pay once a year',
+        popular:      false,
+        sortOrder:    3,
+        features: [
+            'Everything in Per Term',
+            'Save 28% vs monthly',
+            'Annual receipt for records',
+            'Custom onboarding session',
+            '24/7 priority support',
+        ],
+    },
+]
 
 async function main() {
-  console.log("🚀 Starting targeted user seeding...");
-
-  // 1. Ensure the parent Curriculum exists
-  const curriculum = await prisma.curriculum.upsert({
-    where: { id: "nigerian-national-curriculum" },
-    update: {},
-    create: {
-      id: "nigerian-national-curriculum",
-      name: "Nigerian National Curriculum",
-      yearLabel: "Grade",
-      termLabel: "Term",
-      subjectLabel: "Subject",
-    },
-  });
-
-  // ... rest of your logic remains exactly the same ...
-
-  console.log("✅ Seeding complete.");
+    console.log('🌱 Start seeding subscription plans...')
+    for (const plan of plans) {
+        await prisma.subscriptionPlan.upsert({
+            where:  { slug: plan.slug },
+            update: plan,
+            create: plan,
+        })
+    }
+    console.log('✅ Subscription plans seeded')
 }
 
 main()
   .catch((e) => {
-    console.error(e);
-    process.exit(1);
+    console.error(e)
+    process.exit(1)
   })
   .finally(async () => {
-    await prisma.$disconnect();
-  });
+    await prisma.$disconnect()
+  })

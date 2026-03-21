@@ -451,7 +451,7 @@ export default function TeacherDetailPage() {
                                         </p>
                                         <p className="text-xs text-school-secondary-300 truncate">
                                             {c.grade.displayName}
-                                            {c.subject ? ` · ${c.subject}` : ''}
+                                            {/* {c.subject ? ` · ${c.subject}` : ''} */}
                                         </p>
                                     </div>
                                 </div>

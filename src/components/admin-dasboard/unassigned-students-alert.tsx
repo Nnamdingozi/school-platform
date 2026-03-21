@@ -8,6 +8,7 @@ import {
     UnassignedStudent,
     UnassignedStudentsData,
 } from '@/app/actions/analytics.action'
+
 import {
     getClassesBySchool,
     assignUserToClass,
@@ -229,7 +230,7 @@ function StudentRow({
         if (!cls) { setSavingCls(false); return }
 
         // Use first available gradeSubject for this class
-        const result = await assignUserToClass(student.id, selectedCls, '')
+        const result = await assignUserToClass(student.id, selectedCls)
         if (result.success) {
             setShowPicker(false)
             setAssigningId(null)
