@@ -475,6 +475,23 @@ model SubscriptionTransaction {
   @@index([createdAt])
 }
 
+model CreditPackage {
+  id          String   @id @default(uuid())
+  name        String
+  credits     Int
+  priceNGN    Int
+  priceKobo   Int
+  priceUSD    Float
+  description String
+  popular     Boolean  @default(false)
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active])
+}
+
 
 
 enum TxStatus {
