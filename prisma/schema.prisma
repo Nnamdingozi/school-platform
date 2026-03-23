@@ -32,16 +32,20 @@ model School {
   ParentStudent    ParentStudent[]
   subscription     Subscription?
   activityLogs     ActivityLog[]
-  assessments      Assessment[]    
-  primaryColor   String @default("#f59e0b")
-  secondaryColor String @default("#1e293b")
-    createdAt DateTime @default(now())
+  assessments      Assessment[]
+  primaryColor     String            @default("#f59e0b")
+  secondaryColor   String            @default("#1e293b")
+  studentSubjects  StudentSubject[]
+  creditTransactions CreditTransaction[]
+  subscriptionTransactions SubscriptionTransaction[]
+
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Profile {
-  id           String @id @default(uuid())
-  email        String @unique
+  id           String  @id @default(uuid())
+  email        String  @unique
   name         String?
   role         Role
   phone        String?
@@ -62,6 +66,7 @@ model Profile {
   // Classes
   taughtClasses    Class[]           @relation("TeacherClasses")
   classEnrollments ClassEnrollment[]
+  studentSubjects  StudentSubject[]
 
   // Assessments
   assessments Assessment[] @relation("StudentAssessments")
@@ -78,8 +83,9 @@ model Profile {
   // Notifications
   notifications Notification[]
 
-  subscription Subscription? @relation("ProfileSubscription") 
-  activityLogs  ActivityLog[]
+  subscription Subscription? @relation("ProfileSubscription")
+  activityLogs ActivityLog[]
+
   @@index([schoolId])
   @@index([curriculumId])
   @@map("profiles")
@@ -92,9 +98,9 @@ model ParentStudent {
   schoolId  String?
   createdAt DateTime @default(now())
 
-  parent  Profile  @relation("ParentStudent_parentIdToprofiles", fields: [parentId], references: [id])
-  student Profile  @relation("ParentStudent_studentIdToprofiles", fields: [studentId], references: [id])
-  school  School?  @relation(fields: [schoolId], references: [id])
+  parent  Profile @relation("ParentStudent_parentIdToprofiles", fields: [parentId], references: [id])
+  student Profile @relation("ParentStudent_studentIdToprofiles", fields: [studentId], references: [id])
+  school  School? @relation(fields: [schoolId], references: [id])
 
   @@unique([parentId, studentId])
   @@index([parentId])
@@ -144,17 +150,17 @@ model Grade {
 }
 
 model Term {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   index       Int
   displayName String
   gradeId     String
   schoolId    String?
-  startDate DateTime?
-  endDate   DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  grade       Grade    @relation(fields: [gradeId], references: [id])
-  school      School?  @relation(fields: [schoolId], references: [id])
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  grade       Grade     @relation(fields: [gradeId], references: [id])
+  school      School?   @relation(fields: [schoolId], references: [id])
   topics      Topic[]
 
   @@unique([gradeId, index])
@@ -212,17 +218,31 @@ model Class {
 }
 
 model ClassEnrollment {
-  id             String       @id @default(uuid())
-  classId        String?
+  id        String   @id @default(uuid())
+  classId   String?
+  studentId String
+  schoolId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  class   Class?  @relation(fields: [classId], references: [id])
+  school  School  @relation(fields: [schoolId], references: [id])
+  student Profile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model StudentSubject {
+  id             String           @id @default(uuid())
   studentId      String
-  schoolId       String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
   gradeSubjectId String
-  class          Class?       @relation(fields: [classId], references: [id])
-  gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
-  school         School?      @relation(fields: [schoolId], references: [id])
-  student        Profile      @relation(fields: [studentId], references: [id])
+  schoolId       String
+  status         EnrollmentStatus @default(APPROVED)
+  isCompulsory   Boolean          @default(true)
+
+  student      Profile      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  gradeSubject GradeSubject @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
+  school       School       @relation(fields: [schoolId], references: [id])
+
+  @@unique([studentId, gradeSubjectId])
 }
 
 model Assessment {
@@ -296,22 +316,22 @@ model Feedback {
 }
 
 model GradeSubject {
-  id              String            @id @default(uuid())
+  id              String           @id @default(uuid())
   gradeId         String
   subjectId       String
   schoolId        String?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
   profileId       String?
   assessments     Assessment[]
-  enrollments     ClassEnrollment[]
-  grade           Grade             @relation(fields: [gradeId], references: [id])
-  profile         Profile?          @relation("ProfileToGradeSubject", fields: [profileId], references: [id])
-  school          School?           @relation(fields: [schoolId], references: [id])
-  subject         Subject           @relation(fields: [subjectId], references: [id])
+  grade           Grade            @relation(fields: [gradeId], references: [id])
+  profile         Profile?         @relation("ProfileToGradeSubject", fields: [profileId], references: [id])
+  school          School?          @relation(fields: [schoolId], references: [id])
+  subject         Subject          @relation(fields: [subjectId], references: [id])
   topics          Topic[]
-  teachers        Profile[]         @relation("TeacherGradeSubjects")
-  selectedByUsers Profile[]         @relation("UserSelectedSubjects")
+  teachers        Profile[]        @relation("TeacherGradeSubjects")
+  selectedByUsers Profile[]        @relation("UserSelectedSubjects")
+  studentSubjects StudentSubject[]
 
   @@unique([gradeId, subjectId])
 }
@@ -330,16 +350,28 @@ model Notification {
 }
 
 model Subscription {
-  id               String   @id @default(uuid())
-  schoolId         String   @unique
+  id               String    @id @default(uuid())
+  schoolId         String    @unique
   plan             String
-  profileId        String?  @unique 
+  profileId        String?   @unique
   status           String
-  stripeCustomerId String?  @unique
+  // ── Keep existing Stripe fields for future Stripe migration ──
+  stripeCustomerId String?   @unique
   currentPeriodEnd DateTime
-  school           School   @relation(fields: [schoolId], references: [id])
-  profile          Profile? @relation("ProfileSubscription", fields: [profileId], references: [id]) 
+  // ── Add Paystack payment tracking ─────────────────────────────
+  paystackReference String?  @unique  // last successful payment reference
+  planId           String?            // FK to SubscriptionPlan
+  amountNGN        Int?               // what was paid
+  paidAt           DateTime?          // when last payment was confirmed
+  createdAt        DateTime  @default(now())
+   updatedAt DateTime @default(now()) @updatedAt
 
+  school  School            @relation(fields: [schoolId], references: [id])
+  profile Profile?          @relation("ProfileSubscription", fields: [profileId], references: [id])
+  subPlan SubscriptionPlan? @relation(fields: [planId], references: [id])
+
+  @@index([status])
+  @@index([currentPeriodEnd])
 }
 
 model Invitation {
@@ -357,8 +389,6 @@ model Invitation {
   @@index([token])
   @@index([email])
 }
-
-
 
 model ActivityLog {
   id          String       @id @default(uuid())
@@ -378,6 +408,96 @@ model ActivityLog {
   @@index([schoolId])
   @@index([actorId])
   @@index([createdAt])
+}
+
+model CreditTransaction {
+  id           String    @id @default(uuid())
+  schoolId     String
+  packageId    String
+  credits      Int
+  amountNGN    Int
+  amountKobo   Int
+  reference    String    @unique
+  status       TxStatus  @default(PENDING)
+  initiatedBy  String
+  paidAt       DateTime?
+  createdAt    DateTime  @default(now())
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId])
+  @@index([reference])
+}
+
+
+model SubscriptionPlan {
+  id           String   @id @default(uuid())
+  name         String
+  slug         String   @unique  // 'monthly' | 'termly' | 'annual'
+  priceNGN     Int
+  priceKobo    Int
+  priceUSD     Float
+  durationDays Int
+  description  String
+  features     String[] // array of feature strings
+  popular      Boolean  @default(false)
+  active       Boolean  @default(true)  // soft delete
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  subscriptionTransactions SubscriptionTransaction[]
+  subscriptions            Subscription[]
+
+
+  @@index([active])
+  @@index([sortOrder])
+}
+
+model SubscriptionTransaction {
+  id          String    @id @default(uuid())
+  schoolId    String
+  planId      String                    // which plan was purchased
+  planName    String                    // snapshot of plan name at purchase time
+  amountNGN   Int                       // amount paid in naira
+  amountKobo  Int                       // amount in kobo for Paystack
+  reference   String    @unique         // Paystack reference
+  status      TxStatus  @default(PENDING)
+  initiatedBy String                    // profile id of who triggered it
+  paidAt      DateTime?                 // when Paystack confirmed payment
+  createdAt   DateTime  @default(now())
+
+  school School           @relation(fields: [schoolId], references: [id])
+  plan   SubscriptionPlan @relation(fields: [planId],   references: [id])
+
+  @@index([schoolId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CreditPackage {
+  id          String   @id @default(uuid())
+  name        String
+  credits     Int
+  priceNGN    Int
+  priceKobo   Int
+  priceUSD    Float
+  description String
+  popular     Boolean  @default(false)
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active])
+}
+
+
+
+enum TxStatus {
+  PENDING
+  SUCCESS
+  FAILED
 }
 
 enum ActivityType {
@@ -414,4 +534,10 @@ enum AssessmentType {
   WEEKLY
   TERMLY
   YEARLY
+}
+
+enum EnrollmentStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
