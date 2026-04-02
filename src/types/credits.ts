@@ -10,3 +10,13 @@ export interface VerifyPaymentResult {
     credits?: number
     error?: string
 }
+
+export interface CreditPackage {
+    id: string;
+    name: string;
+    credits: number;
+    priceNGN: number;
+    priceUSD: number;
+    description: string;
+    popular: boolean;
+}

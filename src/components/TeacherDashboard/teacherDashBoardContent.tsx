@@ -389,7 +389,7 @@ function TeacherDashboardContent({ teacher }: TeacherDashboardContentProps) {
 
     return (
         <div className="flex flex-col w-full min-h-screen overflow-x-hidden bg-slate-950">
-            <DashboardHeader
+           <DashboardHeader
                 teacherName={teacher.name ?? 'Teacher'}
                 subjects={subjectsForHeader}
                 activeSubjectId={activeSubject.id}
@@ -423,11 +423,17 @@ function TeacherDashboardContent({ teacher }: TeacherDashboardContentProps) {
                     <section className="w-full">
                         <AILessonPlanner
                             topicId={activeTopic?.id ?? ''}
-                            lessonId={activeTopic?.lessons?.id ?? ''}
+                            // ✅ FIX 1: Pass the required schoolId
+                            schoolId={school.id}
+                            // ✅ FIX 2: Access the ID and aiContent from the first item in the array
+                            lessonId={activeTopic?.lessons?.[0]?.id ?? ''}
                             topicTitle={activeTopic?.title ?? 'General Subject'}
-                            initialData={activeTopic?.lessons?.aiContent as unknown as EnhancedLessonContent}
+                            initialData={
+                                activeTopic?.lessons?.[0]?.aiContent as unknown as EnhancedLessonContent
+                            }
                         />
                     </section>
+
 
                     <section className="w-full">
                         <PerformanceCharts

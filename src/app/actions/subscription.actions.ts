@@ -460,6 +460,7 @@ import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { logActivity } from '@/lib/activitylogger'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -629,7 +630,7 @@ export async function initiateSubscriptionPayment(
             },
         })
 
-        const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL}/admin/settings/billing/verify?reference=${reference}`
+        const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL}/admin/subscription/verify?reference=${reference}`
 
         const response = await fetch('https://api.paystack.co/transaction/initialize', {
             method:  'POST',
@@ -671,44 +672,53 @@ export async function initiateSubscriptionPayment(
 
 // ── Verify subscription payment ────────────────────────────────────────────────
 
+// src/app/actions/subscription.actions.ts
+// Replace just the verifySubscriptionPayment function
+
 export async function verifySubscriptionPayment(
     reference: string,
 ): Promise<{
-    success:   boolean
-    planName?: string
+    success:    boolean
+    planName?:  string
     expiresAt?: Date
-    error?:    string
+    error?:     string
 }> {
     try {
         const transaction = await prisma.subscriptionTransaction.findUnique({
-            where:  { reference },
-            include: {
-                plan: true
-            }
+            where:   { reference },
+            include: { plan: true },
         })
 
         if (!transaction) return { success: false, error: 'Transaction not found.' }
-        if (transaction.status === 'SUCCESS') return { success: true, planName: transaction.planName }
 
+        // ✅ Idempotency — already processed
+        if (transaction.status === 'SUCCESS') {
+            return { success: true, planName: transaction.planName }
+        }
+        if (transaction.status === 'FAILED') {
+            return { success: false, error: 'Payment previously failed.' }
+        }
+
+        // Verify with Paystack
         const response = await fetch(
             `https://api.paystack.co/transaction/verify/${reference}`,
-            {
-                headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` },
-            }
+            { headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` } }
         )
 
-        const paystackData = await response.json()
+        const paystackData    = await response.json()
         const paymentSucceeded = paystackData.status && paystackData.data.status === 'success'
-
-        const now = new Date()
+        const now             = new Date()
 
         if (paymentSucceeded) {
-            const expiresAt = new Date(now.getTime() + transaction.plan.durationDays * 24 * 60 * 60 * 1000)
+            const expiresAt = new Date(
+                now.getTime() + transaction.plan.durationDays * 24 * 60 * 60 * 1000
+            )
 
+            // ✅ Atomic update — transaction + subscription together
             await prisma.$transaction([
                 prisma.subscriptionTransaction.update({
                     where: { id: transaction.id },
-                    data: { status: 'SUCCESS', paidAt: now },
+                    data:  { status: 'SUCCESS', paidAt: now },
                 }),
                 prisma.subscription.update({
                     where: { schoolId: transaction.schoolId },
@@ -723,16 +733,89 @@ export async function verifySubscriptionPayment(
                 }),
             ])
 
+            // ✅ Get admin profile for notification + activity log
+            const admin = await prisma.profile.findFirst({
+                where:  { schoolId: transaction.schoolId, role: 'SCHOOL_ADMIN' },
+                select: { id: true, name: true, role: true },
+            })
+
+            if (admin) {
+                // ✅ Notification — shows in the notification bell
+                await prisma.notification.create({
+                    data: {
+                        userId:  admin.id,
+                        message: `✅ Subscription renewed — ${transaction.plan.name} plan active until ${expiresAt.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.`,
+                        read:    false,
+                        link:    '/admin/settings?tab=billing',
+                    },
+                })
+
+                // ✅ Activity log — shows in admin activity feed
+                await logActivity({
+                    schoolId:    transaction.schoolId,
+                    actorId:     admin.id,
+                    actorName:   admin.name ?? 'Admin',
+                    actorRole:   admin.role,
+                    type:        'SETTINGS_UPDATED',
+                    title:       'Subscription Renewed',
+                    description: `${transaction.plan.name} plan renewed for ₦${transaction.plan.priceNGN.toLocaleString()} via Paystack`,
+                    metadata: {
+                        planName:  transaction.plan.name,
+                        amountNGN: transaction.plan.priceNGN,
+                        reference,
+                        expiresAt: expiresAt.toISOString(),
+                    },
+                })
+            }
+
             revalidatePath('/admin/settings')
+            revalidatePath('/admin')
+
             return { success: true, planName: transaction.plan.name, expiresAt }
+
         } else {
+            // ✅ Record failed attempt
             await prisma.subscriptionTransaction.update({
                 where: { id: transaction.id },
                 data:  { status: 'FAILED' },
             })
-            return { success: false, error: 'Payment not confirmed.' }
+
+            // Notify admin of failed payment too
+            const admin = await prisma.profile.findFirst({
+                where:  { schoolId: transaction.schoolId, role: 'SCHOOL_ADMIN' },
+                select: { id: true, name: true, role: true },
+            })
+
+            if (admin) {
+                await prisma.notification.create({
+                    data: {
+                        userId:  admin.id,
+                        message: `❌ Payment failed for ${transaction.plan.name} plan. Please try again or contact support.`,
+                        read:    false,
+                        link:    '/admin/settings?tab=billing',
+                    },
+                })
+
+                await logActivity({
+                    schoolId:    transaction.schoolId,
+                    actorId:     admin.id,
+                    actorName:   admin.name ?? 'Admin',
+                    actorRole:   admin.role,
+                    type:        'SETTINGS_UPDATED',
+                    title:       'Subscription Payment Failed',
+                    description: `Payment failed for ${transaction.plan.name} plan — reference: ${reference}`,
+                    metadata: {
+                        planName:  transaction.plan.name,
+                        reference,
+                        reason:    paystackData.data?.gateway_response ?? 'Unknown',
+                    },
+                })
+            }
+
+            return { success: false, error: 'Payment not confirmed by Paystack.' }
         }
     } catch (err) {
+        console.error('verifySubscriptionPayment error:', getErrorMessage(err))
         return { success: false, error: getErrorMessage(err) }
     }
 }
