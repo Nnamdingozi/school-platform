@@ -450,3 +450,21 @@ export async function deleteNotificationAction(id: string): Promise<ActionResult
         return { success: false, error: getErrorMessage(err) }
     }
 }
+
+
+export async function deleteAllNotificationsAction(): Promise<ActionResult> {
+    try {
+        const supabase = await createClient()
+        const { data: { user }, error } = await supabase.auth.getUser()
+        if (error || !user) return { success: false, error: 'Unauthorized.' }
+
+        await prisma.notification.deleteMany({
+            where: { userId: user.id },
+        })
+
+        return { success: true }
+    } catch (err) {
+        console.error('deleteAllNotificationsAction error:', getErrorMessage(err))
+        return { success: false, error: getErrorMessage(err) }
+    }
+}

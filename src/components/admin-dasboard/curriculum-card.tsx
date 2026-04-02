@@ -1,460 +1,3 @@
-// "use client"
-
-// import { useState } from "react"
-// import { BookOpen, Calendar, CheckCircle2, ChevronDown, Check } from "lucide-react"
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-// import { Button } from "@/components/ui/button"
-// import { Badge } from "@/components/ui/badge"
-// // import { Progress } from "@/components/ui/progress"
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu"
-
-// const curriculumOptions = [
-//   {
-//     id: "british",
-//     name: "British National",
-//     description: "National Curriculum of England and Wales",
-//     subjects: 24,
-//     objectives: 156,
-//   },
-//   {
-//     id: "nigerian",
-//     name: "Nigerian National",
-//     description: "Federal Ministry of Education Curriculum",
-//     subjects: 18,
-//     objectives: 132,
-//   },
-//   {
-//     id: "cambridge",
-//     name: "Cambridge IGCSE",
-//     description: "Cambridge International Examinations",
-//     subjects: 22,
-//     objectives: 178,
-//   },
-//   {
-//     id: "american",
-//     name: "American Common Core",
-//     description: "US State Standards Initiative",
-//     subjects: 20,
-//     objectives: 145,
-//   },
-// ]
-
-// export function CurriculumCard() {
-//   const [selectedCurriculum, setSelectedCurriculum] = useState(curriculumOptions[0])
-
-//   return (
-//     <Card className="h-full">
-//       <CardHeader className="pb-3">
-//         <div className="flex items-center justify-between">
-//           <CardTitle className="text-lg font-semibold text-foreground">
-//             Curriculum Status
-//           </CardTitle>
-//           <DropdownMenu>
-//             <DropdownMenuTrigger asChild>
-//               <Button variant="outline" size="sm" className="h-8 gap-1 bg-transparent">
-//                 <span className="text-xs">Switch</span>
-//                 <ChevronDown className="h-3 w-3" />
-//               </Button>
-//             </DropdownMenuTrigger>
-//             <DropdownMenuContent align="end" className="w-56">
-//               {curriculumOptions.map((curriculum) => (
-//                 <DropdownMenuItem
-//                   key={curriculum.id}
-//                   onClick={() => setSelectedCurriculum(curriculum)}
-//                   className="flex items-center justify-between cursor-pointer"
-//                 >
-//                   <div className="flex flex-col">
-//                     <span className="font-medium">{curriculum.name}</span>
-//                     <span className="text-xs text-muted-foreground">
-//                       {curriculum.subjects} subjects
-//                     </span>
-//                   </div>
-//                   {selectedCurriculum.id === curriculum.id && (
-//                     <Check className="h-4 w-4 text-primary" />
-//                   )}
-//                 </DropdownMenuItem>
-//               ))}
-//             </DropdownMenuContent>
-//           </DropdownMenu>
-//         </div>
-//       </CardHeader>
-//       <CardContent className="space-y-6">
-//         {/* Active Curriculum */}
-//         <div className="rounded-lg border border-border bg-muted/30 p-4">
-//           <div className="flex items-start gap-3">
-//             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-//               <BookOpen className="h-5 w-5 text-primary" />
-//             </div>
-//             <div className="flex-1 space-y-1">
-//               <div className="flex items-center gap-2">
-//                 <h4 className="font-medium text-foreground">{selectedCurriculum.name}</h4>
-//                 <Badge className="bg-accent/15 text-accent hover:bg-accent/25 border-0 text-xs">
-//                   Active
-//                 </Badge>
-//               </div>
-//               <p className="text-sm text-muted-foreground">
-//                 {selectedCurriculum.description}
-//               </p>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Current Term */}
-//         <div className="space-y-3">
-//           <div className="flex items-center gap-2">
-//             <Calendar className="h-4 w-4 text-muted-foreground" />
-//             <span className="text-sm font-medium text-foreground">Current Term</span>
-//           </div>
-//           <div className="flex items-center justify-between rounded-lg border border-border p-3">
-//             <div>
-//               <p className="font-semibold text-foreground">Term 2</p>
-//               <p className="text-xs text-muted-foreground">Jan 8 - Apr 12, 2026</p>
-//             </div>
-//             <Badge variant="secondary" className="text-xs">
-//               Week 5 of 14
-//             </Badge>
-//           </div>
-//         </div>
-
-//         {/* Term Progress */}
-//         <div className="space-y-3">
-//           <div className="flex items-center justify-between text-sm">
-//             <span className="text-muted-foreground">Term Progress</span>
-//             <span className="font-medium text-foreground">36%</span>
-//           </div>
-//           {/* <Progress value={36} className="h-2" /> */}
-//         </div>
-
-//         {/* Quick Stats */}
-//         <div className="grid grid-cols-2 gap-3">
-//           <div className="rounded-lg border border-border p-3 text-center">
-//             <p className="text-2xl font-bold text-foreground">{selectedCurriculum.subjects}</p>
-//             <p className="text-xs text-muted-foreground">Subjects</p>
-//           </div>
-//           <div className="rounded-lg border border-border p-3 text-center">
-//             <p className="text-2xl font-bold text-foreground">{selectedCurriculum.objectives}</p>
-//             <p className="text-xs text-muted-foreground">Learning Objectives</p>
-//           </div>
-//         </div>
-
-//         {/* Curriculum Compliance */}
-//         <div className="flex items-center gap-2 rounded-lg bg-accent/10 p-3">
-//           <CheckCircle2 className="h-5 w-5 text-accent" />
-//           <div>
-//             <p className="text-sm font-medium text-foreground">Compliance Status</p>
-//             <p className="text-xs text-muted-foreground">
-//               All curriculum requirements are being met
-//             </p>
-//           </div>
-//         </div>
-//       </CardContent>
-//     </Card>
-//   )
-// }
-
-// "use client"
-
-// import { useState, useEffect } from "react"
-// import Link from "next/link"
-// import {
-//     BookOpen, Calendar, CheckCircle2,
-//     Loader2, GraduationCap, Layers,
-//     CalendarDays, ChevronRight, AlertTriangle
-// } from "lucide-react"
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-// import { Badge } from "@/components/ui/badge"
-// import { useProfileStore } from "@/store/profileStore"
-// import { getCurriculumStats, CurriculumStats } from "@/app/actions/curiculum-stats"
-
-// function formatDate(date: Date | null): string {
-//     if (!date) return 'Not set'
-//     return new Date(date).toLocaleDateString('en-GB', {
-//         day: 'numeric', month: 'short', year: 'numeric',
-//     })
-// }
-
-// function getTermProgress(startDate: Date | null, endDate: Date | null): number | null {
-//     if (!startDate || !endDate) return null
-//     const now    = new Date().getTime()
-//     const start  = new Date(startDate).getTime()
-//     const end    = new Date(endDate).getTime()
-//     if (now < start) return 0
-//     if (now > end)   return 100
-//     return Math.round(((now - start) / (end - start)) * 100)
-// }
-
-// export function CurriculumCard() {
-//     const { profile }  = useProfileStore()
-//     const schoolId     = profile?.schoolId ?? ''
-
-//     const [stats,   setStats]   = useState<CurriculumStats | null>(null)
-//     const [loading, setLoading] = useState(true)
-
-//     useEffect(() => {
-//         if (!schoolId) return
-//         setLoading(true)
-//         getCurriculumStats(schoolId)
-//             .then(data => { setStats(data); setLoading(false) })
-//             .catch(() => setLoading(false))
-//     }, [schoolId])
-
-//     // ── Loading ────────────────────────────────────────────────────────────
-//     if (loading) return (
-//         <Card className="h-full bg-school-secondary-900 border-school-secondary-700">
-//             <CardContent className="flex items-center justify-center h-48">
-//                 <div className="flex items-center gap-2">
-//                     <Loader2 className="h-4 w-4 animate-spin text-school-primary" />
-//                     <span className="text-xs text-school-secondary-400">
-//                         Loading curriculum...
-//                     </span>
-//                 </div>
-//             </CardContent>
-//         </Card>
-//     )
-
-//     // ── Empty ──────────────────────────────────────────────────────────────
-//     if (!stats) return (
-//         <Card className="h-full bg-school-secondary-900 border-school-secondary-700">
-//             <CardContent className="flex flex-col items-center justify-center h-48 gap-2 text-center p-6">
-//                 <BookOpen className="h-8 w-8 text-school-secondary-600" />
-//                 <p className="text-sm font-semibold text-white">No curriculum found</p>
-//                 <p className="text-xs text-school-secondary-400">
-//                     Assign a curriculum to your school to see stats here.
-//                 </p>
-//             </CardContent>
-//         </Card>
-//     )
-    
-
-//     // ── Current term by date ───────────────────────────────────────────────
-//     const today            = new Date()
-//     const currentTermIndex = (() => {
-//         const byDate = stats.terms.findIndex(t =>
-//             t.startDate && t.endDate &&
-//             today >= new Date(t.startDate) &&
-//             today <= new Date(t.endDate)
-//         )
-//         return byDate !== -1 ? byDate : Math.floor((stats.terms.length - 1) / 2)
-//     })()
-//     const currentTerm = stats.terms[currentTermIndex]
-//     const progress    = currentTerm
-//         ? getTermProgress(currentTerm.startDate, currentTerm.endDate)
-//         : null
-
-//     return (
-//         <Card className="h-full bg-school-secondary-900 border-school-secondary-700">
-
-//             {/* ── Header ── */}
-//             <CardHeader className="pb-3 border-b border-school-secondary-700 px-4 sm:px-5">
-//                 <div className="flex items-center justify-between gap-2">
-//                     <CardTitle className="text-sm sm:text-base font-bold text-white">
-//                         Curriculum Status
-//                     </CardTitle>
-//                     <Badge className="bg-school-primary/20 text-school-primary border border-school-primary/30 text-[10px] font-semibold shrink-0">
-//                         Active
-//                     </Badge>
-//                 </div>
-//             </CardHeader>
-
-//             <CardContent className="p-4 sm:p-5 space-y-4">
-
-//                 {/* ── Active Curriculum ── */}
-//                 <div className="rounded-xl border border-school-secondary-700 bg-school-secondary-800/50 p-3">
-//                     <div className="flex items-center gap-3">
-//                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-school-primary/20 border border-school-primary/20">
-//                             <BookOpen className="h-4 w-4 text-school-primary" />
-//                         </div>
-//                         <div className="flex-1 min-w-0">
-//                             <h4 className="text-sm font-bold text-white truncate">
-//                                 {stats.name}
-//                             </h4>
-//                             <p className="text-[11px] text-school-secondary-400 mt-0.5">
-//                                 {stats.subjectLabel}s · {stats.termLabel}s · {stats.yearLabel}s
-//                             </p>
-//                         </div>
-//                     </div>
-//                 </div>
-
-//                 {/* ── Quick Stats ── */}
-//                 <div className="grid grid-cols-3 gap-2">
-//                     {[
-//                         { label: stats.subjectLabel + 's', value: stats.totalSubjects, icon: BookOpen },
-//                         { label: stats.yearLabel + 's',    value: stats.totalGrades,   icon: GraduationCap },
-//                         { label: 'Topics',                 value: stats.totalTopics,   icon: Layers },
-//                     ].map(card => (
-//                         <div
-//                             key={card.label}
-//                             className="rounded-lg border border-school-secondary-700 bg-school-secondary-800/50 p-2 sm:p-2.5 text-center"
-//                         >
-//                             <card.icon className="h-3.5 w-3.5 text-school-primary mx-auto mb-1" />
-//                             <p className="text-base sm:text-lg font-black text-white leading-none">
-//                                 {card.value}
-//                             </p>
-//                             <p className="text-[9px] sm:text-[10px] text-school-secondary-400 mt-0.5 truncate">
-//                                 {card.label}
-//                             </p>
-//                         </div>
-//                     ))}
-//                 </div>
-
-//                 {/* ── Current Term ── */}
-//                 {currentTerm && (
-//                     <div className="space-y-2">
-//                         <div className="flex items-center gap-1.5">
-//                             <Calendar className="h-3.5 w-3.5 text-school-secondary-400" />
-//                             <span className="text-[10px] font-semibold text-school-secondary-400 uppercase tracking-wider">
-//                                 Current {stats.termLabel}
-//                             </span>
-//                         </div>
-//                         <div className="rounded-xl border border-school-primary/30 bg-school-primary/10 p-3 space-y-2">
-//                             <div className="flex items-center justify-between gap-2">
-//                                 <p className="text-sm font-bold text-white">
-//                                     {currentTerm.displayName}
-//                                 </p>
-//                                 <span className="text-[10px] font-semibold text-school-primary shrink-0">
-//                                     {stats.termLabel} {currentTerm.index + 1}/{stats.terms.length}
-//                                 </span>
-//                             </div>
-//                             // In CurriculumCard — replace the warning
-// {!currentTerm.startDate && (
-//     <Link
-//         href="/admin/settings?tab=terms"
-//         className="inline-flex items-center gap-1 text-[10px] text-amber-400 hover:text-amber-300 hover:underline transition-colors"
-//     >
-//         <AlertTriangle className="h-3 w-3" />
-//         Term dates not set — configure in Settings
-//         <ChevronRight className="h-3 w-3" />
-//     </Link>
-// )}
-
-//                             {/* Dates */}
-//                             <div className="flex items-center gap-1.5 text-[11px] text-school-secondary-300">
-//                                 <CalendarDays className="h-3 w-3 text-school-primary shrink-0" />
-//                                 <span>
-//                                     {formatDate(currentTerm.startDate)}
-//                                     {' → '}
-//                                     {formatDate(currentTerm.endDate)}
-//                                 </span>
-//                             </div>
-
-//                             {/* Progress bar */}
-//                             {progress !== null && (
-//                                 <div className="space-y-1">
-//                                     <div className="flex items-center justify-between">
-//                                         <span className="text-[10px] text-school-secondary-400">
-//                                             Progress
-//                                         </span>
-//                                         <span className="text-[10px] font-semibold text-school-primary">
-//                                             {progress}%
-//                                         </span>
-//                                     </div>
-//                                     <div className="h-1.5 w-full rounded-full bg-school-secondary-700">
-//                                         <div
-//                                             className="h-1.5 rounded-full bg-school-primary transition-all duration-500"
-//                                             style={{ width: `${progress}%` }}
-//                                         />
-//                                     </div>
-//                                 </div>
-//                             )}
-
-//                             {/* No dates set hint */}
-//                             {!currentTerm.startDate && (
-//                                 <p className="text-[10px] text-amber-400">
-//                                     ⚠ Term dates not set — configure in school settings
-//                                 </p>
-//                             )}
-//                         </div>
-//                     </div>
-//                 )}
-
-//                 {/* ── All Terms ── */}
-//                 {stats.terms.length > 0 && (
-//                     <div className="space-y-1.5">
-//                         <p className="text-[10px] font-semibold text-school-secondary-400 uppercase tracking-wider">
-//                             All {stats.termLabel}s
-//                         </p>
-//                         <div className="space-y-1">
-//                             {stats.terms.map((term, i) => {
-//                                 const isCurrent = i === currentTermIndex
-//                                 const isPast    = i < currentTermIndex
-//                                 return (
-//                                     <div
-//                                         key={term.id}
-//                                         className={`flex items-center justify-between rounded-lg px-3 py-2 border transition-colors ${
-//                                             isCurrent
-//                                                 ? 'border-school-primary/30 bg-school-primary/10'
-//                                                 : isPast
-//                                                 ? 'border-school-secondary-700 bg-school-secondary-800/30 opacity-60'
-//                                                 : 'border-school-secondary-700 bg-school-secondary-800/30'
-//                                         }`}
-//                                     >
-//                                         <div className="flex items-center gap-2 min-w-0">
-//                                             <div className={`h-1.5 w-1.5 rounded-full shrink-0 ${
-//                                                 isCurrent ? 'bg-school-primary' :
-//                                                 isPast    ? 'bg-school-secondary-500' :
-//                                                             'bg-school-secondary-600'
-//                                             }`} />
-//                                             <span className={`text-xs font-medium truncate ${
-//                                                 isCurrent ? 'text-school-primary' : 'text-school-secondary-300'
-//                                             }`}>
-//                                                 {term.displayName}
-//                                             </span>
-//                                         </div>
-//                                         <div className="flex items-center gap-2 shrink-0">
-//                                             {term.startDate && (
-//                                                 <span className="hidden sm:block text-[10px] text-school-secondary-500">
-//                                                     {new Date(term.startDate).toLocaleDateString('en-GB', {
-//                                                         day: 'numeric', month: 'short',
-//                                                     })}
-//                                                     {' — '}
-//                                                     {term.endDate
-//                                                         ? new Date(term.endDate).toLocaleDateString('en-GB', {
-//                                                             day: 'numeric', month: 'short',
-//                                                         })
-//                                                         : '?'
-//                                                     }
-//                                                 </span>
-//                                             )}
-//                                             {isCurrent && (
-//                                                 <span className="text-[9px] sm:text-[10px] font-semibold text-school-primary">
-//                                                     Current
-//                                                 </span>
-//                                             )}
-//                                             {!isCurrent && (
-//                                                 <ChevronRight className="h-3 w-3 text-school-secondary-600" />
-//                                             )}
-//                                         </div>
-//                                     </div>
-//                                 )
-//                             })}
-//                         </div>
-//                     </div>
-//                 )}
-
-//                 {/* ── Compliance ── */}
-//                 <div className="flex items-center gap-2.5 rounded-xl bg-school-primary/10 border border-school-primary/20 p-3">
-//                     <CheckCircle2 className="h-4 w-4 text-school-primary shrink-0" />
-//                     <div className="min-w-0">
-//                         <p className="text-xs font-semibold text-white">
-//                             Compliance Status
-//                         </p>
-//                         <p className="text-[11px] text-school-secondary-300 mt-0.5">
-//                             All curriculum requirements are being met
-//                         </p>
-//                     </div>
-//                 </div>
-
-//             </CardContent>
-//         </Card>
-//     )
-// }
-
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -549,7 +92,7 @@ export function CurriculumCard() {
         : null
 
     return (
-        <Card className="h-full bg-gray-50 border-gray-200">
+        <Card className="h-fit bg-gray-50 border-gray-200">
 
             {/* ── Header ── */}
             <CardHeader className="pb-3 border-b border-gray-200 px-4 sm:px-5">
@@ -743,3 +286,181 @@ export function CurriculumCard() {
         </Card>
     )
 }
+
+
+// "use client"
+
+// import { useState, useEffect } from "react"
+// import {
+//     BookOpen, Calendar, CheckCircle2,
+//     Loader2, GraduationCap, Layers,
+//     CalendarDays,
+// } from "lucide-react"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { useProfileStore } from "@/store/profileStore"
+// import { getCurriculumStats, CurriculumStats } from "@/app/actions/curiculum-stats"
+// import { cn } from "@/lib/utils"
+
+// // ── Helpers ────────────────────────────────────────────────────────────────────
+
+// function formatDate(date: Date | null): string {
+//     if (!date) return '---'
+//     return new Date(date).toLocaleDateString('en-GB', {
+//         day: 'numeric', month: 'short'
+//     })
+// }
+
+// function getTermProgress(startDate: Date | null, endDate: Date | null): number | null {
+//     if (!startDate || !endDate) return null
+//     const now = new Date().getTime()
+//     const start = new Date(startDate).getTime()
+//     const end = new Date(endDate).getTime()
+//     if (now < start) return 0
+//     if (now > end) return 100
+//     return Math.round(((now - start) / (end - start)) * 100)
+// }
+
+// export function CurriculumCard() {
+//     const { profile } = useProfileStore()
+//     const schoolId = profile?.schoolId ?? ''
+//     const [stats, setStats] = useState<CurriculumStats | null>(null)
+//     const [loading, setLoading] = useState(true)
+
+//     useEffect(() => {
+//         if (!schoolId) return
+//         setLoading(true)
+//         getCurriculumStats(schoolId)
+//             .then(data => { setStats(data); setLoading(false) })
+//             .catch(() => setLoading(false))
+//     }, [schoolId])
+
+//     if (loading) return (
+//         <Card className="h-48 bg-slate-900 border-white/5 flex items-center justify-center">
+//             <Loader2 className="h-6 w-6 animate-spin text-school-primary" />
+//         </Card>
+//     )
+
+//     if (!stats) return null
+
+//     // Logic: Identify current term
+//     const today = new Date()
+//     const currentTermIndex = stats.terms.findIndex(t =>
+//         t.startDate && t.endDate && today >= new Date(t.startDate) && today <= new Date(t.endDate)
+//     )
+//     const currentTerm = stats.terms[currentTermIndex !== -1 ? currentTermIndex : 0]
+//     const progress = currentTerm ? getTermProgress(currentTerm.startDate, currentTerm.endDate) : null
+
+//     return (
+//         <Card className="h-fit bg-slate-900 border-white/5 shadow-2xl overflow-hidden rounded-[2rem]">
+//             <CardHeader className="pb-2 border-b border-white/5 bg-slate-950/40 px-6 py-4">
+//                 <div className="flex items-center justify-between">
+//                     <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+//                         Academic Infrastructure
+//                     </CardTitle>
+//                     <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-black text-emerald-500 uppercase">
+//                         <span className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
+//                         Live
+//                     </div>
+//                 </div>
+//             </CardHeader>
+
+//             <CardContent className="p-6 space-y-5">
+//                 {/* ── Active Curriculum Title ── */}
+//                 <div className="flex items-center justify-between gap-4">
+//                     <div className="flex items-center gap-3">
+//                         <div className="p-2 bg-school-primary/10 rounded-lg">
+//                             <BookOpen className="h-4 w-4 text-school-primary" />
+//                         </div>
+//                         <h4 className="text-sm font-bold text-white uppercase italic">{stats.name}</h4>
+//                     </div>
+//                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+//                         {stats.totalSubjects} {stats.subjectLabel}s
+//                     </p>
+//                 </div>
+
+//                 {/* ── Compact Stats Grid ── */}
+//                 <div className="grid grid-cols-3 gap-3">
+//                     {[
+//                         { label: stats.yearLabel + 's', value: stats.totalGrades, icon: GraduationCap },
+//                         { label: 'Topics', value: stats.totalTopics, icon: Layers },
+//                         { label: 'Compliance', value: '100%', icon: CheckCircle2 },
+//                     ].map((card) => (
+//                         <div key={card.label} className="bg-slate-950 border border-white/5 rounded-2xl p-3 text-center">
+//                             <card.icon className="h-3 w-3 text-slate-600 mx-auto mb-1" />
+//                             <p className="text-sm font-black text-white leading-none">{card.value}</p>
+//                             <p className="text-[8px] text-slate-500 uppercase font-bold mt-1 tracking-tighter">{card.label}</p>
+//                         </div>
+//                     ))}
+//                 </div>
+
+//                 {/* ── Current Term Focus ── */}
+//                 {currentTerm && (
+//                     <div className="bg-slate-950 border border-school-primary/20 rounded-2xl p-4 shadow-inner relative overflow-hidden">
+//                         {/* Background glow */}
+//                         <div className="absolute top-0 right-0 h-16 w-16 bg-school-primary/5 blur-2xl rounded-full" />
+                        
+//                         <div className="flex justify-between items-start mb-3 relative z-10">
+//                             <div>
+//                                 <p className="text-[9px] font-black text-school-primary uppercase tracking-[0.2em] mb-1">Active Window</p>
+//                                 <h5 className="text-sm font-bold text-white uppercase">{currentTerm.displayName}</h5>
+//                             </div>
+//                             <span className="text-[10px] font-mono text-slate-500">
+//                                 {progress}%
+//                             </span>
+//                         </div>
+
+//                         {/* Progress Bar */}
+//                         {progress !== null && (
+//                             <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden mb-3">
+//                                 <div 
+//                                     className="h-full bg-school-primary shadow-[0_0_8px_var(--color-school-primary)] transition-all duration-1000" 
+//                                     style={{ width: `${progress}%` }} 
+//                                 />
+//                             </div>
+//                         )}
+
+//                         <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-400">
+//                             <CalendarDays className="h-3 w-3 text-school-primary" />
+//                             {formatDate(currentTerm.startDate)} <span className="opacity-30">→</span> {formatDate(currentTerm.endDate)}
+//                         </div>
+//                     </div>
+//                 )}
+
+//                 {/* ── Horizontal Term Timeline (Replaces the long list) ── */}
+//                 <div className="pt-2">
+//                     <div className="flex items-center gap-2 mb-3">
+//                         <div className="h-px flex-1 bg-white/5" />
+//                         <span className="text-[8px] font-black text-slate-600 uppercase tracking-[0.3em]">Timeline</span>
+//                         <div className="h-px flex-1 bg-white/5" />
+//                     </div>
+//                     <div className="flex justify-between items-center px-2">
+//                         {stats.terms.map((term, i) => {
+//                             const isCurrent = i === currentTermIndex || (currentTermIndex === -1 && i === 0);
+//                             const isPast = currentTermIndex > -1 && i < currentTermIndex;
+                            
+//                             return (
+//                                 <div key={term.id} className="flex flex-col items-center gap-1.5 flex-1 relative">
+//                                     {/* Line connectors */}
+//                                     {i < stats.terms.length - 1 && (
+//                                         <div className="absolute top-1.5 left-1/2 w-full h-[1px] bg-white/5 -z-0" />
+//                                     )}
+//                                     <div className={cn(
+//                                         "h-3 w-3 rounded-full border-2 z-10 transition-all",
+//                                         isCurrent ? "bg-school-primary border-slate-900 scale-125 shadow-[0_0_8px_#f59e0b]" : 
+//                                         isPast ? "bg-slate-700 border-slate-900" : "bg-slate-900 border-white/10"
+//                                     )} />
+//                                     <span className={cn(
+//                                         "text-[8px] font-bold uppercase tracking-tighter",
+//                                         isCurrent ? "text-school-primary" : "text-slate-600"
+//                                     )}>
+//                                         {term.displayName.split(' ')[0]}
+//                                     </span>
+//                                 </div>
+//                             )
+//                         })}
+//                     </div>
+//                 </div>
+//             </CardContent>
+//         </Card>
+//     )
+// }
