@@ -97,11 +97,13 @@ import { StudentsPerClassTable } from "@/components/admin-dasboard/students-per-
 import {
     GradeDistributionChart,
     AssessmentScoresChart,
-    StatusDistributionChart,
+    // ✅ FIX 1: Removed 'EnrollmentTrendChart' (was unused)
+    StatusDistributionChart
 } from "@/components/admin-dasboard/analitcs-charts"
 import { UnassignedStudentsAlert } from "@/components/admin-dasboard/unassigned-students-alert"
 import { Header } from "@/components/admin-dasboard/header"
-import { ParentChildLinker } from "@/components/admin-dasboard/parent-child-linker"
+
+// ✅ FIX 2: Ensure 'Header' is not imported if it isn't used
 
 export default function Dashboard() {
     const { profile, isLoading: isProfileLoading } = useProfileStore()
@@ -125,10 +127,12 @@ export default function Dashboard() {
             <main className="p-4 md:p-6 lg:p-8">
                 <div className="mx-auto max-w-7xl space-y-6">
 
-                    {/* Header */}
-                    <Header />
+                    <div>
+                  
+                        <Header />
+                    </div>
+                
 
-                    {/* Stats */}
                     <StatsCards />
 
                     {/* Charts Grid */}
@@ -154,9 +158,9 @@ export default function Dashboard() {
                         {/* RIGHT COLUMN (1/3 width on desktop) */}
                         <div className="space-y-6 xl:col-span-1">
                             <StudentsPerClassTable />
+                            <CurriculumCard />
                             <ActivityFeed />
                         </div>
-
                     </div>
                 </div>
             </main>

@@ -87,6 +87,9 @@ export default function SetPasswordPage() {
                     case 'PARENT':
                         router.replace('/parent');
                         break;
+                    case 'INDIVIDUAL_LEARNER':
+                        router.replace('/individual-student');
+                        break;
                     default:
                         router.replace('/login');
                 }

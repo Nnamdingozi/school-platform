@@ -1,156 +1,3 @@
-
-
-// 'use client'
-
-// import { useState } from 'react'
-// import { DashboardHeader } from '@/components/individual-student/dashboard-header'
-// import { DashboardNavigation } from '@/components/individual-student/dashboard-navigation'
-// import { ContinueLearningCard } from '@/components/individual-student/continue-learning-card'
-// import { SubjectCard } from '@/components/individual-student/subject-card'
-// import { AIRecommendations } from '@/components/individual-student/ai-recommendations'
-// import { MilestonesSidebar } from '@/components/individual-student/milestones-sidebar'
-
-// // --- Types to prevent 'any' errors ---
-// interface Subject {
-//   name: string;
-//   icon: string;
-//   completion: number;
-//   color: 'blue' | 'cyan' | 'pink' | 'yellow';
-// }
-
-// interface Recommendation {
-//   id: string;
-//   title: string;
-//   description: string;
-//   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-//   estimatedTime: string;
-// }
-
-// interface Milestone {
-//   id: string;
-//   level: number;
-//   title: string;
-//   icon: string;
-//   unlocked: boolean;
-//   pointsRequired: number;
-// }
-
-// // --- Sample Data ---
-// const subjects: Subject[] = [
-//   { name: 'Math', icon: '🔢', completion: 80, color: 'blue' },
-//   { name: 'Science', icon: '🧪', completion: 65, color: 'cyan' },
-//   { name: 'English', icon: '📖', completion: 72, color: 'pink' },
-//   { name: 'History', icon: '🏛️', completion: 45, color: 'yellow' },
-//   { name: 'Art', icon: '🎨', completion: 55, color: 'pink' },
-//   { name: 'Music', icon: '🎵', completion: 38, color: 'blue' },
-// ]
-
-// const recommendations: Recommendation[] = [
-//   {
-//     id: '1',
-//     title: 'Quadratic Equations',
-//     description: 'Learn how to solve equations with two variables using various methods.',
-//     difficulty: 'Intermediate',
-//     estimatedTime: '45 minutes',
-//   },
-//   {
-//     id: '2',
-//     title: 'Photosynthesis Deep Dive',
-//     description: 'Explore the process of photosynthesis and its importance in ecosystems.',
-//     difficulty: 'Beginner',
-//     estimatedTime: '30 minutes',
-//   },
-//   {
-//     id: '3',
-//     title: 'Shakespeare Analysis',
-//     description: 'Analyze themes and literary devices in classic Shakespeare works.',
-//     difficulty: 'Advanced',
-//     estimatedTime: '60 minutes',
-//   },
-// ]
-
-// const milestones: Milestone[] = [
-//   { id: '1', level: 1, title: 'Getting Started', icon: '🌟', unlocked: true, pointsRequired: 100 },
-//   { id: '2', level: 2, title: 'Rising Scholar', icon: '📚', unlocked: true, pointsRequired: 500 },
-//   { id: '3', level: 3, title: 'Knowledge Master', icon: '🧠', unlocked: false, pointsRequired: 1000 },
-//   { id: '4', level: 4, title: 'Expert Learner', icon: '🎓', unlocked: false, pointsRequired: 2000 },
-// ]
-
-// export default function DashboardPage() {
-//   // ✅ FIX: Use the state variable to drive the UI
-//   const [activeNav, setActiveNav] = useState('learning-path')
-
-//   const handleNavigation = (id: string) => {
-//     setActiveNav(id)
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-background">
-//       {/* Header */}
-//       <DashboardHeader userName="Alex" streak={12} learningPoints={750} />
-
-//       {/* Navigation */}
-//       <DashboardNavigation onNavigate={handleNavigation} />
-
-//       {/* Main Content */}
-//       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-//         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-          
-//           {/* Main Content Area */}
-//           <div className="lg:col-span-2 space-y-10">
-            
-//             {/* Show specific content based on activeNav */}
-//             {activeNav === 'learning-path' && (
-//               <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
-//                 <ContinueLearningCard
-//                   topic="Fractions & Decimals"
-//                   subject="Mathematics"
-//                   progress={80}
-//                   nextUp="Long Division"
-//                 />
-                
-//                 <AIRecommendations recommendations={recommendations} />
-//               </div>
-//             )}
-
-//             {/* Always show subjects or show only when tab selected */}
-//             {(activeNav === 'learning-path' || activeNav === 'subjects') && (
-//               <section className="animate-in fade-in duration-500">
-//                 <h2 className="mb-6 text-2xl font-bold text-foreground">
-//                   {activeNav === 'subjects' ? 'All Subjects' : 'Explore Subjects'}
-//                 </h2>
-//                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3">
-//                   {subjects.map((subject: Subject) => (
-//                     <SubjectCard
-//                       key={subject.name}
-//                       name={subject.name}
-//                       icon={subject.icon}
-//                       completion={subject.completion}
-//                       color={subject.color}
-//                     />
-//                   ))}
-//                 </div>
-//               </section>
-//             )}
-
-//             {activeNav === 'achievements' && (
-//                 <div className="py-20 text-center border-2 border-dashed rounded-2xl animate-in zoom-in-95">
-//                     <p className="text-muted-foreground">Your detailed achievement history will appear here.</p>
-//                 </div>
-//             )}
-//           </div>
-
-//           {/* Sidebar - Milestones */}
-//           <div className="space-y-6">
-//             <MilestonesSidebar milestones={milestones} currentPoints={750} />
-//           </div>
-//         </div>
-//       </main>
-//     </div>
-//   )
-// }
-
-
 'use client' 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -183,6 +30,10 @@ export default function IndividualStudentOnboardingPage() {
         password: '',
         phone: '',
     })
+
+    const [isProvisioned, setIsProvisioned] = useState(false)
+    const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null)
+    const [isResending, setIsResending] = useState(false)
 
     const canContinue = useMemo(() => {
         return (
@@ -240,21 +91,11 @@ export default function IndividualStudentOnboardingPage() {
                 return
             }
 
-            // Sign in immediately so we can redirect to the dashboard.
-            const supabase = createClient()
-            const { error: signInError } = await supabase.auth.signInWithPassword({
-                email: form.email.trim(),
-                password: form.password,
-            })
-
-            if (signInError) {
-                toast.error(signInError.message ?? 'Account created, but sign-in failed.')
-                router.replace('/login')
-                return
-            }
-
-            toast.success('Account created! Redirecting...')
-            router.replace('/individual-student')
+            // Email confirmation flow (same as school onboarding): user is unconfirmed until they click the link.
+            // Do not signInWithPassword here — it fails with "Email not confirmed" and would send users to /login.
+            setConfirmedEmail(form.email.trim().toLowerCase())
+            setIsProvisioned(true)
+            toast.success('Check your email to confirm your account.')
         } catch (err) {
             const msg = err instanceof Error ? err.message : 'Something went wrong.'
             setError(msg)
@@ -262,6 +103,91 @@ export default function IndividualStudentOnboardingPage() {
         } finally {
             setIsLoading(false)
         }
+    }
+
+    async function handleResend() {
+        if (!confirmedEmail) {
+            toast.error('Email address not found. Please contact support.')
+            return
+        }
+        setIsResending(true)
+        const supabase = createClient()
+        const { error } = await supabase.auth.resend({
+            type: 'signup',
+            email: confirmedEmail,
+        })
+        setIsResending(false)
+        if (error) {
+            toast.error('Could not resend. Please wait a moment and try again.')
+        } else {
+            toast.success('Confirmation email resent!')
+        }
+    }
+
+    if (isProvisioned && confirmedEmail) {
+        return (
+            <div className="min-h-screen bg-school-secondary-950 flex flex-col">
+                <header className="flex items-center justify-between px-6 py-4 border-b border-school-secondary-800">
+                    <div className="flex items-center gap-2">
+                        <div className="h-8 w-8 rounded-lg bg-school-primary flex items-center justify-center">
+                            <span className="text-school-secondary-950 font-black text-sm">E</span>
+                        </div>
+                        <span className="text-school-secondary-100 font-semibold text-lg">EduAI</span>
+                    </div>
+                    <p className="text-school-secondary-100/50 text-sm hidden sm:block">
+                        Check your email to get started
+                    </p>
+                </header>
+                <main className="flex-1 flex items-center justify-center px-4 pb-16">
+                    <div className="w-full max-w-lg animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center text-center py-10 gap-6">
+                        <div className="relative">
+                            <div className="h-20 w-20 rounded-full bg-school-primary/10 border-4 border-school-primary/30 flex items-center justify-center">
+                                <Mail className="h-9 w-9 text-school-primary" />
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-green-500 border-2 border-school-secondary-950 flex items-center justify-center">
+                                <Check className="h-3.5 w-3.5 text-white" />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-2xl font-black text-school-secondary-100 tracking-tight">
+                                Almost there! Check your inbox
+                            </h2>
+                            <p className="text-school-secondary-100/50 text-sm max-w-sm mx-auto leading-relaxed">
+                                We sent a confirmation link to{' '}
+                                <span className="text-school-primary font-semibold break-all">
+                                    {confirmedEmail}
+                                </span>
+                                . Click it to activate your account, then sign in to open your learner dashboard.
+                            </p>
+                        </div>
+                        <p className="text-xs text-school-secondary-100/30">
+                            {"Didn't receive it? Check your spam folder or "}
+                            <button
+                                type="button"
+                                onClick={handleResend}
+                                disabled={isResending}
+                                className="text-school-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1"
+                            >
+                                {isResending ? (
+                                    <>
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                        Sending...
+                                    </>
+                                ) : (
+                                    'resend the email'
+                                )}
+                            </button>
+                        </p>
+                        <a
+                            href="/login"
+                            className="text-xs text-school-secondary-100 hover:text-school-secondary-100/50 transition-colors"
+                        >
+                            Go to login page →
+                        </a>
+                    </div>
+                </main>
+            </div>
+        )
     }
 
     return (

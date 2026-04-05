@@ -14,8 +14,9 @@ import {
 } from '@/types/profile'
 
 // ── Role constants ─────────────────────────────────────────────────────────────
-const ALLOWED_ROLES  = ['SCHOOL_ADMIN', 'SUPER_ADMIN', 'TEACHER', 'STUDENT', 'PARENT']
-const SIDEBAR_ROLES  = ['SCHOOL_ADMIN', 'SUPER_ADMIN', 'TEACHER', 'STUDENT']
+const ALLOWED_ROLES  = ['SCHOOL_ADMIN', 'SUPER_ADMIN', 'TEACHER', 'STUDENT', 'PARENT', 'INDIVIDUAL_LEARNER']
+// Sidebar is rendered for these dashboard roles (including PARENT).
+const SIDEBAR_ROLES  = ['SCHOOL_ADMIN', 'SUPER_ADMIN', 'TEACHER', 'STUDENT', 'PARENT']
 
 // ── Layout ─────────────────────────────────────────────────────────────────────
 export default async function DashboardLayout({
@@ -53,8 +54,7 @@ export default async function DashboardLayout({
 
     if (!profile) redirect('/login?error=profile_not_found')
 
-    // ── Parent — no sidebar, no admin chrome ──────────────────────────────
-    // Parents have their own full-screen dashboard layout
+    // ── Roles without sidebar (full-screen) ───────────────────────────────
     if (!SIDEBAR_ROLES.includes(roleCheck.role)) {
         return (
             <SchoolProvider initialProfile={profile}>

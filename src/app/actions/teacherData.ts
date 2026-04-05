@@ -33,7 +33,7 @@ export const getTeacherData = async (
 ): Promise<ProfileInStore | null> => {
     try {
         const teacher = await prisma.profile.findUnique({
-            where:   { email },
+            where: { email },
             include: comprehensiveProfileInclude,
         })
 
@@ -43,6 +43,5 @@ export const getTeacherData = async (
 
     } catch (error: unknown) {
         console.error('Error fetching teacher data:', getErrorMessage(error))
-        return null
-    }
-}
+        return null}
+    } 
