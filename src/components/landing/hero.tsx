@@ -93,7 +93,7 @@ export function Hero() {
                 </Button>
               </Link>
 
-              <Link href="/onboarding">
+              <Link href="/onboarding/individual-student">
                 <Button
                   variant="outline"
                   size="lg"

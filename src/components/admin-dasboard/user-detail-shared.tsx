@@ -98,7 +98,7 @@ export function AssignClassModal({
 
         const result = role === 'teacher'
             ? await assignTeacherToClass(userId, selected)
-            : await assignUserToClass(userId, selected, '')
+            : await assignUserToClass(userId, selected)
             // Note: gradeSubjectId is required for students —
             // you may want to add a gradeSubject selector for production
 

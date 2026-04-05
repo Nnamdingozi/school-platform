@@ -9,11 +9,10 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
-    
   },
-"prisma": {
-  "seed": "node --loader ts-node/esm prisma/seed.ts"
-},
+  "prisma": {
+    "seed": "node --loader ts-node/esm prisma/seed.ts"
+  },
   "dependencies": {
     "@ai-sdk/google": "^1.1.9",
     "@hookform/resolvers": "^3.10.0",
@@ -64,6 +63,7 @@
   "devDependencies": {
     "@prisma/adapter-pg": "6.1.0",
     "@tailwindcss/postcss": "^4.0.0",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20.17.10",
     "@types/papaparse": "^5.5.2",
     "@types/pg": "^8.11.10",

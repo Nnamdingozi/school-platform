@@ -18,29 +18,31 @@ model School {
   whatsappCredits Int @default(0)
 
   // Relations
-  users            Profile[]
-  classes          Class[]
-  curricula        Curriculum[]      @relation("SchoolCurriculum")
-  grades           Grade[]
-  terms            Term[]
-  subjects         Subject[]
-  topics           Topic[]
-  classEnrollments ClassEnrollment[]
-  feedbacks        Feedback[]
-  gradeSubjects    GradeSubject[]
-  lessons          Lesson[]
-  ParentStudent    ParentStudent[]
-  subscription     Subscription?
-  activityLogs     ActivityLog[]
-  assessments      Assessment[]
-  primaryColor     String            @default("#f59e0b")
-  secondaryColor   String            @default("#1e293b")
-  studentSubjects  StudentSubject[]
-  creditTransactions CreditTransaction[]
+  users                    Profile[]
+  classes                  Class[]
+  curricula                Curriculum[]              @relation("SchoolCurriculum")
+  grades                   Grade[]
+  terms                    Term[]
+  subjects                 Subject[]
+  topics                   Topic[]
+  classEnrollments         ClassEnrollment[]
+  feedbacks                Feedback[]
+  gradeSubjects            GradeSubject[]
+  lessons                  Lesson[]
+  ParentStudent            ParentStudent[]
+  subscription             Subscription?
+  activityLogs             ActivityLog[]
+  assessments              Assessment[]
+  primaryColor             String                    @default("#f59e0b")
+  secondaryColor           String                    @default("#1e293b")
+  studentSubjects          StudentSubject[]
+  creditTransactions       CreditTransaction[]
   subscriptionTransactions SubscriptionTransaction[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Question  Question[]
+  Exam      Exam[]
 }
 
 model Profile {
@@ -113,6 +115,7 @@ model ParentStudent {
 model Curriculum {
   id             String    @id @default(uuid())
   name           String
+  type           String    @default("generic") // 'nigerian' | 'british' | 'american' | 'generic'
   schoolId       String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
@@ -162,6 +165,7 @@ model Term {
   grade       Grade     @relation(fields: [gradeId], references: [id])
   school      School?   @relation(fields: [schoolId], references: [id])
   topics      Topic[]
+  Exam        Exam[]
 
   @@unique([gradeId, index])
   @@index([schoolId])
@@ -193,10 +197,11 @@ model Topic {
   description    String?
   weekNumber     Int?
   assessments    Assessment[]
-  lessons        Lesson?
+  lessons        Lesson[]
   gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
   school         School?      @relation(fields: [schoolId], references: [id])
   term           Term         @relation(fields: [termId], references: [id])
+  Question       Question[]
 
   @@index([schoolId])
 }
@@ -213,6 +218,7 @@ model Class {
   school      School?           @relation(fields: [schoolId], references: [id])
   teacher     Profile           @relation("TeacherClasses", fields: [teacherId], references: [id])
   enrollments ClassEnrollment[]
+  Exam        Exam[]
 
   @@index([schoolId])
 }
@@ -262,6 +268,8 @@ model Assessment {
   student        Profile        @relation("StudentAssessments", fields: [studentId], references: [id])
   topic          Topic?         @relation(fields: [topicId], references: [id])
   feedbacks      Feedback[]
+  Exam           Exam?          @relation(fields: [examId], references: [id])
+  examId         String?
 
   @@index([schoolId])
 }
@@ -269,35 +277,100 @@ model Assessment {
 model Lesson {
   id          String   @id @default(uuid())
   title       String
-  content     String?
-  topicId     String   @unique
-  schoolId    String?
-  aiContent   Json?
+  content     String? // The actual text content
+  topicId     String // Removed @unique
+  schoolId    String? // null = Global, uuid = School Private
+  aiContent   Json? // Structured AI data
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   videoScript String?
-  school      School?  @relation(fields: [schoolId], references: [id])
-  topic       Topic    @relation(fields: [topicId], references: [id])
-  quiz        Quiz?
+
+  school School? @relation(fields: [schoolId], references: [id])
+  topic  Topic   @relation(fields: [topicId], references: [id])
+  quiz   Quiz?
+
+  // ✅ This ensures one Global version AND one version per school only
+  @@unique([topicId, schoolId])
 }
 
 model Quiz {
-  id        String     @id @default(uuid())
-  lessonId  String     @unique
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  questions Question[]
-  lesson    Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  id            String         @id @default(uuid())
+  lessonId      String         @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  quizQuestions QuizQuestion[]
+  lesson        Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
+// 1. The Independent Question Bank
 model Question {
-  id            String  @id @default(uuid())
-  quizId        String
+  id            String           @id @default(uuid())
   text          String
-  options       Json
+  options       Json // Array of strings
   correctAnswer String
   explanation   String?
-  quiz          Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  points        Int              @default(1)
+  category      QuestionCategory @default(PRACTICE)
+
+  topicId  String
+  schoolId String? // null = Global, UUID = School Custom
+
+  topic  Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  school School? @relation(fields: [schoolId], references: [id])
+
+  quizLinks QuizQuestion[]
+  examLinks ExamQuestion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 2. The High-Stakes Exam Model
+model Exam {
+  id       String         @id @default(uuid())
+  title    String
+  type     AssessmentType // MID_TERM, END_OF_TERM
+  duration Int            @default(60) // minutes
+  status   ExamStatus     @default(DRAFT)
+
+  schoolId String
+  classId  String
+  termId   String
+
+  questions   ExamQuestion[]
+  assessments Assessment[] // The actual student results
+
+  school School @relation(fields: [schoolId], references: [id])
+  class  Class  @relation(fields: [classId], references: [id])
+  term   Term   @relation(fields: [termId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 3. Junction Tables
+model QuizQuestion {
+  id         String @id @default(uuid())
+  quizId     String
+  questionId String
+  order      Int
+
+  quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([quizId, questionId])
+}
+
+model ExamQuestion {
+  id         String @id @default(uuid())
+  examId     String
+  questionId String
+  order      Int
+
+  exam     Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, questionId])
 }
 
 model Feedback {
@@ -350,21 +423,21 @@ model Notification {
 }
 
 model Subscription {
-  id               String    @id @default(uuid())
-  schoolId         String    @unique
-  plan             String
-  profileId        String?   @unique
-  status           String
+  id                String    @id @default(uuid())
+  schoolId          String    @unique
+  plan              String
+  profileId         String?   @unique
+  status            String
   // ── Keep existing Stripe fields for future Stripe migration ──
-  stripeCustomerId String?   @unique
-  currentPeriodEnd DateTime
+  stripeCustomerId  String?   @unique
+  currentPeriodEnd  DateTime
   // ── Add Paystack payment tracking ─────────────────────────────
-  paystackReference String?  @unique  // last successful payment reference
-  planId           String?            // FK to SubscriptionPlan
-  amountNGN        Int?               // what was paid
-  paidAt           DateTime?          // when last payment was confirmed
-  createdAt        DateTime  @default(now())
-   updatedAt DateTime @default(now()) @updatedAt
+  paystackReference String?   @unique // last successful payment reference
+  planId            String? // FK to SubscriptionPlan
+  amountNGN         Int? // what was paid
+  paidAt            DateTime? // when last payment was confirmed
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @default(now()) @updatedAt
 
   school  School            @relation(fields: [schoolId], references: [id])
   profile Profile?          @relation("ProfileSubscription", fields: [profileId], references: [id])
@@ -411,17 +484,17 @@ model ActivityLog {
 }
 
 model CreditTransaction {
-  id           String    @id @default(uuid())
-  schoolId     String
-  packageId    String
-  credits      Int
-  amountNGN    Int
-  amountKobo   Int
-  reference    String    @unique
-  status       TxStatus  @default(PENDING)
-  initiatedBy  String
-  paidAt       DateTime?
-  createdAt    DateTime  @default(now())
+  id          String    @id @default(uuid())
+  schoolId    String
+  packageId   String
+  credits     Int
+  amountNGN   Int
+  amountKobo  Int
+  reference   String    @unique
+  status      TxStatus  @default(PENDING)
+  initiatedBy String
+  paidAt      DateTime?
+  createdAt   DateTime  @default(now())
 
   school School @relation(fields: [schoolId], references: [id])
 
@@ -429,11 +502,10 @@ model CreditTransaction {
   @@index([reference])
 }
 
-
 model SubscriptionPlan {
   id           String   @id @default(uuid())
   name         String
-  slug         String   @unique  // 'monthly' | 'termly' | 'annual'
+  slug         String   @unique // 'monthly' | 'termly' | 'annual'
   priceNGN     Int
   priceKobo    Int
   priceUSD     Float
@@ -441,14 +513,13 @@ model SubscriptionPlan {
   description  String
   features     String[] // array of feature strings
   popular      Boolean  @default(false)
-  active       Boolean  @default(true)  // soft delete
+  active       Boolean  @default(true) // soft delete
   sortOrder    Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   subscriptionTransactions SubscriptionTransaction[]
   subscriptions            Subscription[]
-
 
   @@index([active])
   @@index([sortOrder])
@@ -457,18 +528,18 @@ model SubscriptionPlan {
 model SubscriptionTransaction {
   id          String    @id @default(uuid())
   schoolId    String
-  planId      String                    // which plan was purchased
-  planName    String                    // snapshot of plan name at purchase time
-  amountNGN   Int                       // amount paid in naira
-  amountKobo  Int                       // amount in kobo for Paystack
-  reference   String    @unique         // Paystack reference
+  planId      String // which plan was purchased
+  planName    String // snapshot of plan name at purchase time
+  amountNGN   Int // amount paid in naira
+  amountKobo  Int // amount in kobo for Paystack
+  reference   String    @unique // Paystack reference
   status      TxStatus  @default(PENDING)
-  initiatedBy String                    // profile id of who triggered it
-  paidAt      DateTime?                 // when Paystack confirmed payment
+  initiatedBy String // profile id of who triggered it
+  paidAt      DateTime? // when Paystack confirmed payment
   createdAt   DateTime  @default(now())
 
   school School           @relation(fields: [schoolId], references: [id])
-  plan   SubscriptionPlan @relation(fields: [planId],   references: [id])
+  plan   SubscriptionPlan @relation(fields: [planId], references: [id])
 
   @@index([schoolId])
   @@index([status])
@@ -491,8 +562,6 @@ model CreditPackage {
 
   @@index([active])
 }
-
-
 
 enum TxStatus {
   PENDING
@@ -534,10 +603,24 @@ enum AssessmentType {
   WEEKLY
   TERMLY
   YEARLY
+  MID_TERM
+  END_OF_TERM
 }
 
 enum EnrollmentStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum QuestionCategory {
+  PRACTICE // Generated during daily lessons
+  EXAM // Generated specifically for high-stakes exams
+}
+
+enum ExamStatus {
+  DRAFT
+  PUBLISHED
+  COMPLETED
+  ONGOING
 }

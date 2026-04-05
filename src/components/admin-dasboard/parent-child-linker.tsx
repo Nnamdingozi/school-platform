@@ -1,17 +1,207 @@
+
+
+// 'use client';
+
+// import { useCallback, useRef, useState} from 'react';
+// import Papa, { ParseResult } from 'papaparse';
+// // import { toast } from 'sonner';
+// import {
+//   Download, Loader2, Upload, X,
+//   Plus, User, GraduationCap, Trash2, Info
+// } from 'lucide-react';
+// import { useProfileStore } from '@/store/profileStore';
+// import {
+//   bulkLinkParentsAndChildren,
+//   searchUsersByRole,
+//   type ParentChildLinkInput,
+//   type ParentChildLinkResult,
+// } from '@/app/actions/parent-linking';
+// import { UserSearchInput } from '@/components/admin-dasboard/user-searchInput';
+
+
+// // --- Types ---
+// type RowStatus = 'idle' | 'linking' | 'linked' | 'error';
+// interface ChildEntry { id: string; email: string; status: RowStatus; message?: string; }
+// interface ParentGroup { id: string; parentEmail: string; children: ChildEntry[]; }
+
+// const makeChild = (email = ''): ChildEntry => ({ id: crypto.randomUUID(), email, status: 'idle' });
+// const makeGroup = (parentEmail = '', childEmails: string[] = ['']): ParentGroup => ({
+//   id: crypto.randomUUID(),
+//   parentEmail,
+//   children: childEmails.map(email => makeChild(email)),
+// });
+
+// export function ParentChildLinker() {
+//   const [groups, setGroups] = useState<ParentGroup[]>([makeGroup()]);
+//   const [dragOver, setDragOver] = useState(false);
+//   const [submitting, setSubmitting] = useState(false);
+//   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+//   const { profile } = useProfileStore();
+//   const schoolId = profile?.schoolId ?? '';
+
+//   const downloadTemplate = () => {
+//     const csvContent = "parent_email,child_email\nguardian@example.com,student1@example.com";
+//     const blob = new Blob([csvContent], { type: 'text/csv' });
+//     const url = window.URL.createObjectURL(blob);
+//     const a = document.createElement('a');
+//     a.href = url; a.download = 'template.csv'; a.click();
+//   };
+
+//   const parseCsv = useCallback((file: File) => {
+//     Papa.parse<any>(file, {
+//       header: true, skipEmptyLines: true,
+//       complete: (result: ParseResult<any>) => {
+//         const aggregation = new Map<string, string[]>();
+//         result.data.forEach(row => {
+//           const p = (row.parent_email || row.parentEmail || '').trim().toLowerCase();
+//           const c = (row.child_email || row.childEmail || '').trim().toLowerCase();
+//           if (p) {
+//             const existing = aggregation.get(p) || [];
+//             if (c) existing.push(c);
+//             aggregation.set(p, existing);
+//           }
+//         });
+//         const newGroups = Array.from(aggregation.entries()).map(([pEmail, cEmails]) => makeGroup(pEmail, cEmails));
+//         if (newGroups.length > 0) setGroups(newGroups);
+//       },
+//     });
+//   }, []);
+
+//   const handleLinkAll = async () => {
+//     if (!schoolId) return;
+//     setSubmitting(true);
+//     const payload: ParentChildLinkInput[] = [];
+//     groups.forEach(g => g.children.forEach(c => payload.push({ parentEmail: g.parentEmail, childEmail: c.email })));
+    
+//     setGroups(groups.map(g => ({ ...g, children: g.children.map(c => ({ ...c, status: 'linking' })) })));
+//     const results = await bulkLinkParentsAndChildren(payload, schoolId);
+
+//     let idx = 0;
+//     setGroups(groups.map(g => ({
+//       ...g, children: g.children.map(c => {
+//         const res = results[idx++];
+//         return { ...c, status: res.success ? 'linked' : 'error', message: res.message };
+//       })
+//     })));
+//     setSubmitting(false);
+//   };
+
+//   return (
+//     <section className="space-y-6">
+//       {/* Instruction Guide */}
+//       <div className="bg-school-primary/5 border border-school-primary/20 rounded-[2rem] p-6 flex items-start gap-4">
+//         <Info className="h-5 w-5 text-school-primary shrink-0 mt-1" />
+//         <p className="text-[11px] text-slate-400 leading-relaxed">
+//           <strong>Pro Tip:</strong> Use the search fields to find users by name. The CSV grouping logic supports multiple students per parent automatically.
+//         </p>
+//       </div>
+
+//       {/* Drag & Drop */}
+//       <div
+//         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+//         onDragLeave={() => setDragOver(false)}
+//         onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) parseCsv(f); }}
+//         className={`rounded-[2rem] border-2 border-dashed p-8 text-center transition-all ${
+//           dragOver ? 'border-school-primary bg-school-primary/5' : 'border-slate-800 bg-slate-900/30'
+//         }`}
+//       >
+//         <Upload className="mx-auto mb-3 h-8 w-8 text-slate-600" />
+//         <p className="text-xs text-slate-300">Drag CSV here or <button type="button" onClick={() => fileInputRef.current?.click()} className="text-school-primary font-bold hover:underline">browse files</button></p>
+//         <button type="button" onClick={downloadTemplate} className="mt-4 text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-tighter transition-colors flex items-center gap-2 mx-auto">
+//           <Download className="h-3 w-3" /> Get Sample CSV
+//         </button>
+//         <input ref={fileInputRef} type="file" accept=".csv" onChange={(e) => e.target.files?.[0] && parseCsv(e.target.files[0])} className="hidden" />
+//       </div>
+
+//       {/* Main Registry */}
+//       <div className="space-y-4">
+//         {groups.map((group) => (
+//           <div key={group.id} className="bg-slate-900/80 border border-white/5 rounded-[2rem] p-6 relative group shadow-xl">
+//             <button 
+//                 onClick={() => setGroups(groups.length > 1 ? groups.filter(g => g.id !== group.id) : groups)}
+//                 className="absolute top-6 right-6 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+//             ><Trash2 className="h-4 w-4" /></button>
+
+//             <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_2fr] gap-8">
+//               {/* Guardian Search */}
+//               <div className="space-y-3">
+//                 <label className="text-[10px] font-bold text-school-primary uppercase tracking-widest flex items-center gap-2">
+//                   <User className="h-3 w-3" /> Guardian Lookup
+//                 </label>
+//                 <UserSearchInput 
+//                   role="PARENT" 
+//                   schoolId={schoolId} 
+//                   placeholder="Search by name or email..."
+//                   value={group.parentEmail}
+//                   onSelect={(email) => setGroups(groups.map(g => g.id === group.id ? {...g, parentEmail: email} : g))}
+//                 />
+//               </div>
+
+//               {/* Student Search Group */}
+//               <div className="space-y-4">
+//                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//                   <GraduationCap className="h-3 w-3" /> Student Assignments
+//                 </label>
+//                 <div className="space-y-2">
+//                   {group.children.map((child) => (
+//                     <div key={child.id} className="space-y-1">
+//                         <div className="flex gap-2 group/row items-center">
+//                             <UserSearchInput 
+//                               role="STUDENT" 
+//                               schoolId={schoolId} 
+//                               placeholder="Search student..."
+//                               value={child.email}
+//                               onSelect={(email) => {
+//                                 setGroups(groups.map(g => g.id === group.id ? {
+//                                   ...g, children: g.children.map(c => c.id === child.id ? {...c, email, status: 'idle'} : c)
+//                                 } : g))
+//                               }}
+//                             />
+//                             <button onClick={() => setGroups(groups.map(g => g.id === group.id ? {...g, children: g.children.filter(c => c.id !== child.id)} : g))} className="p-2 text-slate-700 hover:text-red-400 transition-opacity"><X className="h-4 w-4" /></button>
+//                         </div>
+//                         {child.message && <p className={`text-[9px] font-medium ml-1 ${child.status === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{child.message}</p>}
+//                     </div>
+//                   ))}
+//                 </div>
+//                 <button onClick={() => setGroups(groups.map(g => g.id === group.id ? {...g, children: [...g.children, makeChild()]} : g))} className="text-[10px] font-bold text-school-primary uppercase tracking-widest flex items-center gap-1.5 hover:brightness-125 transition-all">
+//                   <Plus className="h-3.5 w-3.5" /> Add Student
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* Footer Actions */}
+//       <footer className="mt-12 flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-white/5 pt-10 px-8 pb-10">
+//         <button 
+//           onClick={() => setGroups([...groups, makeGroup()])} 
+//           className="text-slate-500 hover:text-school-primary text-[10px] font-bold uppercase tracking-[0.2em] transition-all flex items-center gap-2"
+//         >
+//           <Plus className="h-4 w-4" /> Add Parent Block
+//         </button>
+
+//         <button
+//           onClick={handleLinkAll}
+//           disabled={submitting}
+//           className="w-full sm:w-auto bg-school-primary text-school-secondary-950 font-bold text-sm px-10 py-3 rounded-xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-30 shadow-xl shadow-school-primary/10"
+//         >
+//           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm All Links"}
+//         </button>
+//       </footer>
+//     </section>
+//   );
+// }
+
+
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
 import Papa, { ParseResult } from 'papaparse';
-import { toast } from 'sonner'
 import {
-  CheckCircle2,
-  Download,
-  Link2,
-  Loader2,
-  Upload,
-  X,
-  XCircle,
-  AlertCircle,
+  Download, Loader2, Upload, X,
+  Plus, User, GraduationCap, Trash2, Info, CheckCircle2, XCircle
 } from 'lucide-react';
 import { useProfileStore } from '@/store/profileStore';
 import {
@@ -19,37 +209,41 @@ import {
   type ParentChildLinkInput,
   type ParentChildLinkResult,
 } from '@/app/actions/parent-linking';
+import { UserSearchInput } from '@/components/admin-dasboard/user-searchInput';
 
+// --- Types ---
 type RowStatus = 'idle' | 'linking' | 'linked' | 'error';
 
-type LinkRow = {
-  id: string;
-  parentEmail: string;
-  childEmail: string;
-  status: RowStatus;
-  message?: string;
-};
+interface ChildEntry { 
+  id: string; 
+  email: string; 
+  status: RowStatus; 
+  message?: string; 
+}
 
-type CsvRow = {
+interface ParentGroup { 
+  id: string; 
+  parentEmail: string; 
+  children: ChildEntry[]; 
+}
+
+// Interface for CSV parsing to replace 'any'
+interface CsvRow {
   parent_email?: string;
   parentEmail?: string;
-  parent?: string;
   child_email?: string;
   childEmail?: string;
-  student?: string;
-};
+}
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const makeRow = (parentEmail = '', childEmail = ''): LinkRow => ({
+const makeChild = (email = ''): ChildEntry => ({ id: crypto.randomUUID(), email, status: 'idle' });
+const makeGroup = (parentEmail = '', childEmails: string[] = ['']): ParentGroup => ({
   id: crypto.randomUUID(),
   parentEmail,
-  childEmail,
-  status: 'idle',
+  children: childEmails.map(email => makeChild(email)),
 });
 
 export function ParentChildLinker() {
-  const [rows, setRows] = useState<LinkRow[]>([makeRow()]);
+  const [groups, setGroups] = useState<ParentGroup[]>([makeGroup()]);
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -57,391 +251,168 @@ export function ParentChildLinker() {
   const { profile } = useProfileStore();
   const schoolId = profile?.schoolId ?? '';
 
-  const updateRow = (id: string, patch: Partial<LinkRow>) => {
-    setRows((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+  const downloadTemplate = () => {
+    const csvContent = "parent_email,child_email\nguardian@example.com,student1@example.com";
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'template.csv'; a.click();
   };
-
-  const removeRow = (id: string) => {
-    setRows((prev) => (prev.length === 1 ? prev : prev.filter((row) => row.id !== id)));
-  };
-
-  const addRow = () => setRows((prev) => [...prev, makeRow()]);
-
-  const clearAll = () => setRows([makeRow()]);
 
   const parseCsv = useCallback((file: File) => {
+    // Replaced 'any' with CsvRow interface
     Papa.parse<CsvRow>(file, {
-      header: true,
+      header: true, 
       skipEmptyLines: true,
       complete: (result: ParseResult<CsvRow>) => {
-        const parsed = result.data
-          .map((row): LinkRow => {
-            const parentEmail =
-              String(
-                row.parent_email ??
-                  row.parentEmail ??
-                  row.parent ??
-                  '',
-              ).trim();
-            const childEmail =
-              String(
-                row.child_email ??
-                  row.childEmail ??
-                  row.student ??
-                  '',
-              ).trim();
-            return makeRow(parentEmail, childEmail);
-          })
-          .filter((row) => row.parentEmail.length > 0 || row.childEmail.length > 0);
-
-        if (parsed.length > 0) {
-          setRows(parsed);
-        }
-      },
-      error: () => {
-       toast.error('Failed to parse CSV. Please check the format.')
+        const aggregation = new Map<string, string[]>();
+        result.data.forEach(row => {
+          const p = (row.parent_email || row.parentEmail || '').trim().toLowerCase();
+          const c = (row.child_email || row.childEmail || '').trim().toLowerCase();
+          if (p) {
+            const existing = aggregation.get(p) || [];
+            if (c) existing.push(c);
+            aggregation.set(p, existing);
+          }
+        });
+        const newGroups = Array.from(aggregation.entries()).map(([pEmail, cEmails]) => makeGroup(pEmail, cEmails));
+        if (newGroups.length > 0) setGroups(newGroups);
       },
     });
   }, []);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      parseCsv(file);
-    }
-    // reset input so selecting the same file again still fires change
-    event.target.value = '';
-  };
-
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setDragOver(false);
-    const file = event.dataTransfer.files?.[0];
-    if (file && file.name.endsWith('.csv')) {
-      parseCsv(file);
-    }
-  };
-
-  const downloadTemplate = () => {
-    const csv = 'parent_email,child_email\nparent@example.com,child1@example.com\nparent@example.com,child2@example.com';
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'parent-children-link-template.csv';
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
   const handleLinkAll = async () => {
-    if (!schoolId) {
-      setRows((prev) =>
-        prev.map((row) => ({
-          ...row,
-          status: 'error',
-          message: 'Missing school context. Please reload and ensure you are logged in as an admin.',
-        })),
-      );
-      return;
-    }
-
-    // basic client-side validation
-    const hasInvalid = rows.some(
-      (row) =>
-        !row.parentEmail.trim() ||
-        !row.childEmail.trim() ||
-        !EMAIL_REGEX.test(row.parentEmail) ||
-        !EMAIL_REGEX.test(row.childEmail),
-    );
-
-    if (hasInvalid) {
-      setRows((prev) =>
-        prev.map((row) => {
-          const parentMissing = !row.parentEmail.trim();
-          const childMissing = !row.childEmail.trim();
-          const parentInvalid = !parentMissing && !EMAIL_REGEX.test(row.parentEmail);
-          const childInvalid = !childMissing && !EMAIL_REGEX.test(row.childEmail);
-
-          if (parentMissing || childMissing || parentInvalid || childInvalid) {
-            let message = '';
-            if (parentMissing || childMissing) {
-              message = 'Parent and child email are required.';
-            } else if (parentInvalid || childInvalid) {
-              message = 'Invalid email format.';
-            }
-
-            return {
-              ...row,
-              status: 'error',
-              message,
-            };
-          }
-          return row;
-        }),
-      );
-      return;
-    }
-
+    if (!schoolId) return;
     setSubmitting(true);
-    setRows((prev) =>
-      prev.map((row) =>
-        row.status === 'linked'
-          ? row
-          : {
-              ...row,
-              status: 'linking',
-              message: undefined,
-            },
-      ),
-    );
+    const payload: ParentChildLinkInput[] = [];
+    groups.forEach(g => g.children.forEach(c => payload.push({ parentEmail: g.parentEmail, childEmail: c.email })));
+    
+    setGroups(groups.map(g => ({ ...g, children: g.children.map(c => ({ ...c, status: 'linking' })) })));
+    
+    const results: ParentChildLinkResult[] = await bulkLinkParentsAndChildren(payload, schoolId);
 
-    const payload: ParentChildLinkInput[] = rows.map((row) => ({
-      parentEmail: row.parentEmail,
-      childEmail: row.childEmail,
-    }));
-
-    const results: ParentChildLinkResult[] = await bulkLinkParentsAndChildren(
-      payload,
-      schoolId,
-    );
-
-    setRows((prev) =>
-      prev.map((row, index) => {
-        const result = results[index];
-        if (!result) {
-          return row;
-        }
-        return {
-          ...row,
-          status: result.success ? 'linked' : 'error',
-          message: result.message,
-        };
-      }),
-    );
-
+    let idx = 0;
+    setGroups(groups.map(g => ({
+      ...g, children: g.children.map(c => {
+        const res = results[idx++];
+        return { ...c, status: res.success ? 'linked' : 'error', message: res.message };
+      })
+    })));
     setSubmitting(false);
   };
 
-  const linkedCount = rows.filter((row) => row.status === 'linked').length;
-  const errorCount = rows.filter((row) => row.status === 'error').length;
-
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-sm shadow-slate-950/40">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-base font-semibold text-slate-50 flex items-center gap-2">
-            <Link2 className="h-4 w-4 text-amber-400" />
-            Link parents to children
-          </h2>
-          <p className="mt-1 text-xs text-slate-400">
-            Upload a CSV to create parent → student relationships inside this school. Parents
-            must already exist with role PARENT; children must exist with role STUDENT.
-          </p>
-        </div>
-        {rows.length > 1 && (
-          <button
-            type="button"
-            onClick={clearAll}
-            className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-red-400"
-          >
-            <X className="h-3 w-3" />
-            Clear all
-          </button>
-        )}
+    <section className="space-y-6">
+      {/* Instruction Guide */}
+      <div className="bg-school-primary/5 border border-school-primary/20 rounded-[2rem] p-6 flex items-start gap-4">
+        <Info className="h-5 w-5 text-school-primary shrink-0 mt-1" />
+        <p className="text-[11px] text-slate-400 leading-relaxed">
+          <strong>Pro Tip:</strong> Use the search fields to find users by name. The CSV grouping logic supports multiple students per parent automatically.
+        </p>
       </div>
 
-      {(linkedCount > 0 || errorCount > 0) && (
-        <div className="mt-3 flex flex-wrap items-center gap-3 text-xs">
-          {linkedCount > 0 && (
-            <span className="inline-flex items-center gap-1 text-emerald-400">
-              <CheckCircle2 className="h-3 w-3" />
-              {linkedCount} link{linkedCount > 1 ? 's' : ''} created
-            </span>
-          )}
-          {errorCount > 0 && (
-            <span className="inline-flex items-center gap-1 text-red-400">
-              <XCircle className="h-3 w-3" />
-              {errorCount} error{errorCount > 1 ? 's' : ''}
-            </span>
-          )}
-        </div>
-      )}
-
+      {/* Drag & Drop */}
       <div
-        onDragOver={(event) => {
-          event.preventDefault();
-          setDragOver(true);
-        }}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
-        className={`mt-4 rounded-xl border-2 border-dashed p-4 text-center text-xs transition-colors ${
-          dragOver
-            ? 'border-amber-500 bg-amber-500/5'
-            : 'border-slate-700 bg-slate-900/60 hover:border-slate-500'
+        onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) parseCsv(f); }}
+        className={`rounded-[2rem] border-2 border-dashed p-8 text-center transition-all ${
+          dragOver ? 'border-school-primary bg-school-primary/5' : 'border-slate-800 bg-slate-900/30'
         }`}
       >
-        <Upload className="mx-auto mb-2 h-5 w-5 text-slate-500" />
-        <p className="text-slate-300 font-medium">
-          Drag &amp; drop a CSV with parent/child emails
-        </p>
-        <p className="mt-1 text-slate-500">
-          or{' '}
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="font-medium text-amber-400 hover:underline"
-          >
-            browse to upload
-          </button>
-        </p>
-        <p className="mt-2 text-[11px] text-slate-500">
-          Expected columns:{' '}
-          <span className="font-mono text-slate-300">
-            parent_email, child_email
-          </span>
-          . You can also use{' '}
-          <span className="font-mono text-slate-300">parentEmail</span> /
-          <span className="font-mono text-slate-300">childEmail</span>.
-        </p>
-        <button
-          type="button"
-          onClick={downloadTemplate}
-          className="mt-2 inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200"
-        >
-          <Download className="h-3 w-3" />
-          Download CSV template
+        <Upload className="mx-auto mb-3 h-8 w-8 text-slate-600" />
+        <p className="text-xs text-slate-300">Drag CSV here or <button type="button" onClick={() => fileInputRef.current?.click()} className="text-school-primary font-bold hover:underline">browse files</button></p>
+        <button type="button" onClick={downloadTemplate} className="mt-4 text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-tighter transition-colors flex items-center gap-2 mx-auto">
+          <Download className="h-3 w-3" /> Get Sample CSV
         </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".csv"
-          onChange={handleFileChange}
-          className="hidden"
-        />
+        <input ref={fileInputRef} type="file" accept=".csv" onChange={(e) => e.target.files?.[0] && parseCsv(e.target.files[0])} className="hidden" />
       </div>
 
-      <div className="mt-4 space-y-2">
-        <div className="hidden grid-cols-[2fr,2fr,auto] gap-3 px-1 text-[10px] uppercase tracking-wider text-slate-500 sm:grid">
-          <span>Parent email</span>
-          <span>Child email</span>
-          <span>Status</span>
-        </div>
-        {rows.map((row) => {
-          const isLinked = row.status === 'linked';
-          const isError = row.status === 'error';
-          const isLinking = row.status === 'linking';
+      {/* Main Registry */}
+      <div className="space-y-4">
+        {groups.map((group) => (
+          <div key={group.id} className="bg-slate-900/80 border border-white/5 rounded-[2rem] p-6 relative group shadow-xl">
+            <button 
+                onClick={() => setGroups(groups.length > 1 ? groups.filter(g => g.id !== group.id) : groups)}
+                className="absolute top-6 right-6 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+            ><Trash2 className="h-4 w-4" /></button>
 
-          return (
-            <div
-              key={row.id}
-              className={`rounded-xl border bg-slate-900/80 p-3 text-xs transition-colors ${
-                isLinked
-                  ? 'border-emerald-500/40 bg-emerald-500/5'
-                  : isError
-                  ? 'border-red-500/40 bg-red-500/5'
-                  : 'border-slate-800'
-              }`}
-            >
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr,2fr,auto]">
-                <div>
-                  <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-slate-500 sm:hidden">
-                    Parent email
-                  </label>
-                  <input
-                    type="email"
-                    value={row.parentEmail}
-                    disabled={isLinked || isLinking}
-                    onChange={(event) =>
-                      updateRow(row.id, {
-                        parentEmail: event.target.value,
-                        status: 'idle',
-                        message: undefined,
-                      })
-                    }
-                    placeholder="parent@example.com"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-slate-100 placeholder:text-slate-600 focus:border-amber-500 focus:outline-none disabled:opacity-60"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-slate-500 sm:hidden">
-                    Child email
-                  </label>
-                  <input
-                    type="email"
-                    value={row.childEmail}
-                    disabled={isLinked || isLinking}
-                    onChange={(event) =>
-                      updateRow(row.id, {
-                        childEmail: event.target.value,
-                        status: 'idle',
-                        message: undefined,
-                      })
-                    }
-                    placeholder="student@example.com"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-slate-100 placeholder:text-slate-600 focus:border-amber-500 focus:outline-none disabled:opacity-60"
-                  />
-                </div>
-                <div className="flex items-center justify-end gap-2">
-                  {isLinking && (
-                    <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
-                  )}
-                  {isLinked && (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                  )}
-                  {!isLinked && !isLinking && (
-                    <button
-                      type="button"
-                      onClick={() => removeRow(row.id)}
-                      disabled={rows.length === 1}
-                      className="rounded-lg p-1 text-slate-600 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-0"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
+            <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_2fr] gap-8">
+              {/* Guardian Search */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold text-school-primary uppercase tracking-widest flex items-center gap-2">
+                  <User className="h-3 w-3" /> Guardian Lookup
+                </label>
+                <UserSearchInput 
+                  role="PARENT" 
+                  schoolId={schoolId} 
+                  placeholder="Search by name or email..."
+                  value={group.parentEmail}
+                  onSelect={(email) => setGroups(groups.map(g => g.id === group.id ? {...g, parentEmail: email} : g))}
+                />
               </div>
-              {isError && row.message && (
-                <div className="mt-1 flex items-center gap-1 text-[11px] text-red-300">
-                  <AlertCircle className="h-3 w-3 shrink-0" />
-                  <span>{row.message}</span>
+
+              {/* Student Search Group */}
+              <div className="space-y-4">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                  <GraduationCap className="h-3 w-3" /> Student Assignments
+                </label>
+                <div className="space-y-2">
+                  {group.children.map((child) => (
+                    <div key={child.id} className="space-y-1">
+                        <div className="flex gap-2 group/row items-center">
+                            <UserSearchInput 
+                              role="STUDENT" 
+                              schoolId={schoolId} 
+                              placeholder="Search student..."
+                              value={child.email}
+                              onSelect={(email) => {
+                                setGroups(groups.map(g => g.id === group.id ? {
+                                  ...g, children: g.children.map(c => c.id === child.id ? {...c, email, status: 'idle'} : c)
+                                } : g))
+                              }}
+                            />
+                            <button onClick={() => setGroups(groups.map(g => g.id === group.id ? {...g, children: g.children.filter(c => c.id !== child.id)} : g))} className="p-2 text-slate-700 hover:text-red-400 transition-opacity"><X className="h-4 w-4" /></button>
+                        </div>
+                        {child.message && (
+                          <div className="flex items-center gap-1 mt-1 ml-1 font-medium">
+                            {child.status === 'error' ? <XCircle className="h-3 w-3 text-red-500" /> : <CheckCircle2 className="h-3 w-3 text-emerald-500" />}
+                            <p className={`text-[9px] ${child.status === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{child.message}</p>
+                          </div>
+                        )}
+                    </div>
+                  ))}
                 </div>
-              )}
-              {isLinked && row.message && (
-                <div className="mt-1 text-[11px] text-emerald-300">{row.message}</div>
-              )}
+                <button onClick={() => setGroups(groups.map(g => g.id === group.id ? {...g, children: [...g.children, makeChild()]} : g))} className="text-[10px] font-bold text-school-primary uppercase tracking-widest flex items-center gap-1.5 hover:brightness-125 transition-all">
+                  <Plus className="h-3.5 w-3.5" /> Add Student
+                </button>
+              </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <button
-          type="button"
-          onClick={addRow}
-          className="inline-flex items-center gap-1 rounded-lg border border-dashed border-slate-700 px-3 py-1.5 text-[11px] text-slate-400 hover:border-slate-500 hover:text-slate-200"
+      {/* Footer Actions */}
+      <footer className="mt-12 flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-white/5 pt-10 px-8 pb-10">
+        <button 
+          onClick={() => setGroups([...groups, makeGroup()])} 
+          className="text-slate-500 hover:text-school-primary text-[10px] font-bold uppercase tracking-[0.2em] transition-all flex items-center gap-2"
         >
-          Add manual row
+          <Plus className="h-4 w-4" /> Add Parent Block
         </button>
+
         <button
-          type="button"
           onClick={handleLinkAll}
-          disabled={submitting || rows.length === 0}
-          className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-xs font-semibold text-slate-950 hover:bg-amber-400 disabled:opacity-60"
+          disabled={submitting}
+          className="w-full sm:w-auto bg-school-primary text-school-secondary-950 font-bold text-sm px-10 py-3 rounded-xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-30 shadow-xl shadow-school-primary/10"
         >
           {submitting ? (
-            <>
-              <Loader2 className="h-3 w-3 animate-spin" />
-              Linking…
-            </>
-          ) : (
-            <>
-              <Link2 className="h-3 w-3" />
-              Link {rows.length} pair{rows.length !== 1 ? 's' : ''}
-            </>
-          )}
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" /> LINKING...
+            </span>
+          ) : "Confirm All Links"}
         </button>
-      </div>
+      </footer>
     </section>
   );
 }
-

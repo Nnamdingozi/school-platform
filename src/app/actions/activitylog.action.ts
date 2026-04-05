@@ -1,5 +1,4 @@
 'use server'
-
 import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
 import { ActivityType } from '@prisma/client'
