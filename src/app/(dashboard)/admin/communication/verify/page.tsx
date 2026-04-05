@@ -128,7 +128,7 @@ export default function VerifyPaymentPage() {
             if (result.success && result.credits) {
                 setCredits(result.credits)
                 setStatus('success')
-                setTimeout(() => router.push('/admin/settings?tab=whatsapp'), 4000)
+                setTimeout(() => router.push('/admin/communication'), 4000)
             } else {
                 setError(result.error ?? 'Payment verification failed.')
                 setStatus('failed')

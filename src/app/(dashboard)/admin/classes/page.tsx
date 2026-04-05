@@ -1240,6 +1240,7 @@
 
 import { useEffect, useState, useTransition, useCallback } from "react"
 import { useProfileStore } from "@/store/profileStore"
+import Link from "next/link"
 import { 
   Loader2, Plus, Users, School, 
   GraduationCap, X, UserPlus, Search 
@@ -1517,6 +1518,15 @@ export default function AdminClassesPage() {
                         {row.studentCount}
                       </span>
                     </td>
+                    <td className="px-8 py-6 text-right">
+      <Link 
+        // This generates: /admin/classes/uuid-123/allocation
+        href={'/admin/subject'}
+        className="bg-slate-800 text-school-primary px-4 py-2 rounded-lg text-[10px] font-black uppercase hover:bg-school-primary hover:text-slate-950 transition-all"
+      >
+        Allocate Subjects
+      </Link>
+    </td>
                   </tr>
                 ))}
                 {classesState.rows.length === 0 && !classesState.isLoading && (

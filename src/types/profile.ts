@@ -264,12 +264,12 @@
 //     school: {
 //         include: {
 //             curriculum: true,
-//             classEnrollments: {
-//                 select: {
-//                     id:      true,
-//                     classId: true,
-//                 },
-//             },
+            // classEnrollments: {
+            //     select: {
+            //         id:      true,
+            //         classId: true,
+            //     },
+            // },
 //             classes: {
 //                 select: {
 //                     id:        true,
@@ -369,6 +369,7 @@ export interface SchoolWithRelations {
     createdAt:       Date
     updatedAt:       Date
     curriculum:      Curriculum
+    users?:          { id: string }[] 
     classEnrollments: {
         id:      string
         classId: string | null
@@ -390,21 +391,31 @@ export interface SchoolWithRelations {
 
 // ── Shared base profile ────────────────────────────────────────────────────────
 
+// src/types/profile.ts
+
+// src/types/profile.ts
+
 export interface BaseProfile {
     id:            string
     email:         string
     name?:         string | null
     role:          Role
+    phone?:        string | null
+    primaryColor:  string
+    secondaryColor: string
     schoolId:      string | null
     curriculumId:  string
     school?:       SchoolWithRelations | null
     curriculum:    Curriculum
     notifications: Notification[]
+    // ✅ ADD THIS: So all profiles can access their enrollment context
+    classEnrollments: {
+        id:      string
+        classId: string | null
+    }[]
     createdAt:     Date
     updatedAt:     Date
 }
-
-// ── Teacher / Admin / Student profile ─────────────────────────────────────────
 
 export interface ProfileInStore extends BaseProfile {
     selectedSubjects: (GradeSubject & {
@@ -420,16 +431,15 @@ export interface ProfileInStore extends BaseProfile {
                 endDate:     Date | null
             } | null
             weekNumber:   number | null
-            lessons:      { id?: string; aiContent: Prisma.JsonValue } | null
+            lessons:      { id: string; aiContent: Prisma.JsonValue }[] 
             title:        string
             description?: string | null
         }[]
-        // ✅ FIX: Replaced enrollments with studentSubjects to match new schema
         studentSubjects: StudentSubject[] 
     })[]
-    taughtClasses?: { id: string; name: string }[]
+    // ✅ Ensure this is here
+    taughtClasses: { id: string; name: string }[] 
 }
-
 export type ParentProfileInStore = BaseProfile
 
 // ── Union type — use this in store and shared components ───────────────────────

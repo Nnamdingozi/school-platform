@@ -514,15 +514,15 @@ import {
     getCreditPackages, 
     initiateCreditsPayment, 
 } from '@/app/actions/credits.actions';
-import { InitiatePaymentResult } from '@/types/credits';
+// import { InitiatePaymentResult } from '@/types/credits';
 import { useProfileStore } from '@/store/profileStore';
 import { 
-    Loader2, Zap, ShoppingCart, CheckCircle2, 
-    Star, ArrowRight, Shield, MessageSquare 
+    Loader2, Zap, ArrowRight, Shield, MessageSquare 
 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+// import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { PackageCard } from '@/components/credit/packageCard';
+import { getErrorMessage } from '@/lib/error-handler'
 
 // ── Interfaces ──────────────────────────────────────────────────────────────
 
@@ -545,7 +545,8 @@ export default function CreditsPage() {
     
     const [packages, setPackages] = useState<CreditPackage[]>([]);
     const [loading, setLoading] = useState(true);
-    const [purchaseLoading, setPurchaseLoading] = useState(false);
+    // const [purchaseLoading, setPurchaseLoading] = useState(false);
+    const [activeId, setActiveId] = useState<string | null>(null);
 
     useEffect(() => {
         async function loadPackages() {
@@ -565,31 +566,29 @@ export default function CreditsPage() {
         loadPackages();
     }, []);
 
+
     const handleSelect = async (id: string) => {
+
         if (!schoolId) {
             toast.error("Institutional identification is required.");
             return;
         }
-        
-        setPurchaseLoading(true);
+        setActiveId(id); // Set the specific package being purchased
         try {
-            // ✅ FIX: Remove the manual type casting on this line
-            const result = await initiateCreditsPayment(schoolId, id);
-            
-            // ✅ FIX: Check if 'result' exists first to satisfy the "possibly undefined" check
-            if (result && result.success && result.authorizationUrl) {
-                window.location.href = result.authorizationUrl;
+            const res = await initiateCreditsPayment(schoolId, id);
+            if (res.success && res.authorizationUrl) {
+                window.location.href = res.authorizationUrl;
             } else {
-                // Handle the case where result is undefined or success is false
-                const errorMsg = result?.error || "Payment gateway connection failed";
-                toast.error(errorMsg);
-                setPurchaseLoading(false); 
+                toast.error(res.error || "Payment failed");
+                setActiveId(null); // Reset if failed
             }
         } catch (err) {
-            toast.error("An unexpected communication error occurred.");
-            setPurchaseLoading(false);
+            toast.error("An error occurred");
+            setActiveId(null); // Reset if crashed
+            getErrorMessage(err)
         }
     };
+
 
     if (loading) return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 gap-4">
@@ -633,16 +632,17 @@ export default function CreditsPage() {
                 </div>
 
                 {/* Packages Grid */}
-                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                    {packages.map((pkg) => (
-                        <PackageCard 
-                            key={pkg.id} 
-                            pkg={pkg} 
-                            loading={purchaseLoading}
-                            onSelect={handleSelect}
-                        />
-                    ))}
-                </div>
+                <div className="grid gap-6 md:grid-cols-4">
+    {packages.map((pkg) => (
+        <PackageCard 
+            key={pkg.id} 
+            pkg={pkg} 
+            isProcessing={activeId === pkg.id} // Is this one?
+            isAnyLoading={!!activeId}         // Is any one?
+            onSelect={handleSelect}
+        />
+    ))}
+</div>
 
                 {/* Footer Section */}
                 <footer className="pt-10 flex items-center justify-center border-t border-white/5 opacity-50">
