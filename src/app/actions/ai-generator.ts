@@ -731,18 +731,441 @@
 
 
 
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { google } from "@ai-sdk/google";
+// import { generateObject } from "ai";
+// import { z } from "zod";
+// import { revalidatePath } from "next/cache";
+// import { Prisma, QuestionCategory } from "@prisma/client"; 
+// import { getErrorMessage } from "@/lib/error-handler";
+
+// // ── 1. The Schema ─────────────────────────────────────────────────────────────
+
+// const LessonAiSchema = z.object({
+//   metadata: z.object({
+//     topicContext: z.string(),
+//     difficultyLevel: z.string(),
+//   }),
+//   teacherLogic: z.object({
+//     teachingMethod: z.string(),
+//     timeAllocation: z.string(),
+//     pedagogicalTips: z.string(),
+//     introductionHook: z.string(),
+//   }),
+//   studentContent: z.object({
+//     title: z.string(),
+//     learningObjectives: z.array(z.string()),
+//     explanation: z.string(), 
+//     examples: z.array(z.object({ task: z.string(), solution: z.string() })),
+//     visualAids: z.array(z.object({
+//       title: z.string(),
+//       description: z.string(),
+//       imagePrompt: z.string(),
+//       url: z.string().optional() 
+//     })),
+//     summary: z.string(),
+//     vocabulary: z.array(z.string()),
+//     quiz: z.array(z.object({
+//       question: z.string(),
+//       options: z.array(z.string()),
+//       answer: z.string(),
+//       explanation: z.string(),
+//     })),
+//   }),
+// });
+
+// export type LessonAiContent = z.infer<typeof LessonAiSchema>;
+
+// // ── 2. The Persistence Action (Used by Manual Editor) ─────────────────────────
+
+// export async function saveLessonAction(data: {
+//   topicId: string;
+//   schoolId: string | null;
+//   title: string;
+//   content: string;
+//   aiContent: LessonAiContent; // ✅ FIX: Replaced 'any' with LessonAiContent
+// }) {
+//   try {
+//     const lesson = await prisma.lesson.upsert({
+//       where: {
+//         topicId_schoolId: {
+//           topicId: data.topicId,
+//           schoolId: data.schoolId as string, 
+//         },
+//       },
+//       update: {
+//         title: data.title,
+//         content: data.content,
+//         aiContent: data.aiContent as unknown as Prisma.InputJsonValue,
+//       },
+//       create: {
+//         topicId: data.topicId,
+//         schoolId: data.schoolId,
+//         title: data.title,
+//         content: data.content,
+//         aiContent: data.aiContent as unknown as Prisma.InputJsonValue,
+//       },
+//     });
+
+//     revalidatePath(`/teacher/lessons/${data.topicId}`);
+//     revalidatePath(`/admin/lessons`);
+
+//     return { success: true, data: lesson };
+//   } catch (err) {
+//     return { success: false, error: getErrorMessage(err) };
+//   }
+// }
+
+// // ── 3. The Generator Action ───────────────────────────────────────────────────
+
+// export async function generateLessonForTopic(topicId: string) {
+//   try {
+//     const topic = await prisma.topic.findUnique({
+//       where: { id: topicId },
+//       include: {
+//         gradeSubject: {
+//           include: {
+//             grade: { include: { curriculum: true } },
+//             subject: true,
+//           },
+//         },
+//         school: true,
+//       },
+//     });
+
+//     if (!topic) throw new Error("Topic not found");
+
+//     const { curriculum } = topic.gradeSubject.grade;
+//     const subjectName = topic.gradeSubject.subject.name;
+
+//     const dynamicPrompt = `
+//       You are an expert instructional designer for the ${curriculum.name} curriculum.
+//       Generate a full academic package for the topic: ${topic.title}.
+//       Subject: ${subjectName}. Level: ${topic.gradeSubject.grade.displayName}.
+//     `;
+
+//     const { object: ai } = await generateObject({
+//       model: google("gemini-1.5-pro"),
+//       schema: LessonAiSchema,
+//       prompt: dynamicPrompt,
+//     });
+
+//     const finalLesson = await prisma.$transaction(async (tx) => {
+//       // 1. Identify if a version already exists for this school/topic combo
+//       const existingLesson = await tx.lesson.findUnique({
+//         where: {
+//           topicId_schoolId: {
+//             topicId: topic.id,
+//             schoolId: topic.schoolId as string,
+//           }
+//         },
+//         select: { id: true }
+//       });
+
+//       // 2. Wipe existing quiz data if we are overwriting
+//       if (existingLesson) {
+//         await tx.quiz.deleteMany({ where: { lessonId: existingLesson.id } });
+//       }
+
+//       // 3. Upsert the Lesson record
+//       const savedLesson = await tx.lesson.upsert({
+//         where: {
+//           topicId_schoolId: {
+//             topicId: topic.id,
+//             schoolId: topic.schoolId as string 
+//           }
+//         },
+//         update: {
+//           title: ai.studentContent.title,
+//           content: ai.studentContent.explanation,
+//           aiContent: ai as unknown as Prisma.InputJsonValue,
+//         },
+//         create: {
+//           topicId: topic.id,
+//           schoolId: topic.schoolId,
+//           title: ai.studentContent.title,
+//           content: ai.studentContent.explanation,
+//           aiContent: ai as unknown as Prisma.InputJsonValue,
+//         },
+//       });
+
+//       // 4. Create new Quiz shell
+//       const quiz = await tx.quiz.create({
+//         data: { lessonId: savedLesson.id }
+//       });
+
+//       // 5. Create Questions in the Bank & Link them to the Quiz
+//       for (const [index, q] of ai.studentContent.quiz.entries()) {
+//         const question = await tx.question.create({
+//             data: {
+//                 text: q.question,
+//                 options: q.options as unknown as Prisma.InputJsonValue,
+//                 correctAnswer: q.answer,
+//                 explanation: q.explanation,
+//                 topicId: topic.id,
+//                 schoolId: topic.schoolId, 
+//                 category: QuestionCategory.PRACTICE 
+//             }
+//         });
+
+//         // Create the junction record
+//         await tx.quizQuestion.create({
+//             data: {
+//                 quizId: quiz.id,
+//                 questionId: question.id,
+//                 order: index + 1 
+//             }
+//         });
+//       }
+
+//       return savedLesson;
+//     });
+
+//     revalidatePath(`/teacher/lessons/${topic.id}`);
+//     revalidatePath(`/student/lessons/${topic.id}`);
+//     revalidatePath(`/admin/lessons`);
+
+//     return { 
+//       success: true, 
+//       data: finalLesson, 
+//       aiContent: ai 
+//     };
+
+//   } catch (err) {
+//     console.error("generateLessonForTopic failure:", getErrorMessage(err));
+//     return { 
+//       success: false, 
+//       error: getErrorMessage(err) 
+//     };
+//   }
+// }
+
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { google } from "@ai-sdk/google";
+// import { generateObject } from "ai";
+// import { z } from "zod";
+// import { revalidatePath } from "next/cache";
+// import { Prisma, QuestionCategory } from "@prisma/client"; 
+// import { getErrorMessage } from "@/lib/error-handler";
+
+// // ── 1. The Schema ─────────────────────────────────────────────────────────────
+
+// const LessonAiSchema = z.object({
+//   metadata: z.object({
+//     topicContext: z.string(),
+//     difficultyLevel: z.string(),
+//   }),
+//   teacherLogic: z.object({
+//     teachingMethod: z.string(),
+//     timeAllocation: z.string(),
+//     pedagogicalTips: z.string(),
+//     introductionHook: z.string(),
+//   }),
+//   studentContent: z.object({
+//     title: z.string(),
+//     learningObjectives: z.array(z.string()),
+//     explanation: z.string(), 
+//     examples: z.array(z.object({ task: z.string(), solution: z.string() })),
+//     visualAids: z.array(z.object({
+//       title: z.string(),
+//       description: z.string(),
+//       imagePrompt: z.string(),
+//       url: z.string().optional() 
+//     })),
+//     summary: z.string(),
+//     vocabulary: z.array(z.string()),
+//     quiz: z.array(z.object({
+//       question: z.string(),
+//       options: z.array(z.string()),
+//       answer: z.string(),
+//       explanation: z.string(),
+//     })),
+//   }),
+// });
+
+// export type LessonAiContent = z.infer<typeof LessonAiSchema>;
+
+// // ── 2. The Persistence Action (Used by Manual Editor) ─────────────────────────
+
+// export async function saveLessonAction(data: {
+//   topicId: string;
+//   schoolId: string | null;
+//   title: string;
+//   content: string;
+//   aiContent: LessonAiContent;
+// }) {
+//   try {
+//     const lesson = await prisma.lesson.upsert({
+//       where: {
+//         topicId_schoolId: {
+//           topicId: data.topicId,
+//           schoolId: data.schoolId as string, 
+//         },
+//       },
+//       update: {
+//         title: data.title,
+//         content: data.content,
+//         aiContent: data.aiContent as unknown as Prisma.InputJsonValue,
+//       },
+//       create: {
+//         topicId: data.topicId,
+//         schoolId: data.schoolId,
+//         title: data.title,
+//         content: data.content,
+//         aiContent: data.aiContent as unknown as Prisma.InputJsonValue,
+//       },
+//     });
+
+//     revalidatePath(`/teacher/lessons/${data.topicId}`);
+//     revalidatePath(`/admin/lessons`);
+
+//     return { success: true, data: lesson };
+//   } catch (err) {
+//     return { success: false, error: getErrorMessage(err) };
+//   }
+// }
+
+// // ── 3. The Generator Action ───────────────────────────────────────────────────
+
+// export async function generateLessonForTopic(topicId: string) {
+//   try {
+//     const topic = await prisma.topic.findUnique({
+//       where: { id: topicId },
+//       include: {
+//         gradeSubject: {
+//           include: {
+//             grade: { include: { curriculum: true } },
+//             subject: true,
+//           },
+//         },
+//         school: true,
+//       },
+//     });
+
+//     if (!topic) throw new Error("Topic not found");
+
+//     const { curriculum } = topic.gradeSubject.grade;
+//     const subjectName = topic.gradeSubject.subject.name;
+
+//     const dynamicPrompt = `
+//       You are an expert instructional designer for the ${curriculum.name} curriculum.
+//       Generate a full academic package for the topic: ${topic.title}.
+//       Subject: ${subjectName}. Level: ${topic.gradeSubject.grade.displayName}.
+      
+//       Requirements:
+//       1. Provide teacher logic including a hook and pedagogical tips.
+//       2. Provide detailed student content with learning objectives, explanations, and examples.
+//       3. Include visual aid prompts for diagrams.
+//       4. Create a 5-question multiple choice quiz with explanations.
+//     `;
+
+//     // CHANGED: Using "gemini-1.5-flash-latest" which is the most compatible string 
+//     // for the v1beta endpoint used by generateObject.
+//     const { object: ai } = await generateObject({
+//       model: google("gemini-1.5-flash-latest"),
+//       schema: LessonAiSchema,
+//       prompt: dynamicPrompt,
+//     });
+
+//     const finalLesson = await prisma.$transaction(async (tx) => {
+//       const existingLesson = await tx.lesson.findUnique({
+//         where: {
+//           topicId_schoolId: {
+//             topicId: topic.id,
+//             schoolId: topic.schoolId as string,
+//           }
+//         },
+//         select: { id: true }
+//       });
+
+//       if (existingLesson) {
+//         await tx.quiz.deleteMany({ where: { lessonId: existingLesson.id } });
+//       }
+
+//       const savedLesson = await tx.lesson.upsert({
+//         where: {
+//           topicId_schoolId: {
+//             topicId: topic.id,
+//             schoolId: topic.schoolId as string 
+//           }
+//         },
+//         update: {
+//           title: ai.studentContent.title,
+//           content: ai.studentContent.explanation,
+//           aiContent: ai as unknown as Prisma.InputJsonValue,
+//         },
+//         create: {
+//           topicId: topic.id,
+//           schoolId: topic.schoolId,
+//           title: ai.studentContent.title,
+//           content: ai.studentContent.explanation,
+//           aiContent: ai as unknown as Prisma.InputJsonValue,
+//         },
+//       });
+
+//       const quiz = await tx.quiz.create({
+//         data: { lessonId: savedLesson.id }
+//       });
+
+//       for (const [index, q] of ai.studentContent.quiz.entries()) {
+//         const question = await tx.question.create({
+//             data: {
+//                 text: q.question,
+//                 options: q.options as unknown as Prisma.InputJsonValue,
+//                 correctAnswer: q.answer,
+//                 explanation: q.explanation,
+//                 topicId: topic.id,
+//                 schoolId: topic.schoolId, 
+//                 category: QuestionCategory.PRACTICE 
+//             }
+//         });
+
+//         await tx.quizQuestion.create({
+//             data: {
+//                 quizId: quiz.id,
+//                 questionId: question.id,
+//                 order: index + 1 
+//             }
+//         });
+//       }
+
+//       return savedLesson;
+//     });
+
+//     revalidatePath(`/teacher/lessons/${topic.id}`);
+//     revalidatePath(`/student/lessons/${topic.id}`);
+//     revalidatePath(`/admin/lessons`);
+
+//     return { 
+//       success: true, 
+//       data: finalLesson, 
+//       aiContent: ai 
+//     };
+
+//   } catch (err) {
+//     console.error("generateLessonForTopic failure:", getErrorMessage(err));
+//     return { 
+//       success: false, 
+//       error: getErrorMessage(err) 
+//     };
+//   }
+// }
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { google } from "@ai-sdk/google";
-import { generateObject } from "ai";
+import { groq } from "@ai-sdk/groq";
+import { generateText, Output } from "ai";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { Prisma, QuestionCategory } from "@prisma/client"; 
 import { getErrorMessage } from "@/lib/error-handler";
 
-// ── 1. The Schema ─────────────────────────────────────────────────────────────
-
+// ── 1. Schema ────────────────────────────────────────────────────────────────
 const LessonAiSchema = z.object({
   metadata: z.object({
     topicContext: z.string(),
@@ -757,42 +1180,45 @@ const LessonAiSchema = z.object({
   studentContent: z.object({
     title: z.string(),
     learningObjectives: z.array(z.string()),
-    explanation: z.string(), 
+    explanation: z.string(),
     examples: z.array(z.object({ task: z.string(), solution: z.string() })),
-    visualAids: z.array(z.object({
-      title: z.string(),
-      description: z.string(),
-      imagePrompt: z.string(),
-      url: z.string().optional() 
-    })),
+    visualAids: z.array(
+      z.object({
+        title: z.string(),
+        description: z.string(),
+        imagePrompt: z.string(),
+        url: z.string().optional(),
+      })
+    ),
     summary: z.string(),
     vocabulary: z.array(z.string()),
-    quiz: z.array(z.object({
-      question: z.string(),
-      options: z.array(z.string()),
-      answer: z.string(),
-      explanation: z.string(),
-    })),
+    quiz: z.array(
+      z.object({
+        question: z.string(),
+        options: z.array(z.string()),
+        answer: z.string(),
+        explanation: z.string(),
+      })
+    ),
   }),
 });
 
 export type LessonAiContent = z.infer<typeof LessonAiSchema>;
 
-// ── 2. The Persistence Action (Used by Manual Editor) ─────────────────────────
-
+// ── 2. Persistence Action ────────────────────────────────────────────────────
 export async function saveLessonAction(data: {
   topicId: string;
   schoolId: string | null;
   title: string;
   content: string;
-  aiContent: LessonAiContent; // ✅ FIX: Replaced 'any' with LessonAiContent
+  aiContent: LessonAiContent;
 }) {
   try {
     const lesson = await prisma.lesson.upsert({
       where: {
         topicId_schoolId: {
           topicId: data.topicId,
-          schoolId: data.schoolId as string, 
+          schoolId: data.schoolId as string,
         },
       },
       update: {
@@ -818,9 +1244,8 @@ export async function saveLessonAction(data: {
   }
 }
 
-// ── 3. The Generator Action ───────────────────────────────────────────────────
-
-export async function generateLessonForTopic(topicId: string) {
+// ── 3. Generator Action ─────────────────────────────────────────────────────
+export async function generateLessonForTopic(topicId: string, schoolId: string) {
   try {
     const topic = await prisma.topic.findUnique({
       where: { id: topicId },
@@ -831,92 +1256,114 @@ export async function generateLessonForTopic(topicId: string) {
             subject: true,
           },
         },
-        school: true,
       },
     });
-
     if (!topic) throw new Error("Topic not found");
 
     const { curriculum } = topic.gradeSubject.grade;
     const subjectName = topic.gradeSubject.subject.name;
 
+    // We provide a "dummy" version of the JSON so the AI sees exactly what keys to use.
     const dynamicPrompt = `
       You are an expert instructional designer for the ${curriculum.name} curriculum.
       Generate a full academic package for the topic: ${topic.title}.
       Subject: ${subjectName}. Level: ${topic.gradeSubject.grade.displayName}.
+
+      CRITICAL: Your output must be a SINGLE JSON object. 
+      You MUST use these EXACT keys (case-sensitive):
+
+      {
+        "metadata": { "topicContext": "", "difficultyLevel": "" },
+        "teacherLogic": { "teachingMethod": "", "timeAllocation": "", "pedagogicalTips": "", "introductionHook": "" },
+        "studentContent": {
+          "title": "",
+          "learningObjectives": [],
+          "explanation": "",
+          "examples": [{ "task": "", "solution": "" }],
+          "visualAids": [{ "title": "", "description": "", "imagePrompt": "" }],
+          "summary": "",
+          "vocabulary": [],
+          "quiz": [{ "question": "", "options": [], "answer": "", "explanation": "" }]
+        }
+      }
     `;
 
-    const { object: ai } = await generateObject({
-      model: google("gemini-1.5-flash"), 
-      schema: LessonAiSchema,
+    const { text, output: jsonOutput } = await generateText({
+      model: groq("llama-3.3-70b-versatile"),
       prompt: dynamicPrompt,
+      output: Output.json(),
+      maxOutputTokens: 4000,
+      temperature: 0.3, // Lower temperature makes the AI follow the schema more strictly
     });
 
+    let aiContent: LessonAiContent;
+    try {
+      // We log the parsed object to your terminal so you can see if keys are missing
+      if (jsonOutput && typeof jsonOutput === "object" && !Array.isArray(jsonOutput)) {
+        console.log("AI Parsed Output Keys:", Object.keys(jsonOutput));
+      }
+
+      aiContent = LessonAiSchema.parse(jsonOutput);
+    } catch (err) {
+      console.error("RAW AI TEXT:", text);
+      throw new Error(`AI generated invalid data structure. Please try again.`);
+    }
+
     const finalLesson = await prisma.$transaction(async (tx) => {
-      // 1. Identify if a version already exists for this school/topic combo
       const existingLesson = await tx.lesson.findUnique({
         where: {
           topicId_schoolId: {
             topicId: topic.id,
-            schoolId: topic.schoolId as string,
-          }
+            schoolId,
+          },
         },
-        select: { id: true }
+        select: { id: true },
       });
 
-      // 2. Wipe existing quiz data if we are overwriting
       if (existingLesson) {
         await tx.quiz.deleteMany({ where: { lessonId: existingLesson.id } });
       }
 
-      // 3. Upsert the Lesson record
       const savedLesson = await tx.lesson.upsert({
         where: {
           topicId_schoolId: {
             topicId: topic.id,
-            schoolId: topic.schoolId as string 
-          }
+            schoolId,
+          },
         },
         update: {
-          title: ai.studentContent.title,
-          content: ai.studentContent.explanation,
-          aiContent: ai as unknown as Prisma.InputJsonValue,
+          title: aiContent.studentContent.title,
+          content: aiContent.studentContent.explanation,
+          aiContent: aiContent as unknown as Prisma.InputJsonValue,
         },
         create: {
           topicId: topic.id,
-          schoolId: topic.schoolId,
-          title: ai.studentContent.title,
-          content: ai.studentContent.explanation,
-          aiContent: ai as unknown as Prisma.InputJsonValue,
+          schoolId,
+          title: aiContent.studentContent.title,
+          content: aiContent.studentContent.explanation,
+          aiContent: aiContent as unknown as Prisma.InputJsonValue,
         },
       });
 
-      // 4. Create new Quiz shell
       const quiz = await tx.quiz.create({
-        data: { lessonId: savedLesson.id }
+        data: { lessonId: savedLesson.id },
       });
 
-      // 5. Create Questions in the Bank & Link them to the Quiz
-      for (const [index, q] of ai.studentContent.quiz.entries()) {
+      for (const [index, q] of aiContent.studentContent.quiz.entries()) {
         const question = await tx.question.create({
-            data: {
-                text: q.question,
-                options: q.options as unknown as Prisma.InputJsonValue,
-                correctAnswer: q.answer,
-                explanation: q.explanation,
-                topicId: topic.id,
-                schoolId: topic.schoolId, 
-                category: QuestionCategory.PRACTICE 
-            }
+          data: {
+            text: q.question,
+            options: q.options as unknown as Prisma.InputJsonValue,
+            correctAnswer: q.answer,
+            explanation: q.explanation,
+            topicId: topic.id,
+            schoolId,
+            category: QuestionCategory.PRACTICE,
+          },
         });
 
-        // Create the junction record
         await tx.quizQuestion.create({
-            data: {
-                quizId: quiz.id,
-                questionId: question.id,
-                order: index + 1 
-            }
+          data: { quizId: quiz.id, questionId: question.id, order: index + 1 },
         });
       }
 
@@ -927,17 +1374,9 @@ export async function generateLessonForTopic(topicId: string) {
     revalidatePath(`/student/lessons/${topic.id}`);
     revalidatePath(`/admin/lessons`);
 
-    return { 
-      success: true, 
-      data: finalLesson, 
-      aiContent: ai 
-    };
-
+    return { success: true, data: finalLesson, aiContent };
   } catch (err) {
-    console.error("generateLessonForTopic failure:", getErrorMessage(err));
-    return { 
-      success: false, 
-      error: getErrorMessage(err) 
-    };
+    console.error("generateLessonForTopic failure:", err);
+    return { success: false, error: getErrorMessage(err) };
   }
 }

@@ -982,18 +982,27 @@ export function AILessonPlanner({
 
   const handleGenerate = async () => {
     if (!isTeacher) return;
+  
     setIsGenerating(true)
+  
     try {
-        const res = await generateLessonForTopic(topicId)
-        if (res.success && res.aiContent) {
-            setData(res.aiContent as unknown as EnhancedLessonContent)
-            toast.success("AI Generation Complete")
-        }
+      const res = await generateLessonForTopic(topicId, schoolId)
+  
+      if (!res.success) {
+        toast.error(res.error ?? "Lesson generation failed")
+        return
+      }
+  
+      if (res.aiContent) {
+        setData(res.aiContent as EnhancedLessonContent)
+        toast.success("AI Generation Complete")
+      }
+  
     } catch (err) {
-        toast.error("AI node synchronization failed.")
-        getErrorMessage(err)
+      console.error(err)
+      toast.error(getErrorMessage(err))
     } finally {
-        setIsGenerating(false)
+      setIsGenerating(false)
     }
   }
 
@@ -1034,23 +1043,49 @@ export function AILessonPlanner({
     }
   }
 
-  if (!data) {
-      return (
-          <div className="py-20 text-center bg-slate-900 rounded-[3rem] border border-white/5 space-y-6 shadow-2xl">
-              <div className="h-20 w-20 bg-school-primary/10 rounded-full flex items-center justify-center mx-auto text-school-primary border border-school-primary/20">
-                  <Sparkles className="h-10 w-10 animate-pulse" />
-              </div>
-              <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">Registry Standby</h3>
-              {isTeacher && (
-                <Button onClick={handleGenerate} disabled={isGenerating} className="bg-school-primary text-slate-950 font-black px-10 py-7 rounded-2xl">
-                   {isGenerating ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="mr-2 h-5 w-5" />}
-                   GENERATE LESSON
-                </Button>
-              )}
-          </div>
-      )
-  }
+if (!data) {
+return (
+<div className="py-20 text-center bg-slate-900 rounded-[3rem] border border-white/5 space-y-6 shadow-2xl">
 
+<div className="h-20 w-20 bg-school-primary/10 rounded-full flex items-center justify-center mx-auto text-school-primary border border-school-primary/20">
+<Sparkles className="h-10 w-10 animate-pulse" />
+</div>
+
+<h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">
+Registry Standby
+</h3>
+
+<p className="text-sm text-slate-400 uppercase tracking-widest">
+Topic
+</p>
+
+<p className="text-xl font-black text-school-primary uppercase italic tracking-tight">
+{topicTitle}
+</p>
+
+{isTeacher && (
+<Button
+onClick={handleGenerate}
+disabled={isGenerating}
+className="bg-school-primary text-slate-950 font-black px-10 py-7 rounded-2xl hover:text-slate-300"
+>
+{isGenerating ? (
+<>
+<Loader2 className="animate-spin mr-2" />
+GENERATING LESSON FOR {topicTitle.toUpperCase()}
+</>
+) : (
+<>
+<Sparkles className="mr-2 h-5 w-5" />
+GENERATE LESSON
+</>
+)}
+</Button>
+)}
+
+</div>
+)
+}
   return (
     <Card className="border-white/5 bg-slate-900 shadow-2xl overflow-hidden rounded-[2.5rem] flex flex-col">
       <CardHeader className="bg-slate-950/50 border-b border-white/5 p-8">
