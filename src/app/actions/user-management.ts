@@ -1287,50 +1287,125 @@ export async function getClassesBySchool(schoolId: string) {
     }
 }
 
+// export async function getUserById(id: string): Promise<UserDetail | null> {
+//     try {
+//         const user = await prisma.profile.findUnique({
+//             where:  { id },
+//             select: {
+//                 id:       true,
+//                 name:     true,
+//                 email:    true,
+//                 phone:    true,
+//                 role:     true,
+//                 schoolId: true,
+//                 taughtClasses: { select: { id: true, name: true, grade: { select: { displayName: true } } } },
+//                 classEnrollments: { select: { class: { select: { id: true, name: true, grade: { select: { displayName: true } } } } } },
+//                 studentSubjects: {
+//                     select: { id: true, status: true, gradeSubject: { select: { subject: { select: { name: true } } } } }
+//                 },
+//                 assessments: {
+//                     orderBy: { createdAt: 'desc' },
+//                     take: 20,
+//                     select: { id: true, type: true, score: true, maxScore: true, comments: true, createdAt: true, gradeSubject: { select: { subject: { select: { name: true } } } } }
+//                 },
+//                 notifications: { orderBy: { createdAt: 'desc' }, take: 20, select: { id: true, message: true, read: true, createdAt: true } },
+//             },
+//         })
+//         if (!user) return null
+//         const taughtClasses = user.taughtClasses.map(c => ({ id: c.id, name: c.name, grade: c.grade }));
+//         const enrolledClasses = user.classEnrollments.filter(e => e.class !== null).map(e => ({ id: e.class!.id, name: e.class!.name, grade: e.class!.grade }));
+//         return {
+//             id: user.id,
+//             name: user.name,
+//             email: user.email,
+//             phone: user.phone,
+//             role: user.role,
+//             schoolId: user.schoolId,
+//             assignedClasses: Array.from(new Map([...taughtClasses, ...enrolledClasses].map(c => [c.id, c])).values()),
+//             allocatedSubjects: user.studentSubjects.map(ss => ({ id: ss.id, name: ss.gradeSubject.subject.name, status: ss.status })),
+//             assessments: user.assessments.map(a => ({ id: a.id, type: a.type, score: a.score, maxScore: a.maxScore, comments: a.comments, subject: a.gradeSubject?.subject?.name ?? null, createdAt: a.createdAt })),
+//             notifications: user.notifications,
+//         }
+//     } catch (err) {
+//         console.error('getUserById error:', getErrorMessage(err))
+//         return null
+//     }
+// }
+
+// src/app/actions/user-management.ts
+
 export async function getUserById(id: string): Promise<UserDetail | null> {
     try {
         const user = await prisma.profile.findUnique({
-            where:  { id },
+            where: { id },
             select: {
-                id:       true,
-                name:     true,
-                email:    true,
-                phone:    true,
-                role:     true,
+                id: true,
+                name: true,
+                email: true,
+                phone: true,
+                role: true,
                 schoolId: true,
-                taughtClasses: { select: { id: true, name: true, grade: { select: { displayName: true } } } },
-                classEnrollments: { select: { class: { select: { id: true, name: true, grade: { select: { displayName: true } } } } } },
-                studentSubjects: {
-                    select: { id: true, status: true, gradeSubject: { select: { subject: { select: { name: true } } } } }
+                // Get linked children with their full academic history
+                ParentStudent_ParentStudent_parentIdToprofiles: {
+                    select: {
+                        student: {
+                            select: {
+                                id: true,
+                                name: true,
+                                // 1. Get the classroom (Placement)
+                                classEnrollments: {
+                                    select: { class: { select: { name: true, grade: { select: { displayName: true } } } } }
+                                },
+                                // 2. Get the allocated subjects (Allocation)
+                                studentSubjects: {
+                                    include: { gradeSubject: { include: { subject: { select: { name: true } } } } }
+                                },
+                                // 3. Get the assessment history (Scores)
+                                assessments: {
+                                    orderBy: { createdAt: 'desc' },
+                                    take: 5,
+                                    include: { gradeSubject: { include: { subject: { select: { name: true } } } } }
+                                }
+                            }
+                        }
+                    }
                 },
-                assessments: {
-                    orderBy: { createdAt: 'desc' },
-                    take: 20,
-                    select: { id: true, type: true, score: true, maxScore: true, comments: true, createdAt: true, gradeSubject: { select: { subject: { select: { name: true } } } } }
-                },
-                notifications: { orderBy: { createdAt: 'desc' }, take: 20, select: { id: true, message: true, read: true, createdAt: true } },
-            },
+                notifications: { orderBy: { createdAt: 'desc' }, take: 5 }
+            }
         })
+
         if (!user) return null
-        const taughtClasses = user.taughtClasses.map(c => ({ id: c.id, name: c.name, grade: c.grade }));
-        const enrolledClasses = user.classEnrollments.filter(e => e.class !== null).map(e => ({ id: e.class!.id, name: e.class!.name, grade: e.class!.grade }));
+
+        // Map children data into a clean structure for the UI
+        const children = user.ParentStudent_ParentStudent_parentIdToprofiles.map(link => {
+            const s = link.student;
+            return {
+                id: s.id,
+                name: s.name,
+                className: s.classEnrollments[0]?.class?.name || "Unassigned",
+                gradeName: s.classEnrollments[0]?.class?.grade.displayName || "N/A",
+                subjects: s.studentSubjects.map(ss => ss.gradeSubject.subject.name),
+                recentAssessments: s.assessments.map(a => ({
+                    id: a.id,
+                    subject: a.gradeSubject.subject.name,
+                    score: a.score,
+                    maxScore: a.maxScore
+                }))
+            }
+        });
+
         return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            role: user.role,
-            schoolId: user.schoolId,
-            assignedClasses: Array.from(new Map([...taughtClasses, ...enrolledClasses].map(c => [c.id, c])).values()),
-            allocatedSubjects: user.studentSubjects.map(ss => ({ id: ss.id, name: ss.gradeSubject.subject.name, status: ss.status })),
-            assessments: user.assessments.map(a => ({ id: a.id, type: a.type, score: a.score, maxScore: a.maxScore, comments: a.comments, subject: a.gradeSubject?.subject?.name ?? null, createdAt: a.createdAt })),
-            notifications: user.notifications,
-        }
+            ...user,
+            // We pass the rich children data into the 'assignedClasses' or a new field
+            childrenRegistry: children, 
+            allocatedSubjects: [], // Parents don't have personal subjects
+            assignedClasses: [],   // Parents aren't in a class
+        } as any; 
     } catch (err) {
-        console.error('getUserById error:', getErrorMessage(err))
-        return null
+        return null;
     }
 }
+
 
 // ── ASSIGNMENT Functions ───────────────────────────────────────────────────────
 

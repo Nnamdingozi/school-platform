@@ -60,10 +60,10 @@
 //     You are an expert ${curriculum.name} instructional designer.
 //     Generate a comprehensive lesson for the subject: ${subjectName}.
    
-//     STRICT SCOPE:
-//     - Topic: ${topic.title}
-//     - Content Breakdown: ${topic.description ?? "Focus on core syllabus principles."}
-//     - Level: ${topic.gradeSubject.grade.displayName}
+    // STRICT SCOPE:
+    // - Topic: ${topic.title}
+    // - Content Breakdown: ${topic.description ?? "Focus on core syllabus principles."}
+    // - Level: ${topic.gradeSubject.grade.displayName}
 //   `;
 
 //   const { object: ai } = await generateObject({
@@ -1155,6 +1155,233 @@
 //   }
 // }
 
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { groq } from "@ai-sdk/groq";
+// import { generateText, Output } from "ai";
+// import { z } from "zod";
+// import { revalidatePath } from "next/cache";
+// import { Prisma, QuestionCategory } from "@prisma/client"; 
+// import { getErrorMessage } from "@/lib/error-handler";
+
+// // ── 1. Schema ────────────────────────────────────────────────────────────────
+// const LessonAiSchema = z.object({
+//   metadata: z.object({
+//     topicContext: z.string(),
+//     difficultyLevel: z.string(),
+//   }),
+//   teacherLogic: z.object({
+//     teachingMethod: z.string(),
+//     timeAllocation: z.string(),
+//     pedagogicalTips: z.string(),
+//     introductionHook: z.string(),
+//   }),
+//   studentContent: z.object({
+//     title: z.string(),
+//     learningObjectives: z.array(z.string()),
+//     explanation: z.string(),
+//     examples: z.array(z.object({ task: z.string(), solution: z.string() })),
+//     visualAids: z.array(
+//       z.object({
+//         title: z.string(),
+//         description: z.string(),
+//         imagePrompt: z.string(),
+//         url: z.string().optional(),
+//       })
+//     ),
+//     summary: z.string(),
+//     vocabulary: z.array(z.string()),
+//     quiz: z.array(
+//       z.object({
+//         question: z.string(),
+//         options: z.array(z.string()),
+//         answer: z.string(),
+//         explanation: z.string(),
+//       })
+//     ),
+//   }),
+// });
+
+// export type LessonAiContent = z.infer<typeof LessonAiSchema>;
+
+// // ── 2. Persistence Action ────────────────────────────────────────────────────
+// export async function saveLessonAction(data: {
+//   topicId: string;
+//   schoolId: string | null;
+//   title: string;
+//   content: string;
+//   aiContent: LessonAiContent;
+// }) {
+//   try {
+//     const lesson = await prisma.lesson.upsert({
+//       where: {
+//         topicId_schoolId: {
+//           topicId: data.topicId,
+//           schoolId: data.schoolId as string,
+//         },
+//       },
+//       update: {
+//         title: data.title,
+//         content: data.content,
+//         aiContent: data.aiContent as unknown as Prisma.InputJsonValue,
+//       },
+//       create: {
+//         topicId: data.topicId,
+//         schoolId: data.schoolId,
+//         title: data.title,
+//         content: data.content,
+//         aiContent: data.aiContent as unknown as Prisma.InputJsonValue,
+//       },
+//     });
+
+//     revalidatePath(`/teacher/lessons/${data.topicId}`);
+//     revalidatePath(`/admin/lessons`);
+
+//     return { success: true, data: lesson };
+//   } catch (err) {
+//     return { success: false, error: getErrorMessage(err) };
+//   }
+// }
+
+// // ── 3. Generator Action ─────────────────────────────────────────────────────
+// export async function generateLessonForTopic(topicId: string, schoolId: string) {
+//   try {
+//     const topic = await prisma.topic.findUnique({
+//       where: { id: topicId },
+//       include: {
+//         gradeSubject: {
+//           include: {
+//             grade: { include: { curriculum: true } },
+//             subject: true,
+//           },
+//         },
+//       },
+//     });
+//     if (!topic) throw new Error("Topic not found");
+
+//     const { curriculum } = topic.gradeSubject.grade;
+//     const subjectName = topic.gradeSubject.subject.name;
+
+//     // We provide a "dummy" version of the JSON so the AI sees exactly what keys to use.
+//     const dynamicPrompt = `
+//       You are an expert instructional designer for the ${curriculum.name} curriculum.
+//       Generate a full academic package for the topic: ${topic.title}.
+//       Subject: ${subjectName}. Level: ${topic.gradeSubject.grade.displayName}.
+
+//       CRITICAL: Your output must be a SINGLE JSON object. 
+//       You MUST use these EXACT keys (case-sensitive):
+
+//       {
+//         "metadata": { "topicContext": "", "difficultyLevel": "" },
+//         "teacherLogic": { "teachingMethod": "", "timeAllocation": "", "pedagogicalTips": "", "introductionHook": "" },
+//         "studentContent": {
+//           "title": "",
+//           "learningObjectives": [],
+//           "explanation": "",
+//           "examples": [{ "task": "", "solution": "" }],
+//           "visualAids": [{ "title": "", "description": "", "imagePrompt": "" }],
+//           "summary": "",
+//           "vocabulary": [],
+//           "quiz": [{ "question": "", "options": [], "answer": "", "explanation": "" }]
+//         }
+//       }
+//     `;
+
+//     const { text, output: jsonOutput } = await generateText({
+//       model: groq("llama-3.3-70b-versatile"),
+//       prompt: dynamicPrompt,
+//       output: Output.json(),
+//       maxOutputTokens: 4000,
+//       temperature: 0.3, // Lower temperature makes the AI follow the schema more strictly
+//     });
+
+//     let aiContent: LessonAiContent;
+//     try {
+//       // We log the parsed object to your terminal so you can see if keys are missing
+//       if (jsonOutput && typeof jsonOutput === "object" && !Array.isArray(jsonOutput)) {
+//         console.log("AI Parsed Output Keys:", Object.keys(jsonOutput));
+//       }
+
+//       aiContent = LessonAiSchema.parse(jsonOutput);
+//     } catch (err) {
+//       console.error("RAW AI TEXT:", text);
+//       throw new Error(`AI generated invalid data structure. Please try again.`);
+//     }
+
+//     const finalLesson = await prisma.$transaction(async (tx) => {
+//       const existingLesson = await tx.lesson.findUnique({
+//         where: {
+//           topicId_schoolId: {
+//             topicId: topic.id,
+//             schoolId,
+//           },
+//         },
+//         select: { id: true },
+//       });
+
+//       if (existingLesson) {
+//         await tx.quiz.deleteMany({ where: { lessonId: existingLesson.id } });
+//       }
+
+//       const savedLesson = await tx.lesson.upsert({
+//         where: {
+//           topicId_schoolId: {
+//             topicId: topic.id,
+//             schoolId,
+//           },
+//         },
+//         update: {
+//           title: aiContent.studentContent.title,
+//           content: aiContent.studentContent.explanation,
+//           aiContent: aiContent as unknown as Prisma.InputJsonValue,
+//         },
+//         create: {
+//           topicId: topic.id,
+//           schoolId,
+//           title: aiContent.studentContent.title,
+//           content: aiContent.studentContent.explanation,
+//           aiContent: aiContent as unknown as Prisma.InputJsonValue,
+//         },
+//       });
+
+//       const quiz = await tx.quiz.create({
+//         data: { lessonId: savedLesson.id },
+//       });
+
+//       for (const [index, q] of aiContent.studentContent.quiz.entries()) {
+//         const question = await tx.question.create({
+//           data: {
+//             text: q.question,
+//             options: q.options as unknown as Prisma.InputJsonValue,
+//             correctAnswer: q.answer,
+//             explanation: q.explanation,
+//             topicId: topic.id,
+//             schoolId,
+//             category: QuestionCategory.PRACTICE,
+//           },
+//         });
+
+//         await tx.quizQuestion.create({
+//           data: { quizId: quiz.id, questionId: question.id, order: index + 1 },
+//         });
+//       }
+
+//       return savedLesson;
+//     });
+
+//     revalidatePath(`/teacher/lessons/${topic.id}`);
+//     revalidatePath(`/student/lessons/${topic.id}`);
+//     revalidatePath(`/admin/lessons`);
+
+//     return { success: true, data: finalLesson, aiContent };
+//   } catch (err) {
+//     console.error("generateLessonForTopic failure:", err);
+//     return { success: false, error: getErrorMessage(err) };
+//   }
+// }
+
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -1263,52 +1490,57 @@ export async function generateLessonForTopic(topicId: string, schoolId: string) 
     const { curriculum } = topic.gradeSubject.grade;
     const subjectName = topic.gradeSubject.subject.name;
 
-    // We provide a "dummy" version of the JSON so the AI sees exactly what keys to use.
     const dynamicPrompt = `
       You are an expert instructional designer for the ${curriculum.name} curriculum.
-      Generate a full academic package for the topic: ${topic.title}.
+      Generate a COMPREHENSIVE academic package for: ${topic.title}.
       Subject: ${subjectName}. Level: ${topic.gradeSubject.grade.displayName}.
 
-      CRITICAL: Your output must be a SINGLE JSON object. 
-      You MUST use these EXACT keys (case-sensitive):
+      STRICT CONTENT REQUIREMENTS:
+      1. EXPLANATION: Write a massive, detailed lesson note (minimum 1000 words). Use rich Markdown: ### for headers, bold text for emphasis, and bullet points.
+      2. VISUAL AIDS: You MUST generate EXACTLY 3 distinct visual aid prompts.
+      3. QUIZ: You MUST generate EXACTLY 10 multiple-choice questions.
 
+      STRICT SCOPE:
+       - Topic: ${topic.title}
+       - Content Breakdown: ${topic.description ?? "Focus on core syllabus principles."}
+       - Level: ${topic.gradeSubject.grade.displayName}
+
+      JSON STRUCTURE:
       {
         "metadata": { "topicContext": "", "difficultyLevel": "" },
         "teacherLogic": { "teachingMethod": "", "timeAllocation": "", "pedagogicalTips": "", "introductionHook": "" },
         "studentContent": {
-          "title": "",
-          "learningObjectives": [],
-          "explanation": "",
-          "examples": [{ "task": "", "solution": "" }],
-          "visualAids": [{ "title": "", "description": "", "imagePrompt": "" }],
+          "title": "${topic.title}",
+          "learningObjectives": ["Obj 1", "Obj 2", "Obj 3"],
+          "explanation": "Extensive markdown text here...",
+          "examples": [{"task": "", "solution": ""}],
+          "visualAids": [
+             {"title": "Visual 1", "description": "", "imagePrompt": ""},
+             {"title": "Visual 2", "description": "", "imagePrompt": ""},
+             {"title": "Visual 3", "description": "", "imagePrompt": ""}
+          ],
           "summary": "",
           "vocabulary": [],
-          "quiz": [{ "question": "", "options": [], "answer": "", "explanation": "" }]
+          "quiz": [
+             {"question": "Q1", "options": ["A", "B", "C", "D"], "answer": "A", "explanation": ""},
+             ... repeat for exactly 10 questions
+          ]
         }
       }
     `;
 
-    const { text, output: jsonOutput } = await generateText({
+    const { text } = await generateText({
       model: groq("llama-3.3-70b-versatile"),
       prompt: dynamicPrompt,
       output: Output.json(),
-      maxOutputTokens: 4000,
-      temperature: 0.3, // Lower temperature makes the AI follow the schema more strictly
+      maxOutputTokens: 8000, 
+      temperature: 0.4,
     });
 
-    let aiContent: LessonAiContent;
-    try {
-      // We log the parsed object to your terminal so you can see if keys are missing
-      if (jsonOutput && typeof jsonOutput === "object" && !Array.isArray(jsonOutput)) {
-        console.log("AI Parsed Output Keys:", Object.keys(jsonOutput));
-      }
+    const cleanJson = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const aiContent = LessonAiSchema.parse(JSON.parse(cleanJson));
 
-      aiContent = LessonAiSchema.parse(jsonOutput);
-    } catch (err) {
-      console.error("RAW AI TEXT:", text);
-      throw new Error(`AI generated invalid data structure. Please try again.`);
-    }
-
+    // FIX: Added timeout configuration to transaction (60 seconds)
     const finalLesson = await prisma.$transaction(async (tx) => {
       const existingLesson = await tx.lesson.findUnique({
         where: {
@@ -1321,6 +1553,10 @@ export async function generateLessonForTopic(topicId: string, schoolId: string) 
       });
 
       if (existingLesson) {
+        // Clear old quiz relations first
+        await tx.quizQuestion.deleteMany({
+            where: { quiz: { lessonId: existingLesson.id } }
+        });
         await tx.quiz.deleteMany({ where: { lessonId: existingLesson.id } });
       }
 
@@ -1349,6 +1585,7 @@ export async function generateLessonForTopic(topicId: string, schoolId: string) 
         data: { lessonId: savedLesson.id },
       });
 
+      // Optimizing loop: Prisma is faster when processing sequentially inside tx
       for (const [index, q] of aiContent.studentContent.quiz.entries()) {
         const question = await tx.question.create({
           data: {
@@ -1368,6 +1605,9 @@ export async function generateLessonForTopic(topicId: string, schoolId: string) 
       }
 
       return savedLesson;
+    }, {
+        timeout: 60000, // 60 seconds
+        maxWait: 5000,
     });
 
     revalidatePath(`/teacher/lessons/${topic.id}`);

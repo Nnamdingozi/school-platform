@@ -1087,7 +1087,7 @@ GENERATE LESSON
 )
 }
   return (
-    <Card className="border-white/5 bg-slate-900 shadow-2xl overflow-hidden rounded-[2.5rem] flex flex-col">
+    <Card className="border-white/5 bg-slate-200 shadow-2xl overflow-hidden rounded-[2.5rem] flex flex-col">
       <CardHeader className="bg-slate-950/50 border-b border-white/5 p-8">
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
@@ -1121,7 +1121,7 @@ GENERATE LESSON
       </CardHeader>
       
       <CardContent className="p-8 flex-1">
-        <div className="flex flex-wrap gap-2 mb-10 bg-slate-950 p-1.5 rounded-2xl w-fit border border-white/5 shadow-inner">
+        <div className="flex flex-wrap gap-2 mb-10 bg-slate-400 p-1.5 text-gray-200 rounded-2xl w-fit border border-white/5 shadow-inner">
             <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Lesson Notes" />
             {isTeacher && <TabButton active={activeTab === "pedagogy"} onClick={() => setActiveTab("pedagogy")} icon={Zap} label="Strategy" />}
             <TabButton active={activeTab === "visuals"} onClick={() => setActiveTab("visuals")} icon={ImageIcon} label="Visuals" />
@@ -1129,21 +1129,35 @@ GENERATE LESSON
         </div>
 
         <div className="min-h-[500px]">
-            {activeTab === "explanation" && (
-                <div className="space-y-6">
-                    {isEditing ? (
-                        <textarea 
-                            className="w-full h-[600px] bg-slate-950 border border-school-primary/20 rounded-[2rem] p-8 text-slate-300 outline-none transition-all font-medium"
-                            value={data.studentContent.explanation}
-                            onChange={(e) => setData({...data, studentContent: {...data.studentContent, explanation: e.target.value}})}
-                        />
-                    ) : (
-                        <article className="prose prose-invert max-w-none px-2 prose-headings:italic prose-headings:font-black prose-p:text-slate-400 prose-strong:text-school-primary">
-                            <ReactMarkdown>{data.studentContent.explanation}</ReactMarkdown>
-                        </article>
-                    )}
-                </div>
-            )}
+        {activeTab === "explanation" && (
+    <div className="space-y-6">
+        {isEditing ? (
+            <textarea 
+                className="w-full h-[600px] bg-slate-950 border border-school-primary rounded-[2rem] p-8 text-slate-100 outline-none transition-all font-medium"
+                value={data.studentContent.explanation}
+                onChange={(e) => setData({...data, studentContent: {...data.studentContent, explanation: e.target.value}})}
+            />
+        ) : (
+            /* FIX: Enhanced visibility with text-slate-100 and higher contrast prose */
+            <ReactMarkdown
+                    components={{
+                      // ✅ FIX: Omitted 'node' from props to resolve unused var warning
+                      h1: ({ ...props }) => <h1 className="text-3xl font-extrabold text-amber-700 border-b-2 border-amber-200 pb-2 mb-6 mt-2" {...props} />,
+                      h2: ({ ...props }) => <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4 flex items-center gap-2" {...props} />,
+                      h3: ({ ...props }) => <h3 className="text-xl font-bold text-amber-800 mt-6 mb-3" {...props} />,
+                      p: ({ ...props }) => <p className="text-slate-700 leading-relaxed mb-4 text-sm" {...props} />,
+                      ul: ({ ...props }) => <ul className="list-disc pl-6 mb-4 text-slate-700 space-y-2" {...props} />,
+                      ol: ({ ...props }) => <ol className="list-decimal pl-6 mb-4 text-slate-700 space-y-2" {...props} />,
+                      li: ({ ...props }) => <li className="pl-1 marker:text-amber-500" {...props} />,
+                      strong: ({ ...props }) => <strong className="font-bold text-slate-900" {...props} />,
+                      blockquote: ({ ...props }) => <blockquote className="border-l-4 border-amber-400 pl-4 py-1 my-4 bg-amber-50/50 italic text-slate-700 rounded-r" {...props} />,
+                    }}
+                  >
+                    {data.studentContent.explanation}
+                  </ReactMarkdown>
+        )}
+    </div>
+)}
 
             {/* Pedagogy Tab (Teacher Only) */}
             {activeTab === "pedagogy" && isTeacher && (

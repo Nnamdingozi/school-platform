@@ -512,13 +512,10 @@ import {
     Bell, BookMarked, School, CreditCard, FileText,
     MessageSquare, Trophy, Calendar, UserCircle,
     Layers, TableProperties, MessageCircle, UserPlus,
-    LogOut, ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useState } from 'react'
-import { logoutAction } from '@/app/actions/auth'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+// ✅ Only import what the Sidebar needs
+import { LogoutButton } from './shared/logOutButton'
 
 // ── Nav item ───────────────────────────────────────────────────────────────────
 
@@ -550,7 +547,7 @@ function NavItem({ href, icon: Icon, label }: {
 function NavGroup({ label, children }: { label: string; children: React.ReactNode }) {
     return (
         <SidebarGroup>
-            <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-school-secondary-100/30 px-3 py-1">
+            <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-school-secondary-100/50 px-3 py-1">
                 {label}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -559,88 +556,6 @@ function NavGroup({ label, children }: { label: string; children: React.ReactNod
                 </SidebarMenu>
             </SidebarGroupContent>
         </SidebarGroup>
-    )
-}
-
-// ── Logout button ──────────────────────────────────────────────────────────────
-
-function LogoutButton() {
-    const [confirming,  setConfirming]  = useState(false)
-    const [loggingOut,  setLoggingOut]  = useState(false)
-    const { clearProfile }              = useProfileStore()
-    const router                        = useRouter()
-
-    async function handleLogout() {
-        if (!confirming) {
-            // First click — ask for confirmation
-            setConfirming(true)
-            // Auto-cancel after 4 seconds if user doesn't confirm
-            setTimeout(() => setConfirming(false), 4000)
-            return
-        }
-
-        // Second click — confirmed, proceed
-        setLoggingOut(true)
-        try {
-            clearProfile()
-            await logoutAction()
-        } catch {
-            // logoutAction redirects — if we reach here something went wrong
-            toast.error('Failed to log out. Please try again.')
-            setLoggingOut(false)
-            setConfirming(false)
-        }
-    }
-
-    return (
-        <div className="space-y-2">
-            {/* Confirmation hint */}
-            {confirming && !loggingOut && (
-                <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2">
-                    <span className="text-[10px] text-red-400 font-semibold flex-1">
-                        Click again to confirm logout
-                    </span>
-                    <button
-                        onClick={() => setConfirming(false)}
-                        className="text-[10px] text-school-secondary-500 hover:text-white transition-colors"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            )}
-
-            <button
-                onClick={handleLogout}
-                disabled={loggingOut}
-                className={cn(
-                    'w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold transition-all',
-                    'border disabled:opacity-50 disabled:cursor-not-allowed',
-                    confirming && !loggingOut
-                        // Confirmed state — red
-                        ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20'
-                        // Default state
-                        : 'bg-school-secondary-800 border-school-secondary-700 text-school-secondary-300 hover:text-white hover:border-school-secondary-600'
-                )}
-            >
-                {loggingOut ? (
-                    <>
-                        <Loader2 className="h-4 w-4 animate-spin shrink-0" />
-                        <span>Signing out...</span>
-                    </>
-                ) : confirming ? (
-                    <>
-                        <LogOut className="h-4 w-4 shrink-0 text-red-400" />
-                        <span className="flex-1 text-left">Confirm Sign Out</span>
-                        <ChevronRight className="h-3.5 w-3.5 text-red-400" />
-                    </>
-                ) : (
-                    <>
-                        <LogOut className="h-4 w-4 shrink-0 text-red-500" />
-                        <span className="flex-1 text-left text-red-500">Sign Out</span>
-                    </>
-                )}
-            </button>
-        </div>
     )
 }
 
@@ -676,7 +591,6 @@ export function AppSidebar() {
         isStudent ? '/student' :
         isParent  ? '/parent'  : '/'
 
-    // Initials for avatar
     const initials = (profile.name ?? profile.email)
         .split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
 
@@ -697,36 +611,36 @@ export function AppSidebar() {
             </SidebarHeader>
 
             {/* ── Navigation ── */}
-            <SidebarContent className="bg-school-secondary-950 px-2 py-4 space-y-4">
+            <SidebarContent className="custom-scrollbar bg-school-secondary-950 px-2 py-4 space-y-4">
 
                 <NavGroup label="Command Center">
                     <NavItem href={dashboardHref} icon={LayoutDashboard} label="Dashboard" />
-                    <NavItem href="/notifications"  icon={Bell}           label="System Alerts" />
+                    <NavItem href="/notifications" icon={Bell} label="System Alerts" />
                 </NavGroup>
 
                 {/* ── Admin ── */}
                 {isAdmin && (
                     <>
                         <NavGroup label="Institutional Control">
-                            <NavItem href="/admin/settings"           icon={School}          label="Global Settings"  />
-                            <NavItem href="/admin/invite-users"       icon={UserPlus}        label="Invite Users"     />
-                            <NavItem href="/admin/users"              icon={Users}           label="User Registry"    />
-                            <NavItem href="/admin/users/parent-linking" icon={UserPlus}      label="Family Relations" />
-                            <NavItem href="/admin/communication"      icon={MessageCircle}   label="WhatsApp Hub"     />
-                            <NavItem href="/admin/classes"            icon={Layers}          label="Add Class"        />
+                            <NavItem href="/admin/settings" icon={School} label="Global Settings" />
+                            <NavItem href="/admin/invite-users" icon={UserPlus} label="Invite Users" />
+                            <NavItem href="/admin/users" icon={Users} label="User Registry" />
+                            <NavItem href="/admin/users/parent-linking" icon={UserPlus} label="Family Relations" />
+                            <NavItem href="/admin/communication" icon={MessageCircle} label="WhatsApp Hub" />
+                            <NavItem href="/classes" icon={Layers} label="Add Class" />
                         </NavGroup>
 
                         <NavGroup label="Academic Logic">
-                            <NavItem href="/admin/curriculum" icon={BookMarked}      label="Master Curriculum"  />
-                            <NavItem href="/admin/subject"    icon={TableProperties} label="Subject Allocation" />
-                            <NavItem href="/admin/catalogue"  icon={BookOpen}        label="Course Catalog"     />
-                            <NavItem href="/admin/lessons"    icon={FileText}        label="Lesson Bank"        />
+                            <NavItem href="/admin/curriculum" icon={BookMarked} label="Master Curriculum" />
+                            <NavItem href="/admin/curriculum/allocation" icon={TableProperties} label="Subject Allocation" />
+                            <NavItem href="/admin/catalogue" icon={BookOpen} label="Course Catalog" />
+                            <NavItem href="/admin/lessons" icon={FileText} label="Lesson Bank" />
                         </NavGroup>
 
                         <NavGroup label="Intelligence">
-                            <NavItem href="/admin/assessments"   icon={ClipboardList} label="Exam Registry"       />
-                            <NavItem href="/admin/reports"       icon={BarChart2}     label="Analytical Insights" />
-                            <NavItem href="/admin/subscription"  icon={CreditCard}    label="Finance & Billing"   />
+                            <NavItem href="/admin/assessments" icon={ClipboardList} label="Exam Registry" />
+                            <NavItem href="/admin/reports" icon={BarChart2} label="Analytical Insights" />
+                            <NavItem href="/admin/billing" icon={CreditCard} label="Finance & Billing" />
                         </NavGroup>
                     </>
                 )}
@@ -735,17 +649,17 @@ export function AppSidebar() {
                 {isTeacher && (
                     <>
                         <NavGroup label="Academic Operations">
-                            <NavItem href="/teacher/classes"    icon={Layers}          label="My Classrooms"      />
-                            <NavItem href="/teacher/subjects"   icon={BookOpen}        label="Assigned Subjects"  />
+                            <NavItem href="/classes" icon={Layers} label="My Classrooms" />
+                            <NavItem href="/subjects/manage" icon={BookOpen} label="Assigned Subjects" />
                             <NavItem href="/teacher/allocation" icon={TableProperties} label="Subject Allocation" />
-                            <NavItem href="/teacher/topics"     icon={Calendar}        label="Termly Schedule"    />
+                            <NavItem href="/teacher/term-timeline" icon={Calendar} label="Termly Schedule" />
                         </NavGroup>
 
                         <NavGroup label="Content & Assessment">
-                            <NavItem href="/teacher/lessons"     icon={FileText}     label="AI Lesson Plans"  />
-                            <NavItem href="/teacher/assessments" icon={ClipboardList} label="Gradebook"        />
-                            <NavItem href="/teacher/students"    icon={GraduationCap} label="Student Directory"/>
-                            <NavItem href="/teacher/reports"     icon={BarChart2}     label="Performance Data" />
+                            <NavItem   href="/teacher#lesson-planner-section"  icon={FileText} label="AI Lesson Plans" />
+                            <NavItem href="/teacher/assessment" icon={ClipboardList} label="Gradebook" />
+                            <NavItem href="/teacher/students" icon={GraduationCap} label="Student Directory" />
+                            <NavItem href="/teacher/reports" icon={BarChart2} label="Performance Data" />
                         </NavGroup>
                     </>
                 )}
@@ -754,13 +668,14 @@ export function AppSidebar() {
                 {isStudent && (
                     <>
                         <NavGroup label="Study Portal">
-                            <NavItem href="/student/subjects"          icon={BookOpen}        label="My Subjects"    />
+                        <NavItem href="/classes" icon={Layers} label="My Class" />
+                            <NavItem href="/student/subjects" icon={BookOpen} label="My Subjects" />
                             <NavItem href="/student/subjects/electives" icon={TableProperties} label="Pick Electives" />
-                            <NavItem href="/student/lessons"           icon={FileText}        label="Digital Lessons"/>
+                            <NavItem href="/student/lessons" icon={FileText} label="Digital Lessons" />
                         </NavGroup>
                         <NavGroup label="Evaluations">
-                            <NavItem href="/student/quizzes" icon={Trophy}   label="AI Challenges"  />
-                            <NavItem href="/student/grades"  icon={BarChart2} label="Academic Record" />
+                            <NavItem href="/student/quizzes" icon={Trophy} label="AI Challenges" />
+                            <NavItem href="/student/grades" icon={BarChart2} label="Academic Record" />
                         </NavGroup>
                     </>
                 )}
@@ -768,9 +683,9 @@ export function AppSidebar() {
                 {/* ── Parent ── */}
                 {isParent && (
                     <NavGroup label="Guardian Hub">
-                        <NavItem href="/parent/children" icon={Users}        label="Child Profiles" />
-                        <NavItem href="/parent/grades"   icon={BarChart2}    label="Results Portal" />
-                        <NavItem href="/parent/feedback" icon={MessageSquare} label="School Comms"  />
+                        <NavItem href="/parent/children" icon={Users} label="Child Profiles" />
+                        <NavItem href="/parent/grades" icon={BarChart2} label="Results Portal" />
+                        <NavItem href="/parent/feedback" icon={MessageSquare} label="School Comms" />
                     </NavGroup>
                 )}
 
@@ -778,31 +693,23 @@ export function AppSidebar() {
 
             {/* ── Footer ── */}
             <SidebarFooter className="p-4 border-t border-school-secondary-800 bg-school-secondary-950 space-y-3">
-
-                {/* User card */}
                 <Link
                     href="/settings/profile"
                     className="flex items-center gap-3 rounded-xl border border-school-secondary-700 bg-school-secondary-800/50 px-3 py-2.5 hover:border-school-secondary-600 hover:bg-school-secondary-800 transition-all group"
                 >
-                    {/* Avatar */}
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-school-primary/20 border border-school-primary/20 text-[11px] font-black text-school-primary">
                         {initials}
                     </div>
-
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
-                      
-                        <p className="text-[10px] text-school-primary truncate hover:text-school-secondary-100 transition-colors">
+                        <p className="text-[12px] text-school-primary truncate group-hover:text-white transition-colors">
                             Profile Settings
                         </p>
                     </div>
-
                     <UserCircle className="h-4 w-4 text-school-secondary-500 group-hover:text-school-primary transition-colors shrink-0" />
                 </Link>
 
-                {/* Logout */}
-                <LogoutButton />
-
+                {/* ✅ REUSABLE LOGOUT COMPONENT (Logic hidden inside) */}
+                <LogoutButton variant="sidebar" />
             </SidebarFooter>
 
         </Sidebar>
