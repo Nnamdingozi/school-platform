@@ -633,11 +633,11 @@
 //       Subject: ${subjectName}. Level: ${topic.gradeSubject.grade.displayName}.
 //     `;
 
-//     const { object: ai } = await generateObject({
-//       model: google("gemini-1.5-flash"), 
-//       schema: LessonAiSchema,
-//       prompt: dynamicPrompt,
-//     });
+    // const { object: ai } = await generateObject({
+    //   model: google("gemini-1.5-flash"), 
+    //   schema: LessonAiSchema,
+    //   prompt: dynamicPrompt,
+    // });
 
 //     const finalLesson = await prisma.$transaction(async (tx) => {
 //       // 1. Identify if a version already exists for this school/topic combo

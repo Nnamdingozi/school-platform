@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useProfileStore } from "@/store/profileStore";
-import { getTeacherAssessmentData } from "@/app/actions/assessment-actions";
-import { AssessmentDashboard } from "./_components/AssessmentDashboard";
+import { getTeacherAssessmentData } from "@/app/actions/assesssment";
+import { AssessmentDashboard } from "@/components/TeacherDashboard/assessment";
 import { isTeacherProfile } from "@/types/profile";
 import { Loader2, ShieldAlert, ClipboardCheck } from "lucide-react";
 
@@ -22,6 +22,7 @@ export default function TeacherAssessmentsPage() {
       const result = await getTeacherAssessmentData(profile.id, profile.schoolId);
       if (result) {
         setData(result);
+        console.log("fetched teacher data: ", result )
       } else {
         setError("Unable to retrieve assessment registry.");
       }
@@ -31,6 +32,8 @@ export default function TeacherAssessmentsPage() {
       setIsFetching(false);
     }
   }, [profile]);
+
+
 
   useEffect(() => {
     if (profile && isTeacherProfile(profile)) {

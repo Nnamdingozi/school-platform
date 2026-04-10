@@ -657,9 +657,9 @@ export function AppSidebar() {
 
                         <NavGroup label="Content & Assessment">
                             <NavItem   href="/teacher#lesson-planner-section"  icon={FileText} label="AI Lesson Plans" />
-                            <NavItem href="/teacher/assessment" icon={ClipboardList} label="Gradebook" />
+                            <NavItem href="/teacher/assessment" icon={ClipboardList} label="Examination" />
                             <NavItem href="/teacher/students" icon={GraduationCap} label="Student Directory" />
-                            <NavItem href="/teacher/reports" icon={BarChart2} label="Performance Data" />
+                            <NavItem href="/teacher/assessmentView" icon={BarChart2} label="Performance Data" />
                         </NavGroup>
                     </>
                 )}

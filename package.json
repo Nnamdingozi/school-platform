@@ -14,9 +14,10 @@
     "seed": "node --loader ts-node/esm prisma/seed.ts"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.58",
+    "@ai-sdk/google": "^3.0.60",
     "@ai-sdk/groq": "^3.0.33",
     "@ai-sdk/openai": "^3.0.50",
+    "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^3.10.0",
     "@prisma/client": "6.1.0",
     "@radix-ui/react-avatar": "^1.1.11",
@@ -35,7 +36,7 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.0",
     "@vercel/blob": "^0.27.1",
-    "ai": "^6.0.146",
+    "ai": "^6.0.154",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",

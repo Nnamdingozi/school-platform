@@ -87,6 +87,7 @@ model Profile {
 
   subscription Subscription? @relation("ProfileSubscription")
   activityLogs ActivityLog[]
+  createdExams Exam[] @relation("ExamCreator")
 
   @@index([schoolId])
   @@index([curriculumId])
@@ -332,10 +333,11 @@ model Exam {
   type     AssessmentType // MID_TERM, END_OF_TERM
   duration Int            @default(60) // minutes
   status   ExamStatus     @default(DRAFT)
-
+  creatorId String    
   schoolId String
   classId  String
   termId   String
+  creator   Profile        @relation("ExamCreator", fields: [creatorId], references: [id])
 
   questions   ExamQuestion[]
   assessments Assessment[] // The actual student results
