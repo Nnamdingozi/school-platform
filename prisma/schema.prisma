@@ -10,83 +10,64 @@ datasource db {
 }
 
 model School {
-  id           String     @id @default(uuid())
-  name         String
-  curriculumId String
-  curriculum   Curriculum @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
-
-  whatsappCredits Int @default(0)
-
-  // Relations
-  users                    Profile[]
+  id                       String                    @id @default(uuid())
+  name                     String
+  curriculumId             String
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  primaryColor             String                    @default("#f59e0b")
+  secondaryColor           String                    @default("#1e293b")
+  whatsappCredits          Int                       @default(0)
+  activityLogs             ActivityLog[]
+  assessments              Assessment[]
   classes                  Class[]
-  curricula                Curriculum[]              @relation("SchoolCurriculum")
-  grades                   Grade[]
-  terms                    Term[]
-  subjects                 Subject[]
-  topics                   Topic[]
   classEnrollments         ClassEnrollment[]
+  creditTransactions       CreditTransaction[]
+  curricula                Curriculum[]              @relation("SchoolCurriculum")
+  Exam                     Exam[]
   feedbacks                Feedback[]
+  grades                   Grade[]
   gradeSubjects            GradeSubject[]
   lessons                  Lesson[]
   ParentStudent            ParentStudent[]
-  subscription             Subscription?
-  activityLogs             ActivityLog[]
-  assessments              Assessment[]
-  primaryColor             String                    @default("#f59e0b")
-  secondaryColor           String                    @default("#1e293b")
+  Question                 Question[]
+  curriculum               Curriculum                @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
   studentSubjects          StudentSubject[]
-  creditTransactions       CreditTransaction[]
+  subjects                 Subject[]
+  subscription             Subscription?
   subscriptionTransactions SubscriptionTransaction[]
-
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Question  Question[]
-  Exam      Exam[]
+  terms                    Term[]
+  topics                   Topic[]
+  users                    Profile[]
 }
 
 model Profile {
-  id           String  @id @default(uuid())
-  email        String  @unique
-  name         String?
-  role         Role
-  phone        String?
-  schoolId     String?
-  curriculumId String
-
-  // Branding
-  primaryColor   String @default("#f59e0b")
-  secondaryColor String @default("#1e293b")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  school     School?    @relation(fields: [schoolId], references: [id])
-  curriculum Curriculum @relation(fields: [curriculumId], references: [id])
-
-  // Classes
-  taughtClasses    Class[]           @relation("TeacherClasses")
-  classEnrollments ClassEnrollment[]
-  studentSubjects  StudentSubject[]
-
-  // Assessments
-  assessments Assessment[] @relation("StudentAssessments")
-
-  // Grade subjects
-  gradeSubjectsTaught GradeSubject[] @relation("TeacherGradeSubjects")
-  selectedSubjects    GradeSubject[] @relation("UserSelectedSubjects")
-  ownedGradeSubjects  GradeSubject[] @relation("ProfileToGradeSubject")
-
-  // Parent ↔ Student
-  ParentStudent_ParentStudent_parentIdToprofiles  ParentStudent[] @relation("ParentStudent_parentIdToprofiles")
-  ParentStudent_ParentStudent_studentIdToprofiles ParentStudent[] @relation("ParentStudent_studentIdToprofiles")
-
-  // Notifications
-  notifications Notification[]
-
-  subscription Subscription? @relation("ProfileSubscription")
-  activityLogs ActivityLog[]
+  id                                              String            @id @default(uuid())
+  email                                           String            @unique
+  name                                            String?
+  role                                            Role
+  schoolId                                        String?
+  curriculumId                                    String
+  createdAt                                       DateTime          @default(now())
+  updatedAt                                       DateTime          @updatedAt
+  phone                                           String?
+  primaryColor                                    String            @default("#f59e0b")
+  secondaryColor                                  String            @default("#1e293b")
+  activityLogs                                    ActivityLog[]
+  assessments                                     Assessment[]      @relation("StudentAssessments")
+  taughtClasses                                   Class[]           @relation("TeacherClasses")
+  classEnrollments                                ClassEnrollment[]
+  Exam                                            Exam[]
+  ownedGradeSubjects                              GradeSubject[]    @relation("ProfileToGradeSubject")
+  notifications                                   Notification[]
+  ParentStudent_ParentStudent_parentIdToprofiles  ParentStudent[]   @relation("ParentStudent_parentIdToprofiles")
+  ParentStudent_ParentStudent_studentIdToprofiles ParentStudent[]   @relation("ParentStudent_studentIdToprofiles")
+  studentSubjects                                 StudentSubject[]
+  subscription                                    Subscription?     @relation("ProfileSubscription")
+  curriculum                                      Curriculum        @relation(fields: [curriculumId], references: [id])
+  school                                          School?           @relation(fields: [schoolId], references: [id])
+  gradeSubjectsTaught                             GradeSubject[]    @relation("TeacherGradeSubjects")
+  selectedSubjects                                GradeSubject[]    @relation("UserSelectedSubjects")
 
   @@index([schoolId])
   @@index([curriculumId])
@@ -99,10 +80,9 @@ model ParentStudent {
   studentId String
   schoolId  String?
   createdAt DateTime @default(now())
-
-  parent  Profile @relation("ParentStudent_parentIdToprofiles", fields: [parentId], references: [id])
-  student Profile @relation("ParentStudent_studentIdToprofiles", fields: [studentId], references: [id])
-  school  School? @relation(fields: [schoolId], references: [id])
+  parent    Profile  @relation("ParentStudent_parentIdToprofiles", fields: [parentId], references: [id])
+  school    School?  @relation(fields: [schoolId], references: [id])
+  student   Profile  @relation("ParentStudent_studentIdToprofiles", fields: [studentId], references: [id])
 
   @@unique([parentId, studentId])
   @@index([parentId])
@@ -110,18 +90,16 @@ model ParentStudent {
   @@index([schoolId])
 }
 
-// ---------------- Curriculum Hierarchy ----------------
-
 model Curriculum {
   id             String    @id @default(uuid())
   name           String
-  type           String    @default("generic") // 'nigerian' | 'british' | 'american' | 'generic'
   schoolId       String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   subjectLabel   String    @default("Subject")
   termLabel      String    @default("Term")
   yearLabel      String    @default("Year")
+  type           String    @default("generic")
   school         School?   @relation("SchoolCurriculum", fields: [schoolId], references: [id])
   grades         Grade[]
   primarySchools School[]  @relation("SchoolPrimaryCurriculum")
@@ -158,14 +136,14 @@ model Term {
   displayName String
   gradeId     String
   schoolId    String?
-  startDate   DateTime?
-  endDate     DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  endDate     DateTime?
+  startDate   DateTime?
+  Exam        Exam[]
   grade       Grade     @relation(fields: [gradeId], references: [id])
   school      School?   @relation(fields: [schoolId], references: [id])
   topics      Topic[]
-  Exam        Exam[]
 
   @@unique([gradeId, index])
   @@index([schoolId])
@@ -198,10 +176,10 @@ model Topic {
   weekNumber     Int?
   assessments    Assessment[]
   lessons        Lesson[]
+  Question       Question[]
   gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
   school         School?      @relation(fields: [schoolId], references: [id])
   term           Term         @relation(fields: [termId], references: [id])
-  Question       Question[]
 
   @@index([schoolId])
 }
@@ -230,10 +208,9 @@ model ClassEnrollment {
   schoolId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  class   Class?  @relation(fields: [classId], references: [id])
-  school  School  @relation(fields: [schoolId], references: [id])
-  student Profile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class     Class?   @relation(fields: [classId], references: [id])
+  school    School   @relation(fields: [schoolId], references: [id])
+  student   Profile  @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
 model StudentSubject {
@@ -243,10 +220,9 @@ model StudentSubject {
   schoolId       String
   status         EnrollmentStatus @default(APPROVED)
   isCompulsory   Boolean          @default(true)
-
-  student      Profile      @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  gradeSubject GradeSubject @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
-  school       School       @relation(fields: [schoolId], references: [id])
+  gradeSubject   GradeSubject     @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
+  school         School           @relation(fields: [schoolId], references: [id])
+  student        Profile          @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, gradeSubjectId])
 }
@@ -263,13 +239,13 @@ model Assessment {
   comments       String?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+  examId         String?
+  Exam           Exam?          @relation(fields: [examId], references: [id])
   gradeSubject   GradeSubject   @relation(fields: [gradeSubjectId], references: [id])
   school         School?        @relation(fields: [schoolId], references: [id])
   student        Profile        @relation("StudentAssessments", fields: [studentId], references: [id])
   topic          Topic?         @relation(fields: [topicId], references: [id])
   feedbacks      Feedback[]
-  Exam           Exam?          @relation(fields: [examId], references: [id])
-  examId         String?
 
   @@index([schoolId])
 }
@@ -277,19 +253,17 @@ model Assessment {
 model Lesson {
   id          String   @id @default(uuid())
   title       String
-  content     String? // The actual text content
-  topicId     String // Removed @unique
-  schoolId    String? // null = Global, uuid = School Private
-  aiContent   Json? // Structured AI data
+  content     String?
+  topicId     String
+  schoolId    String?
+  aiContent   Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   videoScript String?
+  school      School?  @relation(fields: [schoolId], references: [id])
+  topic       Topic    @relation(fields: [topicId], references: [id])
+  quiz        Quiz?
 
-  school School? @relation(fields: [schoolId], references: [id])
-  topic  Topic   @relation(fields: [topicId], references: [id])
-  quiz   Quiz?
-
-  // ✅ This ensures one Global version AND one version per school only
   @@unique([topicId, schoolId])
 }
 
@@ -298,77 +272,69 @@ model Quiz {
   lessonId      String         @unique
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  quizQuestions QuizQuestion[]
   lesson        Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  quizQuestions QuizQuestion[]
 }
 
-// 1. The Independent Question Bank
 model Question {
   id            String           @id @default(uuid())
   text          String
-  options       Json // Array of strings
+  options       Json
   correctAnswer String
   explanation   String?
-  points        Int              @default(1)
   category      QuestionCategory @default(PRACTICE)
-
-  topicId  String
-  schoolId String? // null = Global, UUID = School Custom
-
-  topic  Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  school School? @relation(fields: [schoolId], references: [id])
-
-  quizLinks QuizQuestion[]
-  examLinks ExamQuestion[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime         @default(now())
+  points        Int              @default(1)
+  schoolId      String?
+  topicId       String
+  updatedAt     DateTime         @updatedAt
+  examLinks     ExamQuestion[]
+  school        School?          @relation(fields: [schoolId], references: [id])
+  topic         Topic            @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  quizLinks     QuizQuestion[]
 }
 
-// 2. The High-Stakes Exam Model
 model Exam {
-  id       String         @id @default(uuid())
-  title    String
-  type     AssessmentType // MID_TERM, END_OF_TERM
-  duration Int            @default(60) // minutes
-  status   ExamStatus     @default(DRAFT)
-
-  schoolId String
-  classId  String
-  termId   String
-
-  questions   ExamQuestion[]
-  assessments Assessment[] // The actual student results
-
-  school School @relation(fields: [schoolId], references: [id])
-  class  Class  @relation(fields: [classId], references: [id])
-  term   Term   @relation(fields: [termId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String           @id @default(uuid())
+  title          String
+  type           AssessmentType
+  duration       Int              @default(60)
+  status         ExamStatus       @default(DRAFT)
+  schoolId       String
+  classId        String
+  termId         String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  creatorId      String
+  endTime        DateTime?
+  startTime      DateTime?
+  assessments    Assessment[]
+  class          Class            @relation(fields: [classId], references: [id])
+  profiles       Profile          @relation(fields: [creatorId], references: [id])
+  school         School           @relation(fields: [schoolId], references: [id])
+  term           Term             @relation(fields: [termId], references: [id])
+  questions      ExamQuestion[]
+  ExamSubmission ExamSubmission[]
 }
 
-// 3. Junction Tables
 model QuizQuestion {
-  id         String @id @default(uuid())
+  id         String   @id @default(uuid())
   quizId     String
   questionId String
   order      Int
-
-  quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  quiz       Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
 
   @@unique([quizId, questionId])
 }
 
 model ExamQuestion {
-  id         String @id @default(uuid())
+  id         String   @id @default(uuid())
   examId     String
   questionId String
   order      Int
-
-  exam     Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  exam       Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([examId, questionId])
 }
@@ -401,10 +367,10 @@ model GradeSubject {
   profile         Profile?         @relation("ProfileToGradeSubject", fields: [profileId], references: [id])
   school          School?          @relation(fields: [schoolId], references: [id])
   subject         Subject          @relation(fields: [subjectId], references: [id])
+  studentSubjects StudentSubject[]
   topics          Topic[]
   teachers        Profile[]        @relation("TeacherGradeSubjects")
   selectedByUsers Profile[]        @relation("UserSelectedSubjects")
-  studentSubjects StudentSubject[]
 
   @@unique([gradeId, subjectId])
 }
@@ -423,25 +389,22 @@ model Notification {
 }
 
 model Subscription {
-  id                String    @id @default(uuid())
-  schoolId          String    @unique
+  id                String            @id @default(uuid())
+  schoolId          String            @unique
   plan              String
-  profileId         String?   @unique
   status            String
-  // ── Keep existing Stripe fields for future Stripe migration ──
-  stripeCustomerId  String?   @unique
+  stripeCustomerId  String?           @unique
   currentPeriodEnd  DateTime
-  // ── Add Paystack payment tracking ─────────────────────────────
-  paystackReference String?   @unique // last successful payment reference
-  planId            String? // FK to SubscriptionPlan
-  amountNGN         Int? // what was paid
-  paidAt            DateTime? // when last payment was confirmed
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @default(now()) @updatedAt
-
-  school  School            @relation(fields: [schoolId], references: [id])
-  profile Profile?          @relation("ProfileSubscription", fields: [profileId], references: [id])
-  subPlan SubscriptionPlan? @relation(fields: [planId], references: [id])
+  profileId         String?           @unique
+  amountNGN         Int?
+  createdAt         DateTime          @default(now())
+  paidAt            DateTime?
+  paystackReference String?           @unique
+  planId            String?
+  updatedAt         DateTime          @default(now()) @updatedAt
+  subPlan           SubscriptionPlan? @relation(fields: [planId], references: [id])
+  profile           Profile?          @relation("ProfileSubscription", fields: [profileId], references: [id])
+  school            School            @relation(fields: [schoolId], references: [id])
 
   @@index([status])
   @@index([currentPeriodEnd])
@@ -474,9 +437,8 @@ model ActivityLog {
   description String
   metadata    Json?
   createdAt   DateTime     @default(now())
-
-  school School  @relation(fields: [schoolId], references: [id])
-  actor  Profile @relation(fields: [actorId], references: [id])
+  actor       Profile      @relation(fields: [actorId], references: [id])
+  school      School       @relation(fields: [schoolId], references: [id])
 
   @@index([schoolId])
   @@index([actorId])
@@ -495,51 +457,48 @@ model CreditTransaction {
   initiatedBy String
   paidAt      DateTime?
   createdAt   DateTime  @default(now())
-
-  school School @relation(fields: [schoolId], references: [id])
+  school      School    @relation(fields: [schoolId], references: [id])
 
   @@index([schoolId])
   @@index([reference])
 }
 
 model SubscriptionPlan {
-  id           String   @id @default(uuid())
-  name         String
-  slug         String   @unique // 'monthly' | 'termly' | 'annual'
-  priceNGN     Int
-  priceKobo    Int
-  priceUSD     Float
-  durationDays Int
-  description  String
-  features     String[] // array of feature strings
-  popular      Boolean  @default(false)
-  active       Boolean  @default(true) // soft delete
-  sortOrder    Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  subscriptionTransactions SubscriptionTransaction[]
+  id                       String                    @id @default(uuid())
+  name                     String
+  slug                     String                    @unique
+  priceNGN                 Int
+  priceKobo                Int
+  priceUSD                 Float
+  durationDays             Int
+  description              String
+  features                 String[]
+  popular                  Boolean                   @default(false)
+  active                   Boolean                   @default(true)
+  sortOrder                Int                       @default(0)
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
   subscriptions            Subscription[]
+  subscriptionTransactions SubscriptionTransaction[]
 
   @@index([active])
   @@index([sortOrder])
 }
 
 model SubscriptionTransaction {
-  id          String    @id @default(uuid())
+  id          String           @id @default(uuid())
   schoolId    String
-  planId      String // which plan was purchased
-  planName    String // snapshot of plan name at purchase time
-  amountNGN   Int // amount paid in naira
-  amountKobo  Int // amount in kobo for Paystack
-  reference   String    @unique // Paystack reference
-  status      TxStatus  @default(PENDING)
-  initiatedBy String // profile id of who triggered it
-  paidAt      DateTime? // when Paystack confirmed payment
-  createdAt   DateTime  @default(now())
-
-  school School           @relation(fields: [schoolId], references: [id])
-  plan   SubscriptionPlan @relation(fields: [planId], references: [id])
+  planId      String
+  planName    String
+  amountNGN   Int
+  amountKobo  Int
+  reference   String           @unique
+  status      TxStatus         @default(PENDING)
+  initiatedBy String
+  paidAt      DateTime?
+  createdAt   DateTime         @default(now())
+  plan        SubscriptionPlan @relation(fields: [planId], references: [id])
+  school      School           @relation(fields: [schoolId], references: [id])
 
   @@index([schoolId])
   @@index([status])
@@ -561,6 +520,39 @@ model CreditPackage {
   updatedAt   DateTime @updatedAt
 
   @@index([active])
+}
+
+model ClassPerformance {
+  id           String @id
+  classId      String
+  examId       String
+  averageScore Float
+  passRate     Float
+}
+
+model ExamSubmission {
+  id               String             @id
+  examId           String
+  studentId        String
+  classId          String
+  answers          Json
+  score            Int?
+  total            Int?
+  status           SubmissionStatus   @default(SUBMITTED)
+  gradedAt         DateTime?
+  createdAt        DateTime           @default(now())
+  Exam             Exam               @relation(fields: [examId], references: [id])
+  SubmissionAnswer SubmissionAnswer[]
+}
+
+model SubmissionAnswer {
+  id             String         @id
+  submissionId   String
+  questionId     String
+  selected       String
+  correct        Boolean
+  score          Int
+  ExamSubmission ExamSubmission @relation(fields: [submissionId], references: [id])
 }
 
 enum TxStatus {
@@ -614,8 +606,8 @@ enum EnrollmentStatus {
 }
 
 enum QuestionCategory {
-  PRACTICE // Generated during daily lessons
-  EXAM // Generated specifically for high-stakes exams
+  PRACTICE
+  EXAM
 }
 
 enum ExamStatus {
@@ -623,4 +615,10 @@ enum ExamStatus {
   PUBLISHED
   COMPLETED
   ONGOING
+  SCHEDULED
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  GRADED
 }
