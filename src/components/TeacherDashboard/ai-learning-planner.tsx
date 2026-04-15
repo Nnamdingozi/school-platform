@@ -1007,22 +1007,22 @@ export function AILessonPlanner({
   }
 
   const handleManualSave = () => {
-    if (!data || !isTeacher) return
+    if (!data) return;
+  
     startTransition(async () => {
-        const res = await saveLessonAction({
-            topicId,
-            schoolId,
-            title: data.studentContent.title,
-            content: data.studentContent.explanation,
-            aiContent: data // ✅ Now valid as the types match
-        })
-        if (res.success) {
-            toast.success("Registry updated successfully.")
-            setIsEditing(false)
-        }
-    })
-  }
-
+      const res = await publishLesson({
+        topicId,
+        schoolId,
+        content: data
+      });
+  
+      if (res.success) {
+        toast.success("Lesson published successfully");
+        setIsEditing(false);
+      }
+    });
+  };
+  
   const handleGenerateImage = async (index: number, prompt: string) => {
     if (!isTeacher || loadingImages[index] || (data?.studentContent.visualAids[index]?.url)) return;
     setLoadingImages(prev => ({ ...prev, [index]: true }))

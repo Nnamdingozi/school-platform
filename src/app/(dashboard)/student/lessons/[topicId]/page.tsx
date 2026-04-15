@@ -187,65 +187,491 @@
 
 
 
+// 'use client'
+
+// import { use, useEffect, useState } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { getLessonForTopic } from "@/app/actions/lesson.actions"
+// import { AILessonPlanner, type EnhancedLessonContent } from "@/components/TeacherDashboard/ai-learning-planner"
+// import { ArrowLeft, Loader2 } from "lucide-react"
+// import Link from "next/link"
+
+// interface PageProps {
+//     params: Promise<{ topicId: string }>
+// }
+
+// export default function StudentLessonPage({ params }: PageProps) {
+//     const { topicId } = use(params)
+//     const { profile, isLoading: isProfileLoading } = useProfileStore()
+    
+//     const [lessonId, setLessonId] = useState<string>("")
+//     const [lessonContent, setLessonContent] = useState<EnhancedLessonContent | null>(null)
+//     const [loading, setLoading] = useState(true)
+
+//     useEffect(() => {
+//         if (!profile?.schoolId || !topicId) return
+
+//         async function fetchContent() {
+//             setLoading(true)
+//             const res = await getLessonForTopic(topicId, profile!.schoolId!)
+//             if (res.success && res.data) {
+//                 setLessonId(res.data.id)
+//                 setLessonContent(res.data.aiContent as unknown as EnhancedLessonContent)
+//             }
+//             setLoading(false)
+//         }
+//         fetchContent()
+//     }, [topicId, profile?.schoolId, profile])
+
+//     if (isProfileLoading || loading) {
+//         return (
+//             <div className="h-screen flex flex-col items-center justify-center bg-slate-950">
+//                 <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
+//                 <p className="text-slate-500 font-mono text-[10px] mt-4 uppercase">Syncing_Study_Vault...</p>
+//             </div>
+//         )
+//     }
+
+//     return (
+//         <div className="max-w-7xl mx-auto p-4 md:p-12 space-y-8 bg-slate-950 min-h-screen">
+//             <Link href="/student" className="text-school-primary text-[10px] font-black uppercase flex items-center gap-2">
+//                 <ArrowLeft className="h-3 w-3" /> Back to HUB
+//             </Link>
+
+//             <AILessonPlanner 
+//                 topicId={topicId}
+//                 schoolId={profile!.schoolId!}
+//                 lessonId={lessonId}
+//                 topicTitle="Study Portal"
+//                 initialData={lessonContent}
+//                 mode="student" // ✅ PRO APPROACH: Same code, student view
+//             />
+//         </div>
+//     )
+// }
+
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { useProfileStore } from "@/store/profileStore";
+// import { getStudentLesson } from "@/app/actions/lesson.actions";
+// import { transformLessonByRole } from "@/lib/lessons/transformLessons";
+// import { Loader2 } from "lucide-react";
+
+// export default function StudentLessonPage({
+//   params,
+// }: {
+//   params: { topicId: string };
+// }) {
+//   const { profile } = useProfileStore();
+
+//   const [lesson, setLesson] = useState<any>(null);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     async function load() {
+//       if (!profile?.schoolId) return;
+
+//       const res = await getStudentLesson(params.topicId, profile.schoolId);
+
+//       if (res.success && res.data) {
+//         const transformed = transformLessonByRole(
+//           res.data.aiContent,
+//           "student"
+//         );
+
+//         setLesson({
+//           ...res.data,
+//           view: transformed,
+//         });
+//       }
+
+//       setLoading(false);
+//     }
+
+//     load();
+//   }, [params.topicId, profile]);
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center bg-slate-950">
+//         <Loader2 className="h-8 w-8 animate-spin text-white" />
+//       </div>
+//     );
+//   }
+
+//   if (!lesson) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center text-slate-500">
+//         No lesson available
+//       </div>
+//     );
+//   }
+
+//   const view = lesson.view;
+
+//   return (
+//     <div className="p-6 max-w-4xl mx-auto text-white space-y-6">
+
+//       {/* HEADER */}
+//       <div>
+//         <h1 className="text-2xl font-black uppercase">
+//           {lesson.subject}
+//         </h1>
+//         <p className="text-slate-500 text-sm">{lesson.title}</p>
+//       </div>
+
+//       {/* SUMMARY (PRIMARY) */}
+//       <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+//         <h2 className="text-sm font-black uppercase mb-2">Summary</h2>
+//         <p className="text-slate-300 text-sm leading-relaxed">
+//           {view?.summary}
+//         </p>
+//       </div>
+
+//       {/* GUIDED NOTES */}
+//       <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+//         <h2 className="text-sm font-black uppercase mb-2">
+//           Key Notes
+//         </h2>
+//         <p className="text-slate-300 text-sm whitespace-pre-line">
+//           {view?.guidedNotes}
+//         </p>
+//       </div>
+
+//       {/* VISUAL AIDS */}
+//       {view?.visualAids?.length > 0 && (
+//         <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+//           <h2 className="text-sm font-black uppercase mb-3">
+//             Visual Aids
+//           </h2>
+
+//           <div className="grid gap-3">
+//             {view.visualAids.map((v: any, i: number) => (
+//               <div
+//                 key={i}
+//                 className="p-3 bg-slate-950 rounded-xl border border-white/5"
+//               >
+//                 <p className="text-sm text-slate-300">{v.title}</p>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       )}
+
+//     </div>
+//   );
+// }
+
+
+// "use client";
+
+// import { useEffect, useState, use } from "react";
+// import { useProfileStore } from "@/store/profileStore";
+// import { getStudentLesson } from "@/app/actions/lesson.actions";
+// import { transformLessonByRole } from "@/lib/lessons/transformLessons";
+// import { Loader2 } from "lucide-react";
+
+// export default function StudentLessonPage({
+//   params,
+// }: {
+//   params: Promise<{ topicId: string }>;
+// }) {
+//   // ✅ unwrap params
+//   const { topicId } = use(params);
+
+//   const { profile } = useProfileStore();
+
+//   const [lesson, setLesson] = useState<any>(null);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     async function load() {
+//       if (!profile?.schoolId || !topicId) return;
+
+//       try {
+//         const res = await getStudentLesson(topicId, profile.schoolId);
+
+//         if (res.success && res.data) {
+//           const transformed = transformLessonByRole(
+//             res.data.aiContent,
+//             "student"
+//           );
+
+//           setLesson({
+//             ...res.data,
+//             view: transformed,
+//           });
+//         }
+//       } catch (err) {
+//         console.error("Lesson load error:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     }
+
+//     load();
+//   }, [topicId, profile?.schoolId]); // ✅ FIXED dependency
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center bg-slate-950">
+//         <Loader2 className="h-8 w-8 animate-spin text-white" />
+//       </div>
+//     );
+//   }
+
+//   if (!lesson) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center text-slate-500">
+//         No lesson available
+//       </div>
+//     );
+//   }
+
+//   const view = lesson.view;
+
+//   return (
+//     <div className="p-6 max-w-4xl mx-auto text-white space-y-6">
+
+//       {/* HEADER */}
+//       <div>
+//         <h1 className="text-2xl font-black uppercase">
+//           {lesson.subject}
+//         </h1>
+//         <p className="text-slate-500 text-sm">{lesson.title}</p>
+//       </div>
+
+//       {/* SUMMARY */}
+//       <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+//         <h2 className="text-sm font-black uppercase mb-2">Summary</h2>
+//         <p className="text-slate-300 text-sm leading-relaxed">
+//           {view?.summary}
+//         </p>
+//       </div>
+
+//       {/* GUIDED NOTES */}
+//       <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+//         <h2 className="text-sm font-black uppercase mb-2">
+//           Key Notes
+//         </h2>
+//         <p className="text-slate-300 text-sm whitespace-pre-line">
+//           {view?.guidedNotes}
+//         </p>
+//       </div>
+
+//       {/* VISUAL AIDS */}
+//       {view?.visualAids?.length > 0 && (
+//         <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+//           <h2 className="text-sm font-black uppercase mb-3">
+//             Visual Aids
+//           </h2>
+
+//           <div className="grid gap-3">
+//             {view.visualAids.map((v: any, i: number) => (
+//               <div
+//                 key={i}
+//                 className="p-3 bg-slate-950 rounded-xl border border-white/5"
+//               >
+//                 <p className="text-sm text-slate-300">{v.title}</p>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+
+
 'use client'
 
 import { use, useEffect, useState } from "react"
 import { useProfileStore } from "@/store/profileStore"
-import { getLessonForTopic } from "@/app/actions/lesson.actions"
-import { AILessonPlanner, type EnhancedLessonContent } from "@/components/TeacherDashboard/ai-learning-planner"
-import { ArrowLeft, Loader2 } from "lucide-react"
-import Link from "next/link"
+import { Loader2 } from "lucide-react"
+
+import { getStudentLesson } from "@/app/actions/lesson.actions"
+import { transformLessonByRole } from "@/lib/lessons/transformLessons"
 
 interface PageProps {
-    params: Promise<{ topicId: string }>
+  params: Promise<{ topicId: string }>
+}
+
+type LessonView = {
+  summary?: string
+  guidedNotes?: string
+  visualAids?: any[]
+  quiz?: any[]
 }
 
 export default function StudentLessonPage({ params }: PageProps) {
-    const { topicId } = use(params)
-    const { profile, isLoading: isProfileLoading } = useProfileStore()
-    
-    const [lessonId, setLessonId] = useState<string>("")
-    const [lessonContent, setLessonContent] = useState<EnhancedLessonContent | null>(null)
-    const [loading, setLoading] = useState(true)
+  // ✅ FIX: properly unwrap Next.js async params
+  const { topicId } = use(params)
 
-    useEffect(() => {
-        if (!profile?.schoolId || !topicId) return
+  const { profile } = useProfileStore()
+  const schoolId = profile?.schoolId ?? ""
 
-        async function fetchContent() {
-            setLoading(true)
-            const res = await getLessonForTopic(topicId, profile!.schoolId!)
-            if (res.success && res.data) {
-                setLessonId(res.data.id)
-                setLessonContent(res.data.aiContent as unknown as EnhancedLessonContent)
-            }
-            setLoading(false)
+  const [lesson, setLesson] = useState<any>(null)
+  const [view, setView] = useState<LessonView | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  // ── Fetch Lesson ─────────────────────────────────────
+  useEffect(() => {
+    if (!schoolId || !topicId) return
+
+    async function loadLesson() {
+      setLoading(true)
+
+      try {
+        const res = await getStudentLesson(topicId, schoolId)
+
+        // ❗ No published lesson exists for this school/topic
+        if (!res.success || !res.data) {
+          setLesson(null)
+          setView(null)
+          return
         }
-        fetchContent()
-    }, [topicId, profile?.schoolId, profile])
 
-    if (isProfileLoading || loading) {
-        return (
-            <div className="h-screen flex flex-col items-center justify-center bg-slate-950">
-                <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
-                <p className="text-slate-500 font-mono text-[10px] mt-4 uppercase">Syncing_Study_Vault...</p>
-            </div>
+        const lessonData = res.data
+
+        // transform AI content for student view
+        const transformed = transformLessonByRole(
+          lessonData.aiContent,
+          "student"
         )
+
+        setLesson(lessonData)
+        setView(transformed)
+
+      } catch (err) {
+        console.error("Student lesson load error:", err)
+        setLesson(null)
+        setView(null)
+      } finally {
+        setLoading(false)
+      }
     }
 
-    return (
-        <div className="max-w-7xl mx-auto p-4 md:p-12 space-y-8 bg-slate-950 min-h-screen">
-            <Link href="/student" className="text-school-primary text-[10px] font-black uppercase flex items-center gap-2">
-                <ArrowLeft className="h-3 w-3" /> Back to HUB
-            </Link>
+    loadLesson()
+  }, [topicId, schoolId])
 
-            <AILessonPlanner 
-                topicId={topicId}
-                schoolId={profile!.schoolId!}
-                lessonId={lessonId}
-                topicTitle="Study Portal"
-                initialData={lessonContent}
-                mode="student" // ✅ PRO APPROACH: Same code, student view
-            />
-        </div>
+  // ── Loading State ─────────────────────────────────────
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+        <Loader2 className="h-8 w-8 animate-spin text-white" />
+      </div>
     )
+  }
+
+  // ── Empty State (IMPORTANT UX FIX) ────────────────────
+  if (!lesson || !view) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center text-slate-500 gap-2 px-6 text-center">
+        <p className="text-lg font-semibold">
+          Lesson not available yet
+        </p>
+        <p className="text-sm text-slate-600">
+          Your teacher has not published this lesson for your school.
+        </p>
+      </div>
+    )
+  }
+
+  // ── Main Render ───────────────────────────────────────
+  return (
+    <div className="p-6 max-w-4xl mx-auto text-white space-y-6">
+
+      {/* HEADER */}
+      <div>
+        <h1 className="text-2xl font-black uppercase">
+          {lesson?.subject || "Subject"}
+        </h1>
+        <p className="text-slate-500 text-sm">
+          {lesson?.title || "Lesson"}
+        </p>
+      </div>
+
+      {/* SUMMARY */}
+      <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+        <h2 className="text-sm font-black uppercase mb-2">
+          Summary
+        </h2>
+        <p className="text-slate-300 text-sm leading-relaxed">
+          {view?.summary}
+        </p>
+      </div>
+
+      {/* GUIDED NOTES */}
+      <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+        <h2 className="text-sm font-black uppercase mb-2">
+          Key Notes
+        </h2>
+        <p className="text-slate-300 text-sm whitespace-pre-line">
+          {view?.guidedNotes}
+        </p>
+      </div>
+
+      {/* VISUAL AIDS */}
+      {view?.visualAids?.length > 0 && (
+        <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+          <h2 className="text-sm font-black uppercase mb-3">
+            Visual Aids
+          </h2>
+
+          <div className="grid gap-3">
+            {view.visualAids.map((v: any, i: number) => (
+              <div
+                key={i}
+                className="p-3 bg-slate-950 rounded-xl border border-white/5"
+              >
+                <p className="text-sm text-slate-300">
+                  {v.title}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* QUIZ (optional future-safe rendering) */}
+      {view?.quiz?.length > 0 && (
+        <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+          <h2 className="text-sm font-black uppercase mb-3">
+            Quiz
+          </h2>
+
+          <div className="space-y-4">
+            {view.quiz.map((q: any, i: number) => (
+              <div
+                key={i}
+                className="p-4 bg-slate-950 rounded-xl border border-white/5"
+              >
+                <p className="text-sm font-semibold text-white mb-2">
+                  {q.question}
+                </p>
+
+                <div className="space-y-1">
+                  {q.options?.map((opt: string) => (
+                    <p
+                      key={opt}
+                      className={`text-xs px-3 py-2 rounded-md border ${
+                        opt === q.answer
+                          ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/5"
+                          : "border-white/5 text-slate-400"
+                      }`}
+                    >
+                      {opt}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+    </div>
+  )
 }

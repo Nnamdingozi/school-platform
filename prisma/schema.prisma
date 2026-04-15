@@ -4,9 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model School {
@@ -18,17 +17,18 @@ model School {
   whatsappCredits Int @default(0)
 
   // Relations
-  users                    Profile[]
-  classes                  Class[]
-  curricula                Curriculum[]              @relation("SchoolCurriculum")
-  grades                   Grade[]
-  terms                    Term[]
-  subjects                 Subject[]
-  topics                   Topic[]
-  classEnrollments         ClassEnrollment[]
-  feedbacks                Feedback[]
-  gradeSubjects            GradeSubject[]
-  lessons                  Lesson[]
+  users            Profile[]
+  classes          Class[]
+  curricula        Curriculum[]      @relation("SchoolCurriculum")
+  grades           Grade[]
+  terms            Term[]
+  subjects         Subject[]
+  topics           Topic[]
+  classEnrollments ClassEnrollment[]
+  feedbacks        Feedback[]
+  gradeSubjects    GradeSubject[]
+  schoolLessons    SchoolLesson[]
+
   ParentStudent            ParentStudent[]
   subscription             Subscription?
   activityLogs             ActivityLog[]
@@ -39,10 +39,11 @@ model School {
   creditTransactions       CreditTransaction[]
   subscriptionTransactions SubscriptionTransaction[]
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Question  Question[]
-  Exam      Exam[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Question     Question[]
+  Exam         Exam[]
+  GlobalLesson GlobalLesson[]
 }
 
 model Profile {
@@ -87,7 +88,7 @@ model Profile {
 
   subscription Subscription? @relation("ProfileSubscription")
   activityLogs ActivityLog[]
-  createdExams Exam[] @relation("ExamCreator")
+  createdExams Exam[]        @relation("ExamCreator")
 
   @@index([schoolId])
   @@index([curriculumId])
@@ -180,6 +181,7 @@ model Subject {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   gradeSubjects GradeSubject[]
+  ownershipType String         @default("GLOBAL")
   curriculum    Curriculum     @relation(fields: [curriculumId], references: [id])
   school        School?        @relation(fields: [schoolId], references: [id])
 
@@ -188,21 +190,22 @@ model Subject {
 }
 
 model Topic {
-  id             String       @id @default(uuid())
+  id             String         @id @default(uuid())
   title          String
   gradeSubjectId String
   termId         String
   schoolId       String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   description    String?
   weekNumber     Int?
   assessments    Assessment[]
-  lessons        Lesson[]
-  gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
-  school         School?      @relation(fields: [schoolId], references: [id])
-  term           Term         @relation(fields: [termId], references: [id])
+  gradeSubject   GradeSubject   @relation(fields: [gradeSubjectId], references: [id])
+  school         School?        @relation(fields: [schoolId], references: [id])
+  term           Term           @relation(fields: [termId], references: [id])
   Question       Question[]
+  GlobalLesson   GlobalLesson[]
+  SchoolLesson   SchoolLesson[]
 
   @@index([schoolId])
 }
@@ -275,35 +278,90 @@ model Assessment {
   @@index([schoolId])
 }
 
-model Lesson {
-  id          String   @id @default(uuid())
-  title       String
-  content     String? // The actual text content
-  topicId     String // Removed @unique
-  schoolId    String? // null = Global, uuid = School Private
-  aiContent   Json? // Structured AI data
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model GlobalLesson {
+  id String @id @default(uuid())
+
+  title    String
+  topicId  String
+  schoolId String? // null = global version
+
+  aiContent Json?
+
   videoScript String?
 
-  school School? @relation(fields: [schoolId], references: [id])
-  topic  Topic   @relation(fields: [topicId], references: [id])
-  quiz   Quiz?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  // ✅ This ensures one Global version AND one version per school only
+  school        School?        @relation(fields: [schoolId], references: [id])
+  topic         Topic          @relation(fields: [topicId], references: [id])
+  quiz          Quiz?
+  schoolLessons SchoolLesson[]
+
   @@unique([topicId, schoolId])
+  @@index([schoolId])
+  @@index([topicId])
+}
+
+model SchoolLesson {
+  id String @id @default(cuid())
+
+  topicId  String
+  schoolId String
+
+  globalLessonId String
+  globalLesson   GlobalLesson @relation(fields: [globalLessonId], references: [id])
+
+  // ✅ REQUIRED RELATIONS
+  school School @relation(fields: [schoolId], references: [id])
+  topic  Topic  @relation(fields: [topicId], references: [id])
+
+  // Customization
+  customContent Json?
+  customQuiz    Json?
+
+  status       LessonStatus @default(DRAFT)
+  isCustomized Boolean      @default(false)
+
+  // Versioning
+  versions LessonVersion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([topicId, schoolId])
+  @@index([schoolId])
+  @@index([topicId])
+}
+
+model LessonVersion {
+  id String @id @default(cuid())
+
+  schoolLessonId String
+  schoolLesson   SchoolLesson @relation(fields: [schoolLessonId], references: [id])
+
+  version Int
+
+  content Json
+
+  createdAt DateTime @default(now())
+
+  @@index([schoolLessonId])
 }
 
 model Quiz {
-  id            String         @id @default(uuid())
-  lessonId      String         @unique
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id       String @id @default(uuid())
+  lessonId String @unique
+
+  lesson GlobalLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
   quizQuestions QuizQuestion[]
-  lesson        Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // 1. The Independent Question Bank
+
 model Question {
   id            String           @id @default(uuid())
   text          String
@@ -328,19 +386,22 @@ model Question {
 
 // 2. The High-Stakes Exam Model
 model Exam {
-  id       String         @id @default(uuid())
-  title    String
-  type     AssessmentType // MID_TERM, END_OF_TERM
-  duration Int            @default(60) // minutes
-  status   ExamStatus     @default(DRAFT)
-  creatorId String    
-  schoolId String
-  classId  String
-  termId   String
+  id        String         @id @default(uuid())
+  title     String
+  type      AssessmentType // MID_TERM, END_OF_TERM
+  duration  Int            @default(60) // minutes
+  status    ExamStatus     @default(DRAFT)
+  creatorId String
+  schoolId  String
+  classId   String
+  termId    String
   creator   Profile        @relation("ExamCreator", fields: [creatorId], references: [id])
+  startTime DateTime?
+  endTime   DateTime?
 
   questions   ExamQuestion[]
   assessments Assessment[] // The actual student results
+  submissions ExamSubmission[]
 
   school School @relation(fields: [schoolId], references: [id])
   class  Class  @relation(fields: [classId], references: [id])
@@ -348,6 +409,39 @@ model Exam {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ExamSubmission {
+  id String @id @default(cuid())
+
+  examId    String
+  studentId String
+  classId   String
+
+  answers Json // [{questionId, selectedAnswer}]
+
+  score  Int? // computed after grading
+  total  Int?
+  status SubmissionStatus @default(SUBMITTED)
+
+  gradedAt  DateTime?
+  createdAt DateTime  @default(now())
+
+  exam             Exam               @relation(fields: [examId], references: [id])
+  SubmissionAnswer SubmissionAnswer[]
+}
+
+model SubmissionAnswer {
+  id String @id @default(cuid())
+
+  submissionId String
+  questionId   String
+
+  selected String
+  correct  Boolean
+  score    Int
+
+  submission ExamSubmission @relation(fields: [submissionId], references: [id])
 }
 
 // 3. Junction Tables
@@ -373,6 +467,15 @@ model ExamQuestion {
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([examId, questionId])
+}
+
+model ClassPerformance {
+  id      String @id @default(cuid())
+  classId String
+  examId  String
+
+  averageScore Float
+  passRate     Float
 }
 
 model Feedback {
@@ -625,4 +728,21 @@ enum ExamStatus {
   PUBLISHED
   COMPLETED
   ONGOING
+  SCHEDULED
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  GRADED
+}
+
+enum LessonStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum OwnershipType {
+  GLOBAL
+  SCHOOL
 }

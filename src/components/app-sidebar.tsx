@@ -668,10 +668,10 @@ export function AppSidebar() {
                 {isStudent && (
                     <>
                         <NavGroup label="Study Portal">
-                        <NavItem href="/classes" icon={Layers} label="My Class" />
-                            <NavItem href="/student/subjects" icon={BookOpen} label="My Subjects" />
-                            <NavItem href="/student/subjects/electives" icon={TableProperties} label="Pick Electives" />
-                            <NavItem href="/student/lessons" icon={FileText} label="Digital Lessons" />
+                        <NavItem href="/student/class" icon={Layers} label="My Class" />
+                            <NavItem href="/student/subject" icon={BookOpen} label="My Subjects" />
+                            <NavItem href="/student/subject/elective" icon={TableProperties} label="Pick Electives" />
+                            
                         </NavGroup>
                         <NavGroup label="Evaluations">
                             <NavItem href="/student/quizzes" icon={Trophy} label="AI Challenges" />

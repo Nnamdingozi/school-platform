@@ -821,20 +821,860 @@
 // }
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { AssessmentType, ExamStatus, QuestionCategory, Prisma } from '@prisma/client'
+// import { createGoogleGenerativeAI } from "@ai-sdk/google" 
+// import { GoogleGenerativeAI } from "@google/generative-ai"; 
+
+
+
+// import { z } from "zod"
+// import { revalidatePath } from 'next/cache'
+
+// const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "");
+
+ 
+// // export const runtime = 'edge'
+// // ── 1. Schemas ────────────────────────────────────────────────────────────────
+
+// const ExamQuestionsSchema = z.object({
+//   questions: z.array(z.object({
+//     text: z.string(),
+//     options: z.array(z.string()),
+//     correctAnswer: z.string(),
+//     explanation: z.string(),
+//   }))
+// })
+
+// export interface ExamGenerationConfig {
+//     title: string
+//     type: AssessmentType
+//     schoolId: string
+//     classIds: string[]
+//     teacherId: string
+//     termId: string
+//     topicIds: string[]
+//     totalQuestions: number
+//     reusePercentage: number 
+//     duration: number
+// }
+
+// export interface ExamRegistryItem {
+//     id: string
+//     title: string
+//     className: string
+//     status: string
+//     studentCount: number
+//     completedCount: number
+// }
+
+// // ── 2. AI Question Pool Generation (Groq Implementation) ──────────────────────
+
+
+
+
+
+
+// export async function buildExamPool(config: {
+//     topicIds: string[];
+//     totalQuestions: number;
+//     reusePercentage: number;
+//     schoolId: string;
+//   }) {
+//     console.log("🚀 [SERVER] Initializing Native Google AI Engine...");
+  
+//     try {
+//       const reuseCount = Math.floor(
+//         config.totalQuestions * (config.reusePercentage / 100)
+//       );
+//       const newCount = config.totalQuestions - reuseCount;
+//       let pool: any[] = [];
+  
+//       // 1️⃣ SOURCE REVISION QUESTIONS FROM DATABASE
+//       if (reuseCount > 0) {
+//         const existing = await prisma.question.findMany({
+//           where: {
+//             topicId: { in: config.topicIds },
+//             category: "PRACTICE",
+//             OR: [{ schoolId: config.schoolId }, { schoolId: null }],
+//           },
+//           take: reuseCount,
+//         });
+  
+//         pool.push(...existing.map((q) => ({ ...q, category: "REVISION" })));
+//       }
+  
+//       // 2️⃣ GENERATE NEW QUESTIONS (NATIVE GOOGLE SDK)
+//       if (newCount > 0) {
+//         const topics = await prisma.topic.findMany({
+//           where: { id: { in: config.topicIds } },
+//           select: { title: true },
+//         });
+  
+//         const context = topics.map((t) => t.title).join(", ");
+  
+//         // Configure the model directly
+//         const model = genAI.getGenerativeModel({ 
+//           model: "gemini-2.1-flash",
+//           // Forces Google to return JSON natively
+//           generationConfig: {
+//             responseMimeType: "application/json",
+//           }
+//         });
+  
+//         const prompt = `
+//           Act as a Senior WAEC/JAMB Examiner.
+//           Generate exactly ${newCount} high-quality multiple choice questions
+//           based on the Nigerian Secondary School curriculum for these topics: ${context}.
+  
+//           REQUIREMENTS:
+//           - Use Nigerian academic terminology (e.g., 'Full stop' not 'Period').
+//           - Exactly 4 options per question.
+//           - Provide a pedagogical explanation for the correct key.
+  
+//           OUTPUT FORMAT (JSON):
+//           {
+//             "questions": [
+//               {
+//                 "text": "The question string",
+//                 "options": ["Option A", "Option B", "Option C", "Option D"],
+//                 "correctAnswer": "The exact string from options",
+//                 "explanation": "Rationale"
+//               }
+//             ]
+//           }
+//         `;
+  
+//         // Speak directly to Google's API
+//         const result = await model.generateContent(prompt);
+//         const response = await result.response;
+//         const text = response.text();
+  
+//         // Parse and Validate the AI output
+//         let validated;
+//         try {
+//           const parsedData = JSON.parse(text);
+//           validated = ExamQuestionsSchema.parse(parsedData);
+//         } catch (parseErr) {
+//           console.error("JSON Parsing/Validation Error:", text);
+//           throw new Error("AI returned data in an incompatible format.");
+//         }
+  
+//         if (validated.questions) {
+//           const aiQuestions = validated.questions.map((q: any) => ({
+//             ...q,
+//             category: "NEW_AI",
+//           }));
+//           pool.push(...aiQuestions);
+//         }
+//       }
+  
+//       console.log(`✨ [SERVER] Pool synthesized with ${pool.length} total items.`);
+  
+//       // 3️⃣ PERSIST NEW AI QUESTIONS TO DATABASE
+//       if (pool.length > 0) {
+//         const newAiQuestionsOnly = pool.filter((q) => q.category === "NEW_AI");
+  
+//         if (newAiQuestionsOnly.length > 0) {
+//           await prisma.question.createMany({
+//             data: newAiQuestionsOnly.map((q) => ({
+//               text: q.text,
+//               options: q.options,
+//               correctAnswer: q.correctAnswer,
+//               explanation: q.explanation ?? null,
+//               points: 1,
+//               topicId: config.topicIds[0], // Linked to primary syllabus topic
+//               schoolId: config.schoolId,
+//               category: QuestionCategory.EXAM,
+//             })),
+//           });
+//         }
+//       }
+  
+//       return { success: true, questions: pool };
+  
+//     } catch (err: any) {
+//       console.error("❌ [SERVER] Native Google Failure:", err.message);
+  
+//       // Handle Quota Errors Specifically
+//       if (err.message.includes("429") || err.message.includes("quota")) {
+//           return {
+//             success: false,
+//             error: "API Limit reached. Please reduce question count or enable billing in Google AI Studio.",
+//           };
+//       }
+  
+//       return {
+//         success: false,
+//         error: getErrorMessage(err),
+//       };
+//     }
+//   }
+// /**
+//  * Fetches authorized assignments for the teacher.
+//  */
+// export async function getTeacherAuthorizedAssignments(teacherId: string, schoolId: string) {
+//     try {
+//         return await prisma.gradeSubject.findMany({
+//             where: {
+//                 AND: [
+//                     {
+//                         OR: [
+//                             { profileId: teacherId }, 
+//                             { teachers: { some: { id: teacherId } } }
+//                         ],
+//                     },
+//                     {
+//                         OR: [{ schoolId: null }, { schoolId: schoolId }],
+//                     }
+//                 ]
+//             },
+//             include: {
+//                 subject: { select: { name: true } },
+//                 grade: { select: { id: true, displayName: true } }
+//             },
+//             orderBy: { grade: { level: 'asc' } }
+//         });
+//     } catch (err) {
+//         return [];
+//     }
+// }
+
+// /**
+//  * Admin: Get Registry Stats
+//  */
+// export async function getAdminExamRegistry(schoolId: string) {
+//     try {
+//         const examsData = await prisma.exam.findMany({
+//             where: { schoolId },
+//             include: {
+//                 class: { include: { _count: { select: { enrollments: true } } } },
+//                 _count: { select: { assessments: true } }
+//             },
+//             orderBy: { createdAt: 'desc' }
+//         });
+
+//         const exams = examsData.map((e) => ({
+//             id: e.id,
+//             title: e.title,
+//             className: e.class.name,
+//             status: e.status,
+//             studentCount: e.class._count.enrollments,
+//             completedCount: e._count.assessments
+//         }));
+
+//         const totalExams = exams.length;
+//         const activeNow = exams.filter(e => e.status === 'PUBLISHED').length;
+//         const totalExpected = exams.reduce((acc, curr) => acc + curr.studentCount, 0);
+//         const totalActual = exams.reduce((acc, curr) => acc + curr.completedCount, 0);
+//         const completionRate = totalExpected > 0 ? Math.round((totalActual / totalExpected) * 100) : 0;
+
+//         return { success: true, stats: { totalExams, activeNow, completionRate }, exams };
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// /**
+//  * STUDENT: submit exam logic
+//  */
+// export async function submitExam(examId: string, studentId: string, schoolId: string, answers: Record<string, string>) {
+//     try {
+//         const exam = await prisma.exam.findUnique({
+//             where: { id: examId },
+//             include: { questions: { include: { question: true } } }
+//         })
+
+//         if (!exam) throw new Error("Exam offline.")
+
+//         let score = 0
+//         exam.questions.forEach((eq) => {
+//             if (answers[eq.questionId] === eq.question.correctAnswer) {
+//                 score += eq.question.points
+//             }
+//         })
+
+//         await prisma.assessment.create({
+//             data: {
+//                 type: exam.type,
+//                 score,
+//                 maxScore: exam.questions.length,
+//                 studentId,
+//                 schoolId,
+//                 gradeSubjectId: "GS_ID_PLACEHOLDER", 
+//                 comments: "Auto-graded"
+//             }
+//         })
+
+//         revalidatePath('/student/grades')
+//         return { success: true, score, maxScore: exam.questions.length }
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// export async function getClassesByGradeLevel(gradeId: string, schoolId: string) {
+//     try {
+//         return await prisma.class.findMany({
+//             where: { 
+//                 gradeId: gradeId,
+//                 schoolId: schoolId 
+//             },
+//             select: { id: true, name: true }
+//         });
+//     } catch (err) {
+//         return [];
+//     }
+// }
+
+
+
+// export async function getGroupedTopics(gradeSubjectId: string) {
+//     try {
+//         const terms = await prisma.term.findMany({
+//             where: { grade: { gradeSubjects: { some: { id: gradeSubjectId } } } },
+//             include: {
+//                 topics: {
+//                     where: { gradeSubjectId },
+//                     select: { id: true, title: true }
+//                 }
+//             },
+//             orderBy: { index: 'asc' }
+//         });
+//         return terms;
+//     } catch (err) {
+//         return [];
+//     }
+// }
+
+// export async function finalizeAndDeployExam(
+//     config: ExamGenerationConfig,
+//     verifiedQuestions: any[]
+//   ) {
+//     try {
+  
+//       const exams = await prisma.$transaction(async (tx) => {
+  
+//         // 1️⃣ Create Question Records
+//         const questionRecords = await Promise.all(
+//           verifiedQuestions.map((q) =>
+//             tx.question.create({
+//               data: {
+//                 text: q.text,
+//                 options: q.options as unknown as Prisma.InputJsonValue,
+//                 correctAnswer: q.correctAnswer,
+//                 explanation: q.explanation,
+//                 category: QuestionCategory.EXAM,
+//                 topicId: config.topicIds[0],
+//                 schoolId: config.schoolId
+//               }
+//             })
+//           )
+//         )
+  
+//         // 2️⃣ Create Exams for Each Class
+//         const createdExams = []
+  
+//         for (const classId of config.classIds) {
+  
+//           const exam = await tx.exam.create({
+//             data: {
+//               title: config.title,
+//               type: config.type,
+//               duration: config.duration,
+//               status: ExamStatus.PUBLISHED,
+//               schoolId: config.schoolId,
+//               classId: classId,
+//               creatorId: config.teacherId,
+//               termId: config.termId,
+//               questions: {
+//                 create: questionRecords.map((q, idx) => ({
+//                   questionId: q.id,
+//                   order: idx + 1
+//                 }))
+//               }
+//             }
+//           })
+  
+//           createdExams.push(exam)
+  
+//         }
+  
+//         return createdExams
+  
+//       }, { timeout: 30000 })
+  
+  
+//       revalidatePath('/teacher/assessment')
+  
+//       return {
+//         success: true,
+//         examIds: exams.map(e => e.id)
+//       }
+  
+//     } catch (err) {
+  
+//       return {
+//         success: false,
+//         error: getErrorMessage(err)
+//       }
+  
+//     }
+//   }
+
+
+// /**
+//  * Fetches all exams created for the teacher's assigned subjects.
+//  */
+// export async function getTeacherExamHistory(teacherId: string, schoolId: string) {
+//     try {
+//         return await prisma.exam.findMany({
+//             where: { 
+//                 schoolId,
+//                 creatorId: teacherId 
+//             },
+//             include: {
+//                 class: { select: { name: true } },
+//                 _count: { select: { questions: true } }
+//             },
+//             orderBy: { createdAt: 'desc' }
+//         });
+//     } catch (err) {
+//         return [];
+//     }
+// }
+
+// /**
+//  * Fetches the actual questions for a previously deployed exam.
+//  */
+// export async function getExamQuestions(examId: string) {
+//     try {
+//         const exam = await prisma.exam.findUnique({
+//             where: { id: examId },
+//             include: {
+//                 questions: {
+//                     include: { question: true },
+//                     orderBy: { order: 'asc' }
+//                 }
+//             }
+//         });
+//         // Map to the same format as our 'generatedPool' state
+//         return exam?.questions.map(q => q.question) || [];
+//     } catch (err) {
+//         return [];
+//     }
+// }
+
+
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { AssessmentType, ExamStatus, QuestionCategory, Prisma } from '@prisma/client'
+// import { createGoogleGenerativeAI } from '@ai-sdk/google'
+// import { generateObject } from 'ai'
+// import { z } from 'zod'
+// import { revalidatePath } from 'next/cache'
+
+// // ── Google AI client ───────────────────────────────────────────────────────────
+// // ✅ Use @ai-sdk/google wrapper — proper types, no manual JSON parsing needed
+// // ✅ Reads GOOGLE_GENERATIVE_AI_API_KEY from env automatically
+
+// const google = createGoogleGenerativeAI({
+//     apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY!,
+// })
+
+// // ── Schemas ────────────────────────────────────────────────────────────────────
+
+// const ExamQuestionsSchema = z.object({
+//     questions: z.array(z.object({
+//         text:          z.string(),
+//         options:       z.array(z.string()).length(4),
+//         correctAnswer: z.string(),
+//         explanation:   z.string(),
+//     })),
+// })
+
+// export interface ExamGenerationConfig {
+//     title:          string
+//     type:           AssessmentType
+//     schoolId:       string
+//     classIds:       string[]
+//     teacherId:      string
+//     termId:         string
+//     topicIds:       string[]
+//     totalQuestions: number
+//     reusePercentage: number
+//     duration:       number
+// }
+
+// // ── Build exam question pool ───────────────────────────────────────────────────
+
+// export async function buildExamPool(config: {
+//     topicIds:        string[]
+//     totalQuestions:  number
+//     reusePercentage: number
+//     schoolId:        string
+// }) {
+//     try {
+//         const reuseCount = Math.floor(
+//             config.totalQuestions * (config.reusePercentage / 100)
+//         )
+//         const newCount = config.totalQuestions - reuseCount
+//         let pool: any[] = []
+
+//         // ── 1. Source revision questions from DB ───────────────────────────
+//         if (reuseCount > 0) {
+//             const existing = await prisma.question.findMany({
+//                 where: {
+//                     topicId:  { in: config.topicIds },
+//                     category: 'PRACTICE',
+//                     OR: [
+//                         { schoolId: config.schoolId },
+//                         { schoolId: null },
+//                     ],
+//                 },
+//                 take: reuseCount,
+//             })
+
+//             pool.push(...existing.map(q => ({ ...q, category: 'REVISION' })))
+//         }
+
+//         // ── 2. Generate new questions via Gemini ───────────────────────────
+//         if (newCount > 0) {
+//             const topics = await prisma.topic.findMany({
+//                 where:  { id: { in: config.topicIds } },
+//                 select: { title: true },
+//             })
+
+//             const context = topics.map(t => t.title).join(', ')
+
+//             const prompt = `
+// Act as a Senior WAEC/JAMB Examiner for Nigerian Secondary Schools.
+// Generate exactly ${newCount} high-quality multiple choice questions
+// based on these topics: ${context}.
+
+// Requirements:
+// - Use Nigerian academic terminology (e.g., 'Full stop' not 'Period').
+// - Exactly 4 options per question labeled as plain strings (not A/B/C/D prefixed).
+// - The correctAnswer must be the exact string from the options array.
+// - Provide a clear pedagogical explanation for each correct answer.
+// - Questions should be appropriately challenging for secondary school level.
+//             `.trim()
+
+//             // ✅ generateObject handles JSON mode, schema validation and retries
+//             // ✅ gemini-2.5-flash is the correct current model (not gemini-2.1-flash)
+//             const { object } = await generateObject({
+//                 model:       google('gemini-2.5-flash'),
+//                 schema:      ExamQuestionsSchema,
+//                 prompt,
+//                 temperature: 0.7,
+//             })
+
+//             const aiQuestions = object.questions.map(q => ({
+//                 ...q,
+//                 category: 'NEW_AI',
+//             }))
+
+//             pool.push(...aiQuestions)
+//         }
+
+//         // ── 3. Persist new AI questions to DB ──────────────────────────────
+//         const newAiOnly = pool.filter(q => q.category === 'NEW_AI')
+
+//         if (newAiOnly.length > 0) {
+//             await prisma.question.createMany({
+//                 data: newAiOnly.map(q => ({
+//                     text:          q.text,
+//                     options:       q.options as unknown as Prisma.InputJsonValue,
+//                     correctAnswer: q.correctAnswer,
+//                     explanation:   q.explanation ?? null,
+//                     topicId:       config.topicIds[0],
+//                     schoolId:      config.schoolId,
+//                     category:      QuestionCategory.EXAM,
+//                 })),
+//                 skipDuplicates: true,
+//             })
+//         }
+
+//         return { success: true, questions: pool }
+
+//     } catch (err) {
+//         const message = getErrorMessage(err)
+//         console.error('buildExamPool error:', message)
+
+//         // Handle quota errors
+//         if (message.includes('429') || message.toLowerCase().includes('quota')) {
+//             return {
+//                 success: false,
+//                 error: 'API quota reached. Please reduce question count or check your Google AI billing.',
+//             }
+//         }
+
+//         // Handle model not found (clear message for the developer)
+//         if (message.includes('404') || message.toLowerCase().includes('not found')) {
+//             return {
+//                 success: false,
+//                 error: 'AI model not found. Check model name in the action file.',
+//             }
+//         }
+
+//         return { success: false, error: message }
+//     }
+// }
+
+// // ── Finalize and deploy exam ───────────────────────────────────────────────────
+
+// export async function finalizeAndDeployExam(
+//     config: ExamGenerationConfig,
+//     verifiedQuestions: any[]
+// ) {
+//     try {
+//         const exams = await prisma.$transaction(async tx => {
+
+//             // Create question records
+//             const questionRecords = await Promise.all(
+//                 verifiedQuestions.map(q =>
+//                     tx.question.create({
+//                         data: {
+//                             text:          q.text,
+//                             options:       q.options as unknown as Prisma.InputJsonValue,
+//                             correctAnswer: q.correctAnswer,
+//                             explanation:   q.explanation ?? null,
+//                             category:      QuestionCategory.EXAM,
+//                             topicId:       config.topicIds[0],
+//                             schoolId:      config.schoolId,
+//                         },
+//                     })
+//                 )
+//             )
+
+//             // Create one exam per class
+//             const createdExams = []
+
+//             for (const classId of config.classIds) {
+//                 const exam = await tx.exam.create({
+//                     data: {
+//                         title:    config.title,
+//                         type:     config.type,
+//                         duration: config.duration,
+//                         status:   ExamStatus.PUBLISHED,
+//                         schoolId: config.schoolId,
+//                         classId,
+//                         creatorId: config.teacherId,
+//                         termId:    config.termId,
+//                         questions: {
+//                             create: questionRecords.map((q, idx) => ({
+//                                 questionId: q.id,
+//                                 order:      idx + 1,
+//                             })),
+//                         },
+//                     },
+//                 })
+//                 createdExams.push(exam)
+//             }
+
+//             return createdExams
+
+//         }, { timeout: 30000 })
+
+//         revalidatePath('/teacher/assessment')
+
+//         return { success: true, examIds: exams.map(e => e.id) }
+
+//     } catch (err) {
+//         console.error('finalizeAndDeployExam error:', getErrorMessage(err))
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// // ── Submit exam ────────────────────────────────────────────────────────────────
+
+// export async function submitExam(
+//     examId:    string,
+//     studentId: string,
+//     schoolId:  string,
+//     answers:   Record<string, string>
+// ) {
+//     try {
+//         const exam = await prisma.exam.findUnique({
+//             where:   { id: examId },
+//             include: { questions: { include: { question: true } } },
+//         })
+
+//         if (!exam) return { success: false, error: 'Exam not found.' }
+
+//         let score = 0
+//         exam.questions.forEach(eq => {
+//             if (answers[eq.questionId] === eq.question.correctAnswer) {
+//                 score += eq.question.points
+//             }
+//         })
+
+//         // ⚠️ gradeSubjectId placeholder — wire this to the actual value
+//         // when calling submitExam, pass the gradeSubjectId from the exam context
+//         await prisma.assessment.create({
+//             data: {
+//                 type:           exam.type,
+//                 score,
+//                 maxScore:       exam.questions.length,
+//                 studentId,
+//                 schoolId,
+//                 gradeSubjectId: exam.gradeSubjectId ?? 'PLACEHOLDER',
+//                 comments:       'Auto-graded',
+//             },
+//         })
+
+//         revalidatePath('/student/grades')
+//         return { success: true, score, maxScore: exam.questions.length }
+
+//     } catch (err) {
+//         console.error('submitExam error:', getErrorMessage(err))
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// // ── Query helpers ──────────────────────────────────────────────────────────────
+
+// export async function getTeacherAuthorizedAssignments(teacherId: string, schoolId: string) {
+//     try {
+//         return await prisma.gradeSubject.findMany({
+//             where: {
+//                 AND: [
+//                     {
+//                         OR: [
+//                             { profileId: teacherId },
+//                             { teachers: { some: { id: teacherId } } },
+//                         ],
+//                     },
+//                     {
+//                         OR: [{ schoolId: null }, { schoolId }],
+//                     },
+//                 ],
+//             },
+//             include: {
+//                 subject: { select: { name: true } },
+//                 grade:   { select: { id: true, displayName: true } },
+//             },
+//             orderBy: { grade: { level: 'asc' } },
+//         })
+//     } catch (err) {
+//         console.error('getTeacherAuthorizedAssignments error:', getErrorMessage(err))
+//         return []
+//     }
+// }
+
+// export async function getAdminExamRegistry(schoolId: string) {
+//     try {
+//         const examsData = await prisma.exam.findMany({
+//             where:   { schoolId },
+//             include: {
+//                 class: { include: { _count: { select: { enrollments: true } } } },
+//                 _count: { select: { assessments: true } },
+//             },
+//             orderBy: { createdAt: 'desc' },
+//         })
+
+//         const exams = examsData.map(e => ({
+//             id:             e.id,
+//             title:          e.title,
+//             className:      e.class.name,
+//             status:         e.status,
+//             studentCount:   e.class._count.enrollments,
+//             completedCount: e._count.assessments,
+//         }))
+
+//         const totalExams     = exams.length
+//         const activeNow      = exams.filter(e => e.status === 'PUBLISHED').length
+//         const totalExpected  = exams.reduce((acc, curr) => acc + curr.studentCount, 0)
+//         const totalActual    = exams.reduce((acc, curr) => acc + curr.completedCount, 0)
+//         const completionRate = totalExpected > 0
+//             ? Math.round((totalActual / totalExpected) * 100)
+//             : 0
+
+//         return { success: true, stats: { totalExams, activeNow, completionRate }, exams }
+//     } catch (err) {
+//         console.error('getAdminExamRegistry error:', getErrorMessage(err))
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// export async function getClassesByGradeLevel(gradeId: string, schoolId: string) {
+//     try {
+//         return await prisma.class.findMany({
+//             where:  { gradeId, schoolId },
+//             select: { id: true, name: true },
+//         })
+//     } catch (err) {
+//         return []
+//     }
+// }
+
+// export async function getGroupedTopics(gradeSubjectId: string) {
+//     try {
+//         return await prisma.term.findMany({
+//             where: {
+//                 grade: { gradeSubjects: { some: { id: gradeSubjectId } } },
+//             },
+//             include: {
+//                 topics: {
+//                     where:  { gradeSubjectId },
+//                     select: { id: true, title: true },
+//                 },
+//             },
+//             orderBy: { index: 'asc' },
+//         })
+//     } catch (err) {
+//         return []
+//     }
+// }
+
+// export async function getTeacherExamHistory(teacherId: string, schoolId: string) {
+//     try {
+//         return await prisma.exam.findMany({
+//             where:   { schoolId, creatorId: teacherId },
+//             include: {
+//                 class: { select: { name: true } },
+//                 _count: { select: { questions: true } },
+//             },
+//             orderBy: { createdAt: 'desc' },
+//         })
+//     } catch (err) {
+//         return []
+//     }
+// }
+
+// export async function getExamQuestions(examId: string) {
+//     try {
+//         const exam = await prisma.exam.findUnique({
+//             where:   { id: examId },
+//             include: {
+//                 questions: {
+//                     include: { question: true },
+//                     orderBy: { order: 'asc' },
+//                 },
+//             },
+//         })
+//         return exam?.questions.map(q => q.question) ?? []
+//     } catch (err) {
+//         return []
+//     }
+// }
+
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
 import { AssessmentType, ExamStatus, QuestionCategory, Prisma } from '@prisma/client'
-import { createGoogleGenerativeAI } from "@ai-sdk/google" 
-import { GoogleGenerativeAI } from "@google/generative-ai"; 
-
-
-
+import { google } from "@ai-sdk/google"
+import { generateObject } from "ai"
 import { z } from "zod"
 import { revalidatePath } from 'next/cache'
-
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "");
 
  
 // export const runtime = 'edge'
@@ -860,6 +1700,9 @@ export interface ExamGenerationConfig {
     totalQuestions: number
     reusePercentage: number 
     duration: number
+    startTime: Date
+endTime: Date
+status: "SCHEDULED"
 }
 
 export interface ExamRegistryItem {
@@ -884,7 +1727,7 @@ export async function buildExamPool(config: {
     reusePercentage: number;
     schoolId: string;
   }) {
-    console.log("🚀 [SERVER] Initializing Native Google AI Engine...");
+    console.log("🚀 [SERVER] Initializing Google AI model...");
   
     try {
       const reuseCount = Math.floor(
@@ -907,7 +1750,7 @@ export async function buildExamPool(config: {
         pool.push(...existing.map((q) => ({ ...q, category: "REVISION" })));
       }
   
-      // 2️⃣ GENERATE NEW QUESTIONS (NATIVE GOOGLE SDK)
+      // 2️⃣ GENERATE NEW QUESTIONS (AI SDK + Google provider)
       if (newCount > 0) {
         const topics = await prisma.topic.findMany({
           where: { id: { in: config.topicIds } },
@@ -915,15 +1758,6 @@ export async function buildExamPool(config: {
         });
   
         const context = topics.map((t) => t.title).join(", ");
-  
-        // Configure the model directly
-        const model = genAI.getGenerativeModel({ 
-          model: "gemini-2.1-flash",
-          // Forces Google to return JSON natively
-          generationConfig: {
-            responseMimeType: "application/json",
-          }
-        });
   
         const prompt = `
           Act as a Senior WAEC/JAMB Examiner.
@@ -947,21 +1781,12 @@ export async function buildExamPool(config: {
             ]
           }
         `;
-  
-        // Speak directly to Google's API
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
-  
-        // Parse and Validate the AI output
-        let validated;
-        try {
-          const parsedData = JSON.parse(text);
-          validated = ExamQuestionsSchema.parse(parsedData);
-        } catch (parseErr) {
-          console.error("JSON Parsing/Validation Error:", text);
-          throw new Error("AI returned data in an incompatible format.");
-        }
+
+        const { object: validated } = await generateObject({
+          model: google("gemini-2.5-flash"),
+          schema: ExamQuestionsSchema,
+          prompt,
+        });
   
         if (validated.questions) {
           const aiQuestions = validated.questions.map((q: any) => ({
@@ -982,7 +1807,7 @@ export async function buildExamPool(config: {
           await prisma.question.createMany({
             data: newAiQuestionsOnly.map((q) => ({
               text: q.text,
-              options: q.options,
+              options: q.options as unknown as Prisma.InputJsonValue,
               correctAnswer: q.correctAnswer,
               explanation: q.explanation ?? null,
               points: 1,
@@ -996,11 +1821,12 @@ export async function buildExamPool(config: {
   
       return { success: true, questions: pool };
   
-    } catch (err: any) {
-      console.error("❌ [SERVER] Native Google Failure:", err.message);
+    } catch (err: unknown) {
+      const message = getErrorMessage(err);
+      console.error("❌ [SERVER] Google AI generation failure:", message);
   
       // Handle Quota Errors Specifically
-      if (err.message.includes("429") || err.message.includes("quota")) {
+      if (message.includes("429") || message.toLowerCase().includes("quota")) {
           return {
             success: false,
             error: "API Limit reached. Please reduce question count or enable billing in Google AI Studio.",
@@ -1009,7 +1835,7 @@ export async function buildExamPool(config: {
   
       return {
         success: false,
-        error: getErrorMessage(err),
+        error: message,
       };
     }
   }
@@ -1185,7 +2011,12 @@ export async function finalizeAndDeployExam(
               title: config.title,
               type: config.type,
               duration: config.duration,
-              status: ExamStatus.PUBLISHED,
+            
+              startTime: config.startTime,   // ✅ ADD THIS
+              endTime: config.endTime,       // ✅ ADD THIS
+            
+              status: ExamStatus.SCHEDULED,  // 🔥 IMPORTANT CHANGE (NOT PUBLISHED)
+            
               schoolId: config.schoolId,
               classId: classId,
               creatorId: config.teacherId,
@@ -1266,4 +2097,88 @@ export async function getExamQuestions(examId: string) {
     } catch (err) {
         return [];
     }
+}
+
+
+export async function getTopicsForClass(classId: string) {
+  try {
+      const klass = await prisma.class.findUnique({
+          where: { id: classId },
+          include: {
+              grade: {
+                  include: {
+                      gradeSubjects: {
+                          include: {
+                              topics: {
+                                  select: {
+                                      id: true,
+                                      title: true,
+                                      termId: true,
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      });
+
+      // Flatten all topics from all subjects belonging to this grade
+      const allTopics = klass?.grade.gradeSubjects.flatMap(gs => gs.topics) || [];
+      
+      return allTopics;
+  } catch (err) {
+      console.error("getTopicsForClass error:", getErrorMessage(err));
+      return [];
+  }
+}
+
+
+
+export async function deleteExam(examId: string, teacherId: string) {
+  try {
+    const exam = await prisma.exam.findUnique({
+      where: { id: examId },
+      include: {
+        _count: {
+          select: { assessments: true }
+        }
+      }
+    })
+
+    if (!exam) throw new Error("Exam not found")
+
+    // 🔒 SECURITY: Only creator can delete
+    if (exam.creatorId !== teacherId) {
+      throw new Error("Unauthorized")
+    }
+
+    // 🚫 PREVENT DELETE IF STUDENTS HAVE TAKEN IT
+    if (exam._count.assessments > 0) {
+      throw new Error("Cannot delete exam. Students have already taken it.")
+    }
+
+    await prisma.$transaction(async (tx) => {
+      // delete linking table first
+      await tx.examQuestion.deleteMany({
+        where: { examId }
+      })
+
+      // delete submissions (if any drafts exist)
+      await tx.examSubmission.deleteMany({
+        where: { examId }
+      })
+
+      // delete exam
+      await tx.exam.delete({
+        where: { id: examId }
+      })
+    })
+
+    revalidatePath("/teacher/assessment")
+
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: getErrorMessage(err) }
+  }
 }

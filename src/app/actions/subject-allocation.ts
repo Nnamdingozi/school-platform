@@ -1506,10 +1506,12 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { EnrollmentStatus, ActivityType } from '@prisma/client'
 import { logActivity } from '@/lib/activitylogger'
+import { classifyNigerianSubject } from '@/lib/curriculum/nigeria'
+
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-export type NigerianStream = 'science' | 'arts' | 'commercial' | 'general'
+export type NigerianStream = 'science' | 'arts' | 'commercial' | 'general' | 'trade'
 
 export interface SubjectAllocationData {
     isNigerianCurriculum: boolean
@@ -1556,17 +1558,6 @@ async function getCurriculumContext(schoolId: string) {
     return { isNigeria, curriculum: school?.curriculum };
 }
 
-function classifyNigerianSubject(subjectName: string, isJSS: boolean): { isCompulsory: boolean; stream: NigerianStream | null } {
-    if (isJSS) return { isCompulsory: true, stream: null }
-    const name = subjectName.toLowerCase()
-    const core = ['english', 'mathematics', 'maths', 'civic', 'economics', 'biology', 'data processing', 'marketing', 'trade']
-    const isCompulsory = core.some(c => name.includes(c))
-    let stream: NigerianStream | null = null
-    if (name.includes('physics') || name.includes('chemistry') || name.includes('further math')) stream = 'science'
-    else if (name.includes('literature') || name.includes('government') || name.includes('history') || name.includes('crs') || name.includes('irs')) stream = 'arts'
-    else if (name.includes('commerce') || name.includes('accounting')) stream = 'commercial'
-    return { isCompulsory, stream }
-}
 
 // ── Core Actions ──────────────────────────────────────────────────────────
 
@@ -1756,10 +1747,16 @@ export async function autoAllocateCompulsorySubjects(
             },
             include: { subject: { select: { name: true } } }
         });
+        const isJSS = cls.name.toLowerCase().includes('jss');
 
-        const coreKeywords = ['english', 'mathematics', 'maths', 'civic', 'economics', 'biology'];
         const compulsoryIds = gradeSubjects
-            .filter(gs => coreKeywords.some(kw => gs.subject.name.toLowerCase().includes(kw)))
+            .filter(gs => {
+                const { isCompulsory } = classifyNigerianSubject(
+                    gs.subject.name,
+                    isJSS
+                );
+                return isCompulsory;
+            })
             .map(gs => gs.id);
 
         if (compulsoryIds.length === 0) return { success: true, allocated: 0 };

@@ -322,6 +322,8 @@ type Config = {
   title: string;
   totalQuestions: number;
   duration: number;
+  startTime: string;
+  endTime?: string;
   reusePercentage: number; // The new field for the action
 };
 
@@ -434,11 +436,19 @@ export function SettingsSidebar({
             Mins
           </label>
           <input
-            type="number"
-            value={config.duration}
-            onChange={(e) => setConfig((prev) => ({ ...prev, duration: Number(e.target.value) }))}
             className="w-full bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-white font-mono text-xs focus:border-school-primary outline-none"
-          />
+         
+            type="datetime-local"
+            value={config.startTime}
+            onChange={(e) =>
+              setConfig((prev) => ({
+                ...prev,
+                startTime: e.target.value,
+              }))
+            }
+          
+         
+         />
         </div>
       </div>
 

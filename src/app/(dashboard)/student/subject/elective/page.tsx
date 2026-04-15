@@ -64,29 +64,37 @@ export default function StudentElectivePage() {
     // 1. Fetch available subjects for the student's current grade
     useEffect(() => {
         async function loadSubjects() {
-            // Find the student's active class ID
             if (!profile || !isTeacherProfile(profile)) return; 
-
-        // Now TypeScript knows 'classEnrollments' exists
-        const classId = profile.classEnrollments[0]?.classId;
-        const schoolId = profile.schoolId;
-
-        if (!classId || !schoolId) {
-            setLoading(false);
-            return;
-        }
-
+    
+            const classId = profile.classEnrollments[0]?.classId;
+            const schoolId = profile.schoolId;
+    
+            if (!classId || !schoolId) {
+                setLoading(false);
+                return;
+            }
+    
             try {
                 const res = await getClassSubjectAllocation(classId, schoolId);
                 if (res) {
                     setAvailableSubjects(res.availableSubjects);
-                    // Pre-fill with subjects student already has (if any)
+    
+                    // ✅ Get compulsory subjects
+                    const compulsoryIds = res.availableSubjects
+                        .filter(sub => sub.isCompulsory)
+                        .map(sub => sub.id);
+    
+                    // ✅ Existing student subjects
                     const existing = res.students.find(s => s.id === profile?.id)?.subjects || [];
-                    setSelected(existing);
+    
+                    // ✅ Merge (avoid duplicates)
+                    const merged = Array.from(new Set([...compulsoryIds, ...existing]));
+    
+                    setSelected(merged);
                 }
             } catch (err) {
                 toast.error("Failed to load academic catalog.");
-                getErrorMessage(err)
+                getErrorMessage(err);
             } finally {
                 setLoading(false);
             }
