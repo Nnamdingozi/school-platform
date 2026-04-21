@@ -485,193 +485,1316 @@
 
 
 
+// 'use client'
+
+// import { use, useEffect, useState } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { Loader2 } from "lucide-react"
+
+// import { getStudentLesson } from "@/app/actions/lesson.actions"
+// import { transformLesson } from "@/lib/lessons/transformLessons"
+
+// interface PageProps {
+//   params: Promise<{ topicId: string }>
+// }
+
+// type LessonView = {
+//   summary?: string
+//   guidedNotes?: string
+//   visualAids?: any[]
+//   quiz?: any[]
+// }
+
+// export default function StudentLessonPage({ params }: PageProps) {
+//   // ✅ FIX: properly unwrap Next.js async params
+//   const { topicId } = use(params)
+
+//   const { profile } = useProfileStore()
+//   const schoolId = profile?.schoolId ?? ""
+
+//   const [lesson, setLesson] = useState<any>(null)
+//   const [view, setView] = useState<LessonView | null>(null)
+//   const [loading, setLoading] = useState(true)
+
+//   // ── Fetch Lesson ─────────────────────────────────────
+//   useEffect(() => {
+//     if (!schoolId || !topicId) return
+
+//     async function loadLesson() {
+//       setLoading(true)
+
+//       try {
+//         const res = await getStudentLesson(topicId, schoolId)
+
+//         // ❗ No published lesson exists for this school/topic
+//         if (!res.success || !res.data) {
+//           setLesson(null)
+//           setView(null)
+//           return
+//         }
+
+//         const lessonData = res.data
+
+//         // transform AI content for student view
+//         const transformed = transformLessonByRole(
+//           lessonData.aiContent,
+//           "student"
+//         )
+
+//         setLesson(lessonData)
+//         setView(transformed)
+
+//       } catch (err) {
+//         console.error("Student lesson load error:", err)
+//         setLesson(null)
+//         setView(null)
+//       } finally {
+//         setLoading(false)
+//       }
+//     }
+
+//     loadLesson()
+//   }, [topicId, schoolId])
+
+//   // ── Loading State ─────────────────────────────────────
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center bg-slate-950">
+//         <Loader2 className="h-8 w-8 animate-spin text-white" />
+//       </div>
+//     )
+//   }
+
+//   // ── Empty State (IMPORTANT UX FIX) ────────────────────
+//   if (!lesson || !view) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center text-slate-500 gap-2 px-6 text-center">
+//         <p className="text-lg font-semibold">
+//           Lesson not available yet
+//         </p>
+//         <p className="text-sm text-slate-600">
+//           Your teacher has not published this lesson for your school.
+//         </p>
+//       </div>
+//     )
+//   }
+
+//   // ── Main Render ───────────────────────────────────────
+//   return (
+//     <div className="p-6 max-w-4xl mx-auto text-white space-y-6">
+
+//       {/* HEADER */}
+//       <div>
+//         <h1 className="text-2xl font-black uppercase">
+//           {lesson?.subject || "Subject"}
+//         </h1>
+//         <p className="text-slate-500 text-sm">
+//           {lesson?.title || "Lesson"}
+//         </p>
+//       </div>
+
+//       {/* SUMMARY */}
+//       <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+//         <h2 className="text-sm font-black uppercase mb-2">
+//           Summary
+//         </h2>
+//         <p className="text-slate-300 text-sm leading-relaxed">
+//           {view?.summary}
+//         </p>
+//       </div>
+
+//       {/* GUIDED NOTES */}
+//       <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+//         <h2 className="text-sm font-black uppercase mb-2">
+//           Key Notes
+//         </h2>
+//         <p className="text-slate-300 text-sm whitespace-pre-line">
+//           {view?.guidedNotes}
+//         </p>
+//       </div>
+
+//       {/* VISUAL AIDS */}
+//       {view?.visualAids?.length > 0 && (
+//         <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+//           <h2 className="text-sm font-black uppercase mb-3">
+//             Visual Aids
+//           </h2>
+
+//           <div className="grid gap-3">
+//             {view.visualAids.map((v: any, i: number) => (
+//               <div
+//                 key={i}
+//                 className="p-3 bg-slate-950 rounded-xl border border-white/5"
+//               >
+//                 <p className="text-sm text-slate-300">
+//                   {v.title}
+//                 </p>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       )}
+
+//       {/* QUIZ (optional future-safe rendering) */}
+//       {view?.quiz?.length > 0 && (
+//         <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
+//           <h2 className="text-sm font-black uppercase mb-3">
+//             Quiz
+//           </h2>
+
+//           <div className="space-y-4">
+//             {view.quiz.map((q: any, i: number) => (
+//               <div
+//                 key={i}
+//                 className="p-4 bg-slate-950 rounded-xl border border-white/5"
+//               >
+//                 <p className="text-sm font-semibold text-white mb-2">
+//                   {q.question}
+//                 </p>
+
+//                 <div className="space-y-1">
+//                   {q.options?.map((opt: string) => (
+//                     <p
+//                       key={opt}
+//                       className={`text-xs px-3 py-2 rounded-md border ${
+//                         opt === q.answer
+//                           ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/5"
+//                           : "border-white/5 text-slate-400"
+//                       }`}
+//                     >
+//                       {opt}
+//                     </p>
+//                   ))}
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       )}
+
+//     </div>
+//   )
+// }
+
+
+// 'use client'
+
+// import { use, useEffect, useState } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { Loader2, BookOpen, Layers, CheckCircle2 } from "lucide-react"
+
+// import { getStudentLesson } from "@/app/actions/lesson.actions"
+// import { transformLesson } from "@/lib/lessons/transformLessons"
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface VisualAid {
+//   title: string
+//   description: string
+//   imagePrompt: string
+//   url?: string
+// }
+
+// interface QuizQuestion {
+//   question: string
+//   options: string[]
+//   answer: string
+//   explanation: string
+// }
+
+// interface LessonView {
+//   summary: string
+//   guidedNotes: string
+//   visualAids: VisualAid[]
+//   quiz: QuizQuestion[]
+// }
+
+// interface LessonData {
+//   id: string
+//   title: string
+//   subject: string
+//   aiContent: Record<string, unknown> // Passing raw JSON to transform function
+// }
+
+// interface PageProps {
+//   params: Promise<{ topicId: string }>
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function StudentLessonPage({ params }: PageProps) {
+//   const { topicId } = use(params)
+
+//   const { profile } = useProfileStore()
+//   const schoolId: string = profile?.schoolId ?? ""
+
+//   const [lesson, setLesson] = useState<LessonData | null>(null)
+//   const [view, setView] = useState<LessonView | null>(null)
+//   const [loading, setLoading] = useState<boolean>(true)
+
+//   // ── Fetch Lesson ─────────────────────────────────────
+//   useEffect(() => {
+//     if (!schoolId || !topicId) return
+
+//     async function loadLesson() {
+//       setLoading(true)
+//       try {
+//         const res = await getStudentLesson(topicId, schoolId)
+
+//         if (!res.success || !res.data) {
+//           setLesson(null)
+//           setView(null)
+//           return
+//         }
+
+//         // Logic fix: Using transformLesson as imported from your lib
+//         const transformed: LessonView = transformLesson(
+//           res.data.aiContent,
+//           "student"
+//         )
+
+//         setLesson(res.data as LessonData)
+//         setView(transformed)
+
+//       } catch (err) {
+//         console.error("Student lesson load error:", err)
+//         setLesson(null)
+//         setView(null)
+//       } finally {
+//         setLoading(false)
+//       }
+//     }
+
+//     loadLesson()
+//   }, [topicId, schoolId])
+
+//   // ── Loading State ─────────────────────────────────────
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+//         <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
+//         <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest">
+//           Loading Registry File...
+//         </p>
+//       </div>
+//     )
+//   }
+
+//   // ── Empty State ───────────────────────────────────────
+//   if (!lesson || !view) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-slate-500 gap-4 px-6 text-center">
+//         <BookOpen className="h-12 w-12 text-slate-800" />
+//         <div className="space-y-1">
+//           <p className="text-lg font-black uppercase italic text-white">
+//             Lesson Unavailable
+//           </p>
+//           <p className="text-sm text-slate-600 max-w-xs mx-auto">
+//             Your instructor has not published the academic materials for this topic yet.
+//           </p>
+//         </div>
+//       </div>
+//     )
+//   }
+
+//   // ── Main Render ───────────────────────────────────────
+//   return (
+//     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-10">
+
+//       {/* HEADER */}
+//       <div className="border-b border-white/5 pb-8">
+//         <div className="flex items-center gap-3 text-school-primary mb-2">
+//             <Layers className="h-4 w-4" />
+//             <span className="text-[10px] font-black uppercase tracking-[0.3em]">{lesson.subject}</span>
+//         </div>
+//         <h1 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none">
+//           {lesson.title}
+//         </h1>
+//       </div>
+
+//       {/* SUMMARY */}
+//       <section className="space-y-4">
+//         <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//            <div className="h-1 w-4 bg-school-primary" /> Executive Summary
+//         </h2>
+//         <div className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
+//           <p className="text-slate-300 text-lg leading-loose italic">
+//             {view.summary}
+//           </p>
+//         </div>
+//       </section>
+
+//       {/* GUIDED NOTES */}
+//       <section className="space-y-4">
+//         <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//            <div className="h-1 w-4 bg-school-primary" /> Academic Notes
+//         </h2>
+//         <div className="bg-slate-900 p-8 rounded-[2rem] border border-white/5 shadow-2xl">
+//           <div className="text-slate-200 text-base whitespace-pre-line leading-relaxed font-medium">
+//             {view.guidedNotes}
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* VISUAL AIDS */}
+//       {view.visualAids.length > 0 && (
+//         <section className="space-y-4">
+//           <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//              <div className="h-1 w-4 bg-school-primary" /> Visual References
+//           </h2>
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//             {view.visualAids.map((v, i) => (
+//               <div
+//                 key={i}
+//                 className="p-6 bg-slate-950 rounded-3xl border border-white/5 hover:border-school-primary/20 transition-all group"
+//               >
+//                 <h4 className="text-sm font-black text-white uppercase italic mb-2">{v.title}</h4>
+//                 <p className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-400 transition-colors">
+//                   {v.description}
+//                 </p>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+
+//       {/* QUIZ SECTION */}
+//       {view.quiz.length > 0 && (
+//         <section className="space-y-6 pb-20">
+//           <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//              <div className="h-1 w-4 bg-school-primary" /> Knowledge Check
+//           </h2>
+
+//           <div className="space-y-4">
+//             {view.quiz.map((q, i) => (
+//               <div
+//                 key={i}
+//                 className="p-8 bg-slate-900/40 rounded-[2.5rem] border border-white/5 space-y-6"
+//               >
+//                 <div className="flex gap-4">
+//                     <span className="text-school-primary font-black text-lg italic">0{i+1}</span>
+//                     <p className="text-lg font-bold text-white tracking-tight leading-tight">
+//                         {q.question}
+//                     </p>
+//                 </div>
+
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-10">
+//                   {q.options.map((opt) => (
+//                     <div
+//                       key={opt}
+//                       className={cn(
+//                         "text-xs font-black uppercase px-5 py-4 rounded-xl border transition-all",
+//                         opt === q.answer
+//                           ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/5 shadow-inner"
+//                           : "border-white/5 text-slate-500 bg-slate-950/50"
+//                       )}
+//                     >
+//                       {opt}
+//                     </div>
+//                   ))}
+//                 </div>
+                
+//                 <div className="pl-10 pt-4 border-t border-white/5">
+//                     <p className="text-[10px] font-black uppercase text-slate-600 tracking-widest mb-1">Pedagogical Rationale</p>
+//                     <p className="text-xs text-slate-500 italic leading-relaxed">{q.explanation}</p>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+//     </div>
+//   )
+// }
+
+
+// 'use client'
+
+// import { use, useEffect, useState } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { Loader2, BookOpen, Layers} from "lucide-react"
+
+// import { getStudentLesson } from "@/app/actions/lesson.actions"
+// import { transformLesson } from "@/lib/lessons/transformLessons"
+// import { cn } from "@/lib/utils"
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface VisualAid {
+//   title: string
+//   description: string
+//   imagePrompt: string
+//   url?: string
+// }
+
+// interface QuizQuestion {
+//   question: string
+//   options: string[]
+//   answer: string
+//   explanation: string
+// }
+
+// interface LessonView {
+//   summary: string
+//   guidedNotes: string
+//   visualAids: VisualAid[]
+//   quiz: QuizQuestion[]
+// }
+
+// interface LessonData {
+//   id: string
+//   title: string
+//   subject: string
+//   aiContent: unknown // Using unknown for safer handling of raw JSON
+// }
+
+// interface PageProps {
+//   params: Promise<{ topicId: string }>
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function StudentLessonPage({ params }: PageProps) {
+//   // FIX: Properly unwrap async params using Next.js 'use' hook
+//   const { topicId } = use(params)
+
+//   const { profile } = useProfileStore()
+//   const schoolId: string = profile?.schoolId ?? ""
+
+//   // FIX: Explicitly typed state
+//   const [lesson, setLesson] = useState<LessonData | null>(null)
+//   const [view, setView] = useState<LessonView | null>(null)
+//   const [loading, setLoading] = useState<boolean>(true)
+
+//   // ── Fetch Lesson ─────────────────────────────────────
+//   useEffect(() => {
+//     if (!schoolId || !topicId) return
+
+//     async function loadLesson(): Promise<void> {
+//       setLoading(true)
+//       try {
+//         const res = await getStudentLesson(topicId, schoolId)
+
+//         if (!res.success || !res.data) {
+//           setLesson(null)
+//           setView(null)
+//           return
+//         }
+
+//         // FIX: Replaced any. Typed the incoming data and transformation.
+//         const lessonData = res.data as LessonData
+//         const transformed: LessonView = transformLesson(
+//           lessonData.aiContent,
+//           "student"
+//         )
+
+//         setLesson(lessonData)
+//         setView(transformed)
+
+//       } catch (err) {
+//         console.error("Student lesson load error:", err)
+//         setLesson(null)
+//         setView(null)
+//       } finally {
+//         setLoading(false)
+//       }
+//     }
+
+//     loadLesson()
+//   }, [topicId, schoolId])
+
+//   // ── Loading State ─────────────────────────────────────
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+//         <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
+//         <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest">
+//           Syncing Academic Assets...
+//         </p>
+//       </div>
+//     )
+//   }
+
+//   // ── Empty State ───────────────────────────────────────
+//   if (!lesson || !view) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-slate-500 gap-4 px-6 text-center">
+//         <BookOpen className="h-12 w-12 text-slate-800" />
+//         <div className="space-y-1">
+//           <p className="text-lg font-black uppercase italic text-white">
+//             Lesson Unavailable
+//           </p>
+//           <p className="text-sm text-slate-600 max-w-xs mx-auto leading-relaxed">
+//             Your instructor has not published the academic materials for this topic yet.
+//           </p>
+//         </div>
+//       </div>
+//     )
+//   }
+
+//   // ── Main Render ───────────────────────────────────────
+//   return (
+//     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-10">
+
+//       {/* HEADER */}
+//       <div className="border-b border-white/5 pb-8">
+//         <div className="flex items-center gap-3 text-school-primary mb-2">
+//             <Layers className="h-4 w-4" />
+//             <span className="text-[10px] font-black uppercase tracking-[0.3em]">{lesson.subject}</span>
+//         </div>
+//         <h1 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none">
+//           {lesson.title}
+//         </h1>
+//       </div>
+
+//       {/* SUMMARY */}
+//       <section className="space-y-4">
+//         <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//            <div className="h-1 w-4 bg-school-primary" /> Syllabus Summary
+//         </h2>
+//         <div className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
+//           <p className="text-slate-300 text-lg leading-loose italic">
+//             {view.summary}
+//           </p>
+//         </div>
+//       </section>
+
+//       {/* GUIDED NOTES */}
+//       <section className="space-y-4">
+//         <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//            <div className="h-1 w-4 bg-school-primary" /> Guided Academic Notes
+//         </h2>
+//         <div className="bg-slate-900 p-8 rounded-[2rem] border border-white/5 shadow-2xl">
+//           <div className="text-slate-200 text-base whitespace-pre-line leading-relaxed font-medium">
+//             {view.guidedNotes}
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* VISUAL AIDS */}
+//       {view.visualAids.length > 0 && (
+//         <section className="space-y-4">
+//           <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//              <div className="h-1 w-4 bg-school-primary" /> Visual References
+//           </h2>
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//             {view.visualAids.map((v: VisualAid, i: number) => (
+//               <div
+//                 key={i}
+//                 className="p-6 bg-slate-950 rounded-3xl border border-white/5 hover:border-school-primary/20 transition-all group"
+//               >
+//                 <h4 className="text-sm font-black text-white uppercase italic mb-2">{v.title}</h4>
+//                 <p className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-400 transition-colors">
+//                   {v.description}
+//                 </p>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+
+//       {/* QUIZ SECTION */}
+//       {view.quiz.length > 0 && (
+//         <section className="space-y-6 pb-20">
+//           <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//              <div className="h-1 w-4 bg-school-primary" /> Knowledge Check
+//           </h2>
+
+//           <div className="space-y-4">
+//             {view.quiz.map((q: QuizQuestion, i: number) => (
+//               <div
+//                 key={i}
+//                 className="p-8 bg-slate-900/40 rounded-[2.5rem] border border-white/5 space-y-6 shadow-lg"
+//               >
+//                 <div className="flex gap-4">
+//                     <span className="text-school-primary font-black text-lg italic">0{i+1}</span>
+//                     <p className="text-lg font-bold text-white tracking-tight leading-tight">
+//                         {q.question}
+//                     </p>
+//                 </div>
+
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-10">
+//                   {q.options.map((opt: string) => (
+//                     <div
+//                       key={opt}
+//                       className={cn(
+//                         "text-[10px] font-black uppercase px-5 py-4 rounded-xl border transition-all",
+//                         opt === q.answer
+//                           ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/5 shadow-inner"
+//                           : "border-white/5 text-slate-500 bg-slate-950/50"
+//                       )}
+//                     >
+//                       {opt}
+//                     </div>
+//                   ))}
+//                 </div>
+                
+//                 <div className="pl-10 pt-4 border-t border-white/5">
+//                     <p className="text-[10px] font-black uppercase text-slate-600 tracking-widest mb-1">Pedagogical Rationale</p>
+//                     <p className="text-xs text-slate-500 italic leading-relaxed">{q.explanation}</p>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+//     </div>
+//   )
+// }
+
+
+// 'use client'
+
+// import { use, useEffect, useState } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { Loader2, BookOpen, Layers } from "lucide-react"
+
+// import { getStudentLesson } from "@/app/actions/lesson.actions"
+// import { transformLesson } from "@/lib/lessons/transformLessons"
+// import { cn } from "@/lib/utils"
+
+// // ── Utility ──────────────────────────────────────────────────────────────────
+
+// /**
+//  * Safely extracts a message from an unknown error type
+//  */
+// function getErrorMessage(error: unknown): string {
+//   if (error instanceof Error) return error.message;
+//   if (error && typeof error === 'object' && 'message' in error) {
+//     return String((error as { message?: string }).message);
+//   }
+//   return typeof error === 'string' ? error : "An unknown error occurred";
+// }
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// /**
+//  * Matches the required object structure described in the build error.
+//  */
+// interface LessonAiContent {
+//   metadata: {
+//     topicContext: string;
+//     difficultyLevel: string;
+//   };
+//   teacherLogic: {
+//     teachingMethod: string;
+//     timeAllocation: string;
+//     pedagogicalTips: string;
+//     introductionHook: string;
+//   };
+//   studentContent: {
+//     title: string;
+//     learningObjectives: string[];
+//     explanation: string;
+//     summary: string;
+//     vocabulary: string[];
+//     quiz: Array<{
+//       question: string;
+//       options: string[];
+//       answer: string;
+//       explanation: string;
+//     }>;
+//   };
+// }
+
+// interface VisualAid {
+//   title: string
+//   description: string
+//   imagePrompt: string
+//   url?: string
+// }
+
+// interface QuizQuestion {
+//   question: string
+//   options: string[]
+//   answer: string
+//   explanation: string
+// }
+
+// interface LessonView {
+//   summary: string
+//   guidedNotes: string
+//   visualAids: VisualAid[]
+//   quiz: QuizQuestion[]
+// }
+
+// interface LessonDTO {
+//   summary: string;
+//   content?: string;
+//   explanation?: string;
+//   visualAids: VisualAid[];
+//   quiz: QuizQuestion[];
+// }
+
+// interface LessonData {
+//   id: string
+//   title: string
+//   subject: string
+//   aiContent: unknown 
+// }
+
+// interface PageProps {
+//   params: Promise<{ topicId: string }>
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function StudentLessonPage({ params }: PageProps) {
+//   const { topicId } = use(params)
+//   const { profile } = useProfileStore()
+//   const schoolId: string = profile?.schoolId ?? ""
+
+//   const [lesson, setLesson] = useState<LessonData | null>(null)
+//   const [view, setView] = useState<LessonView | null>(null)
+//   const [loading, setLoading] = useState<boolean>(true)
+
+//   useEffect(() => {
+//     if (!schoolId || !topicId) return
+
+//     async function loadLesson(): Promise<void> {
+//       setLoading(true)
+//       try {
+//         const res = await getStudentLesson(topicId, schoolId)
+
+//         if (!res.success || !res.data) {
+//           setLesson(null)
+//           setView(null)
+//           return
+//         }
+
+//         const lessonData = res.data as LessonData
+
+//         /**
+//          * RESOLUTION: Cast the unknown aiContent to our strict LessonAiContent interface.
+//          * Since Prisma returns Json, this is an object (not a string).
+//          */
+//         const aiContentObj = lessonData.aiContent as unknown as LessonAiContent;
+
+//         const dto = transformLesson(
+//           aiContentObj, 
+//           "student"
+//         ) as LessonDTO
+
+//         const transformed: LessonView = {
+//           summary: dto.summary,
+//           guidedNotes: dto.content || dto.explanation || "No additional notes provided.",
+//           visualAids: dto.visualAids || [],
+//           quiz: dto.quiz || []
+//         }
+
+//         setLesson(lessonData)
+//         setView(transformed)
+
+//       } catch (err) {
+//         console.error("Student lesson load error:", getErrorMessage(err))
+//         setLesson(null)
+//         setView(null)
+//       } finally {
+//         setLoading(false)
+//       }
+//     }
+
+//     loadLesson()
+//   }, [topicId, schoolId])
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+//         <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
+//         <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest">
+//           Syncing Academic Assets...
+//         </p>
+//       </div>
+//     )
+//   }
+
+//   if (!lesson || !view) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-slate-500 gap-4 px-6 text-center">
+//         <BookOpen className="h-12 w-12 text-slate-800" />
+//         <div className="space-y-1">
+//           <p className="text-lg font-black uppercase italic text-white">Lesson Unavailable</p>
+//           <p className="text-sm text-slate-600 max-w-xs mx-auto leading-relaxed">
+//             Your instructor has not published the academic materials for this topic yet.
+//           </p>
+//         </div>
+//       </div>
+//     )
+//   }
+
+//   return (
+//     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-10">
+//       <div className="border-b border-white/5 pb-8">
+//         <div className="flex items-center gap-3 text-school-primary mb-2">
+//             <Layers className="h-4 w-4" />
+//             <span className="text-[10px] font-black uppercase tracking-[0.3em]">{lesson.subject}</span>
+//         </div>
+//         <h1 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none">
+//           {lesson.title}
+//         </h1>
+//       </div>
+
+//       <section className="space-y-4">
+//         <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//            <div className="h-1 w-4 bg-school-primary" /> Syllabus Summary
+//         </h2>
+//         <div className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
+//           <p className="text-slate-300 text-lg leading-loose italic">{view.summary}</p>
+//         </div>
+//       </section>
+
+//       <section className="space-y-4">
+//         <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//            <div className="h-1 w-4 bg-school-primary" /> Guided Academic Notes
+//         </h2>
+//         <div className="bg-slate-900 p-8 rounded-[2rem] border border-white/5 shadow-2xl">
+//           <div className="text-slate-200 text-base whitespace-pre-line leading-relaxed font-medium">
+//             {view.guidedNotes}
+//           </div>
+//         </div>
+//       </section>
+
+//       {view.visualAids.length > 0 && (
+//         <section className="space-y-4">
+//           <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//              <div className="h-1 w-4 bg-school-primary" /> Visual References
+//           </h2>
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//             {view.visualAids.map((v, i) => (
+//               <div key={i} className="p-6 bg-slate-950 rounded-3xl border border-white/5 hover:border-school-primary/20 transition-all group">
+//                 <h4 className="text-sm font-black text-white uppercase italic mb-2">{v.title}</h4>
+//                 <p className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-400 transition-colors">
+//                   {v.description}
+//                 </p>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+
+//       {view.quiz.length > 0 && (
+//         <section className="space-y-6 pb-20">
+//           <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//              <div className="h-1 w-4 bg-school-primary" /> Knowledge Check
+//           </h2>
+//           <div className="space-y-4">
+//             {view.quiz.map((q, i) => (
+//               <div key={i} className="p-8 bg-slate-900/40 rounded-[2.5rem] border border-white/5 space-y-6 shadow-lg">
+//                 <div className="flex gap-4">
+//                     <span className="text-school-primary font-black text-lg italic">0{i+1}</span>
+//                     <p className="text-lg font-bold text-white tracking-tight leading-tight">{q.question}</p>
+//                 </div>
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-10">
+//                   {q.options.map((opt) => (
+//                     <div key={opt} className={cn(
+//                         "text-[10px] font-black uppercase px-5 py-4 rounded-xl border transition-all",
+//                         opt === q.answer ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/5 shadow-inner" : "border-white/5 text-slate-500 bg-slate-950/50"
+//                     )}>
+//                       {opt}
+//                     </div>
+//                   ))}
+//                 </div>
+//                 <div className="pl-10 pt-4 border-t border-white/5">
+//                     <p className="text-[10px] font-black uppercase text-slate-600 tracking-widest mb-1">Pedagogical Rationale</p>
+//                     <p className="text-xs text-slate-500 italic leading-relaxed">{q.explanation}</p>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+//     </div>
+//   )
+// }
+
+
+
+// 'use client'
+
+// import { use, useEffect, useState } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { Loader2, BookOpen, Layers } from "lucide-react"
+// import { getStudentLesson } from "@/app/actions/lesson.actions"
+// import { transformLesson } from "@/lib/lessons/transformLessons"
+// import { cn } from "@/lib/utils"
+// import { getErrorMessage } from "@/lib/error-handler"
+// import { type LessonAiContent } from "@/app/actions/ai-generator"
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface VisualAid {
+//   title: string;
+//   description: string;
+//   imagePrompt: string;
+// }
+
+// interface QuizQuestion {
+//   question: string;
+//   options: string[];
+//   answer: string;
+//   explanation: string;
+// }
+
+// interface LessonView {
+//   summary: string;
+//   guidedNotes: string;
+//   visualAids: VisualAid[];
+//   quiz: QuizQuestion[];
+// }
+
+// /**
+//  * Interface for the object returned by transformLesson
+//  */
+// interface LessonDTO {
+//   summary: string;
+//   explanation?: string;
+//   content?: string;
+//   visualAids: VisualAid[];
+//   quiz: QuizQuestion[];
+// }
+
+// interface StudentLessonData {
+//   id: string;
+//   subject: string;
+//   title: string;
+//   aiContent: LessonAiContent;
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function StudentLessonPage({ params }: { params: Promise<{ topicId: string }> }) {
+//   const { topicId } = use(params);
+//   const { profile } = useProfileStore();
+//   const schoolId = profile?.schoolId ?? "";
+
+//   const [lessonData, setLessonData] = useState<StudentLessonData | null>(null);
+//   const [view, setView] = useState<LessonView | null>(null);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     if (!schoolId || !topicId) return;
+
+//     async function loadLesson() {
+//       setLoading(true);
+//       try {
+//         const res = await getStudentLesson(topicId, schoolId);
+
+//         if (!res.success || !res.data) {
+//           setLessonData(null);
+//           setView(null); 
+//           return;
+//         }
+
+//         // res.data.aiContent is already an object of type LessonAiContent
+//         const rawContent = res.data.aiContent;
+
+//         /**
+//          * FIXED: Removed JSON.stringify.
+//          * Passing the object directly to satisfy the LessonAiContent requirement.
+//          */
+//         const dto = transformLesson(rawContent, "student") as LessonDTO;
+
+//         setLessonData(res.data as StudentLessonData);
+//         setView({
+//           summary: dto.summary,
+//           guidedNotes: dto.explanation || dto.content || "Notes unavailable.",
+//           visualAids: dto.visualAids || [],
+//           quiz: dto.quiz || []
+//         });
+
+//       } catch (err) {
+//         console.error("[LESSON_PAGE_LOAD_ERROR]:", getErrorMessage(err));
+//       } finally {
+//         setLoading(false);
+//       }
+//     }
+//     loadLesson();
+//   }, [topicId, schoolId]);
+
+//   if (loading) return (
+//     <div className="min-h-screen flex items-center justify-center bg-slate-950">
+//       <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
+//     </div>
+//   );
+
+//   if (!view || !lessonData) return (
+//     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-slate-500">
+//       <BookOpen className="h-12 w-12 mb-4" />
+//       <p className="text-lg font-black uppercase">Lesson Not Found</p>
+//     </div>
+//   );
+
+//   return (
+//     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-10">
+      
+//       {/* HEADER */}
+//       <div className="border-b border-white/5 pb-8">
+//         <div className="flex items-center gap-3 text-school-primary mb-2">
+//             <Layers className="h-4 w-4" />
+//             <span className="text-[10px] font-black uppercase tracking-[0.3em]">{lessonData.subject}</span>
+//         </div>
+//         <h1 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none">
+//             {lessonData.title}
+//         </h1>
+//       </div>
+      
+//       {/* SUMMARY */}
+//       <section className="space-y-4">
+//         <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//            <div className="h-1 w-4 bg-school-primary" /> Syllabus Summary
+//         </h2>
+//         <div className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
+//           <p className="text-slate-300 text-lg leading-loose italic">{view.summary}</p>
+//         </div>
+//       </section>
+
+//       {/* GUIDED NOTES */}
+//       <section className="space-y-4">
+//         <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//            <div className="h-1 w-4 bg-school-primary" /> Guided Academic Notes
+//         </h2>
+//         <div className="bg-slate-900 p-8 rounded-[2rem] border border-white/5 shadow-2xl text-slate-200 whitespace-pre-line leading-relaxed font-medium">
+//           {view.guidedNotes}
+//         </div>
+//       </section>
+
+//       {/* VISUAL AIDS */}
+//       {view.visualAids.length > 0 && (
+//         <section className="space-y-4">
+//           <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//              <div className="h-1 w-4 bg-school-primary" /> Visual References
+//           </h2>
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//             {view.visualAids.map((v, i) => (
+//               <div key={i} className="p-6 bg-slate-950 rounded-3xl border border-white/5">
+//                 <h4 className="text-sm font-black text-white mb-2 uppercase italic">{v.title}</h4>
+//                 <p className="text-xs text-slate-500 leading-relaxed">{v.description}</p>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+
+//       {/* QUIZ SECTION */}
+//       {view.quiz.length > 0 && (
+//         <section className="space-y-6 pb-20">
+//           <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//              <div className="h-1 w-4 bg-school-primary" /> Knowledge Check
+//           </h2>
+//           <div className="space-y-4">
+//             {view.quiz.map((q, i) => (
+//               <div key={i} className="p-8 bg-slate-900/40 rounded-[2.5rem] border border-white/5 space-y-6">
+//                 <div className="flex gap-4">
+//                     <span className="text-school-primary font-black text-lg italic">0{i+1}</span>
+//                     <p className="text-lg font-bold text-white tracking-tight">{q.question}</p>
+//                 </div>
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-10">
+//                   {q.options.map((opt) => (
+//                     <div key={opt} className={cn(
+//                         "text-[10px] font-black uppercase px-5 py-4 rounded-xl border",
+//                         opt === q.answer ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/5" : "border-white/5 text-slate-500 bg-slate-950/50"
+//                     )}>
+//                       {opt}
+//                     </div>
+//                   ))}
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+//     </div>
+//   );
+// }
+
+
 'use client'
 
 import { use, useEffect, useState } from "react"
 import { useProfileStore } from "@/store/profileStore"
-import { Loader2 } from "lucide-react"
-
+import { Loader2, BookOpen, Layers } from "lucide-react"
 import { getStudentLesson } from "@/app/actions/lesson.actions"
-import { transformLessonByRole } from "@/lib/lessons/transformLessons"
+// Import the helper and the DTO type correctly
+import { transformLesson, type LessonDTO } from "@/lib/lessons/transformLessons"
+import { cn } from "@/lib/utils"
+import { getErrorMessage } from "@/lib/error-handler"
+import { type LessonAiContent } from "@/app/actions/ai-generator"
 
-interface PageProps {
-  params: Promise<{ topicId: string }>
+// ── Types ───────────────────────────────────────────────────────────────────
+
+interface LessonView {
+  summary: string;
+  explanation: string;
+  visualAids: LessonDTO['visualAids'];
+  quiz: LessonDTO['quiz'];
+  objectives: string[];
 }
 
-type LessonView = {
-  summary?: string
-  guidedNotes?: string
-  visualAids?: any[]
-  quiz?: any[]
+interface StudentLessonData {
+  id: string;
+  subject: string;
+  title: string;
+  aiContent: LessonAiContent;
 }
 
-export default function StudentLessonPage({ params }: PageProps) {
-  // ✅ FIX: properly unwrap Next.js async params
-  const { topicId } = use(params)
+// ── Main Component ──────────────────────────────────────────────────────────
 
-  const { profile } = useProfileStore()
-  const schoolId = profile?.schoolId ?? ""
+export default function StudentLessonPage({ params }: { params: Promise<{ topicId: string }> }) {
+  const { topicId } = use(params);
+  const { profile } = useProfileStore();
+  const schoolId = profile?.schoolId ?? "";
 
-  const [lesson, setLesson] = useState<any>(null)
-  const [view, setView] = useState<LessonView | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [lessonData, setLessonData] = useState<StudentLessonData | null>(null);
+  const [view, setView] = useState<LessonView | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // ── Fetch Lesson ─────────────────────────────────────
   useEffect(() => {
-    if (!schoolId || !topicId) return
+    if (!schoolId || !topicId) return;
 
     async function loadLesson() {
-      setLoading(true)
-
+      setLoading(true);
       try {
-        const res = await getStudentLesson(topicId, schoolId)
+        const res = await getStudentLesson(topicId, schoolId);
 
-        // ❗ No published lesson exists for this school/topic
-        if (!res.success || !res.data) {
-          setLesson(null)
-          setView(null)
-          return
+        if (!res.success || !res.data || !res.data.aiContent) {
+          setLessonData(null);
+          setView(null); 
+          return;
         }
 
-        const lessonData = res.data
+        /**
+         * RESOLUTION:
+         * 1. Cast JsonValue to LessonAiContent safely.
+         * 2. Pass arguments in correct order: (topicId, aiContent).
+         */
+        const ai = res.data.aiContent as unknown as LessonAiContent;
+        const dto = transformLesson(topicId, ai);
 
-        // transform AI content for student view
-        const transformed = transformLessonByRole(
-          lessonData.aiContent,
-          "student"
-        )
+        setLessonData({
+            id: res.data.id,
+            subject: res.data.subject,
+            title: res.data.title,
+            aiContent: ai
+        });
 
-        setLesson(lessonData)
-        setView(transformed)
+        setView({
+          summary: dto.summary,
+          explanation: dto.explanation,
+          visualAids: dto.visualAids,
+          quiz: dto.quiz,
+          objectives: dto.learningObjectives
+        });
 
       } catch (err) {
-        console.error("Student lesson load error:", err)
-        setLesson(null)
-        setView(null)
+        console.error("[LESSON_PAGE_LOAD_ERROR]:", getErrorMessage(err));
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
+    loadLesson();
+  }, [topicId, schoolId]);
 
-    loadLesson()
-  }, [topicId, schoolId])
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-950">
+      <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
+    </div>
+  );
 
-  // ── Loading State ─────────────────────────────────────
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <Loader2 className="h-8 w-8 animate-spin text-white" />
-      </div>
-    )
-  }
+  if (!view || !lessonData) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-slate-500">
+      <BookOpen className="h-12 w-12 mb-4" />
+      <p className="text-lg font-black uppercase">Lesson Not Found</p>
+    </div>
+  );
 
-  // ── Empty State (IMPORTANT UX FIX) ────────────────────
-  if (!lesson || !view) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-slate-500 gap-2 px-6 text-center">
-        <p className="text-lg font-semibold">
-          Lesson not available yet
-        </p>
-        <p className="text-sm text-slate-600">
-          Your teacher has not published this lesson for your school.
-        </p>
-      </div>
-    )
-  }
-
-  // ── Main Render ───────────────────────────────────────
   return (
-    <div className="p-6 max-w-4xl mx-auto text-white space-y-6">
-
+    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-10 pb-20">
+      
       {/* HEADER */}
-      <div>
-        <h1 className="text-2xl font-black uppercase">
-          {lesson?.subject || "Subject"}
+      <div className="border-b border-white/5 pb-8">
+        <div className="flex items-center gap-3 text-school-primary mb-2">
+            <Layers className="h-4 w-4" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em]">{lessonData.subject}</span>
+        </div>
+        <h1 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none">
+            {lessonData.title}
         </h1>
-        <p className="text-slate-500 text-sm">
-          {lesson?.title || "Lesson"}
-        </p>
+      </div>
+      
+      {/* OBJECTIVES */}
+      <div className="flex flex-wrap gap-2">
+          {view.objectives.map((obj, i) => (
+              <span key={i} className="px-3 py-1 bg-school-primary/10 border border-school-primary/20 text-school-primary text-[10px] font-bold uppercase rounded-full">
+                  {obj}
+              </span>
+          ))}
       </div>
 
       {/* SUMMARY */}
-      <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
-        <h2 className="text-sm font-black uppercase mb-2">
-          Summary
+      <section className="space-y-4">
+        <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+           <div className="h-1 w-4 bg-school-primary" /> Executive Summary
         </h2>
-        <p className="text-slate-300 text-sm leading-relaxed">
-          {view?.summary}
-        </p>
-      </div>
+        <div className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
+          <p className="text-slate-300 text-lg leading-loose italic">{view.summary}</p>
+        </div>
+      </section>
 
-      {/* GUIDED NOTES */}
-      <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
-        <h2 className="text-sm font-black uppercase mb-2">
-          Key Notes
+      {/* EXPLANATION */}
+      <section className="space-y-4">
+        <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+           <div className="h-1 w-4 bg-school-primary" /> Lesson Content
         </h2>
-        <p className="text-slate-300 text-sm whitespace-pre-line">
-          {view?.guidedNotes}
-        </p>
-      </div>
+        <div className="bg-slate-900 p-8 rounded-[2.5rem] border border-white/5 shadow-2xl text-slate-200 whitespace-pre-line leading-relaxed font-medium">
+          {view.explanation}
+        </div>
+      </section>
 
       {/* VISUAL AIDS */}
-      {view?.visualAids?.length > 0 && (
-        <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
-          <h2 className="text-sm font-black uppercase mb-3">
-            Visual Aids
+      {view.visualAids.length > 0 && (
+        <section className="space-y-4">
+          <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+             <div className="h-1 w-4 bg-school-primary" /> Visual Aids
           </h2>
-
-          <div className="grid gap-3">
-            {view.visualAids.map((v: any, i: number) => (
-              <div
-                key={i}
-                className="p-3 bg-slate-950 rounded-xl border border-white/5"
-              >
-                <p className="text-sm text-slate-300">
-                  {v.title}
-                </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {view.visualAids.map((v, i) => (
+              <div key={i} className="p-6 bg-slate-950 rounded-3xl border border-white/5">
+                <h4 className="text-sm font-black text-white mb-2 uppercase italic">{v.title}</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">{v.description}</p>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* QUIZ (optional future-safe rendering) */}
-      {view?.quiz?.length > 0 && (
-        <div className="bg-slate-900 p-5 rounded-2xl border border-white/5">
-          <h2 className="text-sm font-black uppercase mb-3">
-            Quiz
+      {/* QUIZ SECTION */}
+      {view.quiz.length > 0 && (
+        <section className="space-y-6">
+          <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+             <div className="h-1 w-4 bg-school-primary" /> Knowledge Check
           </h2>
-
           <div className="space-y-4">
-            {view.quiz.map((q: any, i: number) => (
-              <div
-                key={i}
-                className="p-4 bg-slate-950 rounded-xl border border-white/5"
-              >
-                <p className="text-sm font-semibold text-white mb-2">
-                  {q.question}
-                </p>
-
-                <div className="space-y-1">
-                  {q.options?.map((opt: string) => (
-                    <p
-                      key={opt}
-                      className={`text-xs px-3 py-2 rounded-md border ${
-                        opt === q.answer
-                          ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/5"
-                          : "border-white/5 text-slate-400"
-                      }`}
-                    >
+            {view.quiz.map((q, i) => (
+              <div key={i} className="p-8 bg-slate-900/40 rounded-[2.5rem] border border-white/5 space-y-6">
+                <div className="flex gap-4">
+                    <span className="text-school-primary font-black text-lg italic">0{i+1}</span>
+                    <p className="text-lg font-bold text-white tracking-tight">{q.question}</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-10">
+                  {q.options.map((opt) => (
+                    <div key={opt} className={cn(
+                        "text-[10px] font-black uppercase px-5 py-4 rounded-xl border",
+                        opt === q.answer ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/5" : "border-white/5 text-slate-500 bg-slate-950/50"
+                    )}>
                       {opt}
-                    </p>
+                    </div>
                   ))}
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
-
     </div>
-  )
+  );
 }

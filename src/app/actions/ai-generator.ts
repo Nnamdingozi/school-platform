@@ -1619,6 +1619,470 @@
 // }
 
 
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { google } from "@ai-sdk/google";
+// import { generateObject } from "ai";
+// import { z } from "zod";
+// import { revalidatePath } from "next/cache";
+// import { Prisma, QuestionCategory } from "@prisma/client";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { transformLesson } from "@/lib/lessons/transformLessons";
+
+// /* ─────────────────────────────────────────────
+//    1. AI SCHEMA
+// ───────────────────────────────────────────── */
+
+// const LessonAiSchema = z.object({
+//   metadata: z.object({
+//     topicContext: z.string(),
+//     difficultyLevel: z.string(),
+//   }),
+
+//   teacherLogic: z.object({
+//     teachingMethod: z.string(),
+//     timeAllocation: z.string(),
+//     pedagogicalTips: z.string(),
+//     introductionHook: z.string(),
+//   }),
+
+//   studentContent: z.object({
+//     title: z.string(),
+//     learningObjectives: z.array(z.string()),
+//     explanation: z.string(),
+//     examples: z.array(
+//       z.object({
+//         task: z.string(),
+//         solution: z.string(),
+//       })
+//     ),
+//     visualAids: z.array(
+//       z.object({
+//         title: z.string(),
+//         description: z.string(),
+//         imagePrompt: z.string(),
+//         url: z.string().optional(),
+//       })
+//     ),
+//     summary: z.string(),
+//     vocabulary: z.array(z.string()),
+//     quiz: z.array(
+//       z.object({
+//         question: z.string(),
+//         options: z.array(z.string()),
+//         answer: z.string(),
+//         explanation: z.string(),
+//       })
+//     ),
+//   }),
+// });
+
+// export type LessonAiContent = z.infer<typeof LessonAiSchema>;
+
+// /* ─────────────────────────────────────────────
+//    2. GENERATOR ACTION
+// ───────────────────────────────────────────── */
+
+// export async function generateLessonForTopic(
+//   topicId: string,
+//   schoolId: string
+// ) {
+//   try {
+//     /* ── FETCH TOPIC ── */
+//     const topic = await prisma.topic.findFirst({
+//       where: {
+//         id: topicId,
+//         gradeSubject: {
+//           subject: {
+//             OR: [
+//               { schoolId: null },        // global subject
+//               { schoolId }               // school subject
+//             ]
+//           }
+//         }
+//       },
+//       include: {
+//         gradeSubject: {
+//           include: {
+//             grade: { include: { curriculum: true } },
+//             subject: true,
+//           },
+//         },
+//       },
+//     });
+
+//     if (!topic) throw new Error("Topic not found");
+
+//     const curriculum = topic.gradeSubject.grade.curriculum;
+//     const subjectName = topic.gradeSubject.subject.name;
+
+//     /* ── AI PROMPT ── */
+//     const prompt = `
+// You are an expert instructional designer for the ${curriculum.name} curriculum.
+
+// Generate a full lesson for:
+// - Topic: ${topic.title}
+// - Subject: ${subjectName}
+// - Level: ${topic.gradeSubject.grade.displayName}
+
+// Requirements:
+// - 1000+ word explanation
+// - 3 visual aids
+// - 10 quiz questions
+// `;
+
+//     /* ── AI GENERATION ── */
+//     const { object: aiContent } = await generateObject({
+//       model: google("gemini-2.5-flash"),
+//       schema: LessonAiSchema,
+//       prompt,
+//     });
+
+//     /* ── SAVE LESSON (TEACHER / ADMIN DATA) ── */
+//     const savedLesson = await prisma.$transaction(
+//       async (tx) => {
+//         const existingLesson = await tx.globalLesson.findUnique({
+//           where: {
+//             topicId_schoolId: {
+//               topicId,
+//               schoolId,
+//             },
+//           },
+//           select: { id: true },
+//         });
+
+//         if (existingLesson) {
+//           await tx.quizQuestion.deleteMany({
+//             where: { quiz: { lessonId: existingLesson.id } },
+//           });
+
+//           await tx.quiz.deleteMany({
+//             where: { lessonId: existingLesson.id },
+//           });
+//         }
+
+//         const lesson = await tx.globalLesson.upsert({
+//           where: {
+//             topicId_schoolId: {
+//               topicId,
+//               schoolId,
+//             },
+//           },
+//           update: {
+//             title: aiContent.studentContent.title,
+//             aicontent: aiContent.studentContent.explanation,
+//             aiContent: aiContent as unknown as Prisma.InputJsonValue,
+//           },
+//           create: {
+//             topicId,
+//             schoolId,
+//             title: aiContent.studentContent.title,
+//             content: aiContent.studentContent.explanation,
+//             aiContent: aiContent as unknown as Prisma.InputJsonValue,
+//           },
+//         });
+
+//         const quiz = await tx.quiz.create({
+//           data: { lessonId: lesson.id },
+//         });
+
+//         for (const [index, q] of aiContent.studentContent.quiz.entries()) {
+//           const question = await tx.question.create({
+//             data: {
+//               text: q.question,
+//               options: q.options as unknown as Prisma.InputJsonValue,
+//               correctAnswer: q.answer,
+//               explanation: q.explanation,
+//               topicId,
+//               schoolId,
+//               category: QuestionCategory.PRACTICE,
+//             },
+//           });
+
+//           await tx.quizQuestion.create({
+//             data: {
+//               quizId: quiz.id,
+//               questionId: question.id,
+//               order: index + 1,
+//             },
+//           });
+//         }
+
+//         return lesson;
+//       },
+//       {
+//         timeout: 60000,
+//         maxWait: 5000,
+//       }
+//     );
+
+//     /* ─────────────────────────────────────────────
+//        IMPORTANT: TRANSFORM LAYER (STUDENT VIEW)
+//     ───────────────────────────────────────────── */
+
+//     const lessonDTO = transformLesson(topicId, aiContent);
+
+//     /* ── CACHE INVALIDATION ── */
+//     revalidatePath(`/teacher/lessons/${topicId}`);
+//     revalidatePath(`/student/lessons/${topicId}`);
+//     revalidatePath(`/admin/lessons`);
+
+//     /* ── RETURN BOTH VIEWS ── */
+//     return {
+//       success: true,
+//       lesson: savedLesson,     // teacher/admin/raw DB
+//       lessonDTO,               // student-ready view
+//       aiContent,               // optional debug
+//     };
+//   } catch (err) {
+//     console.error("generateLessonForTopic failure:", err);
+
+//     return {
+//       success: false,
+//       error: getErrorMessage(err),
+//     };
+//   }
+// }
+
+
+
+
+
+
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { google } from "@ai-sdk/google";
+// import { generateObject } from "ai";
+// import { z } from "zod";
+// import { revalidatePath } from "next/cache";
+// import { Prisma, QuestionCategory } from "@prisma/client";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { transformLesson } from "@/lib/lessons/transformLessons";
+
+// /* ─────────────────────────────────────────────────────────────────────────────
+//    1. AI SCHEMA (LessonAiSchema)
+// ───────────────────────────────────────────────────────────────────────────── */
+
+// const LessonAiSchema = z.object({
+//   metadata: z.object({
+//     topicContext: z.string(),
+//     difficultyLevel: z.string(),
+//   }),
+
+//   teacherLogic: z.object({
+//     teachingMethod: z.string(),
+//     timeAllocation: z.string(),
+//     pedagogicalTips: z.string(),
+//     introductionHook: z.string(),
+//   }),
+
+//   studentContent: z.object({
+//     title: z.string(),
+//     learningObjectives: z.array(z.string()),
+//     explanation: z.string(),
+//     examples: z.array(
+//       z.object({
+//         task: z.string(),
+//         solution: z.string(),
+//       })
+//     ),
+//     visualAids: z.array(
+//       z.object({
+//         title: z.string(),
+//         description: z.string(),
+//         imagePrompt: z.string(),
+//         url: z.string().optional(),
+//       })
+//     ),
+//     summary: z.string(),
+//     vocabulary: z.array(z.string()),
+//     quiz: z.array(
+//       z.object({
+//         question: z.string(),
+//         options: z.array(z.string()),
+//         answer: z.string(),
+//         explanation: z.string(),
+//       })
+//     ),
+//   }),
+// });
+
+// /**
+//  * Type inferred from the Zod Schema to be used across the application.
+//  */
+// export type LessonAiContent = z.infer<typeof LessonAiSchema>;
+
+// /* ─────────────────────────────────────────────────────────────────────────────
+//    2. GENERATOR ACTION
+// ───────────────────────────────────────────────────────────────────────────── */
+
+// /**
+//  * Generates a comprehensive lesson using Google's AI and saves it to the
+//  * academic registry (GlobalLesson).
+//  */
+// export async function generateLessonForTopic(
+//   topicId: string,
+//   schoolId: string
+// ) {
+//   try {
+//     /* ── FETCH TOPIC METADATA ── */
+//     const topic = await prisma.topic.findFirst({
+//       where: {
+//         id: topicId,
+//       },
+//       include: {
+//         gradeSubject: {
+//           include: {
+//             grade: { include: { curriculum: true } },
+//             subject: true,
+//           },
+//         },
+//       },
+//     });
+
+//     if (!topic) {
+//         throw new Error("Target topic not found in academic registry.");
+//     }
+
+//     const curriculum = topic.gradeSubject.grade.curriculum;
+//     const subjectName = topic.gradeSubject.subject.name;
+
+//     /* ── AI PROMPT ── */
+//     const prompt = `
+// You are an expert instructional designer for the ${curriculum.name} curriculum.
+
+// Generate a full lesson for:
+// - Topic: ${topic.title}
+// - Subject: ${subjectName}
+// - Level: ${topic.gradeSubject.grade.displayName}
+
+// Requirements:
+// - 1000+ word explanation
+// - 3 visual aids
+// - 10 quiz questions
+// `;
+
+//     /* ── AI GENERATION ── */
+//     // aiContent here is automatically typed as LessonAiContent because of the schema
+//     const { object: aiContent } = await generateObject({
+//       model: google("gemini-1.5-flash"), 
+//       schema: LessonAiSchema,
+//       prompt,
+//     });
+
+//     /* ── DATABASE TRANSACTION ── */
+//     const savedGlobalLesson = await prisma.$transaction(
+//       async (tx) => {
+//         // 1. Identify existing content
+//         const existingGlobal = await tx.globalLesson.findUnique({
+//           where: {
+//             topicId_schoolId: {
+//               topicId,
+//               schoolId,
+//             },
+//           },
+//           select: { id: true, quiz: { select: { id: true } } },
+//         });
+
+//         // 2. Clean up previous quiz links if regenerating
+//         if (existingGlobal?.quiz) {
+//           await tx.quizQuestion.deleteMany({
+//             where: { quizId: existingGlobal.quiz.id },
+//           });
+//           await tx.quiz.deleteMany({
+//             where: { id: existingGlobal.quiz.id },
+//           });
+//         }
+
+//         // 3. Upsert GlobalLesson
+//         const lesson = await tx.globalLesson.upsert({
+//           where: {
+//             topicId_schoolId: {
+//               topicId,
+//               schoolId,
+//             },
+//           },
+//           update: {
+//             title: aiContent.studentContent.title,
+//             aiContent: aiContent as unknown as Prisma.InputJsonValue,
+//           },
+//           create: {
+//             topicId,
+//             schoolId,
+//             title: aiContent.studentContent.title,
+//             aiContent: aiContent as unknown as Prisma.InputJsonValue,
+//           },
+//         });
+
+//         // 4. Create the Quiz shell
+//         const quiz = await tx.quiz.create({
+//           data: { lessonId: lesson.id },
+//         });
+
+//         // 5. Generate Independent Questions and Link to Quiz
+//         for (const [index, q] of aiContent.studentContent.quiz.entries()) {
+//           const question = await tx.question.create({
+//             data: {
+//               text: q.question,
+//               options: q.options as unknown as Prisma.InputJsonValue,
+//               correctAnswer: q.answer,
+//               explanation: q.explanation,
+//               topicId,
+//               schoolId,
+//               category: QuestionCategory.PRACTICE,
+//             },
+//           });
+
+//           await tx.quizQuestion.create({
+//             data: {
+//               quizId: quiz.id,
+//               questionId: question.id,
+//               order: index + 1,
+//             },
+//           });
+//         }
+
+//         return lesson;
+//       },
+//       {
+//         timeout: 60000, 
+//         maxWait: 10000,
+//       }
+//     );
+
+//     /* ── TRANSFORM FOR STUDENT VIEW ── */
+//     /**
+//      * FIXED: Pass aiContent (the object) directly.
+//      * transformLesson is typed to accept the LessonAiContent object shape.
+//      */
+//     const lessonDTO = transformLesson(aiContent, "student");
+
+//     /* ── CACHE INVALIDATION ── */
+//     revalidatePath(`/teacher/lessons/${topicId}`);
+//     revalidatePath(`/student/lessons/${topicId}`);
+//     revalidatePath(`/admin/lessons`);
+
+//     return {
+//       success: true,
+//       lesson: savedGlobalLesson,
+//       lessonDTO,
+//       aiContent,
+//     };
+
+//   } catch (err) {
+//     console.error("[AI_GENERATOR_ERROR]:", getErrorMessage(err));
+
+//     return {
+//       success: false,
+//       error: getErrorMessage(err),
+//     };
+//   }
+// }
+
+
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -1630,9 +2094,9 @@ import { Prisma, QuestionCategory } from "@prisma/client";
 import { getErrorMessage } from "@/lib/error-handler";
 import { transformLesson } from "@/lib/lessons/transformLessons";
 
-/* ─────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
    1. AI SCHEMA
-───────────────────────────────────────────── */
+───────────────────────────────────────────────────────────────────────────── */
 
 const LessonAiSchema = z.object({
   metadata: z.object({
@@ -1680,28 +2144,17 @@ const LessonAiSchema = z.object({
 
 export type LessonAiContent = z.infer<typeof LessonAiSchema>;
 
-/* ─────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
    2. GENERATOR ACTION
-───────────────────────────────────────────── */
+───────────────────────────────────────────────────────────────────────────── */
 
 export async function generateLessonForTopic(
   topicId: string,
   schoolId: string
 ) {
   try {
-    /* ── FETCH TOPIC ── */
     const topic = await prisma.topic.findFirst({
-      where: {
-        id: topicId,
-        gradeSubject: {
-          subject: {
-            OR: [
-              { schoolId: null },        // global subject
-              { schoolId }               // school subject
-            ]
-          }
-        }
-      },
+      where: { id: topicId },
       include: {
         gradeSubject: {
           include: {
@@ -1712,135 +2165,97 @@ export async function generateLessonForTopic(
       },
     });
 
-    if (!topic) throw new Error("Topic not found");
+    if (!topic) throw new Error("Target topic not found.");
 
     const curriculum = topic.gradeSubject.grade.curriculum;
     const subjectName = topic.gradeSubject.subject.name;
-
-    /* ── AI PROMPT ── */
     const prompt = `
-You are an expert instructional designer for the ${curriculum.name} curriculum.
+    You are an expert instructional designer for the ${curriculum.name} curriculum.
+    
+    Generate a full lesson for:
+    - Topic: ${topic.title}
+    - Subject: ${subjectName}
+    - Level: ${topic.gradeSubject.grade.displayName}
+    
+    Requirements:
+    - 1000+ word explanation
+    - 3 visual aids
+    - 10 quiz questions
+    `;
 
-Generate a full lesson for:
-- Topic: ${topic.title}
-- Subject: ${subjectName}
-- Level: ${topic.gradeSubject.grade.displayName}
-
-Requirements:
-- 1000+ word explanation
-- 3 visual aids
-- 10 quiz questions
-`;
-
-    /* ── AI GENERATION ── */
     const { object: aiContent } = await generateObject({
-      model: google("gemini-2.5-flash"),
+      model: google("gemini-1.5-flash"), 
       schema: LessonAiSchema,
-      prompt,
+      prompt: prompt
     });
 
-    /* ── SAVE LESSON (TEACHER / ADMIN DATA) ── */
-    const savedLesson = await prisma.$transaction(
-      async (tx) => {
-        const existingLesson = await tx.lesson.findUnique({
-          where: {
-            topicId_schoolId: {
-              topicId,
-              schoolId,
-            },
-          },
-          select: { id: true },
-        });
+    const savedGlobalLesson = await prisma.$transaction(async (tx) => {
+      const existingGlobal = await tx.globalLesson.findUnique({
+        where: { topicId_schoolId: { topicId, schoolId } },
+        select: { id: true, quiz: { select: { id: true } } },
+      });
 
-        if (existingLesson) {
-          await tx.quizQuestion.deleteMany({
-            where: { quiz: { lessonId: existingLesson.id } },
-          });
+      if (existingGlobal?.quiz) {
+        await tx.quizQuestion.deleteMany({ where: { quizId: existingGlobal.quiz.id } });
+        await tx.quiz.deleteMany({ where: { id: existingGlobal.quiz.id } });
+      }
 
-          await tx.quiz.deleteMany({
-            where: { lessonId: existingLesson.id },
-          });
-        }
+      const lesson = await tx.globalLesson.upsert({
+        where: { topicId_schoolId: { topicId, schoolId } },
+        update: {
+          title: aiContent.studentContent.title,
+          aiContent: aiContent as unknown as Prisma.InputJsonValue,
+        },
+        create: {
+          topicId,
+          schoolId,
+          title: aiContent.studentContent.title,
+          aiContent: aiContent as unknown as Prisma.InputJsonValue,
+        },
+      });
 
-        const lesson = await tx.lesson.upsert({
-          where: {
-            topicId_schoolId: {
-              topicId,
-              schoolId,
-            },
-          },
-          update: {
-            title: aiContent.studentContent.title,
-            content: aiContent.studentContent.explanation,
-            aiContent: aiContent as unknown as Prisma.InputJsonValue,
-          },
-          create: {
+      const quiz = await tx.quiz.create({ data: { lessonId: lesson.id } });
+
+      for (const [index, q] of aiContent.studentContent.quiz.entries()) {
+        const question = await tx.question.create({
+          data: {
+            text: q.question,
+            options: q.options as unknown as Prisma.InputJsonValue,
+            correctAnswer: q.answer,
+            explanation: q.explanation,
             topicId,
             schoolId,
-            title: aiContent.studentContent.title,
-            content: aiContent.studentContent.explanation,
-            aiContent: aiContent as unknown as Prisma.InputJsonValue,
+            category: QuestionCategory.PRACTICE,
           },
         });
 
-        const quiz = await tx.quiz.create({
-          data: { lessonId: lesson.id },
+        await tx.quizQuestion.create({
+          data: {
+            quizId: quiz.id,
+            questionId: question.id,
+            order: index + 1,
+          },
         });
-
-        for (const [index, q] of aiContent.studentContent.quiz.entries()) {
-          const question = await tx.question.create({
-            data: {
-              text: q.question,
-              options: q.options as unknown as Prisma.InputJsonValue,
-              correctAnswer: q.answer,
-              explanation: q.explanation,
-              topicId,
-              schoolId,
-              category: QuestionCategory.PRACTICE,
-            },
-          });
-
-          await tx.quizQuestion.create({
-            data: {
-              quizId: quiz.id,
-              questionId: question.id,
-              order: index + 1,
-            },
-          });
-        }
-
-        return lesson;
-      },
-      {
-        timeout: 60000,
-        maxWait: 5000,
       }
-    );
+      return lesson;
+    });
 
-    /* ─────────────────────────────────────────────
-       IMPORTANT: TRANSFORM LAYER (STUDENT VIEW)
-    ───────────────────────────────────────────── */
-
+    /**
+     * FIXED: The action signature for transformLesson expects:
+     * (topicId: string, content: LessonAiContent)
+     */
     const lessonDTO = transformLesson(topicId, aiContent);
 
-    /* ── CACHE INVALIDATION ── */
-    revalidatePath(`/teacher/lessons/${topicId}`);
     revalidatePath(`/student/lessons/${topicId}`);
-    revalidatePath(`/admin/lessons`);
 
-    /* ── RETURN BOTH VIEWS ── */
     return {
       success: true,
-      lesson: savedLesson,     // teacher/admin/raw DB
-      lessonDTO,               // student-ready view
-      aiContent,               // optional debug
+      lesson: savedGlobalLesson,
+      lessonDTO,
+      aiContent,
     };
-  } catch (err) {
-    console.error("generateLessonForTopic failure:", err);
 
-    return {
-      success: false,
-      error: getErrorMessage(err),
-    };
+  } catch (err) {
+    return { success: false, error: getErrorMessage(err) };
   }
 }

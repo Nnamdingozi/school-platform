@@ -881,6 +881,1560 @@
 
 
 
+// "use client"
+
+// import { useState, useEffect, useTransition } from "react"
+// import ReactMarkdown from "react-markdown"
+// import Image from "next/image"
+// import { 
+//     Sparkles, ImageIcon, FileText, HelpCircle, Zap, 
+//     Loader2, Edit3, Save, Layout, 
+//     type LucideIcon 
+// } from "lucide-react"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Button } from "@/components/ui/button"
+// import { toast } from "sonner"
+// import { cn } from "@/lib/utils"
+
+// // Actions
+// import { generateLessonForTopic } from "@/app/actions/ai-generator" 
+// import { generateDiagramImage } from "@/app/actions/generate-diagram" 
+// import { saveGeneratedImageUrlToLesson } from "@/app/actions/lesson-image-action" 
+// import { getErrorMessage } from "@/lib/error-handler"
+// import { publishLesson } from "@/app/actions/lesson.actions"
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// export interface VisualAid {
+//   title: string;
+//   description: string;
+//   imagePrompt: string;
+//   url?: string; 
+// }
+
+// // ✅ FIX: Synchronized with the Zod schema in ai-generator.ts
+// export interface EnhancedLessonContent {
+//   metadata: {
+//       topicContext: string;
+//       difficultyLevel: string;
+//   };
+//   teacherLogic: {
+//       teachingMethod: string;
+//       timeAllocation: string;
+//       pedagogicalTips: string;
+//       introductionHook: string;
+//   };
+//   studentContent: {
+//       title: string;
+//       explanation: string;
+//       summary: string; // ✅ Renamed from key_summary to match schema
+//       learningObjectives: string[];
+//       vocabulary: string[];
+//       visualAids: VisualAid[]; 
+//       examples: { // ✅ Added missing examples property
+//           task: string;
+//           solution: string;
+//       }[];
+//       quiz: {
+//           question: string;
+//           options: string[];
+//           answer: string;
+//           explanation: string;
+//       }[];
+//   };
+// }
+
+// interface AILessonPlannerProps {
+//   topicId: string;
+//   lessonId: string; 
+//   topicTitle: string;
+//   schoolId: string;
+//   initialData?: EnhancedLessonContent | null;
+//   mode?: "teacher" | "student";
+// }
+
+// // ── Main Component ─────────────────────────────────────────────────────────────
+
+// export function AILessonPlanner({ 
+//     topicId, 
+//     lessonId, 
+//     topicTitle, 
+//     schoolId, 
+//     initialData,
+//     mode = "teacher" 
+// }: AILessonPlannerProps) {
+  
+//   const isTeacher = mode === "teacher";
+//   const [activeTab, setActiveTab] = useState<string>("explanation")
+//   const [isGenerating, setIsGenerating] = useState(false)
+//   const [isEditing, setIsEditing] = useState(false)
+//   const [isPending, startTransition] = useTransition()
+  
+//   const [data, setData] = useState<EnhancedLessonContent | null>(initialData || null)
+//   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({})
+
+//   useEffect(() => {
+//     setData(initialData || null)
+//     setIsEditing(false)
+//   }, [topicId, initialData])
+
+//   // ── Handlers ───────────────────────────────────────────────────────────
+
+//   const handleGenerate = async () => {
+//     if (!isTeacher) return;
+  
+//     setIsGenerating(true)
+  
+//     try {
+//       const res = await generateLessonForTopic(topicId, schoolId)
+  
+//       if (!res.success) {
+//         toast.error(res.error ?? "Lesson generation failed")
+//         return
+//       }
+  
+//       if (res.aiContent) {
+//         setData(res.aiContent as EnhancedLessonContent)
+//         toast.success("AI Generation Complete")
+//       }
+  
+//     } catch (err) {
+//       console.error(err)
+//       toast.error(getErrorMessage(err))
+//     } finally {
+//       setIsGenerating(false)
+//     }
+//   }
+
+//   const handleManualSave = () => {
+//     if (!data) return;
+  
+//     startTransition(async () => {
+//       const res = await publishLesson({
+//         topicId,
+//         schoolId,
+//         content: data
+//       });
+  
+//       if (res.success) {
+//         toast.success("Lesson published successfully");
+//         setIsEditing(false);
+//       }
+//     });
+//   };
+  
+//   const handleGenerateImage = async (index: number, prompt: string) => {
+//     if (!isTeacher || loadingImages[index] || (data?.studentContent.visualAids[index]?.url)) return;
+//     setLoadingImages(prev => ({ ...prev, [index]: true }))
+//     try {
+//       const result = await generateDiagramImage(prompt) 
+//       if (result.success && result.url) {
+//         setData(current => {
+//           if (!current) return null;
+//           const updated = [...current.studentContent.visualAids];
+//           updated[index] = { ...updated[index], url: result.url };
+//           return { ...current, studentContent: { ...current.studentContent, visualAids: updated } };
+//         });
+//         await saveGeneratedImageUrlToLesson(lessonId, index, result.url);
+//         toast.success("Asset bound to registry.");
+//       }
+//     } finally {
+//       setLoadingImages(prev => ({ ...prev, [index]: false }))
+//     }
+//   }
+
+// if (!data) {
+// return (
+// <div className="py-20 text-center bg-slate-900 rounded-[3rem] border border-white/5 space-y-6 shadow-2xl">
+
+// <div className="h-20 w-20 bg-school-primary/10 rounded-full flex items-center justify-center mx-auto text-school-primary border border-school-primary/20">
+// <Sparkles className="h-10 w-10 animate-pulse" />
+// </div>
+
+// <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">
+// Registry Standby
+// </h3>
+
+// <p className="text-sm text-slate-400 uppercase tracking-widest">
+// Topic
+// </p>
+
+// <p className="text-xl font-black text-school-primary uppercase italic tracking-tight">
+// {topicTitle}
+// </p>
+
+// {isTeacher && (
+// <Button
+// onClick={handleGenerate}
+// disabled={isGenerating}
+// className="bg-school-primary text-slate-950 font-black px-10 py-7 rounded-2xl hover:text-slate-300"
+// >
+// {isGenerating ? (
+// <>
+// <Loader2 className="animate-spin mr-2" />
+// GENERATING LESSON FOR {topicTitle.toUpperCase()}
+// </>
+// ) : (
+// <>
+// <Sparkles className="mr-2 h-5 w-5" />
+// GENERATE LESSON
+// </>
+// )}
+// </Button>
+// )}
+
+// </div>
+// )
+// }
+//   return (
+//     <Card className="border-white/5 bg-slate-200 shadow-2xl overflow-hidden rounded-[2.5rem] flex flex-col">
+//       <CardHeader className="bg-slate-950/50 border-b border-white/5 p-8">
+//         <div className="flex items-center justify-between gap-4">
+//           <div className="flex-1 min-w-0">
+//              <div className="flex items-center gap-3 mb-1">
+//                 <Layout className="h-5 w-5 text-school-primary" />
+//                 <CardTitle className="text-2xl font-black text-white uppercase italic tracking-tighter truncate">
+//                     {data.studentContent.title}
+//                 </CardTitle>
+//              </div>
+//              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{topicTitle}</p>
+//           </div>
+          
+//           {isTeacher && (
+//             <div className="flex items-center gap-3 shrink-0">
+//               {!isEditing ? (
+//                   <Button variant="outline" onClick={() => setIsEditing(true)} className="border-white/10 text-slate-400">
+//                       <Edit3 className="h-4 w-4 mr-2" /> Edit
+//                   </Button>
+//               ) : (
+//                   <div className="flex gap-2">
+//                       <Button variant="ghost" onClick={() => setIsEditing(false)} className="text-slate-500">Cancel</Button>
+//                       <Button onClick={handleManualSave} disabled={isPending} className="bg-school-primary text-slate-950 font-black rounded-xl">
+//                           {isPending ? <Loader2 className="animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+//                           SYNC
+//                       </Button>
+//                   </div>
+//               )}
+//             </div>
+//           )}
+//         </div>
+//       </CardHeader>
+      
+//       <CardContent className="p-8 flex-1">
+//         <div className="flex flex-wrap gap-2 mb-10 bg-slate-400 p-1.5 text-gray-200 rounded-2xl w-fit border border-white/5 shadow-inner">
+//             <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Lesson Notes" />
+//             {isTeacher && <TabButton active={activeTab === "pedagogy"} onClick={() => setActiveTab("pedagogy")} icon={Zap} label="Strategy" />}
+//             <TabButton active={activeTab === "visuals"} onClick={() => setActiveTab("visuals")} icon={ImageIcon} label="Visuals" />
+//             <TabButton active={activeTab === "quiz"} onClick={() => setActiveTab("quiz")} icon={HelpCircle} label="Quiz Ref" />
+//         </div>
+
+//         <div className="min-h-[500px]">
+//         {activeTab === "explanation" && (
+//     <div className="space-y-6">
+//         {isEditing ? (
+//             <textarea 
+//                 className="w-full h-[600px] bg-slate-950 border border-school-primary rounded-[2rem] p-8 text-slate-100 outline-none transition-all font-medium"
+//                 value={data.studentContent.explanation}
+//                 onChange={(e) => setData({...data, studentContent: {...data.studentContent, explanation: e.target.value}})}
+//             />
+//         ) : (
+//             /* FIX: Enhanced visibility with text-slate-100 and higher contrast prose */
+//             <ReactMarkdown
+//                     components={{
+//                       // ✅ FIX: Omitted 'node' from props to resolve unused var warning
+//                       h1: ({ ...props }) => <h1 className="text-3xl font-extrabold text-amber-700 border-b-2 border-amber-200 pb-2 mb-6 mt-2" {...props} />,
+//                       h2: ({ ...props }) => <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4 flex items-center gap-2" {...props} />,
+//                       h3: ({ ...props }) => <h3 className="text-xl font-bold text-amber-800 mt-6 mb-3" {...props} />,
+//                       p: ({ ...props }) => <p className="text-slate-700 leading-relaxed mb-4 text-sm" {...props} />,
+//                       ul: ({ ...props }) => <ul className="list-disc pl-6 mb-4 text-slate-700 space-y-2" {...props} />,
+//                       ol: ({ ...props }) => <ol className="list-decimal pl-6 mb-4 text-slate-700 space-y-2" {...props} />,
+//                       li: ({ ...props }) => <li className="pl-1 marker:text-amber-500" {...props} />,
+//                       strong: ({ ...props }) => <strong className="font-bold text-slate-900" {...props} />,
+//                       blockquote: ({ ...props }) => <blockquote className="border-l-4 border-amber-400 pl-4 py-1 my-4 bg-amber-50/50 italic text-slate-700 rounded-r" {...props} />,
+//                     }}
+//                   >
+//                     {data.studentContent.explanation}
+//                   </ReactMarkdown>
+//         )}
+//     </div>
+// )}
+
+//             {/* Pedagogy Tab (Teacher Only) */}
+//             {activeTab === "pedagogy" && isTeacher && (
+//                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+//                     <PedagogyCard title="Instructional Method" value={data.teacherLogic.teachingMethod} icon={Zap} />
+//                     <PedagogyCard title="Classroom Hook" value={data.teacherLogic.introductionHook} icon={Sparkles} />
+//                 </div>
+//             )}
+
+//             {/* Visuals Tab */}
+//             {activeTab === "visuals" && (
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//                     {data.studentContent.visualAids.map((aid, idx) => (
+//                         <Card key={idx} className="bg-slate-950 border-white/5 rounded-[2rem] overflow-hidden group shadow-xl transition-all">
+//                             <div className="p-6 border-b border-white/5">
+//                                 <h4 className="text-sm font-bold text-white uppercase italic">{aid.title}</h4>
+//                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">{aid.description}</p>
+//                             </div>
+//                             <div className="relative aspect-video flex flex-col items-center justify-center p-2">
+//                                 {aid.url ? (
+//                                     <Image src={aid.url} alt={aid.title} fill className="object-cover rounded-2xl opacity-90 transition-opacity" unoptimized />
+//                                 ) : (
+//                                     <div className="text-center space-y-4">
+//                                         <ImageIcon className="h-10 w-10 text-slate-800 mx-auto" />
+//                                         {isTeacher && (
+//                                             <Button onClick={() => handleGenerateImage(idx, aid.imagePrompt)} disabled={loadingImages[idx]} className="bg-slate-900 border border-white/10 hover:bg-school-primary hover:text-slate-950 transition-all rounded-xl">
+//                                                 {loadingImages[idx] ? <Loader2 className="animate-spin h-4 w-4" /> : "Generate Diagram"}
+//                                             </Button>
+//                                         )}
+//                                     </div>
+//                                 )}
+//                             </div>
+//                         </Card>
+//                     ))}
+//                 </div>
+//             )}
+
+//             {/* Quiz Tab */}
+//             {activeTab === "quiz" && (
+//                 <div className="max-w-3xl mx-auto space-y-6">
+//                     {data.studentContent.quiz.map((q, i) => (
+//                         <div key={i} className="p-8 bg-slate-950 rounded-[2rem] border border-white/5 space-y-4 shadow-xl">
+//                             <p className="text-xs font-black text-school-primary uppercase tracking-widest">Question 0{i+1}</p>
+//                             <p className="text-base font-bold text-white leading-relaxed">{q.question}</p>
+//                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+//                                 {q.options.map(opt => (
+//                                     <div key={opt} className={cn(
+//                                         "p-4 rounded-xl border text-xs font-medium",
+//                                         opt === q.answer ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-400" : "border-white/5 bg-slate-900/50 text-slate-500"
+//                                     )}>
+//                                         {opt}
+//                                     </div>
+//                                 ))}
+//                             </div>
+//                         </div>
+//                     ))}
+//                 </div>
+//             )}
+//         </div>
+//       </CardContent>
+//     </Card>
+//   )
+// }
+
+// function TabButton({ active, onClick, icon: Icon, label }: { active: boolean, onClick: () => void, icon: LucideIcon, label: string }) {
+//   return (
+//     <Button
+//       variant="ghost"
+//       onClick={onClick}
+//       className={cn(
+//           "gap-2 px-6 h-11 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+//           active ? "bg-school-primary text-slate-950 shadow-lg" : "text-slate-500 hover:text-white"
+//       )}
+//     >
+//       <Icon className="h-4 w-4" />
+//       {label}
+//     </Button>
+//   )
+// }
+
+// function PedagogyCard({ title, value, icon: Icon }: { title: string, value: string, icon: LucideIcon }) {
+//     return (
+//         <Card className="bg-slate-950 border-white/5 p-8 rounded-[2rem] shadow-inner space-y-4">
+//             <div className="flex items-center gap-3">
+//                 <div className="p-2 bg-white/5 rounded-lg text-slate-50"><Icon className="h-4 w-4" /></div>
+//                 <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{title}</h5>
+//             </div>
+//             <p className="text-lg font-bold text-white uppercase italic tracking-tight">{value}</p>
+//         </Card>
+//     )
+// }
+
+
+
+// "use client"
+
+// import { useState, useEffect, useTransition } from "react"
+// import ReactMarkdown from "react-markdown"
+// import Image from "next/image"
+// import { 
+//     Sparkles, ImageIcon, FileText, HelpCircle, Zap, 
+//     Loader2, Edit3, Save, Layout, ListChecks, 
+//     Book, Clock, Lightbulb, GraduationCap,
+//     type LucideIcon 
+// } from "lucide-react"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Button } from "@/components/ui/button"
+// import { Badge } from "@/components/ui/badge"
+// import { toast } from "sonner"
+// import { cn } from "@/lib/utils"
+
+// // Actions
+// import { generateLessonForTopic } from "@/app/actions/ai-generator" 
+// import { generateDiagramImage } from "@/app/actions/generate-diagram" 
+// import { saveGeneratedImageUrlToLesson } from "@/app/actions/lesson-image-action" 
+// import { getErrorMessage } from "@/lib/error-handler"
+// import { publishLesson } from "@/app/actions/lesson.actions"
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// export interface VisualAid {
+//   title: string;
+//   description: string;
+//   imagePrompt: string;
+//   url?: string; 
+// }
+
+// export interface EnhancedLessonContent {
+//   metadata: {
+//       topicContext: string;
+//       difficultyLevel: string;
+//   };
+//   teacherLogic: {
+//       teachingMethod: string;
+//       timeAllocation: string;
+//       pedagogicalTips: string;
+//       introductionHook: string;
+//   };
+//   studentContent: {
+//       title: string;
+//       explanation: string;
+//       summary: string; 
+//       learningObjectives: string[];
+//       vocabulary: string[];
+//       visualAids: VisualAid[]; 
+//       examples: {
+//           task: string;
+//           solution: string;
+//       }[];
+//       quiz: {
+//           question: string;
+//           options: string[];
+//           answer: string;
+//           explanation: string;
+//       }[];
+//   };
+// }
+
+// interface AILessonPlannerProps {
+//   topicId: string;
+//   lessonId: string; 
+//   topicTitle: string;
+//   schoolId: string;
+//   initialData?: EnhancedLessonContent | null;
+//   mode?: "teacher" | "student";
+// }
+
+// // ── Main Component ─────────────────────────────────────────────────────────────
+
+// export function AILessonPlanner({ 
+//     topicId, 
+//     lessonId, 
+//     topicTitle, 
+//     schoolId, 
+//     initialData,
+//     mode = "teacher" 
+// }: AILessonPlannerProps) {
+  
+//   const isTeacher = mode === "teacher";
+//   const [activeTab, setActiveTab] = useState<string>("explanation")
+//   const [isGenerating, setIsGenerating] = useState(false)
+//   const [isEditing, setIsEditing] = useState(false)
+//   const [isPending, startTransition] = useTransition()
+  
+//   const [data, setData] = useState<EnhancedLessonContent | null>(initialData || null)
+//   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({})
+
+//   useEffect(() => {
+//     setData(initialData || null)
+//     setIsEditing(false)
+//   }, [topicId, initialData])
+
+//   // ── Handlers ───────────────────────────────────────────────────────────
+
+//   const handleGenerate = async () => {
+//     if (!isTeacher) return;
+//     setIsGenerating(true)
+//     try {
+//       const res = await generateLessonForTopic(topicId, schoolId)
+//       if (!res.success) {
+//         toast.error(res.error ?? "Lesson generation failed")
+//         return
+//       }
+//       if (res.aiContent) {
+//         setData(res.aiContent as unknown as EnhancedLessonContent)
+//         toast.success("AI Generation Complete")
+//       }
+//     } catch (err) {
+//       toast.error(getErrorMessage(err))
+//     } finally {
+//       setIsGenerating(false)
+//     }
+//   }
+
+//   const handleManualSave = () => {
+//     if (!data) return;
+//     startTransition(async () => {
+//       const res = await publishLesson({ topicId, schoolId, content: data as any });
+//       if (res.success) {
+//         toast.success("Lesson published successfully");
+//         setIsEditing(false);
+//       }
+//     });
+//   };
+  
+//   const handleGenerateImage = async (index: number, prompt: string) => {
+//     if (!isTeacher || loadingImages[index] || (data?.studentContent.visualAids[index]?.url)) return;
+//     setLoadingImages(prev => ({ ...prev, [index]: true }))
+//     try {
+//       const result = await generateDiagramImage(prompt) 
+//       if (result.success && result.url) {
+//         setData(current => {
+//           if (!current) return null;
+//           const updated = [...current.studentContent.visualAids];
+//           updated[index] = { ...updated[index], url: result.url };
+//           return { ...current, studentContent: { ...current.studentContent, visualAids: updated } };
+//         });
+//         await saveGeneratedImageUrlToLesson(lessonId, index, result.url);
+//         toast.success("Asset bound to registry.");
+//       }
+//     } finally {
+//       setLoadingImages(prev => ({ ...prev, [index]: false }))
+//     }
+//   }
+
+//   if (!data) {
+//     return (
+//       <div className="py-20 text-center bg-slate-900 rounded-[3rem] border border-white/5 space-y-6 shadow-2xl">
+//         <div className="h-20 w-20 bg-school-primary/10 rounded-full flex items-center justify-center mx-auto text-school-primary border border-school-primary/20">
+//           <Sparkles className="h-10 w-10 animate-pulse" />
+//         </div>
+//         <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">Registry Standby</h3>
+//         <p className="text-xl font-black text-school-primary uppercase italic tracking-tight">{topicTitle}</p>
+//         {isTeacher && (
+//           <Button onClick={handleGenerate} disabled={isGenerating} className="bg-school-primary text-slate-950 font-black px-10 py-7 rounded-2xl">
+//             {isGenerating ? <><Loader2 className="animate-spin mr-2" /> GENERATING...</> : <><Sparkles className="mr-2 h-5 w-5" /> GENERATE LESSON</>}
+//           </Button>
+//         )}
+//       </div>
+//     )
+//   }
+
+//   return (
+//     <Card className="border-white/5 bg-slate-950 shadow-2xl overflow-hidden rounded-[2.5rem] flex flex-col">
+//       {/* HEADER SECTION: Includes Difficulty Metadata */}
+//       <CardHeader className="bg-slate-900 border-b border-white/5 p-8">
+//         <div className="flex items-center justify-between gap-4">
+//           <div className="flex-1 min-w-0">
+//              <div className="flex items-center gap-3 mb-1">
+//                 <Layout className="h-5 w-5 text-school-primary" />
+//                 <CardTitle className="text-2xl font-black text-white uppercase italic tracking-tighter truncate">
+//                     {data.studentContent.title}
+//                 </CardTitle>
+//                 <Badge className="bg-school-primary/10 text-school-primary border-school-primary/20 uppercase text-[9px]">
+//                     {data.metadata.difficultyLevel}
+//                 </Badge>
+//              </div>
+//              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{topicTitle}</p>
+//           </div>
+          
+//           {isTeacher && (
+//             <div className="flex items-center gap-3 shrink-0">
+//               {!isEditing ? (
+//                   <Button variant="outline" onClick={() => setIsEditing(true)} className="border-white/10 text-slate-400 rounded-xl">
+//                       <Edit3 className="h-4 w-4 mr-2" /> Edit Registry
+//                   </Button>
+//               ) : (
+//                   <div className="flex gap-2">
+//                       <Button variant="ghost" onClick={() => setIsEditing(false)} className="text-slate-500">Cancel</Button>
+//                       <Button onClick={handleManualSave} disabled={isPending} className="bg-school-primary text-slate-950 font-black rounded-xl px-6">
+//                           {isPending ? <Loader2 className="animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+//                           PUBLISH
+//                       </Button>
+//                   </div>
+//               )}
+//             </div>
+//           )}
+//         </div>
+//       </CardHeader>
+      
+//       <CardContent className="p-8 flex-1 bg-slate-950">
+//         {/* TAB NAVIGATION */}
+//         <div className="flex flex-wrap gap-2 mb-10 bg-slate-900 p-1.5 rounded-2xl w-fit border border-white/5">
+//             <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Notes" />
+//             <TabButton active={activeTab === "syllabus"} onClick={() => setActiveTab("syllabus")} icon={ListChecks} label="Syllabus" />
+//             {isTeacher && <TabButton active={activeTab === "pedagogy"} onClick={() => setActiveTab("pedagogy")} icon={Zap} label="Strategy" />}
+//             <TabButton active={activeTab === "visuals"} onClick={() => setActiveTab("visuals")} icon={ImageIcon} label="Visuals" />
+//             <TabButton active={activeTab === "quiz"} onClick={() => setActiveTab("quiz")} icon={HelpCircle} label="Quiz" />
+//         </div>
+
+//         <div className="min-h-[600px]">
+//             {/* 1. NOTES TAB */}
+//             {activeTab === "explanation" && (
+//                 <div className="space-y-6">
+//                     {isEditing ? (
+//                         <textarea 
+//                             className="w-full h-[600px] bg-slate-900 border border-school-primary/30 rounded-[2rem] p-8 text-slate-100 outline-none font-medium"
+//                             value={data.studentContent.explanation}
+//                             onChange={(e) => setData({...data, studentContent: {...data.studentContent, explanation: e.target.value}})}
+//                         />
+//                     ) : (
+//                         <div className="prose prose-invert max-w-none">
+//                             <ReactMarkdown
+//                                 components={{
+//                                     h1: ({...props}) => <h1 className="text-3xl font-black text-white uppercase italic border-b border-white/10 pb-4 mb-6" {...props} />,
+//                                     h2: ({...props}) => <h2 className="text-xl font-bold text-school-primary uppercase tracking-tight mt-10 mb-4" {...props} />,
+//                                     p: ({...props}) => <p className="text-slate-300 leading-loose mb-6 text-lg" {...props} />,
+//                                     li: ({...props}) => <li className="text-slate-300 mb-2" {...props} />,
+//                                 }}
+//                             >
+//                                 {data.studentContent.explanation}
+//                             </ReactMarkdown>
+//                         </div>
+//                     )}
+//                 </div>
+//             )}
+
+//             {/* 2. SYLLABUS TAB: Summary, Objectives, Vocabulary, Examples */}
+//             {activeTab === "syllabus" && (
+//                 <div className="space-y-10">
+//                     <section className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
+//                         <h4 className="text-school-primary text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+//                             <GraduationCap className="h-4 w-4" /> Learning Objectives
+//                         </h4>
+//                         <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                             {data.studentContent.learningObjectives.map((obj, i) => (
+//                                 <li key={i} className="flex items-start gap-3 text-slate-300 text-sm italic">
+//                                     <span className="text-school-primary font-black">0{i+1}.</span> {obj}
+//                                 </li>
+//                             ))}
+//                         </ul>
+//                     </section>
+
+//                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+//                         <section className="space-y-4">
+//                             <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Executive Summary</h4>
+//                             <div className="bg-slate-900 p-6 rounded-3xl border border-white/5 text-slate-400 text-sm leading-relaxed italic">
+//                                 {data.studentContent.summary}
+//                             </div>
+//                         </section>
+
+//                         <section className="space-y-4">
+//                             <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Keyword Registry</h4>
+//                             <div className="flex flex-wrap gap-2">
+//                                 {data.studentContent.vocabulary.map((word, i) => (
+//                                     <Badge key={i} variant="outline" className="px-4 py-2 border-white/5 bg-slate-900 text-slate-300 rounded-xl text-[10px] uppercase font-bold tracking-widest">
+//                                         {word}
+//                                     </Badge>
+//                                 ))}
+//                             </div>
+//                         </section>
+//                     </div>
+
+//                     <section className="space-y-4">
+//                         <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Practical Applications (Examples)</h4>
+//                         <div className="grid grid-cols-1 gap-4">
+//                             {data.studentContent.examples.map((ex, i) => (
+//                                 <div key={i} className="p-6 bg-slate-900 rounded-3xl border border-white/5 space-y-3">
+//                                     <p className="text-sm font-black text-school-primary uppercase italic">Task: {ex.task}</p>
+//                                     <p className="text-xs text-slate-400 border-t border-white/5 pt-3">Solution: {ex.solution}</p>
+//                                 </div>
+//                             ))}
+//                         </div>
+//                     </section>
+//                 </div>
+//             )}
+
+//             {/* 3. PEDAGOGY TAB: Teaching Method, Hook, Time, Tips */}
+//             {activeTab === "pedagogy" && isTeacher && (
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//                     <PedagogyCard title="Instructional Method" value={data.teacherLogic.teachingMethod} icon={Zap} />
+//                     <PedagogyCard title="Classroom Hook" value={data.teacherLogic.introductionHook} icon={Sparkles} />
+//                     <PedagogyCard title="Time Allocation" value={data.teacherLogic.timeAllocation} icon={Clock} />
+//                     <PedagogyCard title="Pedagogical Tips" value={data.teacherLogic.pedagogicalTips} icon={Lightbulb} />
+//                 </div>
+//             )}
+
+//             {/* 4. VISUALS TAB */}
+//             {activeTab === "visuals" && (
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//                     {data.studentContent.visualAids.map((aid, idx) => (
+//                         <Card key={idx} className="bg-slate-900 border-white/5 rounded-[2rem] overflow-hidden group shadow-xl">
+//                             <div className="p-6 border-b border-white/5">
+//                                 <h4 className="text-sm font-bold text-white uppercase italic">{aid.title}</h4>
+//                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">{aid.description}</p>
+//                             </div>
+//                             <div className="relative aspect-video flex flex-col items-center justify-center p-2 bg-slate-950">
+//                                 {aid.url ? (
+//                                     <Image src={aid.url} alt={aid.title} fill className="object-cover rounded-2xl opacity-80" unoptimized />
+//                                 ) : (
+//                                     <div className="text-center space-y-4">
+//                                         <ImageIcon className="h-10 w-10 text-slate-800 mx-auto" />
+//                                         {isTeacher && (
+//                                             <Button onClick={() => handleGenerateImage(idx, aid.imagePrompt)} disabled={loadingImages[idx]} className="bg-slate-900 border border-white/10 hover:bg-school-primary hover:text-slate-950 transition-all rounded-xl">
+//                                                 {loadingImages[idx] ? <Loader2 className="animate-spin h-4 w-4" /> : "Synthesize Diagram"}
+//                                             </Button>
+//                                         )}
+//                                     </div>
+//                                 )}
+//                             </div>
+//                         </Card>
+//                     ))}
+//                 </div>
+//             )}
+
+//             {/* 5. QUIZ TAB */}
+//             {activeTab === "quiz" && (
+//                 <div className="max-w-3xl mx-auto space-y-6">
+//                     {data.studentContent.quiz.map((q, i) => (
+//                         <div key={i} className="p-8 bg-slate-900 rounded-[2rem] border border-white/5 space-y-4 shadow-xl">
+//                             <p className="text-xs font-black text-school-primary uppercase tracking-widest">Assessment Item 0{i+1}</p>
+//                             <p className="text-base font-bold text-white leading-relaxed">{q.question}</p>
+//                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+//                                 {q.options.map(opt => (
+//                                     <div key={opt} className={cn(
+//                                         "p-4 rounded-xl border text-xs font-medium",
+//                                         opt === q.answer ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-400" : "border-white/5 bg-slate-950/50 text-slate-500"
+//                                     )}>
+//                                         {opt}
+//                                     </div>
+//                                 ))}
+//                             </div>
+//                             <div className="pt-4 border-t border-white/5 text-[10px] text-slate-500 italic">
+//                                 Rationale: {q.explanation}
+//                             </div>
+//                         </div>
+//                     ))}
+//                 </div>
+//             )}
+//         </div>
+//       </CardContent>
+//     </Card>
+//   )
+// }
+
+// function TabButton({ active, onClick, icon: Icon, label }: { active: boolean, onClick: () => void, icon: LucideIcon, label: string }) {
+//   return (
+//     <Button variant="ghost" onClick={onClick} className={cn(
+//           "gap-2 px-6 h-11 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+//           active ? "bg-school-primary text-slate-950 shadow-lg" : "text-slate-500 hover:text-white hover:bg-white/5"
+//       )}>
+//       <Icon className="h-4 w-4" /> {label}
+//     </Button>
+//   )
+// }
+
+// function PedagogyCard({ title, value, icon: Icon }: { title: string, value: string, icon: LucideIcon }) {
+//     return (
+//         <Card className="bg-slate-900 border-white/5 p-8 rounded-[2rem] shadow-inner space-y-4">
+//             <div className="flex items-center gap-3">
+//                 <div className="p-2 bg-white/5 rounded-lg text-school-primary"><Icon className="h-4 w-4" /></div>
+//                 <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{title}</h5>
+//             </div>
+//             <p className="text-lg font-bold text-white uppercase italic tracking-tight leading-relaxed">{value}</p>
+//         </Card>
+//     )
+// }
+
+
+
+
+// "use client"
+
+// import { useState, useEffect, useTransition } from "react"
+// import ReactMarkdown from "react-markdown"
+// import Image from "next/image"
+// import { 
+//     Sparkles, ImageIcon, FileText, HelpCircle, Zap, 
+//     Loader2, Edit3, Save, Layout, ListChecks, 
+//     Clock, Lightbulb, GraduationCap,
+//     type LucideIcon 
+// } from "lucide-react"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Button } from "@/components/ui/button"
+// import { Badge } from "@/components/ui/badge"
+// import { toast } from "sonner"
+// import { cn } from "@/lib/utils"
+
+// // Actions
+// import { generateLessonForTopic, type LessonAiContent } from "@/app/actions/ai-generator" 
+// import { generateDiagramImage } from "@/app/actions/generate-diagram" 
+// import { saveGeneratedImageUrlToLesson } from "@/app/actions/lesson-image-action" 
+// import { getErrorMessage } from "@/lib/error-handler"
+// import { publishLesson } from "@/app/actions/lesson.actions"
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// export interface VisualAid {
+//   title: string;
+//   description: string;
+//   imagePrompt: string;
+//   url?: string; 
+// }
+
+// /**
+//  * Interface representing the complete lesson structure.
+//  * Synced with LessonAiContent from ai-generator.ts.
+//  */
+// export interface EnhancedLessonContent {
+//   metadata: {
+//       topicContext: string;
+//       difficultyLevel: string;
+//   };
+//   teacherLogic: {
+//       teachingMethod: string;
+//       timeAllocation: string;
+//       pedagogicalTips: string;
+//       introductionHook: string;
+//   };
+//   studentContent: {
+//       title: string;
+//       explanation: string;
+//       summary: string; 
+//       learningObjectives: string[];
+//       vocabulary: string[];
+//       visualAids: VisualAid[]; 
+//       examples: {
+//           task: string;
+//           solution: string;
+//       }[];
+//       quiz: {
+//           question: string;
+//           options: string[];
+//           answer: string;
+//           explanation: string;
+//       }[];
+//   };
+// }
+
+// interface AILessonPlannerProps {
+//   topicId: string;
+//   lessonId: string; 
+//   topicTitle: string;
+//   schoolId: string;
+//   initialData?: EnhancedLessonContent | null;
+//   mode?: "teacher" | "student";
+// }
+
+// // ── Main Component ─────────────────────────────────────────────────────────────
+
+// export function AILessonPlanner({ 
+//     topicId, 
+//     lessonId, 
+//     topicTitle, 
+//     schoolId, 
+//     initialData,
+//     mode = "teacher" 
+// }: AILessonPlannerProps) {
+  
+//   const isTeacher = mode === "teacher";
+//   const [activeTab, setActiveTab] = useState<string>("explanation")
+//   const [isGenerating, setIsGenerating] = useState(false)
+//   const [isEditing, setIsEditing] = useState(false)
+//   const [isPending, startTransition] = useTransition()
+  
+//   const [data, setData] = useState<EnhancedLessonContent | null>(initialData || null)
+//   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({})
+
+//   useEffect(() => {
+//     setData(initialData || null)
+//     setIsEditing(false)
+//   }, [topicId, initialData])
+
+//   // ── Handlers ───────────────────────────────────────────────────────────
+
+//   const handleGenerate = async () => {
+//     if (!isTeacher) return;
+//     setIsGenerating(true)
+//     try {
+//       const res = await generateLessonForTopic(topicId, schoolId)
+//       if (!res.success) {
+//         toast.error(res.error ?? "Lesson generation failed")
+//         return
+//       }
+//       if (res.aiContent) {
+//         // Casting to our specific interface instead of any
+//         setData(res.aiContent as EnhancedLessonContent)
+//         toast.success("AI Generation Complete")
+//       }
+//     } catch (err) {
+//       toast.error(getErrorMessage(err))
+//     } finally {
+//       setIsGenerating(false)
+//     }
+//   }
+
+//   const handleManualSave = () => {
+//     if (!data) return;
+//     startTransition(async () => {
+//       try {
+//         const res = await publishLesson({ 
+//           topicId, 
+//           schoolId, 
+//           // FIXED: Removed 'as any'. Using proper type mapping.
+//           content: data as unknown as LessonAiContent 
+//         });
+//         if (res.success) {
+//           toast.success("Lesson published successfully");
+//           setIsEditing(false);
+//         } else if (res.error) {
+//           toast.error(res.error);
+//         }
+//       } catch (err) {
+//         toast.error(getErrorMessage(err));
+//       }
+//     });
+//   };
+  
+//   const handleGenerateImage = async (index: number, prompt: string) => {
+//     if (!isTeacher || loadingImages[index] || (data?.studentContent.visualAids[index]?.url)) return;
+//     setLoadingImages(prev => ({ ...prev, [index]: true }))
+//     try {
+//       const result = await generateDiagramImage(prompt) 
+//       if (result.success && result.url) {
+//         setData(current => {
+//           if (!current) return null;
+//           const updated = [...current.studentContent.visualAids];
+//           updated[index] = { ...updated[index], url: result.url };
+//           return { ...current, studentContent: { ...current.studentContent, visualAids: updated } };
+//         });
+//         await saveGeneratedImageUrlToLesson(lessonId, index, result.url);
+//         toast.success("Asset bound to registry.");
+//       }
+//     } catch (err) {
+//         toast.error(getErrorMessage(err));
+//     } finally {
+//       setLoadingImages(prev => ({ ...prev, [index]: false }))
+//     }
+//   }
+
+//   if (!data) {
+//     return (
+//       <div className="py-20 text-center bg-slate-900 rounded-[3rem] border border-white/5 space-y-6 shadow-2xl">
+//         <div className="h-20 w-20 bg-school-primary/10 rounded-full flex items-center justify-center mx-auto text-school-primary border border-school-primary/20">
+//           <Sparkles className="h-10 w-10 animate-pulse" />
+//         </div>
+//         <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">Registry Standby</h3>
+//         <p className="text-xl font-black text-school-primary uppercase italic tracking-tight">{topicTitle}</p>
+//         {isTeacher && (
+//           <Button onClick={handleGenerate} disabled={isGenerating} className="bg-school-primary text-slate-950 font-black px-10 py-7 rounded-2xl">
+//             {isGenerating ? <><Loader2 className="animate-spin mr-2" /> GENERATING...</> : <><Sparkles className="mr-2 h-5 w-5" /> GENERATE LESSON</>}
+//           </Button>
+//         )}
+//       </div>
+//     )
+//   }
+
+//   return (
+//     <Card className="border-white/5 bg-slate-950 shadow-2xl overflow-hidden rounded-[2.5rem] flex flex-col">
+//       <CardHeader className="bg-slate-900 border-b border-white/5 p-8">
+//         <div className="flex items-center justify-between gap-4">
+//           <div className="flex-1 min-w-0">
+//              <div className="flex items-center gap-3 mb-1">
+//                 <Layout className="h-5 w-5 text-school-primary" />
+//                 <CardTitle className="text-2xl font-black text-white uppercase italic tracking-tighter truncate">
+//                     {data.studentContent.title}
+//                 </CardTitle>
+//                 <Badge className="bg-school-primary/10 text-school-primary border-school-primary/20 uppercase text-[9px]">
+//                     {data.metadata.difficultyLevel}
+//                 </Badge>
+//              </div>
+//              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{topicTitle}</p>
+//           </div>
+          
+//           {isTeacher && (
+//             <div className="flex items-center gap-3 shrink-0">
+//               {!isEditing ? (
+//                   <Button variant="outline" onClick={() => setIsEditing(true)} className="border-white/10 text-slate-400 rounded-xl">
+//                       <Edit3 className="h-4 w-4 mr-2" /> Edit Registry
+//                   </Button>
+//               ) : (
+//                   <div className="flex gap-2">
+//                       <Button variant="ghost" onClick={() => setIsEditing(false)} className="text-slate-500">Cancel</Button>
+//                       <Button onClick={handleManualSave} disabled={isPending} className="bg-school-primary text-slate-950 font-black rounded-xl px-6">
+//                           {isPending ? <Loader2 className="animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+//                           PUBLISH
+//                       </Button>
+//                   </div>
+//               )}
+//             </div>
+//           )}
+//         </div>
+//       </CardHeader>
+      
+//       <CardContent className="p-8 flex-1 bg-slate-950">
+//         <div className="flex flex-wrap gap-2 mb-10 bg-slate-900 p-1.5 rounded-2xl w-fit border border-white/5">
+//             <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Notes" />
+//             <TabButton active={activeTab === "syllabus"} onClick={() => setActiveTab("syllabus")} icon={ListChecks} label="Syllabus" />
+//             {isTeacher && <TabButton active={activeTab === "pedagogy"} onClick={() => setActiveTab("pedagogy")} icon={Zap} label="Strategy" />}
+//             <TabButton active={activeTab === "visuals"} onClick={() => setActiveTab("visuals")} icon={ImageIcon} label="Visuals" />
+//             <TabButton active={activeTab === "quiz"} onClick={() => setActiveTab("quiz")} icon={HelpCircle} label="Quiz" />
+//         </div>
+
+//         <div className="min-h-[600px]">
+//             {activeTab === "explanation" && (
+//                 <div className="space-y-6">
+//                     {isEditing ? (
+//                         <textarea 
+//                             className="w-full h-[600px] bg-slate-900 border border-school-primary/30 rounded-[2rem] p-8 text-slate-100 outline-none font-medium"
+//                             value={data.studentContent.explanation}
+//                             onChange={(e) => setData({...data, studentContent: {...data.studentContent, explanation: e.target.value}})}
+//                         />
+//                     ) : (
+//                         <div className="prose prose-invert max-w-none">
+//                             <ReactMarkdown
+//                                 components={{
+//                                     h1: ({node, ...props}) => <h1 className="text-3xl font-black text-white uppercase italic border-b border-white/10 pb-4 mb-6" {...props} />,
+//                                     h2: ({node, ...props}) => <h2 className="text-xl font-bold text-school-primary uppercase tracking-tight mt-10 mb-4" {...props} />,
+//                                     p: ({node, ...props}) => <p className="text-slate-300 leading-loose mb-6 text-lg" {...props} />,
+//                                     li: ({node, ...props}) => <li className="text-slate-300 mb-2" {...props} />,
+//                                 }}
+//                             >
+//                                 {data.studentContent.explanation}
+//                             </ReactMarkdown>
+//                         </div>
+//                     )}
+//                 </div>
+//             )}
+
+//             {activeTab === "syllabus" && (
+//                 <div className="space-y-10">
+//                     <section className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
+//                         <h4 className="text-school-primary text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+//                             <GraduationCap className="h-4 w-4" /> Learning Objectives
+//                         </h4>
+//                         <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                             {data.studentContent.learningObjectives.map((obj, i) => (
+//                                 <li key={i} className="flex items-start gap-3 text-slate-300 text-sm italic">
+//                                     <span className="text-school-primary font-black">0{i+1}.</span> {obj}
+//                                 </li>
+//                             ))}
+//                         </ul>
+//                     </section>
+
+//                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+//                         <section className="space-y-4">
+//                             <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Executive Summary</h4>
+//                             <div className="bg-slate-900 p-6 rounded-3xl border border-white/5 text-slate-400 text-sm leading-relaxed italic">
+//                                 {data.studentContent.summary}
+//                             </div>
+//                         </section>
+
+//                         <section className="space-y-4">
+//                             <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Keyword Registry</h4>
+//                             <div className="flex flex-wrap gap-2">
+//                                 {data.studentContent.vocabulary.map((word, i) => (
+//                                     <Badge key={i} variant="outline" className="px-4 py-2 border-white/5 bg-slate-900 text-slate-300 rounded-xl text-[10px] uppercase font-bold tracking-widest">
+//                                         {word}
+//                                     </Badge>
+//                                 ))}
+//                             </div>
+//                         </section>
+//                     </div>
+
+//                     <section className="space-y-4">
+//                         <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Applications (Examples)</h4>
+//                         <div className="grid grid-cols-1 gap-4">
+//                             {data.studentContent.examples.map((ex, i) => (
+//                                 <div key={i} className="p-6 bg-slate-900 rounded-3xl border border-white/5 space-y-3">
+//                                     <p className="text-sm font-black text-school-primary uppercase italic">Task: {ex.task}</p>
+//                                     <p className="text-xs text-slate-400 border-t border-white/5 pt-3">Solution: {ex.solution}</p>
+//                                 </div>
+//                             ))}
+//                         </div>
+//                     </section>
+//                 </div>
+//             )}
+
+//             {activeTab === "pedagogy" && isTeacher && (
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//                     <PedagogyCard title="Instructional Method" value={data.teacherLogic.teachingMethod} icon={Zap} />
+//                     <PedagogyCard title="Classroom Hook" value={data.teacherLogic.introductionHook} icon={Sparkles} />
+//                     <PedagogyCard title="Time Allocation" value={data.teacherLogic.timeAllocation} icon={Clock} />
+//                     <PedagogyCard title="Pedagogical Tips" value={data.teacherLogic.pedagogicalTips} icon={Lightbulb} />
+//                 </div>
+//             )}
+
+//             {activeTab === "visuals" && (
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//                     {data.studentContent.visualAids.map((aid, idx) => (
+//                         <Card key={idx} className="bg-slate-900 border-white/5 rounded-[2rem] overflow-hidden group shadow-xl">
+//                             <div className="p-6 border-b border-white/5">
+//                                 <h4 className="text-sm font-bold text-white uppercase italic">{aid.title}</h4>
+//                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">{aid.description}</p>
+//                             </div>
+//                             <div className="relative aspect-video flex flex-col items-center justify-center p-2 bg-slate-950">
+//                                 {aid.url ? (
+//                                     <Image src={aid.url} alt={aid.title} fill className="object-cover rounded-2xl opacity-80" unoptimized />
+//                                 ) : (
+//                                     <div className="text-center space-y-4">
+//                                         <ImageIcon className="h-10 w-10 text-slate-800 mx-auto" />
+//                                         {isTeacher && (
+//                                             <Button onClick={() => handleGenerateImage(idx, aid.imagePrompt)} disabled={loadingImages[idx]} className="bg-slate-900 border border-white/10 hover:bg-school-primary hover:text-slate-950 transition-all rounded-xl">
+//                                                 {loadingImages[idx] ? <Loader2 className="animate-spin h-4 w-4" /> : "Synthesize Diagram"}
+//                                             </Button>
+//                                         )}
+//                                     </div>
+//                                 )}
+//                             </div>
+//                         </Card>
+//                     ))}
+//                 </div>
+//             )}
+
+//             {activeTab === "quiz" && (
+//                 <div className="max-w-3xl mx-auto space-y-6">
+//                     {data.studentContent.quiz.map((q, i) => (
+//                         <div key={i} className="p-8 bg-slate-900 rounded-[2rem] border border-white/5 space-y-4 shadow-xl">
+//                             <p className="text-xs font-black text-school-primary uppercase tracking-widest">Assessment Item 0{i+1}</p>
+//                             <p className="text-base font-bold text-white leading-relaxed">{q.question}</p>
+//                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+//                                 {q.options.map(opt => (
+//                                     <div key={opt} className={cn(
+//                                         "p-4 rounded-xl border text-xs font-medium",
+//                                         opt === q.answer ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-400" : "border-white/5 bg-slate-950/50 text-slate-500"
+//                                     )}>
+//                                         {opt}
+//                                     </div>
+//                                 ))}
+//                             </div>
+//                             <div className="pt-4 border-t border-white/5 text-[10px] text-slate-500 italic">
+//                                 Rationale: {q.explanation}
+//                             </div>
+//                         </div>
+//                     ))}
+//                 </div>
+//             )}
+//         </div>
+//       </CardContent>
+//     </Card>
+//   )
+// }
+
+// function TabButton({ active, onClick, icon: Icon, label }: { active: boolean, onClick: () => void, icon: LucideIcon, label: string }) {
+//   return (
+//     <Button variant="ghost" onClick={onClick} className={cn(
+//           "gap-2 px-6 h-11 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+//           active ? "bg-school-primary text-slate-950 shadow-lg" : "text-slate-500 hover:text-white hover:bg-white/5"
+//       )}>
+//       <Icon className="h-4 w-4" /> {label}
+//     </Button>
+//   )
+// }
+
+// function PedagogyCard({ title, value, icon: Icon }: { title: string, value: string, icon: LucideIcon }) {
+//     return (
+//         <Card className="bg-slate-900 border-white/5 p-8 rounded-[2rem] shadow-inner space-y-4">
+//             <div className="flex items-center gap-3">
+//                 <div className="p-2 bg-white/5 rounded-lg text-school-primary"><Icon className="h-4 w-4" /></div>
+//                 <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{title}</h5>
+//             </div>
+//             <p className="text-lg font-bold text-white uppercase italic tracking-tight leading-relaxed">{value}</p>
+//         </Card>
+//     )
+// }
+
+
+// "use client"
+
+// import { useState, useEffect, useTransition } from "react"
+// import ReactMarkdown from "react-markdown"
+// import Image from "next/image"
+// import { 
+//     Sparkles, ImageIcon, FileText, HelpCircle, Zap, 
+//     Loader2, Edit3, Save, Layout, ListChecks, 
+//     Clock, Lightbulb, GraduationCap,
+//     type LucideIcon 
+// } from "lucide-react"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Button } from "@/components/ui/button"
+// import { Badge } from "@/components/ui/badge"
+// import { toast } from "sonner"
+// import { cn } from "@/lib/utils"
+
+// // Actions
+// import { generateLessonForTopic, type LessonAiContent } from "@/app/actions/ai-generator" 
+// import { generateDiagramImage } from "@/app/actions/generate-diagram" 
+// import { saveGeneratedImageUrlToLesson } from "@/app/actions/lesson-image-action" 
+// import { getErrorMessage } from "@/lib/error-handler"
+// import { publishLesson } from "@/app/actions/lesson.actions"
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// export interface VisualAid {
+//   title: string;
+//   description: string;
+//   imagePrompt: string;
+//   url?: string; 
+// }
+
+// /**
+//  * Interface representing the complete lesson structure.
+//  * Synced with LessonAiContent from ai-generator.ts.
+//  */
+// export interface EnhancedLessonContent {
+//   metadata: {
+//       topicContext: string;
+//       difficultyLevel: string;
+//   };
+//   teacherLogic: {
+//       teachingMethod: string;
+//       timeAllocation: string;
+//       pedagogicalTips: string;
+//       introductionHook: string;
+//   };
+//   studentContent: {
+//       title: string;
+//       explanation: string;
+//       summary: string; 
+//       learningObjectives: string[];
+//       vocabulary: string[];
+//       visualAids: VisualAid[]; 
+//       examples: {
+//           task: string;
+//           solution: string;
+//       }[];
+//       quiz: {
+//           question: string;
+//           options: string[];
+//           answer: string;
+//           explanation: string;
+//       }[];
+//   };
+// }
+
+// interface AILessonPlannerProps {
+//   topicId: string;
+//   lessonId: string; 
+//   topicTitle: string;
+//   schoolId: string;
+//   initialData?: EnhancedLessonContent | null;
+//   mode?: "teacher" | "student";
+// }
+
+// // ── Main Component ─────────────────────────────────────────────────────────────
+
+// export function AILessonPlanner({ 
+//     topicId, 
+//     lessonId, 
+//     topicTitle, 
+//     schoolId, 
+//     initialData,
+//     mode = "teacher" 
+// }: AILessonPlannerProps) {
+  
+//   const isTeacher = mode === "teacher";
+//   const [activeTab, setActiveTab] = useState<string>("explanation")
+//   const [isGenerating, setIsGenerating] = useState(false)
+//   const [isEditing, setIsEditing] = useState(false)
+//   const [isPending, startTransition] = useTransition()
+  
+//   const [data, setData] = useState<EnhancedLessonContent | null>(initialData || null)
+//   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({})
+
+//   useEffect(() => {
+//     setData(initialData || null)
+//     setIsEditing(false)
+//   }, [topicId, initialData])
+
+//   // ── Handlers ───────────────────────────────────────────────────────────
+
+//   const handleGenerate = async () => {
+//     if (!isTeacher) return;
+//     setIsGenerating(true)
+//     try {
+//       const res = await generateLessonForTopic(topicId, schoolId)
+//       if (!res.success) {
+//         toast.error(res.error ?? "Lesson generation failed")
+//         return
+//       }
+//       if (res.aiContent) {
+//         setData(res.aiContent as EnhancedLessonContent)
+//         toast.success("AI Generation Complete")
+//       }
+//     } catch (err) {
+//       toast.error(getErrorMessage(err))
+//     } finally {
+//       setIsGenerating(false)
+//     }
+//   }
+
+//   const handleManualSave = () => {
+//     if (!data) return;
+//     startTransition(async () => {
+//       try {
+//         const res = await publishLesson({ 
+//           topicId, 
+//           schoolId, 
+//           content: data as unknown as LessonAiContent 
+//         });
+//         if (res.success) {
+//           toast.success("Lesson published successfully");
+//           setIsEditing(false);
+//         } else if (res.error) {
+//           toast.error(res.error);
+//         }
+//       } catch (err) {
+//         toast.error(getErrorMessage(err));
+//       }
+//     });
+//   };
+  
+//   const handleGenerateImage = async (index: number, prompt: string) => {
+//     if (!isTeacher || loadingImages[index] || (data?.studentContent.visualAids[index]?.url)) return;
+//     setLoadingImages(prev => ({ ...prev, [index]: true }))
+//     try {
+//       const result = await generateDiagramImage(prompt) 
+//       if (result.success && result.url) {
+//         setData(current => {
+//           if (!current) return null;
+//           const updated = [...current.studentContent.visualAids];
+//           updated[index] = { ...updated[index], url: result.url };
+//           return { ...current, studentContent: { ...current.studentContent, visualAids: updated } };
+//         });
+//         await saveGeneratedImageUrlToLesson(lessonId, index, result.url);
+//         toast.success("Asset bound to registry.");
+//       }
+//     } catch (err) {
+//         toast.error(getErrorMessage(err));
+//     } finally {
+//       setLoadingImages(prev => ({ ...prev, [index]: false }))
+//     }
+//   }
+
+//   if (!data) {
+//     return (
+//       <div className="py-20 text-center bg-slate-900 rounded-[3rem] border border-white/5 space-y-6 shadow-2xl">
+//         <div className="h-20 w-20 bg-school-primary/10 rounded-full flex items-center justify-center mx-auto text-school-primary border border-school-primary/20">
+//           <Sparkles className="h-10 w-10 animate-pulse" />
+//         </div>
+//         <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">Registry Standby</h3>
+//         <p className="text-xl font-black text-school-primary uppercase italic tracking-tight">{topicTitle}</p>
+//         {isTeacher && (
+//           <Button onClick={handleGenerate} disabled={isGenerating} className="bg-school-primary text-slate-950 font-black px-10 py-7 rounded-2xl">
+//             {isGenerating ? <><Loader2 className="animate-spin mr-2" /> GENERATING...</> : <><Sparkles className="mr-2 h-5 w-5" /> GENERATE LESSON</>}
+//           </Button>
+//         )}
+//       </div>
+//     )
+//   }
+
+//   return (
+//     <Card className="border-white/5 bg-slate-950 shadow-2xl overflow-hidden rounded-[2.5rem] flex flex-col">
+//       <CardHeader className="bg-slate-900 border-b border-white/5 p-8">
+//         <div className="flex items-center justify-between gap-4">
+//           <div className="flex-1 min-w-0">
+//              <div className="flex items-center gap-3 mb-1">
+//                 <Layout className="h-5 w-5 text-school-primary" />
+//                 <CardTitle className="text-2xl font-black text-white uppercase italic tracking-tighter truncate">
+//                     {data.studentContent.title}
+//                 </CardTitle>
+//                 <Badge className="bg-school-primary/10 text-school-primary border-school-primary/20 uppercase text-[9px]">
+//                     {data.metadata.difficultyLevel}
+//                 </Badge>
+//              </div>
+//              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{topicTitle}</p>
+//           </div>
+          
+//           {isTeacher && (
+//             <div className="flex items-center gap-3 shrink-0">
+//               {!isEditing ? (
+//                   <Button variant="outline" onClick={() => setIsEditing(true)} className="border-white/10 text-slate-400 rounded-xl">
+//                       <Edit3 className="h-4 w-4 mr-2" /> Edit Registry
+//                   </Button>
+//               ) : (
+//                   <div className="flex gap-2">
+//                       <Button variant="ghost" onClick={() => setIsEditing(false)} className="text-slate-500">Cancel</Button>
+//                       <Button onClick={handleManualSave} disabled={isPending} className="bg-school-primary text-slate-950 font-black rounded-xl px-6">
+//                           {isPending ? <Loader2 className="animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+//                           PUBLISH
+//                       </Button>
+//                   </div>
+//               )}
+//             </div>
+//           )}
+//         </div>
+//       </CardHeader>
+      
+//       <CardContent className="p-8 flex-1 bg-slate-950">
+//         <div className="flex flex-wrap gap-2 mb-10 bg-slate-900 p-1.5 rounded-2xl w-fit border border-white/5">
+//             <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Notes" />
+//             <TabButton active={activeTab === "syllabus"} onClick={() => setActiveTab("syllabus")} icon={ListChecks} label="Syllabus" />
+//             {isTeacher && <TabButton active={activeTab === "pedagogy"} onClick={() => setActiveTab("pedagogy")} icon={Zap} label="Strategy" />}
+//             <TabButton active={activeTab === "visuals"} onClick={() => setActiveTab("visuals")} icon={ImageIcon} label="Visuals" />
+//             <TabButton active={activeTab === "quiz"} onClick={() => setActiveTab("quiz")} icon={HelpCircle} label="Quiz" />
+//         </div>
+
+//         <div className="min-h-[600px]">
+//             {/* 1. NOTES TAB */}
+//             {activeTab === "explanation" && (
+//                 <div className="space-y-6">
+//                     {isEditing ? (
+//                         <textarea 
+//                             className="w-full h-[600px] bg-slate-900 border border-school-primary/30 rounded-[2rem] p-8 text-slate-100 outline-none font-medium"
+//                             value={data.studentContent.explanation}
+//                             onChange={(e) => setData({...data, studentContent: {...data.studentContent, explanation: e.target.value}})}
+//                         />
+//                     ) : (
+//                         <div className="prose prose-invert max-w-none">
+//                             <ReactMarkdown
+//                                 components={{
+//                                     // FIXED: Removed 'node' from props to resolve unused var warning
+//                                     h1: ({ ...props }) => <h1 className="text-3xl font-black text-white uppercase italic border-b border-white/10 pb-4 mb-6" {...props} />,
+//                                     h2: ({ ...props }) => <h2 className="text-xl font-bold text-school-primary uppercase tracking-tight mt-10 mb-4" {...props} />,
+//                                     p: ({ ...props }) => <p className="text-slate-300 leading-loose mb-6 text-lg" {...props} />,
+//                                     li: ({ ...props }) => <li className="text-slate-300 mb-2" {...props} />,
+//                                 }}
+//                             >
+//                                 {data.studentContent.explanation}
+//                             </ReactMarkdown>
+//                         </div>
+//                     )}
+//                 </div>
+//             )}
+
+//             {/* 2. SYLLABUS TAB */}
+//             {activeTab === "syllabus" && (
+//                 <div className="space-y-10">
+//                     <section className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
+//                         <h4 className="text-school-primary text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+//                             <GraduationCap className="h-4 w-4" /> Learning Objectives
+//                         </h4>
+//                         <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                             {data.studentContent.learningObjectives.map((obj, i) => (
+//                                 <li key={i} className="flex items-start gap-3 text-slate-300 text-sm italic">
+//                                     <span className="text-school-primary font-black">0{i+1}.</span> {obj}
+//                                 </li>
+//                             ))}
+//                         </ul>
+//                     </section>
+
+//                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+//                         <section className="space-y-4">
+//                             <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Executive Summary</h4>
+//                             <div className="bg-slate-900 p-6 rounded-3xl border border-white/5 text-slate-400 text-sm leading-relaxed italic">
+//                                 {data.studentContent.summary}
+//                             </div>
+//                         </section>
+
+//                         <section className="space-y-4">
+//                             <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Keyword Registry</h4>
+//                             <div className="flex flex-wrap gap-2">
+//                                 {data.studentContent.vocabulary.map((word, i) => (
+//                                     <Badge key={i} variant="outline" className="px-4 py-2 border-white/5 bg-slate-900 text-slate-300 rounded-xl text-[10px] uppercase font-bold tracking-widest">
+//                                         {word}
+//                                     </Badge>
+//                                 ))}
+//                             </div>
+//                         </section>
+//                     </div>
+
+//                     <section className="space-y-4">
+//                         <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Applications (Examples)</h4>
+//                         <div className="grid grid-cols-1 gap-4">
+//                             {data.studentContent.examples.map((ex, i) => (
+//                                 <div key={i} className="p-6 bg-slate-900 rounded-3xl border border-white/5 space-y-3">
+//                                     <p className="text-sm font-black text-school-primary uppercase italic">Task: {ex.task}</p>
+//                                     <p className="text-xs text-slate-400 border-t border-white/5 pt-3">Solution: {ex.solution}</p>
+//                                 </div>
+//                             ))}
+//                         </div>
+//                     </section>
+//                 </div>
+//             )}
+
+//             {/* 3. PEDAGOGY TAB */}
+//             {activeTab === "pedagogy" && isTeacher && (
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//                     <PedagogyCard title="Instructional Method" value={data.teacherLogic.teachingMethod} icon={Zap} />
+//                     <PedagogyCard title="Classroom Hook" value={data.teacherLogic.introductionHook} icon={Sparkles} />
+//                     <PedagogyCard title="Time Allocation" value={data.teacherLogic.timeAllocation} icon={Clock} />
+//                     <PedagogyCard title="Pedagogical Tips" value={data.teacherLogic.pedagogicalTips} icon={Lightbulb} />
+//                 </div>
+//             )}
+
+//             {/* 4. VISUALS TAB */}
+//             {activeTab === "visuals" && (
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//                     {data.studentContent.visualAids.map((aid, idx) => (
+//                         <Card key={idx} className="bg-slate-900 border border-white/5 rounded-[2rem] overflow-hidden group shadow-xl">
+//                             <div className="p-6 border-b border-white/5">
+//                                 <h4 className="text-sm font-bold text-white uppercase italic">{aid.title}</h4>
+//                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">{aid.description}</p>
+//                             </div>
+//                             <div className="relative aspect-video flex flex-col items-center justify-center p-2 bg-slate-950">
+//                                 {aid.url ? (
+//                                     <Image src={aid.url} alt={aid.title} fill className="object-cover rounded-2xl opacity-80" unoptimized />
+//                                 ) : (
+//                                     <div className="text-center space-y-4">
+//                                         <ImageIcon className="h-10 w-10 text-slate-800 mx-auto" />
+//                                         {isTeacher && (
+//                                             <Button onClick={() => handleGenerateImage(idx, aid.imagePrompt)} disabled={loadingImages[idx]} className="bg-slate-900 border border-white/10 hover:bg-school-primary hover:text-slate-950 transition-all rounded-xl">
+//                                                 {loadingImages[idx] ? <Loader2 className="animate-spin h-4 w-4" /> : "Synthesize Diagram"}
+//                                             </Button>
+//                                         )}
+//                                     </div>
+//                                 )}
+//                             </div>
+//                         </Card>
+//                     ))}
+//                 </div>
+//             )}
+
+//             {/* 5. QUIZ TAB */}
+//             {activeTab === "quiz" && (
+//                 <div className="max-w-3xl mx-auto space-y-6">
+//                     {data.studentContent.quiz.map((q, i) => (
+//                         <div key={i} className="p-8 bg-slate-900 rounded-[2rem] border border-white/5 space-y-4 shadow-xl">
+//                             <p className="text-xs font-black text-school-primary uppercase tracking-widest">Assessment Item 0{i+1}</p>
+//                             <p className="text-base font-bold text-white leading-relaxed">{q.question}</p>
+//                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+//                                 {q.options.map(opt => (
+//                                     <div key={opt} className={cn(
+//                                         "p-4 rounded-xl border text-xs font-medium",
+//                                         opt === q.answer ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-400" : "border-white/5 bg-slate-950/50 text-slate-500"
+//                                     )}>
+//                                         {opt}
+//                                     </div>
+//                                 ))}
+//                             </div>
+//                             <div className="pt-4 border-t border-white/5 text-[10px] text-slate-500 italic">
+//                                 Rationale: {q.explanation}
+//                             </div>
+//                         </div>
+//                     ))}
+//                 </div>
+//             )}
+//         </div>
+//       </CardContent>
+//     </Card>
+//   )
+// }
+
+// function TabButton({ active, onClick, icon: Icon, label }: { active: boolean, onClick: () => void, icon: LucideIcon, label: string }) {
+//   return (
+//     <Button variant="ghost" onClick={onClick} className={cn(
+//           "gap-2 px-6 h-11 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+//           active ? "bg-school-primary text-slate-950 shadow-lg" : "text-slate-500 hover:text-white hover:bg-white/5"
+//       )}>
+//       <Icon className="h-4 w-4" /> {label}
+//     </Button>
+//   )
+// }
+
+// function PedagogyCard({ title, value, icon: Icon }: { title: string, value: string, icon: LucideIcon }) {
+//     return (
+//         <Card className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] shadow-inner space-y-4">
+//             <div className="flex items-center gap-3">
+//                 <div className="p-2 bg-white/5 rounded-lg text-school-primary"><Icon className="h-4 w-4" /></div>
+//                 <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{title}</h5>
+//             </div>
+//             <p className="text-lg font-bold text-white uppercase italic tracking-tight leading-relaxed">{value}</p>
+//         </Card>
+//     )
+// }
+
+
 "use client"
 
 import { useState, useEffect, useTransition } from "react"
@@ -888,20 +2442,23 @@ import ReactMarkdown from "react-markdown"
 import Image from "next/image"
 import { 
     Sparkles, ImageIcon, FileText, HelpCircle, Zap, 
-    Loader2, Edit3, Save, Layout, 
+    Loader2, Edit3, Save, Layout, ListChecks, 
+    Clock, Lightbulb, GraduationCap,
     type LucideIcon 
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
-// Actions
-import { generateLessonForTopic } from "@/app/actions/ai-generator" 
+// Store & Types
+import { useTeacherStore,  } from "@/store/teacherDataStore"
+import { getErrorMessage } from "@/lib/error-handler"
+import { generateLessonForTopic, type LessonAiContent } from "@/app/actions/ai-generator" 
 import { generateDiagramImage } from "@/app/actions/generate-diagram" 
 import { saveGeneratedImageUrlToLesson } from "@/app/actions/lesson-image-action" 
-import { saveLessonAction } from "@/app/actions/ai-generator"
-import { getErrorMessage } from "@/lib/error-handler"
+import { publishLesson } from "@/app/actions/lesson.actions"
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -912,7 +2469,10 @@ export interface VisualAid {
   url?: string; 
 }
 
-// ✅ FIX: Synchronized with the Zod schema in ai-generator.ts
+/**
+ * Interface representing the complete lesson structure.
+ * This is the hydrated version of the Prisma JsonValue.
+ */
 export interface EnhancedLessonContent {
   metadata: {
       topicContext: string;
@@ -927,11 +2487,11 @@ export interface EnhancedLessonContent {
   studentContent: {
       title: string;
       explanation: string;
-      summary: string; // ✅ Renamed from key_summary to match schema
+      summary: string; 
       learningObjectives: string[];
       vocabulary: string[];
       visualAids: VisualAid[]; 
-      examples: { // ✅ Added missing examples property
+      examples: {
           task: string;
           solution: string;
       }[];
@@ -949,7 +2509,7 @@ interface AILessonPlannerProps {
   lessonId: string; 
   topicTitle: string;
   schoolId: string;
-  initialData?: EnhancedLessonContent | null;
+  initialData: EnhancedLessonContent | null;
   mode?: "teacher" | "student";
 }
 
@@ -970,11 +2530,15 @@ export function AILessonPlanner({
   const [isEditing, setIsEditing] = useState(false)
   const [isPending, startTransition] = useTransition()
   
-  const [data, setData] = useState<EnhancedLessonContent | null>(initialData || null)
+  // Local state for "Drafting" before committing to Store/DB
+  const [data, setData] = useState<EnhancedLessonContent | null>(initialData)
   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({})
 
+  // Pulling from Store to allow cross-component synchronization
+  const { setActiveTopic } = useTeacherStore();
+
   useEffect(() => {
-    setData(initialData || null)
+    setData(initialData)
     setIsEditing(false)
   }, [topicId, initialData])
 
@@ -982,24 +2546,19 @@ export function AILessonPlanner({
 
   const handleGenerate = async () => {
     if (!isTeacher) return;
-  
     setIsGenerating(true)
-  
     try {
       const res = await generateLessonForTopic(topicId, schoolId)
-  
       if (!res.success) {
         toast.error(res.error ?? "Lesson generation failed")
         return
       }
-  
       if (res.aiContent) {
-        setData(res.aiContent as EnhancedLessonContent)
+        const aiData = res.aiContent as unknown as EnhancedLessonContent;
+        setData(aiData)
         toast.success("AI Generation Complete")
       }
-  
     } catch (err) {
-      console.error(err)
       toast.error(getErrorMessage(err))
     } finally {
       setIsGenerating(false)
@@ -1008,17 +2567,21 @@ export function AILessonPlanner({
 
   const handleManualSave = () => {
     if (!data) return;
-  
     startTransition(async () => {
-      const res = await publishLesson({
-        topicId,
-        schoolId,
-        content: data
-      });
-  
-      if (res.success) {
-        toast.success("Lesson published successfully");
-        setIsEditing(false);
+      try {
+          const res = await publishLesson({ 
+            topicId, 
+            schoolId, 
+            content: data as unknown as LessonAiContent 
+          });
+          if (res.success) {
+            toast.success("Lesson published successfully");
+            setIsEditing(false);
+            // Sync with Store so other components reflect changes
+            setActiveTopic(topicId); 
+          }
+      } catch (err) {
+          toast.error(getErrorMessage(err));
       }
     });
   };
@@ -1038,57 +2601,33 @@ export function AILessonPlanner({
         await saveGeneratedImageUrlToLesson(lessonId, index, result.url);
         toast.success("Asset bound to registry.");
       }
+    } catch (err) {
+        toast.error(getErrorMessage(err));
     } finally {
       setLoadingImages(prev => ({ ...prev, [index]: false }))
     }
   }
 
-if (!data) {
-return (
-<div className="py-20 text-center bg-slate-900 rounded-[3rem] border border-white/5 space-y-6 shadow-2xl">
+  if (!data) {
+    return (
+      <div className="py-20 text-center bg-slate-900 rounded-[3rem] border border-white/5 space-y-6 shadow-2xl">
+        <div className="h-20 w-20 bg-school-primary/10 rounded-full flex items-center justify-center mx-auto text-school-primary border border-school-primary/20">
+          <Sparkles className="h-10 w-10 animate-pulse" />
+        </div>
+        <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">Registry Standby</h3>
+        <p className="text-xl font-black text-school-primary uppercase italic tracking-tight">{topicTitle}</p>
+        {isTeacher && (
+          <Button onClick={handleGenerate} disabled={isGenerating} className="bg-school-primary text-slate-950 font-black px-10 py-7 rounded-2xl">
+            {isGenerating ? <><Loader2 className="animate-spin mr-2" /> GENERATING...</> : <><Sparkles className="mr-2 h-5 w-5" /> GENERATE LESSON</>}
+          </Button>
+        )}
+      </div>
+    )
+  }
 
-<div className="h-20 w-20 bg-school-primary/10 rounded-full flex items-center justify-center mx-auto text-school-primary border border-school-primary/20">
-<Sparkles className="h-10 w-10 animate-pulse" />
-</div>
-
-<h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">
-Registry Standby
-</h3>
-
-<p className="text-sm text-slate-400 uppercase tracking-widest">
-Topic
-</p>
-
-<p className="text-xl font-black text-school-primary uppercase italic tracking-tight">
-{topicTitle}
-</p>
-
-{isTeacher && (
-<Button
-onClick={handleGenerate}
-disabled={isGenerating}
-className="bg-school-primary text-slate-950 font-black px-10 py-7 rounded-2xl hover:text-slate-300"
->
-{isGenerating ? (
-<>
-<Loader2 className="animate-spin mr-2" />
-GENERATING LESSON FOR {topicTitle.toUpperCase()}
-</>
-) : (
-<>
-<Sparkles className="mr-2 h-5 w-5" />
-GENERATE LESSON
-</>
-)}
-</Button>
-)}
-
-</div>
-)
-}
   return (
-    <Card className="border-white/5 bg-slate-200 shadow-2xl overflow-hidden rounded-[2.5rem] flex flex-col">
-      <CardHeader className="bg-slate-950/50 border-b border-white/5 p-8">
+    <Card className="border-white/5 bg-slate-950 shadow-2xl overflow-hidden rounded-[2.5rem] flex flex-col">
+      <CardHeader className="bg-slate-900 border-b border-white/5 p-8">
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
              <div className="flex items-center gap-3 mb-1">
@@ -1096,6 +2635,9 @@ GENERATE LESSON
                 <CardTitle className="text-2xl font-black text-white uppercase italic tracking-tighter truncate">
                     {data.studentContent.title}
                 </CardTitle>
+                <Badge className="bg-school-primary/10 text-school-primary border-school-primary/20 uppercase text-[9px]">
+                    {data.metadata.difficultyLevel}
+                </Badge>
              </div>
              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{topicTitle}</p>
           </div>
@@ -1103,15 +2645,15 @@ GENERATE LESSON
           {isTeacher && (
             <div className="flex items-center gap-3 shrink-0">
               {!isEditing ? (
-                  <Button variant="outline" onClick={() => setIsEditing(true)} className="border-white/10 text-slate-400">
-                      <Edit3 className="h-4 w-4 mr-2" /> Edit
+                  <Button variant="outline" onClick={() => setIsEditing(true)} className="border-white/10 text-slate-400 rounded-xl">
+                      <Edit3 className="h-4 w-4 mr-2" /> Edit Registry
                   </Button>
               ) : (
                   <div className="flex gap-2">
                       <Button variant="ghost" onClick={() => setIsEditing(false)} className="text-slate-500">Cancel</Button>
-                      <Button onClick={handleManualSave} disabled={isPending} className="bg-school-primary text-slate-950 font-black rounded-xl">
+                      <Button onClick={handleManualSave} disabled={isPending} className="bg-school-primary text-slate-950 font-black rounded-xl px-6">
                           {isPending ? <Loader2 className="animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-                          SYNC
+                          PUBLISH
                       </Button>
                   </div>
               )}
@@ -1120,71 +2662,116 @@ GENERATE LESSON
         </div>
       </CardHeader>
       
-      <CardContent className="p-8 flex-1">
-        <div className="flex flex-wrap gap-2 mb-10 bg-slate-400 p-1.5 text-gray-200 rounded-2xl w-fit border border-white/5 shadow-inner">
-            <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Lesson Notes" />
+      <CardContent className="p-8 flex-1 bg-slate-950">
+        <div className="flex flex-wrap gap-2 mb-10 bg-slate-900 p-1.5 rounded-2xl w-fit border border-white/5">
+            <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Notes" />
+            <TabButton active={activeTab === "syllabus"} onClick={() => setActiveTab("syllabus")} icon={ListChecks} label="Syllabus" />
             {isTeacher && <TabButton active={activeTab === "pedagogy"} onClick={() => setActiveTab("pedagogy")} icon={Zap} label="Strategy" />}
             <TabButton active={activeTab === "visuals"} onClick={() => setActiveTab("visuals")} icon={ImageIcon} label="Visuals" />
-            <TabButton active={activeTab === "quiz"} onClick={() => setActiveTab("quiz")} icon={HelpCircle} label="Quiz Ref" />
+            <TabButton active={activeTab === "quiz"} onClick={() => setActiveTab("quiz")} icon={HelpCircle} label="Quiz" />
         </div>
 
-        <div className="min-h-[500px]">
-        {activeTab === "explanation" && (
-    <div className="space-y-6">
-        {isEditing ? (
-            <textarea 
-                className="w-full h-[600px] bg-slate-950 border border-school-primary rounded-[2rem] p-8 text-slate-100 outline-none transition-all font-medium"
-                value={data.studentContent.explanation}
-                onChange={(e) => setData({...data, studentContent: {...data.studentContent, explanation: e.target.value}})}
-            />
-        ) : (
-            /* FIX: Enhanced visibility with text-slate-100 and higher contrast prose */
-            <ReactMarkdown
-                    components={{
-                      // ✅ FIX: Omitted 'node' from props to resolve unused var warning
-                      h1: ({ ...props }) => <h1 className="text-3xl font-extrabold text-amber-700 border-b-2 border-amber-200 pb-2 mb-6 mt-2" {...props} />,
-                      h2: ({ ...props }) => <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4 flex items-center gap-2" {...props} />,
-                      h3: ({ ...props }) => <h3 className="text-xl font-bold text-amber-800 mt-6 mb-3" {...props} />,
-                      p: ({ ...props }) => <p className="text-slate-700 leading-relaxed mb-4 text-sm" {...props} />,
-                      ul: ({ ...props }) => <ul className="list-disc pl-6 mb-4 text-slate-700 space-y-2" {...props} />,
-                      ol: ({ ...props }) => <ol className="list-decimal pl-6 mb-4 text-slate-700 space-y-2" {...props} />,
-                      li: ({ ...props }) => <li className="pl-1 marker:text-amber-500" {...props} />,
-                      strong: ({ ...props }) => <strong className="font-bold text-slate-900" {...props} />,
-                      blockquote: ({ ...props }) => <blockquote className="border-l-4 border-amber-400 pl-4 py-1 my-4 bg-amber-50/50 italic text-slate-700 rounded-r" {...props} />,
-                    }}
-                  >
-                    {data.studentContent.explanation}
-                  </ReactMarkdown>
-        )}
-    </div>
-)}
-
-            {/* Pedagogy Tab (Teacher Only) */}
-            {activeTab === "pedagogy" && isTeacher && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <PedagogyCard title="Instructional Method" value={data.teacherLogic.teachingMethod} icon={Zap} />
-                    <PedagogyCard title="Classroom Hook" value={data.teacherLogic.introductionHook} icon={Sparkles} />
+        <div className="min-h-[600px]">
+            {activeTab === "explanation" && (
+                <div className="space-y-6">
+                    {isEditing ? (
+                        <textarea 
+                            className="w-full h-[600px] bg-slate-900 border border-school-primary/30 rounded-[2rem] p-8 text-slate-100 outline-none font-medium"
+                            value={data.studentContent.explanation}
+                            onChange={(e) => setData({...data, studentContent: {...data.studentContent, explanation: e.target.value}})}
+                        />
+                    ) : (
+                        <div className="prose prose-invert max-w-none">
+                            <ReactMarkdown
+                                components={{
+                                    h1: ({ ...props }) => <h1 className="text-3xl font-black text-white uppercase italic border-b border-white/10 pb-4 mb-6" {...props} />,
+                                    h2: ({ ...props }) => <h2 className="text-xl font-bold text-school-primary uppercase tracking-tight mt-10 mb-4" {...props} />,
+                                    p: ({ ...props }) => <p className="text-slate-300 leading-loose mb-6 text-lg" {...props} />,
+                                    li: ({ ...props }) => <li className="text-slate-300 mb-2" {...props} />,
+                                }}
+                            >
+                                {data.studentContent.explanation}
+                            </ReactMarkdown>
+                        </div>
+                    )}
                 </div>
             )}
 
-            {/* Visuals Tab */}
+            {activeTab === "syllabus" && (
+                <div className="space-y-10">
+                    <section className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
+                        <h4 className="text-school-primary text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <GraduationCap className="h-4 w-4" /> Learning Objectives
+                        </h4>
+                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {data.studentContent.learningObjectives.map((obj, i) => (
+                                <li key={i} className="flex items-start gap-3 text-slate-300 text-sm italic">
+                                    <span className="text-school-primary font-black">0{i+1}.</span> {obj}
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <section className="space-y-4">
+                            <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Executive Summary</h4>
+                            <div className="bg-slate-900 p-6 rounded-3xl border border-white/5 text-slate-400 text-sm leading-relaxed italic">
+                                {data.studentContent.summary}
+                            </div>
+                        </section>
+
+                        <section className="space-y-4">
+                            <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Keyword Registry</h4>
+                            <div className="flex flex-wrap gap-2">
+                                {data.studentContent.vocabulary.map((word, i) => (
+                                    <Badge key={i} variant="outline" className="px-4 py-2 border-white/5 bg-slate-900 text-slate-300 rounded-xl text-[10px] uppercase font-bold tracking-widest">
+                                        {word}
+                                    </Badge>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+
+                    <section className="space-y-4">
+                        <h4 className="text-white text-xs font-black uppercase tracking-widest ml-2">Applications (Examples)</h4>
+                        <div className="grid grid-cols-1 gap-4">
+                            {data.studentContent.examples.map((ex, i) => (
+                                <div key={i} className="p-6 bg-slate-900 rounded-3xl border border-white/5 space-y-3">
+                                    <p className="text-sm font-black text-school-primary uppercase italic">Task: {ex.task}</p>
+                                    <p className="text-xs text-slate-400 border-t border-white/5 pt-3">Solution: {ex.solution}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </div>
+            )}
+
+            {activeTab === "pedagogy" && isTeacher && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <PedagogyCard title="Instructional Method" value={data.teacherLogic.teachingMethod} icon={Zap} />
+                    <PedagogyCard title="Classroom Hook" value={data.teacherLogic.introductionHook} icon={Sparkles} />
+                    <PedagogyCard title="Time Allocation" value={data.teacherLogic.timeAllocation} icon={Clock} />
+                    <PedagogyCard title="Pedagogical Tips" value={data.teacherLogic.pedagogicalTips} icon={Lightbulb} />
+                </div>
+            )}
+
             {activeTab === "visuals" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {data.studentContent.visualAids.map((aid, idx) => (
-                        <Card key={idx} className="bg-slate-950 border-white/5 rounded-[2rem] overflow-hidden group shadow-xl transition-all">
+                        <Card key={idx} className="bg-slate-900 border border-white/5 rounded-[2rem] overflow-hidden group shadow-xl">
                             <div className="p-6 border-b border-white/5">
                                 <h4 className="text-sm font-bold text-white uppercase italic">{aid.title}</h4>
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">{aid.description}</p>
                             </div>
-                            <div className="relative aspect-video flex flex-col items-center justify-center p-2">
+                            <div className="relative aspect-video flex flex-col items-center justify-center p-2 bg-slate-950">
                                 {aid.url ? (
-                                    <Image src={aid.url} alt={aid.title} fill className="object-cover rounded-2xl opacity-90 transition-opacity" unoptimized />
+                                    <Image src={aid.url} alt={aid.title} fill className="object-cover rounded-2xl opacity-80" unoptimized />
                                 ) : (
                                     <div className="text-center space-y-4">
                                         <ImageIcon className="h-10 w-10 text-slate-800 mx-auto" />
                                         {isTeacher && (
                                             <Button onClick={() => handleGenerateImage(idx, aid.imagePrompt)} disabled={loadingImages[idx]} className="bg-slate-900 border border-white/10 hover:bg-school-primary hover:text-slate-950 transition-all rounded-xl">
-                                                {loadingImages[idx] ? <Loader2 className="animate-spin h-4 w-4" /> : "Generate Diagram"}
+                                                {loadingImages[idx] ? <Loader2 className="animate-spin h-4 w-4" /> : "Synthesize Diagram"}
                                             </Button>
                                         )}
                                     </div>
@@ -1195,22 +2782,24 @@ GENERATE LESSON
                 </div>
             )}
 
-            {/* Quiz Tab */}
             {activeTab === "quiz" && (
                 <div className="max-w-3xl mx-auto space-y-6">
                     {data.studentContent.quiz.map((q, i) => (
-                        <div key={i} className="p-8 bg-slate-950 rounded-[2rem] border border-white/5 space-y-4 shadow-xl">
-                            <p className="text-xs font-black text-school-primary uppercase tracking-widest">Question 0{i+1}</p>
+                        <div key={i} className="p-8 bg-slate-900 rounded-[2rem] border border-white/5 space-y-4 shadow-xl">
+                            <p className="text-xs font-black text-school-primary uppercase tracking-widest">Assessment Item 0{i+1}</p>
                             <p className="text-base font-bold text-white leading-relaxed">{q.question}</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 {q.options.map(opt => (
                                     <div key={opt} className={cn(
                                         "p-4 rounded-xl border text-xs font-medium",
-                                        opt === q.answer ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-400" : "border-white/5 bg-slate-900/50 text-slate-500"
+                                        opt === q.answer ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-400" : "border-white/5 bg-slate-950/50 text-slate-500"
                                     )}>
                                         {opt}
                                     </div>
                                 ))}
+                            </div>
+                            <div className="pt-4 border-t border-white/5 text-[10px] text-slate-500 italic">
+                                Rationale: {q.explanation}
                             </div>
                         </div>
                     ))}
@@ -1224,28 +2813,23 @@ GENERATE LESSON
 
 function TabButton({ active, onClick, icon: Icon, label }: { active: boolean, onClick: () => void, icon: LucideIcon, label: string }) {
   return (
-    <Button
-      variant="ghost"
-      onClick={onClick}
-      className={cn(
+    <Button variant="ghost" onClick={onClick} className={cn(
           "gap-2 px-6 h-11 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-          active ? "bg-school-primary text-slate-950 shadow-lg" : "text-slate-500 hover:text-white"
-      )}
-    >
-      <Icon className="h-4 w-4" />
-      {label}
+          active ? "bg-school-primary text-slate-950 shadow-lg" : "text-slate-500 hover:text-white hover:bg-white/5"
+      )}>
+      <Icon className="h-4 w-4" /> {label}
     </Button>
   )
 }
 
 function PedagogyCard({ title, value, icon: Icon }: { title: string, value: string, icon: LucideIcon }) {
     return (
-        <Card className="bg-slate-950 border-white/5 p-8 rounded-[2rem] shadow-inner space-y-4">
+        <Card className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] shadow-inner space-y-4">
             <div className="flex items-center gap-3">
-                <div className="p-2 bg-white/5 rounded-lg text-slate-50"><Icon className="h-4 w-4" /></div>
+                <div className="p-2 bg-white/5 rounded-lg text-school-primary"><Icon className="h-4 w-4" /></div>
                 <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{title}</h5>
             </div>
-            <p className="text-lg font-bold text-white uppercase italic tracking-tight">{value}</p>
+            <p className="text-lg font-bold text-white uppercase italic tracking-tight leading-relaxed">{value}</p>
         </Card>
     )
 }

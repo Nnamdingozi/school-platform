@@ -316,47 +316,41 @@
 import React from "react";
 import { Loader2, ShieldCheck, Database, Sparkles, School } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useExamStore, getErrorMessage } from "@/store/useExamStore";
 
-// --- Updated Types to match Server Action ---
-type Config = {
-  title: string;
-  totalQuestions: number;
-  duration: number;
-  startTime: string;
-  endTime?: string;
-  reusePercentage: number; // The new field for the action
-};
+// ── Types ───────────────────────────────────────────────────────────────────
 
-type Classroom = {
-  id: string;
-  name: string;
-};
+interface SettingsSidebarProps {
+  /**
+   * The trigger function to start the AI generation.
+   * This is usually a server action defined in the parent page.
+   */
+  onBuildPool: () => Promise<void> | void;
+}
 
-type Props = {
-  config: Config;
-  setConfig: React.Dispatch<React.SetStateAction<Config>>;
-  validClassrooms: Classroom[];
-  selectedClassIds: string[];
-  toggleClass: (id: string) => void;
-  handleBuildPool: () => void;
-  isPending: boolean;
-};
+// ── Main Component ──────────────────────────────────────────────────────────
 
-export function SettingsSidebar({
-  config,
-  setConfig,
-  validClassrooms,
-  selectedClassIds,
-  toggleClass,
-  handleBuildPool,
-  isPending,
-}: Props) {
+export function SettingsSidebar({ onBuildPool }: SettingsSidebarProps) {
+  // Pulling everything from the Zustand store
+  const { 
+    config, 
+    setConfig, 
+    availableClasses, 
+    selectedClassIds, 
+    toggleClass, 
+    isSubmitting 
+  } = useExamStore();
 
-  const handleBuildClick = () => {
-    if (!config.title.trim()) {
-      return; // Handled by toast in parent usually, or alert
+  const handleBuildClick = async () => {
+    try {
+      if (!config.title.trim()) {
+        // You can add a toast notification here
+        return; 
+      }
+      await onBuildPool();
+    } catch (error) {
+      console.error("[BUILD_CLICK_ERROR]:", getErrorMessage(error));
     }
-    handleBuildPool();
   };
 
   return (
@@ -376,7 +370,7 @@ export function SettingsSidebar({
           <textarea
             placeholder="e.g. JS1 Biology Mid-Term"
             value={config.title}
-            onChange={(e) => setConfig((prev) => ({ ...prev, title: e.target.value }))}
+            onChange={(e) => setConfig({ title: e.target.value })}
             className="w-full bg-slate-950 border border-white/5 rounded-2xl px-4 py-3 text-sm text-white resize-none outline-none focus:border-school-primary transition-all font-bold uppercase italic"
             rows={2}
           />
@@ -401,7 +395,7 @@ export function SettingsSidebar({
             max="100" 
             step="10" 
             value={config.reusePercentage} 
-            onChange={e => setConfig({...config, reusePercentage: Number(e.target.value)})} 
+            onChange={e => setConfig({ reusePercentage: Number(e.target.value) })} 
             className="w-full accent-school-primary cursor-pointer h-1.5 bg-slate-950 rounded-lg appearance-none" 
         />
         
@@ -426,33 +420,25 @@ export function SettingsSidebar({
           <input
             type="number"
             value={config.totalQuestions}
-            onChange={(e) => setConfig((prev) => ({ ...prev, totalQuestions: Number(e.target.value) }))}
+            onChange={(e) => setConfig({ totalQuestions: Number(e.target.value) })}
             className="w-full bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-white font-mono text-xs focus:border-school-primary outline-none"
           />
         </div>
 
         <div className="space-y-2">
           <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-            Mins
+            Duration (Mins)
           </label>
           <input
-            className="w-full bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-white font-mono text-xs focus:border-school-primary outline-none"
-         
             type="datetime-local"
             value={config.startTime}
-            onChange={(e) =>
-              setConfig((prev) => ({
-                ...prev,
-                startTime: e.target.value,
-              }))
-            }
-          
-         
-         />
+            onChange={(e) => setConfig({ startTime: e.target.value })}
+            className="w-full bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-white font-mono text-[10px] focus:border-school-primary outline-none"
+          />
         </div>
       </div>
 
-      {/* 4. CLASSROOM SELECTION (Multi-Select) */}
+      {/* 4. CLASSROOM SELECTION */}
       <div className="space-y-4 pt-6 border-t border-white/5">
         <div className="flex items-center gap-2 text-slate-400">
             <School className="h-4 w-4" />
@@ -460,7 +446,7 @@ export function SettingsSidebar({
         </div>
 
         <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
-          {validClassrooms.map((classroom) => {
+          {availableClasses.map((classroom) => {
             const isSelected = selectedClassIds.includes(classroom.id);
 
             return (
@@ -485,11 +471,11 @@ export function SettingsSidebar({
       {/* 5. BUILD BUTTON */}
       <button
         onClick={handleBuildClick}
-        disabled={isPending || selectedClassIds.length === 0}
+        disabled={isSubmitting || selectedClassIds.length === 0}
         className="group relative w-full bg-school-primary text-slate-950 font-black py-5 rounded-2xl overflow-hidden hover:scale-[1.03] active:scale-95 transition-all shadow-xl shadow-school-primary/10 disabled:opacity-20 disabled:grayscale"
       >
         <div className="relative z-10 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.2em]">
-            {isPending ? (
+            {isSubmitting ? (
                 <>
                     <Loader2 className="h-4 w-4 animate-spin" />
                     Synthesizing Pool...
@@ -502,7 +488,6 @@ export function SettingsSidebar({
             )}
         </div>
         
-        {/* Animated background glow on hover */}
         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
       </button>
 

@@ -124,17 +124,362 @@
 
 
 
+// "use client"
+
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Badge } from "@/components/ui/badge"
+// import { Button } from "@/components/ui/button"
+// import { Calendar, Clock, FileText, Zap, ChevronRight, AlertCircle } from "lucide-react"
+// import { cn } from "@/lib/utils"
+
+// interface WhatsDueWidgetProps {
+//   exams: any[]; // Data from Prisma 'Exam' model
+// }
+
+// export function WhatsDueWidget({ exams }: WhatsDueWidgetProps) {
+//   return (
+//     <Card className="h-full bg-slate-900 border-white/5 rounded-[2rem] shadow-2xl overflow-hidden">
+//       <CardHeader className="pb-6 bg-slate-950/50 border-b border-white/5">
+//         <div className="flex items-center justify-between">
+//           <div className="flex items-center gap-3">
+//             <div className="p-2 bg-school-primary/10 rounded-lg">
+//                 <Calendar className="h-4 w-4 text-school-primary" />
+//             </div>
+//             <CardTitle className="text-sm font-black uppercase italic tracking-tighter text-white">
+//                 Upcoming Assessment Vault
+//             </CardTitle>
+//           </div>
+//           <Badge variant="outline" className="text-[9px] font-black uppercase border-white/10 text-slate-500">
+//             {exams.length} Pending
+//           </Badge>
+//         </div>
+//       </CardHeader>
+
+//       <CardContent className="p-6 space-y-4">
+//         {exams.length === 0 ? (
+//           <div className="py-12 text-center space-y-3">
+//             <AlertCircle className="h-8 w-8 text-slate-800 mx-auto" />
+//             <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+//                 Registry Clear: No Exams Scheduled
+//             </p>
+//           </div>
+//         ) : (
+//           exams.map((exam) => (
+//             <div
+//               key={exam.id}
+//               className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-slate-950 p-4 transition-all hover:border-school-primary/30"
+//             >
+//               {/* Icon Based on Type */}
+//               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-900 border border-white/5 text-school-primary shadow-inner">
+//                 <Zap className="h-5 w-5" />
+//               </div>
+
+//               <div className="min-w-0 flex-1">
+//                 <div className="flex items-start justify-between gap-2">
+//                   <div>
+//                     <h4 className="font-black text-white text-sm uppercase italic tracking-tight leading-none truncate">
+//                       {exam.title}
+//                     </h4>
+//                     <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1.5">
+//                       {exam.type.replace(/_/g, ' ')}
+//                     </p>
+//                   </div>
+//                   <Badge className="bg-school-primary/10 text-school-primary border-none text-[8px] font-black uppercase px-2 py-0">
+//                     Active
+//                   </Badge>
+//                 </div>
+                
+//                 <div className="mt-4 flex items-center justify-between">
+//                   <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-slate-600">
+//                     <span className="flex items-center gap-1.5">
+//                         <Clock className="h-3 w-3" />
+//                         {exam.duration} Minutes
+//                     </span>
+//                     <span className="flex items-center gap-1.5">
+//                         <FileText className="h-3 w-3" />
+//                         CBT Format
+//                     </span>
+//                   </div>
+                  
+//                   <Button size="sm" className="h-7 bg-slate-900 border border-white/10 hover:bg-school-primary hover:text-slate-950 text-[9px] font-black uppercase rounded-lg transition-all">
+//                     Initialize <ChevronRight className="ml-1 h-3 w-3" />
+//                   </Button>
+//                 </div>
+//               </div>
+//             </div>
+//           ))
+//         )}
+        
+//         {exams.length > 0 && (
+//             <button className="w-full py-3 text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 hover:text-school-primary transition-colors mt-2">
+//                 View Full Assessment History
+//             </button>
+//         )}
+//       </CardContent>
+//     </Card>
+//   )
+// }
+
+
+// "use client"
+
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Badge } from "@/components/ui/badge"
+// import { Button } from "@/components/ui/button"
+// import { Calendar, Clock, FileText, Zap, ChevronRight, AlertCircle } from "lucide-react"
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface Exam {
+//   id: string;
+//   title: string;
+//   type: string;
+//   duration: number;
+// }
+
+// interface WhatsDueWidgetProps {
+//   // FIX: Replaced 'any[]' with the specific Exam interface
+//   exams: Exam[]; 
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export function WhatsDueWidget({ exams }: WhatsDueWidgetProps) {
+//   return (
+//     <Card className="h-full bg-slate-900 border-white/5 rounded-[2rem] shadow-2xl overflow-hidden">
+//       <CardHeader className="pb-6 bg-slate-950/50 border-b border-white/5">
+//         <div className="flex items-center justify-between">
+//           <div className="flex items-center gap-3">
+//             <div className="p-2 bg-school-primary/10 rounded-lg">
+//                 <Calendar className="h-4 w-4 text-school-primary" />
+//             </div>
+//             <CardTitle className="text-sm font-black uppercase italic tracking-tighter text-white leading-none">
+//                 Upcoming Assessment Vault
+//             </CardTitle>
+//           </div>
+//           <Badge variant="outline" className="text-[9px] font-black uppercase border-white/10 text-slate-500">
+//             {exams.length} Pending
+//           </Badge>
+//         </div>
+//       </CardHeader>
+
+//       <CardContent className="p-6 space-y-4">
+//         {exams.length === 0 ? (
+//           <div className="py-12 text-center space-y-3">
+//             <AlertCircle className="h-8 w-8 text-slate-800 mx-auto" />
+//             <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+//                 Registry Clear: No Exams Scheduled
+//             </p>
+//           </div>
+//         ) : (
+//           // FIX: Strictly typed mapping
+//           exams.map((exam: Exam) => (
+//             <div
+//               key={exam.id}
+//               className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-slate-950 p-4 transition-all hover:border-school-primary/30"
+//             >
+//               {/* Icon Based on Type */}
+//               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-900 border border-white/5 text-school-primary shadow-inner">
+//                 <Zap className="h-5 w-5" />
+//               </div>
+
+//               <div className="min-w-0 flex-1">
+//                 <div className="flex items-start justify-between gap-2">
+//                   <div>
+//                     <h4 className="font-black text-white text-sm uppercase italic tracking-tight leading-none truncate">
+//                       {exam.title}
+//                     </h4>
+//                     <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1.5">
+//                       {exam.type.replace(/_/g, ' ')}
+//                     </p>
+//                   </div>
+//                   <Badge className="bg-school-primary/10 text-school-primary border-none text-[8px] font-black uppercase px-2 py-0">
+//                     Active
+//                   </Badge>
+//                 </div>
+                
+//                 <div className="mt-4 flex items-center justify-between">
+//                   <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-slate-600">
+//                     <span className="flex items-center gap-1.5">
+//                         <Clock className="h-3 w-3" />
+//                         {exam.duration} Minutes
+//                     </span>
+//                     <span className="flex items-center gap-1.5">
+//                         <FileText className="h-3 w-3" />
+//                         CBT Format
+//                     </span>
+//                   </div>
+                  
+//                   <Button size="sm" className="h-7 bg-slate-900 border border-white/10 hover:bg-school-primary hover:text-slate-950 text-[9px] font-black uppercase rounded-lg transition-all">
+//                     Initialize <ChevronRight className="ml-1 h-3 w-3" />
+//                   </Button>
+//                 </div>
+//               </div>
+//             </div>
+//           ))
+//         )}
+        
+//         {exams.length > 0 && (
+//             <button className="w-full py-3 text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 hover:text-school-primary transition-colors mt-2">
+//                 View Full Assessment History
+//             </button>
+//         )}
+//       </CardContent>
+//     </Card>
+//   )
+// }
+
+
+
+// "use client"
+
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Badge } from "@/components/ui/badge"
+// import { Button } from "@/components/ui/button"
+// import { Calendar, Clock, FileText, Zap, ChevronRight, AlertCircle } from "lucide-react"
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface Exam {
+//   id: string;
+//   title: string;
+//   type: string;
+//   duration: number;
+// }
+
+// interface WhatsDueWidgetProps {
+//   // FIX: Replaced 'any[]' with the specific Exam interface
+//   exams: Exam[]; 
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export function WhatsDueWidget({ exams }: WhatsDueWidgetProps) {
+//   return (
+//     <Card className="h-full bg-slate-900 border-white/5 rounded-[2rem] shadow-2xl overflow-hidden">
+//       <CardHeader className="pb-6 bg-slate-950/50 border-b border-white/5">
+//         <div className="flex items-center justify-between">
+//           <div className="flex items-center gap-3">
+//             <div className="p-2 bg-school-primary/10 rounded-lg">
+//                 {/* Utilized icon */}
+//                 <Calendar className="h-4 w-4 text-school-primary" />
+//             </div>
+//             <CardTitle className="text-sm font-black uppercase italic tracking-tighter text-white leading-none">
+//                 Upcoming Assessment Vault
+//             </CardTitle>
+//           </div>
+//           <Badge variant="outline" className="text-[9px] font-black uppercase border-white/10 text-slate-500">
+//             {exams.length} Pending
+//           </Badge>
+//         </div>
+//       </CardHeader>
+
+//       <CardContent className="p-6 space-y-4">
+//         {exams.length === 0 ? (
+//           <div className="py-12 text-center space-y-3">
+//             {/* Utilized icon */}
+//             <AlertCircle className="h-8 w-8 text-slate-800 mx-auto" />
+//             <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+//                 Registry Clear: No Exams Scheduled
+//             </p>
+//           </div>
+//         ) : (
+//           // FIX: Strictly typed mapping using the Exam interface
+//           exams.map((exam: Exam) => (
+//             <div
+//               key={exam.id}
+//               className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-slate-950 p-4 transition-all hover:border-school-primary/30"
+//             >
+//               {/* Icon Based on Type - Utilized Zap */}
+//               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-900 border border-white/5 text-school-primary shadow-inner">
+//                 <Zap className="h-5 w-5" />
+//               </div>
+
+//               <div className="min-w-0 flex-1">
+//                 <div className="flex items-start justify-between gap-2">
+//                   <div>
+//                     <h4 className="font-black text-white text-sm uppercase italic tracking-tight leading-none truncate">
+//                       {exam.title}
+//                     </h4>
+//                     <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1.5">
+//                       {exam.type.replace(/_/g, ' ')}
+//                     </p>
+//                   </div>
+//                   <Badge className="bg-school-primary/10 text-school-primary border-none text-[8px] font-black uppercase px-2 py-0">
+//                     Active
+//                   </Badge>
+//                 </div>
+                
+//                 <div className="mt-4 flex items-center justify-between">
+//                   <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-slate-600">
+//                     <span className="flex items-center gap-1.5">
+//                         {/* Utilized Clock icon */}
+//                         <Clock className="h-3 w-3" />
+//                         {exam.duration} Minutes
+//                     </span>
+//                     <span className="flex items-center gap-1.5">
+//                         {/* Utilized FileText icon */}
+//                         <FileText className="h-3 w-3" />
+//                         CBT Format
+//                     </span>
+//                   </div>
+                  
+//                   <Button size="sm" className="h-7 bg-slate-900 border border-white/10 hover:bg-school-primary hover:text-slate-950 text-[9px] font-black uppercase rounded-lg transition-all">
+//                     Initialize 
+//                     {/* Utilized Chevron icon */}
+//                     <ChevronRight className="ml-1 h-3 w-3" />
+//                   </Button>
+//                 </div>
+//               </div>
+//             </div>
+//           ))
+//         )}
+        
+//         {exams.length > 0 && (
+//             <button className="w-full py-3 text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 hover:text-school-primary transition-colors mt-2 outline-none">
+//                 View Full Assessment History
+//             </button>
+//         )}
+//       </CardContent>
+//     </Card>
+//   )
+// }
+
+
+
+
+
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, Clock, FileText, Zap, ChevronRight, AlertCircle } from "lucide-react"
-import { cn } from "@/lib/utils"
+// Import generated Prisma types
+import { Exam } from "@prisma/client"
+
+// ── Utility ──────────────────────────────────────────────────────────────────
+
+/**
+ * Standard error extractor for usage in client-side actions
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String(error.message);
+  }
+  return typeof error === 'string' ? error : "An unknown error occurred";
+}
+
+// ── Types ───────────────────────────────────────────────────────────────────
 
 interface WhatsDueWidgetProps {
-  exams: any[]; // Data from Prisma 'Exam' model
+  // Using the Prisma generated Exam type
+  exams: Exam[]; 
 }
+
+// ── Main Component ──────────────────────────────────────────────────────────
 
 export function WhatsDueWidget({ exams }: WhatsDueWidgetProps) {
   return (
@@ -145,7 +490,7 @@ export function WhatsDueWidget({ exams }: WhatsDueWidgetProps) {
             <div className="p-2 bg-school-primary/10 rounded-lg">
                 <Calendar className="h-4 w-4 text-school-primary" />
             </div>
-            <CardTitle className="text-sm font-black uppercase italic tracking-tighter text-white">
+            <CardTitle className="text-sm font-black uppercase italic tracking-tighter text-white leading-none">
                 Upcoming Assessment Vault
             </CardTitle>
           </div>
@@ -169,7 +514,6 @@ export function WhatsDueWidget({ exams }: WhatsDueWidgetProps) {
               key={exam.id}
               className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-slate-950 p-4 transition-all hover:border-school-primary/30"
             >
-              {/* Icon Based on Type */}
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-900 border border-white/5 text-school-primary shadow-inner">
                 <Zap className="h-5 w-5" />
               </div>
@@ -202,7 +546,8 @@ export function WhatsDueWidget({ exams }: WhatsDueWidgetProps) {
                   </div>
                   
                   <Button size="sm" className="h-7 bg-slate-900 border border-white/10 hover:bg-school-primary hover:text-slate-950 text-[9px] font-black uppercase rounded-lg transition-all">
-                    Initialize <ChevronRight className="ml-1 h-3 w-3" />
+                    Initialize 
+                    <ChevronRight className="ml-1 h-3 w-3" />
                   </Button>
                 </div>
               </div>
@@ -211,7 +556,7 @@ export function WhatsDueWidget({ exams }: WhatsDueWidgetProps) {
         )}
         
         {exams.length > 0 && (
-            <button className="w-full py-3 text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 hover:text-school-primary transition-colors mt-2">
+            <button className="w-full py-3 text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 hover:text-school-primary transition-colors mt-2 outline-none">
                 View Full Assessment History
             </button>
         )}

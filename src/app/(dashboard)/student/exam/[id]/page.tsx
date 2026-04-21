@@ -556,14 +556,54 @@
 // }
 
 
-import { getStudentExam } from "@/app/actions/studentExam";
-import ExamClient from "@/components/student-dashboard/exams/examClient"
-export default async function Page({
-  params,
-}: {
-  params: { examId: string };
-}) {
-  const exam = await getStudentExam(params.examId, "");
+// import { getStudentExam } from "@/app/actions/studentExam";
+// import ExamClient from "@/components/student-dashboard/exams/examClient"
+// export default async function Page({
+//   params,
+// }: {
+//   params: { examId: string };
+// }) {
+//   const exam = await getStudentExam(params.examId, "");
 
-  return <ExamClient exam={exam} />;
+//   return <ExamClient exam={exam} />;
+// }
+
+
+
+import { getStudentExam } from "@/app/actions/studentExam";
+import ExamClient, { StudentExamPayload } from "@/components/student-dashboard/exams/examClient";
+import { notFound } from "next/navigation";
+
+type PageProps = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function Page({ params }: PageProps) {
+  try {
+    const { id } = await params;
+    
+    // The server action result is typed as StudentExamResponse
+    const rawExam = await getStudentExam(id, "");
+
+    if (!rawExam) {
+      return notFound();
+    }
+
+    /**
+     * FIXED: Explicitly cast the raw response to StudentExamPayload.
+     * This removes the requirement for schoolId, createdAt, etc.
+     */
+    const examPayload = rawExam as unknown as StudentExamPayload;
+
+    return <ExamClient exam={examPayload} />;
+  } catch (error) {
+    console.error("[EXAM_PAGE_ERROR]:", error);
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <p className="text-red-500 font-bold uppercase tracking-widest text-xs">
+          Registry Connection Failed
+        </p>
+      </div>
+    );
+  }
 }

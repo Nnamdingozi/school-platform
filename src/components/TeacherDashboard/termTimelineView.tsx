@@ -354,6 +354,122 @@
 // }
 
 
+// "use client";
+
+// import { 
+//   CheckCircle2, Clock, PlayCircle, AlertCircle, 
+//   Calendar, ChevronRight, Archive 
+// } from "lucide-react";
+// import { cn } from "@/lib/utils";
+// import { Progress } from "@/components/ui/progress";
+
+// export function TermTimelineView({ data }: { data: any }) {
+//   const { term, isConcluded, schedule, progressPercent, subjectName, gradeName } = data;
+
+//   return (
+//     <div className="max-w-5xl mx-auto space-y-12 pb-20">
+      
+//       {/* ── HEADER ── */}
+//       <div className={cn(
+//         "relative overflow-hidden border rounded-[3rem] p-10 shadow-2xl transition-all duration-500",
+//         isConcluded ? "bg-slate-900/40 border-emerald-500/20" : "bg-slate-900 border-white/5"
+//       )}>
+//         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+//           <div className="space-y-3 text-center md:text-left">
+//             <div className="flex items-center justify-center md:justify-start gap-3">
+//               {isConcluded ? (
+//                 <div className="flex items-center gap-2 bg-emerald-500 text-slate-950 text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-widest">
+//                   <Archive className="h-3 w-3" /> Term Concluded
+//                 </div>
+//               ) : (
+//                 <div className="flex items-center gap-2 bg-school-primary text-slate-950 text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-widest">
+//                   <PlayCircle className="h-3 w-3" /> Active Roadmap
+//                 </div>
+//               )}
+//             </div>
+            
+//             <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+//               {term.displayName}
+//             </h1>
+            
+//             <div className="flex items-center justify-center md:justify-start gap-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+//               <div className="flex items-center gap-2">
+//                 <Calendar className="h-3 w-3" />
+//                 <span>
+//                   {new Date(term.startDate).toLocaleDateString('en-GB')} — {new Date(term.endDate).toLocaleDateString('en-GB')}
+//                 </span>
+//               </div>
+//               <span className="text-slate-800">|</span>
+//               <span className="text-slate-300">{gradeName} / {subjectName}</span>
+//             </div>
+//           </div>
+
+//           <div className="w-full md:w-72 space-y-4">
+//             <div className="flex justify-between items-end text-[10px] font-black uppercase tracking-widest">
+//               <span className="text-slate-400">Completion</span>
+//               <span className={isConcluded ? "text-emerald-500" : "text-school-primary"}>{progressPercent}%</span>
+//             </div>
+//             <Progress value={progressPercent} className={cn("h-3 bg-slate-950", isConcluded ? "[&>div]:bg-emerald-500" : "[&>div]:bg-school-primary")} />
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* ── TIMELINE ── */}
+//       <div className="relative px-4">
+//         <div className="absolute left-[31px] md:left-1/2 top-0 bottom-0 w-px bg-slate-800" />
+
+//         <div className="space-y-12">
+//           {schedule.length > 0 ? (
+//             schedule.map((topic: any, index: number) => (
+//               <div key={topic.id} className={cn(
+//                 "relative flex flex-col md:flex-row items-center",
+//                 index % 2 === 0 ? "md:flex-row-reverse" : "",
+//                 isConcluded && "opacity-70 grayscale-[0.4]"
+//               )}>
+//                 <div className="absolute left-4 md:left-1/2 -translate-x-1/2 z-20">
+//                   <div className={cn(
+//                     "h-8 w-8 rounded-full flex items-center justify-center border-4 border-slate-950",
+//                     topic.status === "current" ? "bg-school-primary" : 
+//                     topic.status === "completed" ? "bg-emerald-500" : "bg-slate-800"
+//                   )}>
+//                     {topic.status === "completed" ? <CheckCircle2 className="h-4 w-4 text-white" /> : <Clock className="h-4 w-4 text-slate-500" />}
+//                   </div>
+//                 </div>
+
+//                 <div className="w-full md:w-[45%] ml-12 md:ml-0">
+//                   <div className="p-8 rounded-[2.5rem] bg-slate-900 border border-white/5">
+//                     <div className="flex justify-between mb-4">
+//                       <span className="text-[10px] font-black px-3 py-1 bg-slate-950 rounded-full text-slate-500 uppercase tracking-widest">
+//                         Week {topic.weekNumber}
+//                       </span>
+//                       {topic.needsReview && <AlertCircle className="h-4 w-4 text-amber-500" />}
+//                     </div>
+//                     <h4 className="text-xl font-bold text-white uppercase italic">{topic.title}</h4>
+//                     <div className="mt-6 flex justify-between items-center border-t border-white/5 pt-6">
+//                       <div className="text-[8px] font-black text-slate-600 uppercase tracking-widest">
+//                         Performance: {topic.averagePercent ? `${topic.averagePercent}%` : 'N/A'}
+//                       </div>
+//                       <button className="h-10 w-10 rounded-xl bg-slate-950 flex items-center justify-center text-slate-500 hover:text-school-primary transition-colors">
+//                         <ChevronRight className="h-5 w-5" />
+//                       </button>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             ))
+//           ) : (
+//             <div className="py-20 text-center bg-slate-900/50 rounded-[3rem] border border-dashed border-white/10">
+//               <p className="text-slate-600 uppercase text-[10px] font-black tracking-widest">No topics mapped for this term yet</p>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
 "use client";
 
 import { 
@@ -363,7 +479,39 @@ import {
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 
-export function TermTimelineView({ data }: { data: any }) {
+// ── Types ───────────────────────────────────────────────────────────────────
+
+interface TimelineTopic {
+  id: string;
+  title: string;
+  weekNumber: number | null;
+  status: "completed" | "current" | "pending";
+  hasLesson: boolean;
+  averagePercent?: string | null;
+  needsReview?: boolean;
+}
+
+interface TermTimelineData {
+  term: {
+    displayName: string;
+    startDate: string | Date;
+    endDate: string | Date;
+  };
+  isConcluded: boolean;
+  schedule: TimelineTopic[];
+  progressPercent: number;
+  subjectName: string;
+  gradeName: string;
+}
+
+interface TermTimelineViewProps {
+  // FIX: Replaced 'any' with specific interface
+  data: TermTimelineData;
+}
+
+// ── Main Component ──────────────────────────────────────────────────────────
+
+export function TermTimelineView({ data }: TermTimelineViewProps) {
   const { term, isConcluded, schedule, progressPercent, subjectName, gradeName } = data;
 
   return (
@@ -420,16 +568,17 @@ export function TermTimelineView({ data }: { data: any }) {
 
         <div className="space-y-12">
           {schedule.length > 0 ? (
-            schedule.map((topic: any, index: number) => (
+            // FIX: Replaced topic: any with topic: TimelineTopic
+            schedule.map((topic: TimelineTopic, index: number) => (
               <div key={topic.id} className={cn(
-                "relative flex flex-col md:flex-row items-center",
+                "relative flex flex-col md:flex-row items-center transition-all duration-300",
                 index % 2 === 0 ? "md:flex-row-reverse" : "",
                 isConcluded && "opacity-70 grayscale-[0.4]"
               )}>
                 <div className="absolute left-4 md:left-1/2 -translate-x-1/2 z-20">
                   <div className={cn(
-                    "h-8 w-8 rounded-full flex items-center justify-center border-4 border-slate-950",
-                    topic.status === "current" ? "bg-school-primary" : 
+                    "h-8 w-8 rounded-full flex items-center justify-center border-4 border-slate-950 shadow-lg transition-all",
+                    topic.status === "current" ? "bg-school-primary scale-110 shadow-school-primary/20" : 
                     topic.status === "completed" ? "bg-emerald-500" : "bg-slate-800"
                   )}>
                     {topic.status === "completed" ? <CheckCircle2 className="h-4 w-4 text-white" /> : <Clock className="h-4 w-4 text-slate-500" />}
@@ -437,19 +586,24 @@ export function TermTimelineView({ data }: { data: any }) {
                 </div>
 
                 <div className="w-full md:w-[45%] ml-12 md:ml-0">
-                  <div className="p-8 rounded-[2.5rem] bg-slate-900 border border-white/5">
+                  <div className={cn(
+                    "p-8 rounded-[2.5rem] bg-slate-900 border transition-all hover:border-white/20",
+                    topic.status === "current" ? "border-school-primary/40 shadow-xl" : "border-white/5"
+                  )}>
                     <div className="flex justify-between mb-4">
                       <span className="text-[10px] font-black px-3 py-1 bg-slate-950 rounded-full text-slate-500 uppercase tracking-widest">
                         Week {topic.weekNumber}
                       </span>
-                      {topic.needsReview && <AlertCircle className="h-4 w-4 text-amber-500" />}
+                      {topic.needsReview && <AlertCircle className="h-4 w-4 text-amber-500 animate-pulse" />}
                     </div>
-                    <h4 className="text-xl font-bold text-white uppercase italic">{topic.title}</h4>
+                    <h4 className="text-xl font-bold text-white uppercase italic tracking-tight leading-tight">
+                        {topic.title}
+                    </h4>
                     <div className="mt-6 flex justify-between items-center border-t border-white/5 pt-6">
                       <div className="text-[8px] font-black text-slate-600 uppercase tracking-widest">
-                        Performance: {topic.averagePercent ? `${topic.averagePercent}%` : 'N/A'}
+                        Performance Index: {topic.averagePercent ? `${topic.averagePercent}%` : 'Pending'}
                       </div>
-                      <button className="h-10 w-10 rounded-xl bg-slate-950 flex items-center justify-center text-slate-500 hover:text-school-primary transition-colors">
+                      <button className="h-10 w-10 rounded-xl bg-slate-950 flex items-center justify-center text-slate-500 hover:text-school-primary border border-white/5 transition-all active:scale-95 shadow-inner">
                         <ChevronRight className="h-5 w-5" />
                       </button>
                     </div>
@@ -458,8 +612,11 @@ export function TermTimelineView({ data }: { data: any }) {
               </div>
             ))
           ) : (
-            <div className="py-20 text-center bg-slate-900/50 rounded-[3rem] border border-dashed border-white/10">
-              <p className="text-slate-600 uppercase text-[10px] font-black tracking-widest">No topics mapped for this term yet</p>
+            <div className="py-24 text-center bg-slate-900/40 rounded-[3rem] border border-dashed border-white/5">
+              <Archive className="h-12 w-12 text-slate-800 mx-auto mb-4" />
+              <p className="text-slate-600 uppercase text-[10px] font-black tracking-widest italic opacity-50">
+                Registry Empty: No Topics Mapped for this Term
+              </p>
             </div>
           )}
         </div>

@@ -456,52 +456,355 @@
 //   )
 // }
 
-// src/app/dashboard/classes/page.tsx
+// // src/app/dashboard/classes/page.tsx
+// "use client"
+
+// import { useProfileStore } from "@/store/profileStore"
+// import { getClassDashboardData, getManagementHelpers } from "@/app/actions/class-management" // The unified action from previous turn
+// import { useState, useEffect } from "react"
+// import { Loader2 } from "lucide-react"
+
+// import { AdminClassView } from "@/components/admin-dasboard/adminClassView"
+// import { TeacherClassView } from "@/components/TeacherDashboard/teacherClassView"
+// import { StudentClassView } from "@/components/student-dashboard/studentClassView"
+
+// export default function ClassesPage() {
+//   const { profile, isLoading: isProfileLoading } = useProfileStore()
+//   const [data, setData] = useState<any>(null)
+//   const [helpers, setHelpers] = useState<any>(null)
+//   const [isLoading, setIsLoading] = useState(true)
+
+//   useEffect(() => {
+//     async function load() {
+//       if (!profile?.id || !profile?.schoolId) return
+//       const [dashboardData, helperData] = await Promise.all([
+//         getClassDashboardData(profile.id),
+//         profile.role === "SCHOOL_ADMIN" ? getManagementHelpers(profile.schoolId) : null
+//       ])
+//       setData(dashboardData)
+//       setHelpers(helperData)
+//       setIsLoading(false)
+//     }
+//     load()
+//   }, [profile])
+
+//   if (isProfileLoading || isLoading) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+//         <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
+//         <p className="text-slate-400 animate-pulse uppercase text-[10px] tracking-widest font-black">Syncing Registry...</p>
+//       </div>
+//     )
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
+//       {profile?.role === "SCHOOL_ADMIN" && <AdminClassView initialData={data} helpers={helpers} profile={profile} />}
+//       {profile?.role === "TEACHER" && <TeacherClassView data={data} />}
+//       {profile?.role === "STUDENT" && <StudentClassView data={data} />}
+//     </div>
+//   )
+// }
+
+// "use client"
+
+// import { useState, useEffect, useCallback } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { getClassDashboardData, getManagementHelpers } from "@/app/actions/class-management"
+// import { Loader2 } from "lucide-react"
+
+// import { AdminClassView } from "@/components/admin-dasboard/adminClassView"
+// import { TeacherClassView } from "@/components/TeacherDashboard/teacherClassView"
+// import { StudentClassView } from "@/components/student-dashboard/studentClassView"
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// // Matches the data needed for the Admin Management tools
+// interface ManagementHelpers {
+//   grades: Array<{
+//     id: string;
+//     displayName: string;
+//     level: number;
+//   }>;
+//   teachers: Array<{
+//     id: string;
+//     name: string | null;
+//   }>;
+//   students: Array<{
+//     id: string;
+//     name: string | null;
+//     email: string;
+//   }>;
+// }
+
+// // Since data can be an array (Admin/Teacher) or a single object (Student),
+// // we use a Union type to handle all possible dashboard returns.
+// type DashboardData = Record<string, unknown> | Array<Record<string, unknown>> | null;
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function ClassesPage() {
+//   const { profile, isLoading: isProfileLoading } = useProfileStore()
+  
+//   const [data, setData] = useState<DashboardData>(null)
+//   const [helpers, setHelpers] = useState<ManagementHelpers | null>(null)
+//   const [isLoading, setIsLoading] = useState<boolean>(true)
+
+//   const loadRegistry = useCallback(async () => {
+//     if (!profile?.id || !profile?.schoolId) return
+
+//     try {
+//       setIsLoading(true)
+      
+//       // Perform parallel fetching for performance
+//       const [dashboardData, helperData] = await Promise.all([
+//         getClassDashboardData(profile.id),
+//         profile.role === "SCHOOL_ADMIN" || profile.role === "SUPER_ADMIN" 
+//           ? getManagementHelpers(profile.schoolId) 
+//           : Promise.resolve(null)
+//       ])
+
+//       setData(dashboardData as DashboardData)
+//       setHelpers(helperData as ManagementHelpers | null)
+//     } catch (err) {
+//       console.error("Registry load error:", err)
+//     } finally {
+//       setIsLoading(false)
+//     }
+//   }, [profile])
+
+//   useEffect(() => {
+//     loadRegistry()
+//   }, [loadRegistry])
+
+//   if (isProfileLoading || isLoading) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+//         <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
+//         <p className="text-slate-400 animate-pulse uppercase text-[10px] tracking-widest font-black">
+//             Syncing Registry Environment...
+//         </p>
+//       </div>
+//     )
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
+//       {/* ── Role-Based Routing ── */}
+      
+//       {(profile?.role === "SCHOOL_ADMIN" || profile?.role === "SUPER_ADMIN") && (
+//         <AdminClassView 
+//             initialData={data as Array<Record<string, unknown>>} 
+//             helpers={helpers} 
+//             profile={profile} 
+//         />
+//       )}
+
+//       {profile?.role === "TEACHER" && (
+//         <TeacherClassView 
+//             data={data as Array<Record<string, unknown>>} 
+//         />
+//       )}
+
+//       {profile?.role === "STUDENT" && (
+//         <StudentClassView 
+//             data={data as Record<string, unknown>} 
+//         />
+//       )}
+
+//       {/* Handling edge case where no role matches or data is missing */}
+//       {!isLoading && !data && (
+//         <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+//             <p className="text-xs font-black uppercase tracking-widest">Registry Entry Not Found</p>
+//         </div>
+//       )}
+//     </div>
+//   )
+// }
+
+
 "use client"
 
+import { useState, useEffect, useCallback } from "react"
 import { useProfileStore } from "@/store/profileStore"
-import { getClassDashboardData, getManagementHelpers } from "@/app/actions/class-management" // The unified action from previous turn
-import { useState, useEffect } from "react"
+import { getClassDashboardData, getManagementHelpers } from "@/app/actions/class-management"
 import { Loader2 } from "lucide-react"
 
 import { AdminClassView } from "@/components/admin-dasboard/adminClassView"
 import { TeacherClassView } from "@/components/TeacherDashboard/teacherClassView"
 import { StudentClassView } from "@/components/student-dashboard/studentClassView"
 
-export default function ClassesPage() {
-  const { profile, isLoading: isProfileLoading } = useProfileStore()
-  const [data, setData] = useState<any>(null)
-  const [helpers, setHelpers] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
+// Import Prisma types
+import { Assessment, Subject } from "@prisma/client"
 
-  useEffect(() => {
-    async function load() {
-      if (!profile?.id || !profile?.schoolId) return
-      const [dashboardData, helperData] = await Promise.all([
-        getClassDashboardData(profile.id),
-        profile.role === "SCHOOL_ADMIN" ? getManagementHelpers(profile.schoolId) : null
-      ])
-      setData(dashboardData)
-      setHelpers(helperData)
-      setIsLoading(false)
+// ── Utility ──────────────────────────────────────────────────────────────────
+
+function getErrorMessage(error: unknown): string {
+    if (error instanceof Error) return error.message;
+    if (error && typeof error === 'object' && 'message' in error) {
+        return String((error as { message?: string }).message);
     }
-    load()
-  }, [profile])
+    return typeof error === 'string' ? error : "An unknown error occurred";
+}
 
-  if (isProfileLoading || isLoading) {
+// ── Types ───────────────────────────────────────────────────────────────────
+
+interface AdminClassRow {
+    id: string;
+    name: string;
+    gradeDisplayName: string;
+    teacherName: string | null;
+    studentCount: number;
+}
+
+interface ManagementHelpers {
+    grades: Array<{ id: string; displayName: string; }>;
+    teachers: Array<{ id: string; name: string | null; }>;
+}
+
+interface TeacherClassData {
+    id: string;
+    name: string;
+    grade: { 
+        displayName: string;
+        gradeSubjects: Array<{
+            id: string;
+            subject: Pick<Subject, "name">;
+        }>;
+    };
+    students: Array<{ 
+        id: string; 
+        name: string | null;
+        assessments: Assessment[]; 
+    }>;
+}
+
+/**
+ * FIXED: Added 'phone' property to match the expected UI type 
+ * in the StudentClassView component.
+ */
+interface Classmate {
+    id: string;
+    name: string;
+    phone: string | null;
+}
+
+interface StudentClassData {
+    name: string;
+    teacher: { name: string | null } | null;
+    classmates: Classmate[];
+    mySubjects: string[];
+}
+
+type DashboardData = AdminClassRow[] | TeacherClassData[] | StudentClassData | null;
+
+// ── Main Component ──────────────────────────────────────────────────────────
+
+export default function ClassesPage() {
+    const { profile, isLoading: isProfileLoading } = useProfileStore()
+
+    const [data, setData] = useState<DashboardData>(null)
+    const [helpers, setHelpers] = useState<ManagementHelpers | null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(true)
+
+    const loadRegistry = useCallback(async () => {
+        if (!profile?.id || !profile?.schoolId) return
+
+        try {
+            setIsLoading(true)
+
+            const dashboardData = await getClassDashboardData(profile.id);
+            const helperData = (profile.role === "SCHOOL_ADMIN" || profile.role === "SUPER_ADMIN")
+                ? await getManagementHelpers(profile.schoolId)
+                : null;
+
+            let processedData: DashboardData = null;
+
+            /**
+             * FIXED: Transformation logic now maps 'phone' and enforces strict 
+             * typing to satisfy the DashboardData union.
+             */
+            if (profile.role === "STUDENT" && dashboardData && !Array.isArray(dashboardData)) {
+                const raw = dashboardData as {
+                    name: string;
+                    teacher: { name: string | null } | null;
+                    classmates: Array<{ id: string; name: string | null; phone?: string | null }>;
+                    mySubjects: string[];
+                };
+
+                const cleanedClassmates: Classmate[] = (raw.classmates || []).map(c => ({
+                    id: c.id,
+                    name: c.name ?? "Unknown Student",
+                    phone: c.phone ?? null // Ensure phone is present as null if missing
+                }));
+
+                const studentData: StudentClassData = {
+                    name: raw.name,
+                    teacher: raw.teacher,
+                    classmates: cleanedClassmates,
+                    mySubjects: raw.mySubjects
+                };
+                processedData = studentData;
+            } else {
+                // For Teacher or Admin, we use the raw array return
+                processedData = dashboardData as DashboardData;
+            }
+
+            setData(processedData)
+            setHelpers(helperData as unknown as ManagementHelpers | null)
+        } catch (err) {
+            console.error("Registry load error:", getErrorMessage(err))
+        } finally {
+            setIsLoading(false)
+        }
+    }, [profile])
+
+    useEffect(() => {
+        loadRegistry()
+    }, [loadRegistry])
+
+    if (isProfileLoading || isLoading) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+                <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
+                <p className="text-slate-400 animate-pulse uppercase text-[10px] tracking-widest font-black">
+                    Syncing Registry Environment...
+                </p>
+            </div>
+        )
+    }
+
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
-        <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
-        <p className="text-slate-400 animate-pulse uppercase text-[10px] tracking-widest font-black">Syncing Registry...</p>
-      </div>
-    )
-  }
+        <div className="min-h-screen bg-slate-950 p-4 md:p-8">
+            
+            {/* ── Admin View ── */}
+            {(profile?.role === "SCHOOL_ADMIN" || profile?.role === "SUPER_ADMIN") && data && Array.isArray(data) && helpers && (
+                <AdminClassView
+                    initialData={data as AdminClassRow[]}
+                    helpers={helpers}
+                    profile={profile}
+                />
+            )}
 
-  return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8">
-      {profile?.role === "SCHOOL_ADMIN" && <AdminClassView initialData={data} helpers={helpers} profile={profile} />}
-      {profile?.role === "TEACHER" && <TeacherClassView data={data} />}
-      {profile?.role === "STUDENT" && <StudentClassView data={data} />}
-    </div>
-  )
+            {/* ── Teacher View ── */}
+            {profile?.role === "TEACHER" && data && Array.isArray(data) && (
+                <TeacherClassView
+                    data={data as TeacherClassData[]}
+                />
+            )}
+
+            {/* ── Student View ── */}
+            {profile?.role === "STUDENT" && data && !Array.isArray(data) && (
+                <StudentClassView
+                    data={data as StudentClassData}
+                />
+            )}
+
+            {!isLoading && !data && (
+                <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                    <p className="text-xs font-black uppercase tracking-widest">Registry Entry Not Found</p>
+                </div>
+            )}
+        </div>
+    )
 }

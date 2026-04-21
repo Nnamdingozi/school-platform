@@ -1629,6 +1629,318 @@
 // }
 
 
+// "use client";
+
+// import React, { useState, useMemo } from "react";
+// import { Card, CardContent, CardHeader } from "@/components/ui/card";
+// import { Badge } from "@/components/ui/badge";
+// import { Button } from "@/components/ui/button";
+// import { Progress } from "@/components/ui/progress";
+// import {
+//   BookOpen,
+//   CheckCircle2,
+//   ArrowLeft,
+//   User,
+//   ChevronRight,
+//   BookX,
+// } from "lucide-react";
+// import { cn } from "@/lib/utils";
+// import { classifyNigerianSubject } from "@/lib/curriculum/nigeria";
+// import { computeSubjectPerformance } from "@/lib/academics/compute-performance";
+// import { useRouter } from "next/navigation";
+// /* ───────────────────────────────────────────── */
+
+// interface SubjectsGridProps {
+//   subjects: any[];
+//   classTeacherName: string;
+//   gradeLevel: number;
+// }
+
+// /* ───────────────────────────────────────────── */
+
+// export function SubjectsGrid({
+//   subjects,
+//   classTeacherName,
+//   gradeLevel,
+// }: SubjectsGridProps) {
+//   const [selectedSubject, setSelectedSubject] = useState<any | null>(null);
+
+//   if (selectedSubject) {
+//     return (
+//       <CurriculumView
+//         subject={selectedSubject}
+//         classTeacherName={classTeacherName}
+//         onBack={() => setSelectedSubject(null)}
+//       />
+//     );
+//   }
+
+//   return (
+//     <div className="space-y-6">
+//       {/* HEADER */}
+//       <div className="flex items-center justify-between">
+//         <div>
+//           <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">
+//             {gradeLevel <= 9 ? "Full Curriculum" : "My Academic Load"}
+//           </h2>
+//           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">
+//             {gradeLevel <= 9
+//               ? "Standard JSS syllabus automatically allocated"
+//               : "Core subjects and selected electives"}
+//           </p>
+//         </div>
+
+//         <Badge
+//           variant="outline"
+//           className="border-white/10 text-school-primary px-4 rounded-full font-black text-[10px] uppercase"
+//         >
+//           {subjects.length} Modules
+//         </Badge>
+//       </div>
+
+//       {/* EMPTY STATE */}
+//       {subjects.length === 0 ? (
+//         <div className="py-20 text-center bg-slate-900/40 rounded-[2rem] border border-dashed border-white/5">
+//           <BookX className="h-10 w-10 text-slate-800 mx-auto mb-4" />
+//           <p className="text-slate-600 uppercase text-[10px] font-black tracking-widest">
+//             No subjects found for this grade level
+//           </p>
+//         </div>
+//       ) : (
+//         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+//           {subjects.map((gs) => (
+//             <SubjectCard
+//               key={gs.id}
+//               gs={gs}
+//               classTeacherName={classTeacherName}
+//               isSSS={gradeLevel >= 10}
+//               onSelect={() => setSelectedSubject(gs)}
+//             />
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+// /* ───────────────────────────────────────────── */
+// /* SUBJECT CARD */
+// /* ───────────────────────────────────────────── */
+
+// function SubjectCard({ gs, classTeacherName, isSSS, onSelect }: any) {
+//   const totalTopics = gs.topics?.length || 0;
+//   const gradedTopics = gs.assessments?.length || 0;
+
+//   const progressPercent =
+//     totalTopics > 0 ? (gradedTopics / totalTopics) * 100 : 0;
+
+//   const { isCompulsory, stream } = classifyNigerianSubject(
+//     gs.subject.name,
+//     !isSSS
+//   );
+
+//   const isCore = isSSS && isCompulsory;
+
+//   const performance = computeSubjectPerformance(gs.assessments || []);
+
+//   return (
+//     <Card
+//       className={cn(
+//         "group cursor-pointer bg-slate-900 border-white/5 rounded-[2rem] transition-all hover:border-school-primary/30 shadow-xl overflow-hidden",
+//         isCore && "border-school-primary/20 bg-school-primary/[0.02]"
+//       )}
+//       onClick={onSelect}
+//     >
+//       <CardContent className="p-6">
+
+//         {/* HEADER FIXED (ICON + NAME SEPARATED) */}
+//         <div className="flex items-start justify-between mb-6">
+
+//           {/* LEFT STACK */}
+//           <div className="flex-1 min-w-0 space-y-3">
+
+//             {/* ICON ROW */}
+//             <div
+//               className={cn(
+//                 "p-3 rounded-xl w-fit",
+//                 isCore
+//                   ? "bg-school-primary text-slate-950"
+//                   : "bg-school-primary/10 text-school-primary"
+//               )}
+//             >
+//               <BookOpen className="h-5 w-5" />
+//             </div>
+
+//             {/* SUBJECT NAME ROW */}
+//             <div className="min-w-0">
+//               <h3 className="text-sm font-black text-white uppercase italic tracking-tighter truncate">
+//                 {gs.subject.name}
+//               </h3>
+
+//               <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1 truncate">
+//                 {classTeacherName}
+//               </p>
+//             </div>
+
+//           </div>
+
+//           {/* BADGES */}
+//           <div className="flex gap-1 shrink-0">
+//             {isCore && (
+//               <Badge className="bg-school-primary text-slate-950 text-[8px] font-black uppercase px-2 py-0">
+//                 Core
+//               </Badge>
+//             )}
+
+//             {stream && !isCore && (
+//               <Badge className="bg-white/10 text-white text-[8px] font-black uppercase px-2 py-0">
+//                 {stream}
+//               </Badge>
+//             )}
+//           </div>
+
+//         </div>
+
+//         {/* PERFORMANCE */}
+//         <div className="mb-6 space-y-3">
+
+//           <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+//             <span className="text-slate-500">Score</span>
+//             <span className="text-white">
+//               {performance.total}%
+//               <span className="ml-2 text-school-primary">
+//                 ({performance.grade})
+//               </span>
+//             </span>
+//           </div>
+
+//           <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-slate-400">
+//             <span>CA: {performance.ca}</span>
+//             <span>Exam: {performance.exam}</span>
+//           </div>
+
+//         </div>
+
+//         {/* COVERAGE */}
+//         <div className="mb-6 space-y-2">
+//           <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
+//             <span className="text-slate-500">Coverage</span>
+//             <span className="text-slate-300">
+//               {gradedTopics}/{totalTopics}
+//             </span>
+//           </div>
+
+//           <Progress
+//             value={progressPercent}
+//             className="h-1 bg-slate-950 [&>div]:bg-school-primary"
+//           />
+//         </div>
+
+//         {/* FOOTER */}
+//         <div className="flex items-center justify-between pt-4 border-t border-white/5">
+//           <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em]">
+//             Open Syllabus
+//           </p>
+
+//           <ChevronRight className="h-4 w-4 text-slate-800 group-hover:text-school-primary transition-all group-hover:translate-x-1" />
+//         </div>
+
+//       </CardContent>
+//     </Card>
+//   );
+// }
+
+// /* ───────────────────────────────────────────── */
+// /* CURRICULUM VIEW (UNCHANGED) */
+// /* ───────────────────────────────────────────── */
+
+// function CurriculumView({ subject: gs, classTeacherName, onBack }: any) {
+//   const [selectedTerm, setSelectedTerm] = useState<number>(1);
+//   const router = useRouter();
+
+//   const terms = useMemo(() => {
+//     const map: Record<number, any[]> = { 1: [], 2: [], 3: [] };
+
+//     gs.topics?.forEach((t: any) => {
+//       const idx = t.term?.index || 1;
+//       if (map[idx]) map[idx].push(t);
+//     });
+
+//     return map;
+//   }, [gs.topics]);
+
+//   return (
+//     <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl animate-in slide-in-from-right-4">
+//       <CardHeader className="bg-slate-950/50 p-8 border-b border-white/5">
+//         <div className="flex items-center gap-4 mb-8">
+//           <Button variant="ghost" size="icon" onClick={onBack}>
+//             <ArrowLeft className="h-5 w-5 text-slate-400" />
+//           </Button>
+
+//           <div className="flex-1">
+//             <h2 className="text-3xl font-black text-white uppercase italic">
+//               {gs.subject.name}
+//             </h2>
+
+//             <p className="text-xs text-slate-500 font-bold uppercase mt-2 flex items-center gap-2">
+//               <User className="h-3 w-3 text-school-primary" />
+//               Instructor: {classTeacherName}
+//             </p>
+//           </div>
+//         </div>
+
+//         <div className="grid grid-cols-3 gap-3">
+//           {[1, 2, 3].map((idx) => (
+//             <button
+//               key={idx}
+//               onClick={() => setSelectedTerm(idx)}
+//               className={cn(
+//                 "p-4 rounded-2xl border text-left",
+//                 selectedTerm === idx
+//                   ? "bg-school-primary text-slate-950"
+//                   : "bg-slate-950 border-white/5 text-slate-500"
+//               )}
+//             >
+//               <p className="text-[9px] font-black uppercase">Term</p>
+//               <p className="text-lg font-black italic">0{idx}</p>
+//             </button>
+//           ))}
+//         </div>
+//       </CardHeader>
+
+//       <div className="p-8 space-y-3">
+//         {terms[selectedTerm]?.length === 0 ? (
+//           <p className="text-center py-10 text-slate-700 text-[10px] font-bold uppercase italic">
+//             No roadmap defined for this term
+//           </p>
+//         ) : (
+//           terms[selectedTerm].map((topic: any, index: number) => (
+        
+//               <div
+//                 key={topic.id}
+//                 onClick={() => router.push(`/student/lessons/${topic.id}`)}
+//                 className="flex items-center gap-4 p-5 rounded-2xl bg-slate-950 border border-white/5 cursor-pointer hover:border-school-primary/30 transition-all group"
+//               >
+//               <div className="h-8 w-8 flex items-center justify-center text-[10px] font-black text-slate-500">
+//                 {topic.weekNumber || index + 1}
+//               </div>
+
+//               <div className="flex-1">
+//                 <p className="text-sm font-black text-slate-200 uppercase">
+//                   {topic.title}
+//                 </p>
+//               </div>
+
+//               <CheckCircle2 className="h-4 w-4 text-slate-800" />
+//             </div>
+//           ))
+//         )}
+//       </div>
+//     </Card>
+//   );
+// }
+
+
 "use client";
 
 import React, { useState, useMemo } from "react";
@@ -1648,22 +1960,48 @@ import { cn } from "@/lib/utils";
 import { classifyNigerianSubject } from "@/lib/curriculum/nigeria";
 import { computeSubjectPerformance } from "@/lib/academics/compute-performance";
 import { useRouter } from "next/navigation";
-/* ───────────────────────────────────────────── */
+
+// ── Types ───────────────────────────────────────────────────────────────────
+
+interface Topic {
+  id: string;
+  title: string;
+  weekNumber?: number | null;
+  term?: {
+    index: number;
+  } | null;
+}
+
+interface Assessment {
+  id: string;
+  score: number | null;
+  maxScore: number | null;
+  type: string;
+}
+
+interface GradeSubject {
+  id: string;
+  subject: {
+    name: string;
+  };
+  topics: Topic[];
+  assessments: Assessment[];
+}
 
 interface SubjectsGridProps {
-  subjects: any[];
+  subjects: GradeSubject[];
   classTeacherName: string;
   gradeLevel: number;
 }
 
-/* ───────────────────────────────────────────── */
+// ── Main Component ──────────────────────────────────────────────────────────
 
 export function SubjectsGrid({
   subjects,
   classTeacherName,
   gradeLevel,
 }: SubjectsGridProps) {
-  const [selectedSubject, setSelectedSubject] = useState<any | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<GradeSubject | null>(null);
 
   if (selectedSubject) {
     return (
@@ -1677,7 +2015,6 @@ export function SubjectsGrid({
 
   return (
     <div className="space-y-6">
-      {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">
@@ -1698,7 +2035,6 @@ export function SubjectsGrid({
         </Badge>
       </div>
 
-      {/* EMPTY STATE */}
       {subjects.length === 0 ? (
         <div className="py-20 text-center bg-slate-900/40 rounded-[2rem] border border-dashed border-white/5">
           <BookX className="h-10 w-10 text-slate-800 mx-auto mb-4" />
@@ -1723,11 +2059,16 @@ export function SubjectsGrid({
   );
 }
 
-/* ───────────────────────────────────────────── */
-/* SUBJECT CARD */
-/* ───────────────────────────────────────────── */
+// ── Subject Card ─────────────────────────────────────────────────────────────
 
-function SubjectCard({ gs, classTeacherName, isSSS, onSelect }: any) {
+interface SubjectCardProps {
+  gs: GradeSubject;
+  classTeacherName: string;
+  isSSS: boolean;
+  onSelect: () => void;
+}
+
+function SubjectCard({ gs, classTeacherName, isSSS, onSelect }: SubjectCardProps) {
   const totalTopics = gs.topics?.length || 0;
   const gradedTopics = gs.assessments?.length || 0;
 
@@ -1741,6 +2082,7 @@ function SubjectCard({ gs, classTeacherName, isSSS, onSelect }: any) {
 
   const isCore = isSSS && isCompulsory;
 
+  // Assuming computeSubjectPerformance accepts the typed assessment array
   const performance = computeSubjectPerformance(gs.assessments || []);
 
   return (
@@ -1752,14 +2094,8 @@ function SubjectCard({ gs, classTeacherName, isSSS, onSelect }: any) {
       onClick={onSelect}
     >
       <CardContent className="p-6">
-
-        {/* HEADER FIXED (ICON + NAME SEPARATED) */}
         <div className="flex items-start justify-between mb-6">
-
-          {/* LEFT STACK */}
           <div className="flex-1 min-w-0 space-y-3">
-
-            {/* ICON ROW */}
             <div
               className={cn(
                 "p-3 rounded-xl w-fit",
@@ -1771,39 +2107,31 @@ function SubjectCard({ gs, classTeacherName, isSSS, onSelect }: any) {
               <BookOpen className="h-5 w-5" />
             </div>
 
-            {/* SUBJECT NAME ROW */}
             <div className="min-w-0">
               <h3 className="text-sm font-black text-white uppercase italic tracking-tighter truncate">
                 {gs.subject.name}
               </h3>
-
               <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1 truncate">
                 {classTeacherName}
               </p>
             </div>
-
           </div>
 
-          {/* BADGES */}
           <div className="flex gap-1 shrink-0">
             {isCore && (
               <Badge className="bg-school-primary text-slate-950 text-[8px] font-black uppercase px-2 py-0">
                 Core
               </Badge>
             )}
-
             {stream && !isCore && (
               <Badge className="bg-white/10 text-white text-[8px] font-black uppercase px-2 py-0">
                 {stream}
               </Badge>
             )}
           </div>
-
         </div>
 
-        {/* PERFORMANCE */}
         <div className="mb-6 space-y-3">
-
           <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
             <span className="text-slate-500">Score</span>
             <span className="text-white">
@@ -1813,15 +2141,12 @@ function SubjectCard({ gs, classTeacherName, isSSS, onSelect }: any) {
               </span>
             </span>
           </div>
-
           <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-slate-400">
             <span>CA: {performance.ca}</span>
             <span>Exam: {performance.exam}</span>
           </div>
-
         </div>
 
-        {/* COVERAGE */}
         <div className="mb-6 space-y-2">
           <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
             <span className="text-slate-500">Coverage</span>
@@ -1829,39 +2154,39 @@ function SubjectCard({ gs, classTeacherName, isSSS, onSelect }: any) {
               {gradedTopics}/{totalTopics}
             </span>
           </div>
-
           <Progress
             value={progressPercent}
             className="h-1 bg-slate-950 [&>div]:bg-school-primary"
           />
         </div>
 
-        {/* FOOTER */}
         <div className="flex items-center justify-between pt-4 border-t border-white/5">
           <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em]">
             Open Syllabus
           </p>
-
           <ChevronRight className="h-4 w-4 text-slate-800 group-hover:text-school-primary transition-all group-hover:translate-x-1" />
         </div>
-
       </CardContent>
     </Card>
   );
 }
 
-/* ───────────────────────────────────────────── */
-/* CURRICULUM VIEW (UNCHANGED) */
-/* ───────────────────────────────────────────── */
+// ── Curriculum View ──────────────────────────────────────────────────────────
 
-function CurriculumView({ subject: gs, classTeacherName, onBack }: any) {
+interface CurriculumViewProps {
+  subject: GradeSubject;
+  classTeacherName: string;
+  onBack: () => void;
+}
+
+function CurriculumView({ subject: gs, classTeacherName, onBack }: CurriculumViewProps) {
   const [selectedTerm, setSelectedTerm] = useState<number>(1);
   const router = useRouter();
 
   const terms = useMemo(() => {
-    const map: Record<number, any[]> = { 1: [], 2: [], 3: [] };
+    const map: Record<number, Topic[]> = { 1: [], 2: [], 3: [] };
 
-    gs.topics?.forEach((t: any) => {
+    gs.topics?.forEach((t: Topic) => {
       const idx = t.term?.index || 1;
       if (map[idx]) map[idx].push(t);
     });
@@ -1873,15 +2198,14 @@ function CurriculumView({ subject: gs, classTeacherName, onBack }: any) {
     <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl animate-in slide-in-from-right-4">
       <CardHeader className="bg-slate-950/50 p-8 border-b border-white/5">
         <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="icon" onClick={onBack}>
+          <Button variant="ghost" size="icon" onClick={onBack} className="rounded-xl hover:bg-white/5">
             <ArrowLeft className="h-5 w-5 text-slate-400" />
           </Button>
 
           <div className="flex-1">
-            <h2 className="text-3xl font-black text-white uppercase italic">
+            <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter">
               {gs.subject.name}
             </h2>
-
             <p className="text-xs text-slate-500 font-bold uppercase mt-2 flex items-center gap-2">
               <User className="h-3 w-3 text-school-primary" />
               Instructor: {classTeacherName}
@@ -1895,13 +2219,13 @@ function CurriculumView({ subject: gs, classTeacherName, onBack }: any) {
               key={idx}
               onClick={() => setSelectedTerm(idx)}
               className={cn(
-                "p-4 rounded-2xl border text-left",
+                "p-4 rounded-2xl border text-left transition-all",
                 selectedTerm === idx
-                  ? "bg-school-primary text-slate-950"
+                  ? "bg-school-primary text-slate-950 border-school-primary shadow-lg"
                   : "bg-slate-950 border-white/5 text-slate-500"
               )}
             >
-              <p className="text-[9px] font-black uppercase">Term</p>
+              <p className="text-[9px] font-black uppercase tracking-widest">Term</p>
               <p className="text-lg font-black italic">0{idx}</p>
             </button>
           ))}
@@ -1909,13 +2233,12 @@ function CurriculumView({ subject: gs, classTeacherName, onBack }: any) {
       </CardHeader>
 
       <div className="p-8 space-y-3">
-        {terms[selectedTerm]?.length === 0 ? (
-          <p className="text-center py-10 text-slate-700 text-[10px] font-bold uppercase italic">
+        {!terms[selectedTerm] || terms[selectedTerm].length === 0 ? (
+          <p className="text-center py-10 text-slate-700 text-[10px] font-black uppercase italic tracking-widest">
             No roadmap defined for this term
           </p>
         ) : (
-          terms[selectedTerm].map((topic: any, index: number) => (
-        
+          terms[selectedTerm].map((topic: Topic, index: number) => (
               <div
                 key={topic.id}
                 onClick={() => router.push(`/student/lessons/${topic.id}`)}
@@ -1926,12 +2249,12 @@ function CurriculumView({ subject: gs, classTeacherName, onBack }: any) {
               </div>
 
               <div className="flex-1">
-                <p className="text-sm font-black text-slate-200 uppercase">
+                <p className="text-sm font-black text-slate-200 uppercase italic">
                   {topic.title}
                 </p>
               </div>
 
-              <CheckCircle2 className="h-4 w-4 text-slate-800" />
+              <CheckCircle2 className="h-4 w-4 text-slate-800 group-hover:text-school-primary transition-colors" />
             </div>
           ))
         )}

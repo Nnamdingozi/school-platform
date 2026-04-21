@@ -145,7 +145,7 @@ export async function saveGeneratedImageUrlToLesson(
 ) {
   try {
     // 1. Fetch the lesson data
-    const lesson = await prisma.lesson.findUnique({
+    const lesson = await prisma.globalLesson.findUnique({
       where: { id: lessonId },
       select: { id: true, aiContent: true, topicId: true } 
     });
@@ -165,7 +165,7 @@ export async function saveGeneratedImageUrlToLesson(
       visualAids[visualAidIndex].url = imageUrl;
 
       // 4. Perform an atomic update back to the database
-      await prisma.lesson.update({
+      await prisma.globalLesson.update({
         where: { id: lessonId },
         data: {
           aiContent: currentAiContent as unknown as Prisma.InputJsonValue,

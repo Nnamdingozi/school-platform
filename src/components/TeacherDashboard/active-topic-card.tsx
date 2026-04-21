@@ -1294,76 +1294,541 @@
 // }
 
 
+// "use client";
+
+// import { useState, useTransition} from "react";
+// import { useRouter, usePathname } from "next/navigation";
+// import { Settings2, Check, Loader2, Bookmark, Calendar as CalendarIcon, Info } from "lucide-react";
+// import { Card, CardContent, CardHeader } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// import { cn } from "@/lib/utils";
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// interface Term {
+//   id: string;
+//   displayName: string;
+// }
+
+// interface Topic {
+//   id: string;
+//   title: string;
+//   description?: string | null;
+//   weekNumber?: number | null;
+//   termId: string;
+//   term?: Term | null;
+// }
+
+// interface ActiveTopicCardProps {
+//   activeSubject: {
+//     id: string;
+//     topics: Topic[];
+//   } | null;
+//   activeTopic: Topic | null;
+//   selectedTermId?: string;
+//   selectedWeek?: string;
+// }
+
+// export function ActiveTopicCard({ 
+//   activeSubject, 
+//   activeTopic, 
+//   selectedTermId, 
+//   selectedWeek 
+// }: ActiveTopicCardProps) {
+//   const router = useRouter();
+//   const pathname = usePathname();
+//   const [isPending, startTransition] = useTransition();
+//   const [isEditing, setIsEditing] = useState(false);
+
+//   const topics = activeSubject?.topics ?? [];
+  
+//   // ── Logic: Derived Registry Data ──────────────────────────────────────────
+  
+//   // Extract unique terms available for this specific subject
+//   const terms = Array.from(
+//     new Map<string, Term>(
+//       topics
+//         .filter((t: Topic) => t.term?.id != null)
+//         .map((t: Topic) => [t.term!.id, t.term!])
+//     ).values()
+//   );
+
+//   const currentTermId = selectedTermId;
+//   const currentWeek = selectedWeek;
+
+//   // Sync URL parameters to trigger parent re-fetch
+//   const updateUrl = (updates: Record<string, string | undefined>) => {
+//     const params = new URLSearchParams(window.location.search);
+//     Object.entries(updates).forEach(([k, v]) => (v ? params.set(k, v) : params.delete(k)));
+    
+//     startTransition(() => {
+//       // Use pathname to ensure we stay on the same page while changing params
+//       router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+//     });
+//   };
+
+//   // Extract available weeks for the currently selected term
+//   const availableWeeks = Array.from(new Set(
+//     topics
+//       .filter((t: Topic) => t.termId === currentTermId)
+//       .map((t: Topic) => t.weekNumber)
+//       .filter((w): w is number => w != null)
+//   )).sort((a, b) => a - b);
+
+//   // Extract topics available for the specific Term + Week combo
+//   const availableTopics = topics.filter((t: Topic) => 
+//     t.termId === currentTermId && String(t.weekNumber) === currentWeek
+//   );
+
+//   const isEmpty = !activeSubject || topics.length === 0 || !activeTopic;
+
+//   return (
+//     <Card className="relative border-none shadow-2xl bg-gradient-to-br from-school-primary to-school-primary-600 text-school-secondary-950 overflow-hidden transition-all w-full">
+      
+//       {/* ── Background Branding Elements ── */}
+//       <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+//           <Bookmark className="h-32 w-32 -mr-10 -mt-10 rotate-12" />
+//       </div>
+
+//       {isPending && (
+//         <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/10 backdrop-blur-[2px]">
+//           <Loader2 className="h-8 w-8 animate-spin text-school-secondary-950" />
+//         </div>
+//       )}
+
+//       <CardHeader className="pb-4 relative z-10">
+//         <div className="flex items-center justify-between gap-4">
+//           <div className="space-y-1 min-w-0">
+//             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-school-secondary-950/60 flex items-center gap-2">
+//               <span className="h-1 w-4 bg-school-secondary-950/40 rounded-full" />
+//               Active Academic Node
+//             </p>
+//             <h2 className="text-3xl font-black md:text-4xl tracking-tighter uppercase italic truncate leading-none">
+//               {activeTopic?.title || "No Subject Context"}
+//             </h2>
+//           </div>
+
+//           {!isEmpty && (
+//             <Button 
+//               onClick={() => setIsEditing(!isEditing)} 
+//               className={cn(
+//                 "transition-all border-none rounded-2xl px-6 h-12 shadow-xl font-black text-[10px] uppercase tracking-widest", 
+//                 isEditing 
+//                   ? "bg-school-secondary-950 text-school-primary hover:bg-school-secondary-900" 
+//                   : "bg-school-secondary-950/10 text-school-secondary-950 hover:bg-school-secondary-950/20"
+//               )}
+//             >
+//               {isEditing ? (
+//                 <><Check className="h-4 w-4 mr-2" /> Finish</>
+//               ) : (
+//                 <><Settings2 className="h-4 w-4 mr-2" /> Adjust Focus</>
+//               )}
+//             </Button>
+//           )}
+//         </div>
+//       </CardHeader>
+
+//       <CardContent className="relative z-10">
+//         {isEmpty ? (
+//           <div className="flex items-start gap-4 p-6 bg-school-secondary-950/10 rounded-[1.5rem] border border-school-secondary-950/10">
+//             <Info className="h-5 w-5 shrink-0 mt-1" />
+//             <div className="space-y-1">
+//                 <p className="text-sm font-bold uppercase tracking-tight">Registry Standby</p>
+//                 <p className="text-xs font-medium opacity-70 leading-relaxed italic">
+//                     This classroom has no syllabus topics mapped in the registry. 
+//                     Please initialize your curriculum in the Subject Management section.
+//                 </p>
+//             </div>
+//           </div>
+//         ) : isEditing ? (
+//           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-school-secondary-950/10 rounded-[2rem] border border-school-secondary-950/10 animate-in zoom-in-95 duration-200">
+//             {/* 1. TERM SELECTOR */}
+//             <div className="space-y-2">
+//               <label className="text-[10px] font-black uppercase text-school-secondary-950/50 tracking-widest ml-1">01. Session Term</label>
+//               <Select 
+//                 value={currentTermId} 
+//                 onValueChange={(v) => updateUrl({ termId: v, week: undefined, topicId: undefined })}
+//               >
+//                 <SelectTrigger className="h-12 bg-white/20 border-none text-school-secondary-950 font-bold rounded-xl focus:ring-school-secondary-950">
+//                   <SelectValue placeholder="Select Term" />
+//                 </SelectTrigger>
+//                 <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl shadow-2xl">
+//                   {terms.map((t: Term) => (
+//                     <SelectItem key={t.id} value={t.id} className="font-bold uppercase text-[10px] tracking-widest">{t.displayName}</SelectItem>
+//                   ))}
+//                 </SelectContent>
+//               </Select>
+//             </div>
+
+//             {/* 2. WEEK SELECTOR */}
+//             <div className="space-y-2">
+//               <label className="text-[10px] font-black uppercase text-school-secondary-950/50 tracking-widest ml-1">02. Academic Week</label>
+//               <Select 
+//                 value={currentWeek} 
+//                 disabled={!currentTermId} 
+//                 onValueChange={(v) => updateUrl({ week: v, topicId: undefined })}
+//               >
+//                 <SelectTrigger className="h-12 bg-white/20 border-none text-school-secondary-950 font-bold rounded-xl focus:ring-school-secondary-950">
+//                   <SelectValue placeholder="Select Week" />
+//                 </SelectTrigger>
+//                 <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
+//                   {availableWeeks.map((w: number) => (
+//                     <SelectItem key={w} value={String(w)} className="font-bold uppercase text-[10px] tracking-widest text-white">Week {w}</SelectItem>
+//                   ))}
+//                 </SelectContent>
+//               </Select>
+//             </div>
+
+//             {/* 3. TOPIC SELECTOR */}
+//             <div className="space-y-2">
+//               <label className="text-[10px] font-black uppercase text-school-secondary-950/50 tracking-widest ml-1">03. Target Topic</label>
+//               <Select 
+//                 value={activeTopic?.id} 
+//                 disabled={!currentWeek} 
+//                 onValueChange={(v) => updateUrl({ topicId: v })}
+//               >
+//                 <SelectTrigger className="h-12 bg-white/40 border-none font-black text-school-secondary-950 rounded-xl focus:ring-school-secondary-950 shadow-lg">
+//                   <SelectValue placeholder="Select Topic" />
+//                 </SelectTrigger>
+//                 <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
+//                   {availableTopics.map((t: Topic) => (
+//                     <SelectItem key={t.id} value={t.id} className="font-bold uppercase text-[10px] tracking-widest">{t.title}</SelectItem>
+//                   ))}
+//                 </SelectContent>
+//               </Select>
+//             </div>
+//           </div>
+//         ) : (
+//           <div className="flex flex-col gap-6">
+//             <div className="flex items-center gap-3 flex-wrap">
+//               <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-school-secondary-950 text-school-primary text-[10px] font-black uppercase tracking-[0.2em] shadow-lg">
+//                 <CalendarIcon className="h-3 w-3" />
+//                 {activeTopic?.term?.displayName}
+//               </div>
+//               <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-school-secondary-950/20 text-school-secondary-950 text-[10px] font-black uppercase tracking-[0.2em] border border-school-secondary-950/10">
+//                 Week {activeTopic?.weekNumber}
+//               </div>
+//             </div>
+            
+//             <div className="relative">
+//                 <p className="text-school-secondary-950/70 text-sm font-medium italic leading-relaxed max-w-3xl border-l-4 border-school-secondary-950/20 pl-6 py-1">
+//                 {activeTopic?.description || "Course material and instructional assets are synchronized for this session node."}
+//                 </p>
+//             </div>
+//           </div>
+//         )}
+//       </CardContent>
+//     </Card>
+//   );
+// }
+
+
+
+// "use client";
+
+// import { useState, useTransition } from "react";
+// import { useRouter, usePathname, useSearchParams } from "next/navigation";
+// import { Settings2, Check, Loader2, Bookmark, Calendar as CalendarIcon, Info } from "lucide-react";
+// import { Card, CardContent, CardHeader } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// import { cn } from "@/lib/utils";
+
+// // Import Store and Prisma Types
+// import { useTeacherStore, type DashboardTopic } from "@/store/teacherDataStore";
+// import { Term } from "@prisma/client";
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// interface ActiveTopicCardProps {
+//   /**
+//    * We keep these as props because they usually come from the URL 
+//    * searchParams in the parent, but the subject/topic data comes from store.
+//    */
+//   selectedTermId?: string;
+//   selectedWeek?: string;
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export function ActiveTopicCard({ 
+//   selectedTermId, 
+//   selectedWeek 
+// }: ActiveTopicCardProps) {
+//   const router = useRouter();
+//   const pathname = usePathname();
+//   const searchParams = useSearchParams();
+//   const [isPending, startTransition] = useTransition();
+//   const [isEditing, setIsEditing] = useState(false);
+
+//   // Pulling from Zustand Store
+//   const { selectedSubjects, activeSubjectId, activeTopicId } = useTeacherStore();
+
+//   // ── Data Resolution ───────────────────────────────────────────────────────
+
+//   const activeSubject = selectedSubjects.find(s => s.id === activeSubjectId) || null;
+//   const topics = activeSubject?.topics ?? [];
+  
+//   // Find the current active topic object from the store's topics array
+//   const activeTopic = topics.find(t => t.id === activeTopicId) || null;
+  
+//   // ── Logic: Derived Registry Data ──────────────────────────────────────────
+  
+//   // Extract unique terms available for this specific subject
+//   // Uses a Map to ensure unique Term objects by ID
+//   const terms = Array.from(
+//     new Map<string, Term>(
+//       topics
+//         .filter((t: DashboardTopic) => (t as any).term?.id != null)
+//         .map((t: DashboardTopic) => [(t as any).term.id, (t as any).term])
+//     ).values()
+//   );
+
+//   const currentTermId = selectedTermId || activeTopic?.termId;
+//   const currentWeek = selectedWeek || String(activeTopic?.weekNumber || "");
+
+//   // Sync URL parameters to trigger store updates in the parent
+//   const updateUrl = (updates: Record<string, string | undefined>) => {
+//     const params = new URLSearchParams(searchParams.toString());
+//     Object.entries(updates).forEach(([k, v]) => (v ? params.set(k, v) : params.delete(k)));
+    
+//     startTransition(() => {
+//       router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+//     });
+//   };
+
+//   // Extract available weeks for the currently selected term
+//   const availableWeeks = Array.from(new Set(
+//     topics
+//       .filter((t: DashboardTopic) => t.termId === currentTermId)
+//       .map((t: DashboardTopic) => t.weekNumber)
+//       .filter((w): w is number => w != null)
+//   )).sort((a, b) => a - b);
+
+//   // Extract topics available for the specific Term + Week combo
+//   const availableTopics = topics.filter((t: DashboardTopic) => 
+//     t.termId === currentTermId && String(t.weekNumber) === currentWeek
+//   );
+
+//   const isEmpty = !activeSubject || topics.length === 0 || !activeTopic;
+
+//   return (
+//     <Card className="relative border-none shadow-2xl bg-gradient-to-br from-school-primary to-school-primary-600 text-school-secondary-950 overflow-hidden transition-all w-full">
+      
+//       {/* ── Background Branding ── */}
+//       <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+//           <Bookmark className="h-32 w-32 -mr-10 -mt-10 rotate-12" />
+//       </div>
+
+//       {isPending && (
+//         <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/10 backdrop-blur-[2px]">
+//           <Loader2 className="h-8 w-8 animate-spin text-school-secondary-950" />
+//         </div>
+//       )}
+
+//       <CardHeader className="pb-4 relative z-10">
+//         <div className="flex items-center justify-between gap-4">
+//           <div className="space-y-1 min-w-0">
+//             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-school-secondary-950/60 flex items-center gap-2">
+//               <span className="h-1 w-4 bg-school-secondary-950/40 rounded-full" />
+//               Active Academic Node
+//             </p>
+//             <h2 className="text-3xl font-black md:text-4xl tracking-tighter uppercase italic truncate leading-none">
+//               {activeTopic?.title || "No Subject Context"}
+//             </h2>
+//           </div>
+
+//           {!isEmpty && (
+//             <Button 
+//               onClick={() => setIsEditing(!isEditing)} 
+//               className={cn(
+//                 "transition-all border-none rounded-2xl px-6 h-12 shadow-xl font-black text-[10px] uppercase tracking-widest", 
+//                 isEditing 
+//                   ? "bg-school-secondary-950 text-school-primary hover:bg-school-secondary-900" 
+//                   : "bg-school-secondary-950/10 text-school-secondary-950 hover:bg-school-secondary-950/20"
+//               )}
+//             >
+//               {isEditing ? (
+//                 <><Check className="h-4 w-4 mr-2" /> Finish</>
+//               ) : (
+//                 <><Settings2 className="h-4 w-4 mr-2" /> Adjust Focus</>
+//               )}
+//             </Button>
+//           )}
+//         </div>
+//       </CardHeader>
+
+//       <CardContent className="relative z-10">
+//         {isEmpty ? (
+//           <div className="flex items-start gap-4 p-6 bg-school-secondary-950/10 rounded-[1.5rem] border border-school-secondary-950/10">
+//             <Info className="h-5 w-5 shrink-0 mt-1" />
+//             <div className="space-y-1">
+//                 <p className="text-sm font-bold uppercase tracking-tight">Registry Standby</p>
+//                 <p className="text-xs font-medium opacity-70 leading-relaxed italic">
+//                     This classroom has no syllabus topics mapped in the registry. 
+//                     Please initialize your curriculum in the Subject Management section.
+//                 </p>
+//             </div>
+//           </div>
+//         ) : isEditing ? (
+//           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-school-secondary-950/10 rounded-[2rem] border border-school-secondary-950/10 animate-in zoom-in-95 duration-200">
+            
+//             {/* 1. TERM SELECTOR */}
+//             <div className="space-y-2">
+//               <label className="text-[10px] font-black uppercase text-school-secondary-950/50 tracking-widest ml-1">01. Session Term</label>
+//               <Select 
+//                 value={currentTermId} 
+//                 onValueChange={(v) => updateUrl({ termId: v, week: undefined, topicId: undefined })}
+//               >
+//                 <SelectTrigger className="h-12 bg-white/20 border-none text-school-secondary-950 font-bold rounded-xl">
+//                   <SelectValue placeholder="Select Term" />
+//                 </SelectTrigger>
+//                 <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl shadow-2xl">
+//                   {terms.map((t: Term) => (
+//                     <SelectItem key={t.id} value={t.id} className="font-bold uppercase text-[10px] tracking-widest">{t.displayName}</SelectItem>
+//                   ))}
+//                 </SelectContent>
+//               </Select>
+//             </div>
+
+//             {/* 2. WEEK SELECTOR */}
+//             <div className="space-y-2">
+//               <label className="text-[10px] font-black uppercase text-school-secondary-950/50 tracking-widest ml-1">02. Academic Week</label>
+//               <Select 
+//                 value={currentWeek} 
+//                 disabled={!currentTermId} 
+//                 onValueChange={(v) => updateUrl({ week: v, topicId: undefined })}
+//               >
+//                 <SelectTrigger className="h-12 bg-white/20 border-none text-school-secondary-950 font-bold rounded-xl">
+//                   <SelectValue placeholder="Select Week" />
+//                 </SelectTrigger>
+//                 <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
+//                   {availableWeeks.map((w: number) => (
+//                     <SelectItem key={w} value={String(w)} className="font-bold uppercase text-[10px] tracking-widest text-white">Week {w}</SelectItem>
+//                   ))}
+//                 </SelectContent>
+//               </Select>
+//             </div>
+
+//             {/* 3. TOPIC SELECTOR */}
+//             <div className="space-y-2">
+//               <label className="text-[10px] font-black uppercase text-school-secondary-950/50 tracking-widest ml-1">03. Target Topic</label>
+//               <Select 
+//                 value={activeTopic?.id} 
+//                 disabled={!currentWeek} 
+//                 onValueChange={(v) => updateUrl({ topicId: v })}
+//               >
+//                 <SelectTrigger className="h-12 bg-white/40 border-none font-black text-school-secondary-950 rounded-xl shadow-lg">
+//                   <SelectValue placeholder="Select Topic" />
+//                 </SelectTrigger>
+//                 <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
+//                   {availableTopics.map((t: DashboardTopic) => (
+//                     <SelectItem key={t.id} value={t.id} className="font-bold uppercase text-[10px] tracking-widest">{t.title}</SelectItem>
+//                   ))}
+//                 </SelectContent>
+//               </Select>
+//             </div>
+//           </div>
+//         ) : (
+//           <div className="flex flex-col gap-6">
+//             <div className="flex items-center gap-3 flex-wrap">
+//               <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-school-secondary-950 text-school-primary text-[10px] font-black uppercase tracking-[0.2em] shadow-lg">
+//                 <CalendarIcon className="h-3 w-3" />
+//                 {(activeTopic as any)?.term?.displayName || "Registry Term"}
+//               </div>
+//               <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-school-secondary-950/20 text-school-secondary-950 text-[10px] font-black uppercase tracking-[0.2em] border border-school-secondary-950/10">
+//                 Week {activeTopic?.weekNumber}
+//               </div>
+//             </div>
+            
+//             <div className="relative">
+//                 <p className="text-school-secondary-950/70 text-sm font-medium italic leading-relaxed max-w-3xl border-l-4 border-school-secondary-950/20 pl-6 py-1">
+//                 {activeTopic?.description || "Course material and instructional assets are synchronized for this session node."}
+//                 </p>
+//             </div>
+//           </div>
+//         )}
+//       </CardContent>
+//     </Card>
+//   );
+// }
+
+
+
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useState, useTransition } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Settings2, Check, Loader2, Bookmark, Calendar as CalendarIcon, Info } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
+// Import Store and Prisma Types
+import { useTeacherStore, type DashboardTopic } from "@/store/teacherDataStore";
+import { Term } from "@prisma/client";
+
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-interface Term {
-  id: string;
-  displayName: string;
-}
-
-interface Topic {
-  id: string;
-  title: string;
-  description?: string | null;
-  weekNumber?: number | null;
-  termId: string;
+/**
+ * Hydrated version of the DashboardTopic that includes the Term relation.
+ * This resolves the errors caused by missing properties in the base Prisma Topic model.
+ */
+interface HydratedDashboardTopic extends DashboardTopic {
   term?: Term | null;
 }
 
 interface ActiveTopicCardProps {
-  activeSubject: {
-    id: string;
-    topics: Topic[];
-  } | null;
-  activeTopic: Topic | null;
   selectedTermId?: string;
   selectedWeek?: string;
 }
 
+// ── Main Component ──────────────────────────────────────────────────────────
+
 export function ActiveTopicCard({ 
-  activeSubject, 
-  activeTopic, 
   selectedTermId, 
   selectedWeek 
 }: ActiveTopicCardProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [isEditing, setIsEditing] = useState(false);
 
-  const topics = activeSubject?.topics ?? [];
+  // Pulling state from Zustand Store
+  const { selectedSubjects, activeSubjectId, activeTopicId } = useTeacherStore();
+
+  // ── Data Resolution ───────────────────────────────────────────────────────
+
+  const activeSubject = selectedSubjects.find(s => s.id === activeSubjectId) || null;
+  
+  // Cast topics to the Hydrated version to access relations like 'term'
+  const topics = (activeSubject?.topics ?? []) as HydratedDashboardTopic[];
+  
+  const activeTopic = topics.find(t => t.id === activeTopicId) || null;
   
   // ── Logic: Derived Registry Data ──────────────────────────────────────────
   
-  // Extract unique terms available for this specific subject
+  // Extract unique terms available for this specific subject using a Map for de-duplication
   const terms = Array.from(
     new Map<string, Term>(
       topics
-        .filter((t: Topic) => t.term?.id != null)
-        .map((t: Topic) => [t.term!.id, t.term!])
+        .filter((t): t is HydratedDashboardTopic & { term: Term } => !!t.term?.id)
+        .map((t) => [t.term.id, t.term])
     ).values()
   );
 
-  const currentTermId = selectedTermId;
-  const currentWeek = selectedWeek;
+  const currentTermId = selectedTermId || activeTopic?.termId;
+  const currentWeek = selectedWeek || String(activeTopic?.weekNumber || "");
 
-  // Sync URL parameters to trigger parent re-fetch
+  // Sync URL parameters to trigger store updates in the parent
   const updateUrl = (updates: Record<string, string | undefined>) => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(searchParams.toString());
     Object.entries(updates).forEach(([k, v]) => (v ? params.set(k, v) : params.delete(k)));
     
     startTransition(() => {
-      // Use pathname to ensure we stay on the same page while changing params
       router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     });
   };
@@ -1371,13 +1836,13 @@ export function ActiveTopicCard({
   // Extract available weeks for the currently selected term
   const availableWeeks = Array.from(new Set(
     topics
-      .filter((t: Topic) => t.termId === currentTermId)
-      .map((t: Topic) => t.weekNumber)
+      .filter((t) => t.termId === currentTermId)
+      .map((t) => t.weekNumber)
       .filter((w): w is number => w != null)
-  )).sort((a, b) => a - b);
+  )).sort((a, b) => (a ?? 0) - (b ?? 0));
 
   // Extract topics available for the specific Term + Week combo
-  const availableTopics = topics.filter((t: Topic) => 
+  const availableTopics = topics.filter((t) => 
     t.termId === currentTermId && String(t.weekNumber) === currentWeek
   );
 
@@ -1386,7 +1851,7 @@ export function ActiveTopicCard({
   return (
     <Card className="relative border-none shadow-2xl bg-gradient-to-br from-school-primary to-school-primary-600 text-school-secondary-950 overflow-hidden transition-all w-full">
       
-      {/* ── Background Branding Elements ── */}
+      {/* ── Background Branding ── */}
       <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
           <Bookmark className="h-32 w-32 -mr-10 -mt-10 rotate-12" />
       </div>
@@ -1443,6 +1908,7 @@ export function ActiveTopicCard({
           </div>
         ) : isEditing ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-school-secondary-950/10 rounded-[2rem] border border-school-secondary-950/10 animate-in zoom-in-95 duration-200">
+            
             {/* 1. TERM SELECTOR */}
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase text-school-secondary-950/50 tracking-widest ml-1">01. Session Term</label>
@@ -1450,11 +1916,11 @@ export function ActiveTopicCard({
                 value={currentTermId} 
                 onValueChange={(v) => updateUrl({ termId: v, week: undefined, topicId: undefined })}
               >
-                <SelectTrigger className="h-12 bg-white/20 border-none text-school-secondary-950 font-bold rounded-xl focus:ring-school-secondary-950">
+                <SelectTrigger className="h-12 bg-white/20 border-none text-school-secondary-950 font-bold rounded-xl">
                   <SelectValue placeholder="Select Term" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl shadow-2xl">
-                  {terms.map((t: Term) => (
+                  {terms.map((t) => (
                     <SelectItem key={t.id} value={t.id} className="font-bold uppercase text-[10px] tracking-widest">{t.displayName}</SelectItem>
                   ))}
                 </SelectContent>
@@ -1469,11 +1935,11 @@ export function ActiveTopicCard({
                 disabled={!currentTermId} 
                 onValueChange={(v) => updateUrl({ week: v, topicId: undefined })}
               >
-                <SelectTrigger className="h-12 bg-white/20 border-none text-school-secondary-950 font-bold rounded-xl focus:ring-school-secondary-950">
+                <SelectTrigger className="h-12 bg-white/20 border-none text-school-secondary-950 font-bold rounded-xl">
                   <SelectValue placeholder="Select Week" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
-                  {availableWeeks.map((w: number) => (
+                  {availableWeeks.map((w) => (
                     <SelectItem key={w} value={String(w)} className="font-bold uppercase text-[10px] tracking-widest text-white">Week {w}</SelectItem>
                   ))}
                 </SelectContent>
@@ -1488,11 +1954,11 @@ export function ActiveTopicCard({
                 disabled={!currentWeek} 
                 onValueChange={(v) => updateUrl({ topicId: v })}
               >
-                <SelectTrigger className="h-12 bg-white/40 border-none font-black text-school-secondary-950 rounded-xl focus:ring-school-secondary-950 shadow-lg">
+                <SelectTrigger className="h-12 bg-white/40 border-none font-black text-school-secondary-950 rounded-xl shadow-lg">
                   <SelectValue placeholder="Select Topic" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
-                  {availableTopics.map((t: Topic) => (
+                  {availableTopics.map((t) => (
                     <SelectItem key={t.id} value={t.id} className="font-bold uppercase text-[10px] tracking-widest">{t.title}</SelectItem>
                   ))}
                 </SelectContent>
@@ -1504,7 +1970,7 @@ export function ActiveTopicCard({
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-school-secondary-950 text-school-primary text-[10px] font-black uppercase tracking-[0.2em] shadow-lg">
                 <CalendarIcon className="h-3 w-3" />
-                {activeTopic?.term?.displayName}
+                {activeTopic?.term?.displayName || "Registry Term"}
               </div>
               <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-school-secondary-950/20 text-school-secondary-950 text-[10px] font-black uppercase tracking-[0.2em] border border-school-secondary-950/10">
                 Week {activeTopic?.weekNumber}

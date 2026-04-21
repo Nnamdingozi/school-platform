@@ -924,6 +924,244 @@
 // }
 
 
+// "use client"
+
+// import { useState, useEffect } from "react"
+// import {
+//   Bar,
+//   BarChart,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   ResponsiveContainer,
+//   PieChart,
+//   Pie,
+//   Cell,
+// } from "recharts"
+// import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+// import {
+//   ChartContainer,
+//   ChartTooltip,
+//   ChartTooltipContent,
+// } from "@/components/ui/chart"
+// import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
+// import type { PerformanceDashboardData } from "@/types/performanceData"
+// import { toast } from "sonner"
+// // ✅ Import your error utility
+// import { getErrorMessage } from "@/lib/error-handler"
+
+// interface PerformanceChartsProps {
+//   gradeSubjectId: string;
+//   schoolId: string;
+//   initialPerformanceData?: PerformanceDashboardData | null;
+//   initialPerformanceError?: string | null;
+// }
+
+// export function PerformanceCharts({ 
+//   gradeSubjectId, 
+//   schoolId, 
+//   initialPerformanceData,
+//   initialPerformanceError
+// }: PerformanceChartsProps) {
+//   const [data, setData] = useState<PerformanceDashboardData | null>(initialPerformanceData || null);
+//   const [isLoading, setIsLoading] = useState(!initialPerformanceData && !initialPerformanceError);
+//   const [error, setError] = useState<string | null>(initialPerformanceError || null);
+
+//   useEffect(() => {
+//     if (initialPerformanceData) {
+//       setData(initialPerformanceData);
+//       setIsLoading(false);
+//       return;
+//     }
+    
+//     if (initialPerformanceError) {
+//       setError(initialPerformanceError);
+//       setIsLoading(false);
+//       return;
+//     }
+
+//     const fetchData = async () => {
+//       if (!gradeSubjectId || !schoolId) return;
+      
+//       setIsLoading(true);
+//       setError(null);
+//       try {
+//         const response = await fetch(`/api/performance/${gradeSubjectId}/${schoolId}`);
+//         if (!response.ok) {
+//           const errorData = await response.json();
+//           throw new Error(errorData.error || `Error: ${response.status}`);
+//         }
+//         const resultData: PerformanceDashboardData = await response.json();
+//         setData(resultData);
+//       } catch (err: unknown) { // ✅ FIX 1: Changed 'any' to 'unknown'
+//         const message = getErrorMessage(err);
+//         console.error("Error fetching performance data:", message);
+//         setError(message);
+//         toast.error("Could not load performance stats.");
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
+
+//     fetchData();
+//   }, [gradeSubjectId, schoolId, initialPerformanceData, initialPerformanceError]);
+
+//   if (isLoading) {
+//     return (
+//       <div className="flex items-center justify-center h-[350px] w-full border rounded-xl bg-muted/10">
+//         <div className="flex flex-col items-center gap-2">
+//           <Loader2 className="h-8 w-8 animate-spin text-primary" />
+//           <p className="text-sm text-muted-foreground">Loading performance data...</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="flex items-center justify-center h-[350px] w-full border border-destructive/20 rounded-xl bg-destructive/5">
+//         <div className="flex flex-col items-center gap-2 text-destructive">
+//           <AlertCircle className="h-8 w-8" />
+//           <p className="text-sm font-medium">{error}</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   const isDataEmpty = !data || (
+//     (data.topicScores?.length ?? 0) === 0 && 
+//     (data.studentsNeedingAttention?.length ?? 0) === 0 && 
+//     (data.curriculumCompletion?.totalTopics ?? 0) === 0
+//   );
+
+//   if (isDataEmpty) {
+//     return (
+//       <Card className="flex items-center justify-center h-[350px] w-full border-dashed">
+//         <div className="text-center p-6">
+//           <AlertCircle className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+//           <h3 className="text-lg font-medium text-foreground">No Assessment Data</h3>
+//           {/* ✅ FIX 2: Wrapped text in curly braces to escape the apostrophe */}
+//           <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+//             {"We couldn't find any performance records for this subject yet. Once you grade assessments, the charts will appear here."}
+//           </p>
+//         </div>
+//       </Card>
+//     );
+//   }
+
+//   const topicScores = data.topicScores || [];
+//   const completionData = data.curriculumCompletion?.completionData || [];
+//   const studentsNeedingAttention = data.studentsNeedingAttention || [];
+//   const curriculumPercentage = data.curriculumCompletion?.percentage || 0;
+//   const completedTopicsCount = data.curriculumCompletion?.completedTopics || 0;
+//   const totalTopicsCount = data.curriculumCompletion?.totalTopics || 0;
+
+//   const PIE_COLORS = ["#10b981", "#e5e7eb"];
+
+//   return (
+//     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 min-h-[350px]">
+//       <Card className="md:col-span-2 lg:col-span-1">
+//         <CardHeader className="pb-2">
+//           <CardTitle className="text-base font-semibold">Average Score per Topic</CardTitle>
+//           <CardDescription>Performance across curriculum topics</CardDescription>
+//         </CardHeader>
+//         <CardContent>
+//           {topicScores.length > 0 ? (
+//             <div className="h-[200px] w-full">
+//               <ChartContainer config={{ score: { label: "Score", color: "#10b981" } }}>
+//                 <ResponsiveContainer width="100%" height="100%">
+//                   <BarChart data={topicScores} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+//                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+//                     <XAxis dataKey="topic" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+//                     <YAxis tick={{ fontSize: 11 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+//                     <ChartTooltip content={<ChartTooltipContent />} />
+//                     <Bar dataKey="score" fill="#10b981" radius={[4, 4, 0, 0]} />
+//                   </BarChart>
+//                 </ResponsiveContainer>
+//               </ChartContainer>
+//             </div>
+//           ) : (
+//             <div className="flex items-center justify-center h-[200px] text-muted-foreground text-sm">
+//               No topic scores available
+//             </div>
+//           )}
+//         </CardContent>
+//       </Card>
+
+//       <Card>
+//         <CardHeader className="pb-2">
+//           <CardTitle className="text-base font-semibold">Curriculum Completion</CardTitle>
+//           <CardDescription>Overall progress</CardDescription>
+//         </CardHeader>
+//         <CardContent className="flex flex-col items-center">
+//           <div className="relative h-40 w-40">
+//             <ResponsiveContainer width="100%" height="100%">
+//               <PieChart>
+//                 <Pie
+//                   data={completionData}
+//                   cx="50%"
+//                   cy="50%"
+//                   innerRadius={50}
+//                   outerRadius={70}
+//                   paddingAngle={2}
+//                   dataKey="value"
+//                   startAngle={90}
+//                   endAngle={-270}
+//                 >
+//                   {completionData.map((_, index) => (
+//                     <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+//                   ))}
+//                 </Pie>
+//               </PieChart>
+//             </ResponsiveContainer>
+//             <div className="absolute inset-0 flex flex-col items-center justify-center">
+//               <span className="text-2xl font-bold">{curriculumPercentage}%</span>
+//               <span className="text-[10px] uppercase text-muted-foreground">Done</span>
+//             </div>
+//           </div>
+//           <p className="mt-2 text-xs text-muted-foreground font-medium">
+//             {completedTopicsCount} of {totalTopicsCount} topics completed
+//           </p>
+//         </CardContent>
+//       </Card>
+
+//       <Card>
+//         <CardHeader className="pb-2">
+//           <div className="flex items-center gap-2">
+//             <AlertCircle className="h-4 w-4 text-amber-500" />
+//             <CardTitle className="text-base font-semibold">Attention Needed</CardTitle>
+//           </div>
+//           <CardDescription>Lowest performing students</CardDescription>
+//         </CardHeader>
+//         <CardContent>
+//           <div className="space-y-4">
+//             {studentsNeedingAttention.length > 0 ? (
+//               studentsNeedingAttention.map((student) => (
+//                 <div key={student.name} className="flex items-center justify-between">
+//                   <div className="flex items-center gap-3">
+//                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+//                       {student.name.charAt(0)}
+//                     </div>
+//                     <span className="text-sm font-medium truncate max-w-[120px]">{student.name}</span>
+//                   </div>
+//                   <span className={`text-sm font-bold ${student.score < 50 ? "text-red-500" : "text-amber-500"}`}>
+//                     {student.score}%
+//                   </span>
+//                 </div>
+//               ))
+//             ) : (
+//               <div className="flex flex-col items-center justify-center pt-4 text-center">
+//                 <CheckCircle2 className="h-8 w-8 text-emerald-500 mb-2" />
+//                 <p className="text-xs text-muted-foreground">All students are performing well!</p>
+//               </div>
+//             )}
+//           </div>
+//         </CardContent>
+//       </Card>
+//     </div>
+//   )
+// }
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -944,74 +1182,93 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
+import { AlertCircle, CheckCircle2, Loader2, TrendingUp } from "lucide-react"
 import type { PerformanceDashboardData } from "@/types/performanceData"
 import { toast } from "sonner"
-// ✅ Import your error utility
+
+// Store and Utility Imports
+import { useTeacherStore } from "@/store/teacherDataStore"
 import { getErrorMessage } from "@/lib/error-handler"
+import { cn } from "@/lib/utils"
+
 
 interface PerformanceChartsProps {
-  gradeSubjectId: string;
   schoolId: string;
+  /**
+   * Optional initial data usually passed during first load from Server Page
+   */
   initialPerformanceData?: PerformanceDashboardData | null;
   initialPerformanceError?: string | null;
 }
 
+// ── Main Component ──────────────────────────────────────────────────────────
+
 export function PerformanceCharts({ 
-  gradeSubjectId, 
   schoolId, 
   initialPerformanceData,
   initialPerformanceError
 }: PerformanceChartsProps) {
+  // Pulling active context from the Zustand Store
+  const { activeSubjectId } = useTeacherStore();
+
   const [data, setData] = useState<PerformanceDashboardData | null>(initialPerformanceData || null);
   const [isLoading, setIsLoading] = useState(!initialPerformanceData && !initialPerformanceError);
   const [error, setError] = useState<string | null>(initialPerformanceError || null);
 
   useEffect(() => {
-    if (initialPerformanceData) {
+    // 1. If we have initial data and it matches the current subject, skip fetch
+    if (initialPerformanceData && !activeSubjectId) {
       setData(initialPerformanceData);
       setIsLoading(false);
       return;
     }
     
-    if (initialPerformanceError) {
+    // 2. Handle initial error states
+    if (initialPerformanceError && !data) {
       setError(initialPerformanceError);
       setIsLoading(false);
       return;
     }
 
+    // 3. Fetch data whenever the active subject changes in the Store
     const fetchData = async () => {
-      if (!gradeSubjectId || !schoolId) return;
+      if (!activeSubjectId || !schoolId) return;
       
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/performance/${gradeSubjectId}/${schoolId}`);
+        const response = await fetch(`/api/performance/${activeSubjectId}/${schoolId}`);
+        
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || `Error: ${response.status}`);
+          throw new Error(errorData.error || `Registry Fetch Error: ${response.status}`);
         }
+        
         const resultData: PerformanceDashboardData = await response.json();
         setData(resultData);
-      } catch (err: unknown) { // ✅ FIX 1: Changed 'any' to 'unknown'
+      } catch (err: unknown) {
         const message = getErrorMessage(err);
-        console.error("Error fetching performance data:", message);
+        console.error("[PERFORMANCE_SYNC_ERROR]:", message);
         setError(message);
-        toast.error("Could not load performance stats.");
+        toast.error("Analytics synchronization failed.");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [gradeSubjectId, schoolId, initialPerformanceData, initialPerformanceError]);
+  }, [activeSubjectId, schoolId, initialPerformanceData, initialPerformanceError, data]);
+
+  // ── Render Helpers ──
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[350px] w-full border rounded-xl bg-muted/10">
-        <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Loading performance data...</p>
+      <div className="flex items-center justify-center h-[350px] w-full border border-white/5 rounded-[2rem] bg-slate-900/50">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-school-primary" />
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 animate-pulse">
+            Calculating Performance Index...
+          </p>
         </div>
       </div>
     );
@@ -1019,10 +1276,10 @@ export function PerformanceCharts({
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-[350px] w-full border border-destructive/20 rounded-xl bg-destructive/5">
-        <div className="flex flex-col items-center gap-2 text-destructive">
+      <div className="flex items-center justify-center h-[350px] w-full border border-red-500/10 rounded-[2rem] bg-red-500/5">
+        <div className="flex flex-col items-center gap-2 text-red-500/50">
           <AlertCircle className="h-8 w-8" />
-          <p className="text-sm font-medium">{error}</p>
+          <p className="text-[10px] font-black uppercase tracking-widest">{error}</p>
         </div>
       </div>
     );
@@ -1036,14 +1293,17 @@ export function PerformanceCharts({
 
   if (isDataEmpty) {
     return (
-      <Card className="flex items-center justify-center h-[350px] w-full border-dashed">
-        <div className="text-center p-6">
-          <AlertCircle className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-          <h3 className="text-lg font-medium text-foreground">No Assessment Data</h3>
-          {/* ✅ FIX 2: Wrapped text in curly braces to escape the apostrophe */}
-          <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-            {"We couldn't find any performance records for this subject yet. Once you grade assessments, the charts will appear here."}
-          </p>
+      <Card className="flex items-center justify-center h-[350px] w-full bg-slate-900/20 border-white/5 border-dashed rounded-[2rem]">
+        <div className="text-center p-6 space-y-4">
+          <div className="h-16 w-16 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto border border-white/5">
+            <TrendingUp className="h-8 w-8 text-slate-700" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-black text-white uppercase tracking-widest">No Analytics Discovered</h3>
+            <p className="text-[10px] text-slate-500 max-w-xs mx-auto leading-relaxed uppercase font-bold">
+                Deploy and grade your first assessment to initialize the performance engine.
+            </p>
+          </div>
         </div>
       </Card>
     );
@@ -1056,103 +1316,114 @@ export function PerformanceCharts({
   const completedTopicsCount = data.curriculumCompletion?.completedTopics || 0;
   const totalTopicsCount = data.curriculumCompletion?.totalTopics || 0;
 
-  const PIE_COLORS = ["#10b981", "#e5e7eb"];
+  const PIE_COLORS = ["#f59e0b", "#1e293b"]; // Using school-primary and slate-800
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 min-h-[350px]">
-      <Card className="md:col-span-2 lg:col-span-1">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 min-h-[350px]">
+      
+      {/* 1. BAR CHART: Topic Scores */}
+      <Card className="md:col-span-2 lg:col-span-1 bg-slate-900 border-white/5 rounded-[2rem] shadow-2xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Average Score per Topic</CardTitle>
-          <CardDescription>Performance across curriculum topics</CardDescription>
+          <CardTitle className="text-xs font-black uppercase text-slate-400 tracking-widest flex items-center gap-2">
+            <TrendingUp className="h-3 w-3 text-school-primary" /> Topic Performance
+          </CardTitle>
+          <CardDescription className="text-[10px] uppercase font-bold text-slate-600">Avg % per Module</CardDescription>
         </CardHeader>
         <CardContent>
           {topicScores.length > 0 ? (
-            <div className="h-[200px] w-full">
-              <ChartContainer config={{ score: { label: "Score", color: "#10b981" } }}>
+            <div className="h-[200px] w-full mt-4">
+              <ChartContainer config={{ score: { label: "Score", color: "#f59e0b" } }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={topicScores} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-                    <XAxis dataKey="topic" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 11 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                    <XAxis dataKey="topic" tick={{ fontSize: 9, fontWeight: 800, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 9, fontWeight: 800, fill: '#64748b' }} axisLine={false} tickLine={false} domain={[0, 100]} />
                     <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="score" fill="#10b981" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="score" fill="#f59e0b" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
             </div>
           ) : (
-            <div className="flex items-center justify-center h-[200px] text-muted-foreground text-sm">
-              No topic scores available
+            <div className="flex items-center justify-center h-[200px] text-slate-700 text-[10px] font-black uppercase">
+              Insufficient Data
             </div>
           )}
         </CardContent>
       </Card>
 
-      <Card>
+      {/* 2. PIE CHART: Completion */}
+      <Card className="bg-slate-900 border-white/5 rounded-[2rem] shadow-2xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Curriculum Completion</CardTitle>
-          <CardDescription>Overall progress</CardDescription>
+          <CardTitle className="text-xs font-black uppercase text-slate-400 tracking-widest">Syllabus Health</CardTitle>
+          <CardDescription className="text-[10px] uppercase font-bold text-slate-600">Coverage Index</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col items-center">
-          <div className="relative h-40 w-40">
+        <CardContent className="flex flex-col items-center justify-center">
+          <div className="relative h-44 w-44">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={completionData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
-                  outerRadius={70}
-                  paddingAngle={2}
+                  innerRadius={55}
+                  outerRadius={75}
+                  paddingAngle={4}
                   dataKey="value"
                   startAngle={90}
                   endAngle={-270}
                 >
                   {completionData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                    <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} stroke="none" />
                   ))}
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-2xl font-bold">{curriculumPercentage}%</span>
-              <span className="text-[10px] uppercase text-muted-foreground">Done</span>
+              <span className="text-3xl font-black text-white italic tracking-tighter">{curriculumPercentage}%</span>
+              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-school-primary">Locked</span>
             </div>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground font-medium">
-            {completedTopicsCount} of {totalTopicsCount} topics completed
+          <p className="mt-4 text-[9px] text-slate-500 font-black uppercase tracking-widest">
+            {completedTopicsCount} / {totalTopicsCount} Modules Sync
           </p>
         </CardContent>
       </Card>
 
-      <Card>
+      {/* 3. LIST: Attention Needed */}
+      <Card className="bg-slate-900 border-white/5 rounded-[2rem] shadow-2xl">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 text-amber-500" />
-            <CardTitle className="text-base font-semibold">Attention Needed</CardTitle>
+            <AlertCircle className="h-4 w-4 text-school-primary" />
+            <CardTitle className="text-xs font-black uppercase text-slate-400 tracking-widest">Risk Registry</CardTitle>
           </div>
-          <CardDescription>Lowest performing students</CardDescription>
+          <CardDescription className="text-[10px] uppercase font-bold text-slate-600">Performance Outliers</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3 mt-4">
             {studentsNeedingAttention.length > 0 ? (
               studentsNeedingAttention.map((student) => (
-                <div key={student.name} className="flex items-center justify-between">
+                <div key={student.name} className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-white/5">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-school-primary/10 text-school-primary text-[10px] font-black uppercase border border-school-primary/20">
                       {student.name.charAt(0)}
                     </div>
-                    <span className="text-sm font-medium truncate max-w-[120px]">{student.name}</span>
+                    <span className="text-[11px] font-bold text-slate-200 uppercase truncate max-w-[110px]">{student.name}</span>
                   </div>
-                  <span className={`text-sm font-bold ${student.score < 50 ? "text-red-500" : "text-amber-500"}`}>
+                  <span className={cn(
+                      "text-[11px] font-black italic",
+                      student.score < 50 ? "text-red-500" : "text-amber-500"
+                  )}>
                     {student.score}%
                   </span>
                 </div>
               ))
             ) : (
-              <div className="flex flex-col items-center justify-center pt-4 text-center">
-                <CheckCircle2 className="h-8 w-8 text-emerald-500 mb-2" />
-                <p className="text-xs text-muted-foreground">All students are performing well!</p>
+              <div className="flex flex-col items-center justify-center py-10 text-center space-y-3">
+                <div className="h-10 w-10 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                </div>
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Registry Optimized: No Outliers</p>
               </div>
             )}
           </div>

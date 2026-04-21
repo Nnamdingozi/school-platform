@@ -910,13 +910,738 @@
 
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { revalidatePath } from 'next/cache'
+// import { Prisma } from '@prisma/client'
+// import { type LessonAiContent } from '@/app/actions/ai-generator'
+
+// // ─────────────────────────────────────────────
+// // TYPES
+// // ─────────────────────────────────────────────
+
+// export interface LessonVersionInput {
+//   schoolLessonId: string
+//   content: LessonAiContent
+// }
+
+// // ─────────────────────────────────────────────
+// // 1. GLOBAL AI GENERATION
+// // ─────────────────────────────────────────────
+
+// export async function generateLessonForTopic(topicId: string, schoolId: string) {
+//   try {
+//     let globalLesson = await prisma.globalLesson.findUnique({
+//       where: { topicId }
+//     })
+
+//     if (!globalLesson) {
+//       const aiContent = await fakeAIGeneration(topicId)
+
+//       globalLesson = await prisma.globalLesson.create({
+//         data: {
+//           topicId,
+//           aiContent: aiContent as Prisma.InputJsonValue
+//         }
+//       })
+//     }
+
+//     return {
+//       success: true,
+//       aiContent: globalLesson.aiContent
+//     }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 2. SCHOOL LESSON GET OR CREATE
+// // ─────────────────────────────────────────────
+
+// export async function getOrCreateSchoolLesson({
+//   topicId,
+//   schoolId,
+//   aiContent
+// }: {
+//   topicId: string
+//   schoolId: string
+//   aiContent: LessonAiContent
+// }) {
+//   try {
+//     let lesson = await prisma.schoolLesson.findFirst({
+//       where: { topicId, schoolId },
+//       include: { globalLesson: true }
+//     })
+
+//     if (!lesson) {
+//       const globalLesson = await prisma.globalLesson.findUnique({
+//         where: { topicId }
+//       })
+
+//       if (!globalLesson) {
+//         throw new Error("Global lesson missing")
+//       }
+
+//       lesson = await prisma.schoolLesson.create({
+//         data: {
+//           topicId,
+//           schoolId,
+//           globalLessonId: globalLesson.id,
+//           aiContent: globalLesson.aiContent as Prisma.InputJsonValue,
+//           isCustomized: false,
+//           status: "draft"
+//         },
+//         include: { globalLesson: true }
+//       })
+//     }
+
+//     return {
+//       success: true,
+//       data: lesson
+//     }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 3. TEACHER SAVE (UPDATE + VERSION HISTORY)
+// // ─────────────────────────────────────────────
+
+// export async function saveSchoolLesson({
+//   lessonId,
+//   schoolId,
+//   topicId,
+//   aiContent
+// }: {
+//   lessonId: string
+//   schoolId: string
+//   topicId: string
+//   aiContent: LessonAiContent
+// }) {
+//   try {
+//     const lesson = await prisma.schoolLesson.update({
+//       where: {
+//         id: lessonId
+//       },
+//       data: {
+//         aiContent: aiContent as Prisma.InputJsonValue,
+//         isCustomized: true,
+//         status: "draft"
+//       }
+//     })
+
+//     // 🧠 VERSION HISTORY (IMPORTANT)
+//     await prisma.lessonVersion.create({
+//       data: {
+//         schoolLessonId: lessonId,
+//         content: aiContent as Prisma.InputJsonValue
+//       }
+//     })
+
+//     revalidatePath(`/teacher/lessons/${topicId}`)
+//     revalidatePath(`/student/lessons/${topicId}`)
+
+//     return {
+//       success: true,
+//       data: lesson
+//     }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 4. TEACHER FETCH (SCHOOL → GLOBAL FALLBACK)
+// // ─────────────────────────────────────────────
+
+// export async function getLessonForTeacher(topicId: string, schoolId: string) {
+//   try {
+//     const schoolLesson = await prisma.schoolLesson.findFirst({
+//       where: { topicId, schoolId },
+//       include: { globalLesson: true }
+//     })
+
+//     if (schoolLesson) {
+//       return {
+//         success: true,
+//         data: schoolLesson
+//       }
+//     }
+
+//     const globalLesson = await prisma.globalLesson.findUnique({
+//       where: { topicId }
+//     })
+
+//     return {
+//       success: true,
+//       data: globalLesson
+//         ? {
+//             id: "",
+//             aiContent: globalLesson.aiContent,
+//             isCustomized: false
+//           }
+//         : null
+//     }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 5. STUDENT FETCH (ONLY PUBLISHED SCHOOL VERSION)
+// // ─────────────────────────────────────────────
+
+// export async function getStudentLesson(topicId: string, schoolId: string) {
+//   try {
+//     const lesson = await prisma.schoolLesson.findFirst({
+//       where: {
+//         topicId,
+//         schoolId,
+//         status: "published"
+//       },
+//       include: {
+//         globalLesson: true
+//       }
+//     })
+
+//     if (!lesson) {
+//       const globalLesson = await prisma.globalLesson.findUnique({
+//         where: { topicId }
+//       })
+
+//       if (!globalLesson) {
+//         return { success: true, data: null }
+//       }
+
+//       return {
+//         success: true,
+//         data: {
+//           id: "",
+//           subject: "",
+//           title: "",
+//           aiContent: globalLesson.aiContent
+//         }
+//       }
+//     }
+
+//     return {
+//       success: true,
+//       data: {
+//         id: lesson.id,
+//         subject: "",
+//         title: "",
+//         aiContent:
+//           lesson.customContent ?? lesson.globalLesson.aiContent
+//       }
+//     }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 6. PUBLISH LESSON (TEACHER CONTROL)
+// // ─────────────────────────────────────────────
+
+// export async function publishLesson({
+//   topicId,
+//   schoolId,
+//   content
+// }: {
+//   topicId: string
+//   schoolId: string
+//   content: LessonAiContent
+// }) {
+//   try {
+//     await prisma.schoolLesson.update({
+//       where: {
+//         topicId_schoolId: {
+//           topicId,
+//           schoolId
+//         }
+//       },
+//       data: {
+//         customContent: content as Prisma.InputJsonValue,
+//         status: "published",
+//         isCustomized: true
+//       }
+//     })
+
+//     revalidatePath(`/student/lessons/${topicId}`)
+
+//     return { success: true }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 7. VERSION HISTORY
+// // ─────────────────────────────────────────────
+
+// export async function createLessonVersion({
+//   schoolLessonId,
+//   content
+// }: LessonVersionInput) {
+//   try {
+//     await prisma.lessonVersion.create({
+//       data: {
+//         schoolLessonId,
+//         content: content as Prisma.InputJsonValue
+//       }
+//     })
+
+//     return { success: true }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // MOCK AI (REMOVE IN PRODUCTION)
+// // ─────────────────────────────────────────────
+
+// async function fakeAIGeneration(topicId: string) {
+//   return {
+//     metadata: {
+//       topicContext: topicId,
+//       difficultyLevel: "medium"
+//     },
+//     teacherLogic: {
+//       teachingMethod: "interactive",
+//       timeAllocation: "45 mins",
+//       pedagogicalTips: "Use examples",
+//       introductionHook: "Start with question"
+//     },
+//     studentContent: {
+//       title: "Generated Lesson",
+//       explanation: "This is AI generated content",
+//       summary: "Summary here",
+//       learningObjectives: [],
+//       vocabulary: [],
+//       visualAids: [],
+//       examples: [],
+//       quiz: []
+//     }
+//   }
+// }
+
+
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { revalidatePath } from 'next/cache'
+// import { Prisma, LessonStatus } from '@prisma/client'
+// import { type LessonAiContent } from '@/app/actions/ai-generator'
+
+// // ─────────────────────────────────────────────
+// // TYPES
+// // ─────────────────────────────────────────────
+
+// export interface LessonVersionInput {
+//   schoolLessonId: string
+//   content: LessonAiContent
+// }
+
+// interface StudentLessonResponse {
+//   id: string
+//   subject: string
+//   title: string
+//   aiContent: LessonAiContent | Prisma.JsonValue | null
+// }
+
+// // ─────────────────────────────────────────────
+// // 1. GLOBAL AI GENERATION
+// // ─────────────────────────────────────────────
+
+// // FIX: Removed unused schoolId parameter
+// export async function generateLessonForTopic(topicId: string) {
+//   try {
+//     let globalLesson = await prisma.globalLesson.findUnique({
+//       where: { topicId }
+//     })
+
+//     if (!globalLesson) {
+//       const aiContent = await fakeAIGeneration(topicId)
+
+//       globalLesson = await prisma.globalLesson.create({
+//         data: {
+//           topicId,
+//           aiContent: aiContent as unknown as Prisma.InputJsonValue
+//         }
+//       })
+//     }
+
+//     return {
+//       success: true,
+//       aiContent: globalLesson.aiContent as unknown as LessonAiContent
+//     }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 2. SCHOOL LESSON GET OR CREATE
+// // ─────────────────────────────────────────────
+
+// export async function getOrCreateSchoolLesson({
+//   topicId,
+//   schoolId,
+// }: {
+//   topicId: string
+//   schoolId: string
+// }) {
+//   try {
+//     let lesson = await prisma.schoolLesson.findFirst({
+//       where: { topicId, schoolId },
+//       include: { globalLesson: true }
+//     })
+
+//     if (!lesson) {
+//       const globalLesson = await prisma.globalLesson.findUnique({
+//         where: { topicId }
+//       })
+
+//       if (!globalLesson) {
+//         throw new Error("Global syllabus module missing. Please generate global content first.")
+//       }
+
+//       lesson = await prisma.schoolLesson.create({
+//         data: {
+//           topicId,
+//           schoolId,
+//           globalLessonId: globalLesson.id,
+//           // Use global content as the initial starting point
+//           customContent: globalLesson.aiContent as Prisma.InputJsonValue,
+//           isCustomized: false,
+//           status: LessonStatus.DRAFT
+//         },
+//         include: { globalLesson: true }
+//       })
+//     }
+
+//     return {
+//       success: true,
+//       data: lesson
+//     }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 3. TEACHER SAVE (UPDATE + VERSION HISTORY)
+// // ─────────────────────────────────────────────
+
+// export async function saveSchoolLesson({
+//   lessonId,
+//   schoolId,
+//   topicId,
+//   aiContent
+// }: {
+//   lessonId: string
+//   schoolId: string
+//   topicId: string
+//   aiContent: LessonAiContent
+// }) {
+//   try {
+//     const lesson = await prisma.schoolLesson.update({
+//       where: {
+//         id: lessonId,
+//         schoolId: schoolId // FIX: Used schoolId for security/scoping
+//       },
+//       data: {
+//         customContent: aiContent as unknown as Prisma.InputJsonValue,
+//         isCustomized: true,
+//         status: LessonStatus.DRAFT
+//       }
+//     })
+
+//     // 🧠 VERSION HISTORY
+//     await prisma.lessonVersion.create({
+//       data: {
+//         schoolLessonId: lessonId,
+//         content: aiContent as unknown as Prisma.InputJsonValue,
+//         version: 1 // In a real app, increment this based on count
+//       }
+//     })
+
+//     revalidatePath(`/teacher/lessons/${topicId}`)
+//     revalidatePath(`/student/lessons/${topicId}`)
+
+//     return {
+//       success: true,
+//       data: lesson
+//     }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 4. TEACHER FETCH (SCHOOL → GLOBAL FALLBACK)
+// // ─────────────────────────────────────────────
+
+// export async function getLessonForTeacher(topicId: string, schoolId: string) {
+//   try {
+//     const schoolLesson = await prisma.schoolLesson.findFirst({
+//       where: { topicId, schoolId },
+//       include: { globalLesson: true }
+//     })
+
+//     if (schoolLesson) {
+//       return {
+//         success: true,
+//         data: schoolLesson
+//       }
+//     }
+
+//     const globalLesson = await prisma.globalLesson.findUnique({
+//       where: { topicId }
+//     })
+
+//     return {
+//       success: true,
+//       data: globalLesson
+//         ? {
+//             id: "",
+//             customContent: globalLesson.aiContent,
+//             isCustomized: false,
+//             status: LessonStatus.DRAFT
+//           }
+//         : null
+//     }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 5. STUDENT FETCH (ONLY PUBLISHED SCHOOL VERSION)
+// // ─────────────────────────────────────────────
+
+// export async function getStudentLesson(topicId: string, schoolId: string) {
+//   try {
+//     const lesson = await prisma.schoolLesson.findFirst({
+//       where: {
+//         topicId,
+//         schoolId,
+//         status: LessonStatus.PUBLISHED
+//       },
+//       include: {
+//         globalLesson: true
+//       }
+//     })
+
+//     if (!lesson) {
+//       const globalLesson = await prisma.globalLesson.findUnique({
+//         where: { topicId }
+//       })
+
+//       if (!globalLesson) {
+//         return { success: true, data: null }
+//       }
+
+//       const response: StudentLessonResponse = {
+//         id: "",
+//         subject: "General",
+//         title: "Global Syllabus Version",
+//         aiContent: globalLesson.aiContent
+//       }
+
+//       return {
+//         success: true,
+//         data: response
+//       }
+//     }
+
+//     const response: StudentLessonResponse = {
+//       id: lesson.id,
+//       subject: "Class Module",
+//       title: "School Customized Version",
+//       aiContent: lesson.customContent ?? lesson.globalLesson.aiContent
+//     }
+
+//     return {
+//       success: true,
+//       data: response
+//     }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 6. PUBLISH LESSON (TEACHER CONTROL)
+// // ─────────────────────────────────────────────
+
+// export async function publishLesson({
+//   topicId,
+//   schoolId,
+//   content
+// }: {
+//   topicId: string
+//   schoolId: string
+//   content: LessonAiContent
+// }) {
+//   try {
+//     await prisma.schoolLesson.update({
+//       where: {
+//         topicId_schoolId: {
+//           topicId,
+//           schoolId
+//         }
+//       },
+//       data: {
+//         customContent: content as unknown as Prisma.InputJsonValue,
+//         status: LessonStatus.PUBLISHED,
+//         isCustomized: true,
+//         publishedAt: new Date()
+//       }
+//     })
+
+//     revalidatePath(`/student/lessons/${topicId}`)
+
+//     return { success: true }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 7. VERSION HISTORY
+// // ─────────────────────────────────────────────
+
+// export async function createLessonVersion({
+//   schoolLessonId,
+//   content
+// }: LessonVersionInput) {
+//   try {
+//     await prisma.lessonVersion.create({
+//       data: {
+//         schoolLessonId,
+//         content: content as unknown as Prisma.InputJsonValue,
+//         version: 1 // Replace with count increment logic
+//       }
+//     })
+
+//     return { success: true }
+
+//   } catch (err) {
+//     return {
+//       success: false,
+//       error: getErrorMessage(err)
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // MOCK AI
+// // ─────────────────────────────────────────────
+
+// async function fakeAIGeneration(topicId: string): Promise<LessonAiContent> {
+//   return {
+//     metadata: {
+//       topicContext: topicId,
+//       difficultyLevel: "medium"
+//     },
+//     teacherLogic: {
+//       teachingMethod: "interactive",
+//       timeAllocation: "45 mins",
+//       pedagogicalTips: "Use examples",
+//       introductionHook: "Start with question"
+//     },
+//     studentContent: {
+//       title: "Generated Lesson",
+//       explanation: "This is AI generated content",
+//       summary: "Summary here",
+//       learningObjectives: [],
+//       vocabulary: [],
+//       visualAids: [],
+//       examples: [],
+//       quiz: []
+//     }
+//   }
+// }
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { getErrorMessage } from '@/lib/error-handler'
 import { revalidatePath } from 'next/cache'
-import { Prisma } from '@prisma/client'
+import { Prisma, LessonStatus } from '@prisma/client'
 import { type LessonAiContent } from '@/app/actions/ai-generator'
+
+// ── Utility ──────────────────────────────────────────────────────────────────
+
+/**
+ * Standard error extractor for strict error typing
+ */
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String((error as { message?: string }).message);
+  }
+  return typeof error === 'string' ? error : "An unknown error occurred";
+}
 
 // ─────────────────────────────────────────────
 // TYPES
@@ -927,14 +1652,27 @@ export interface LessonVersionInput {
   content: LessonAiContent
 }
 
+interface StudentLessonResponse {
+  id: string
+  subject: string
+  title: string
+  aiContent: LessonAiContent
+}
+
 // ─────────────────────────────────────────────
 // 1. GLOBAL AI GENERATION
 // ─────────────────────────────────────────────
 
 export async function generateLessonForTopic(topicId: string, schoolId: string) {
   try {
+    // FIXED: Use compound unique key 'topicId_schoolId'
     let globalLesson = await prisma.globalLesson.findUnique({
-      where: { topicId }
+      where: {
+        topicId_schoolId: {
+          topicId,
+          schoolId
+        }
+      }
     })
 
     if (!globalLesson) {
@@ -943,14 +1681,16 @@ export async function generateLessonForTopic(topicId: string, schoolId: string) 
       globalLesson = await prisma.globalLesson.create({
         data: {
           topicId,
-          aiContent: aiContent as Prisma.InputJsonValue
+          schoolId,
+          title: aiContent.studentContent.title,
+          aiContent: aiContent as unknown as Prisma.InputJsonValue
         }
       })
     }
 
     return {
       success: true,
-      aiContent: globalLesson.aiContent
+      aiContent: globalLesson.aiContent as unknown as LessonAiContent
     }
 
   } catch (err) {
@@ -968,25 +1708,31 @@ export async function generateLessonForTopic(topicId: string, schoolId: string) 
 export async function getOrCreateSchoolLesson({
   topicId,
   schoolId,
-  aiContent
 }: {
   topicId: string
   schoolId: string
-  aiContent: LessonAiContent
 }) {
   try {
-    let lesson = await prisma.schoolLesson.findFirst({
-      where: { topicId, schoolId },
+    // Try to find the specific school version
+    let lesson = await prisma.schoolLesson.findUnique({
+      where: { 
+        topicId_schoolId: { topicId, schoolId } 
+      },
       include: { globalLesson: true }
     })
 
     if (!lesson) {
-      const globalLesson = await prisma.globalLesson.findUnique({
-        where: { topicId }
+      // Find the global blueprint (try school-specific first, then system global)
+      const globalLesson = await prisma.globalLesson.findFirst({
+        where: { 
+            topicId,
+            OR: [{ schoolId }, { schoolId: null }]
+        },
+        orderBy: { schoolId: 'desc' } // Prioritize school-owned global version
       })
 
       if (!globalLesson) {
-        throw new Error("Global lesson missing")
+        throw new Error("Global syllabus module missing. Please generate global content first.")
       }
 
       lesson = await prisma.schoolLesson.create({
@@ -994,9 +1740,9 @@ export async function getOrCreateSchoolLesson({
           topicId,
           schoolId,
           globalLessonId: globalLesson.id,
-          aiContent: globalLesson.aiContent as Prisma.InputJsonValue,
+          customContent: globalLesson.aiContent as Prisma.InputJsonValue,
           isCustomized: false,
-          status: "draft"
+          status: LessonStatus.DRAFT
         },
         include: { globalLesson: true }
       })
@@ -1016,64 +1762,15 @@ export async function getOrCreateSchoolLesson({
 }
 
 // ─────────────────────────────────────────────
-// 3. TEACHER SAVE (UPDATE + VERSION HISTORY)
-// ─────────────────────────────────────────────
-
-export async function saveSchoolLesson({
-  lessonId,
-  schoolId,
-  topicId,
-  aiContent
-}: {
-  lessonId: string
-  schoolId: string
-  topicId: string
-  aiContent: LessonAiContent
-}) {
-  try {
-    const lesson = await prisma.schoolLesson.update({
-      where: {
-        id: lessonId
-      },
-      data: {
-        aiContent: aiContent as Prisma.InputJsonValue,
-        isCustomized: true,
-        status: "draft"
-      }
-    })
-
-    // 🧠 VERSION HISTORY (IMPORTANT)
-    await prisma.lessonVersion.create({
-      data: {
-        schoolLessonId: lessonId,
-        content: aiContent as Prisma.InputJsonValue
-      }
-    })
-
-    revalidatePath(`/teacher/lessons/${topicId}`)
-    revalidatePath(`/student/lessons/${topicId}`)
-
-    return {
-      success: true,
-      data: lesson
-    }
-
-  } catch (err) {
-    return {
-      success: false,
-      error: getErrorMessage(err)
-    }
-  }
-}
-
-// ─────────────────────────────────────────────
-// 4. TEACHER FETCH (SCHOOL → GLOBAL FALLBACK)
+// 3. TEACHER FETCH
 // ─────────────────────────────────────────────
 
 export async function getLessonForTeacher(topicId: string, schoolId: string) {
   try {
-    const schoolLesson = await prisma.schoolLesson.findFirst({
-      where: { topicId, schoolId },
+    const schoolLesson = await prisma.schoolLesson.findUnique({
+      where: { 
+        topicId_schoolId: { topicId, schoolId } 
+      },
       include: { globalLesson: true }
     })
 
@@ -1084,8 +1781,13 @@ export async function getLessonForTeacher(topicId: string, schoolId: string) {
       }
     }
 
-    const globalLesson = await prisma.globalLesson.findUnique({
-      where: { topicId }
+    // Fallback to finding the global version blueprint
+    const globalLesson = await prisma.globalLesson.findFirst({
+        where: { 
+            topicId,
+            OR: [{ schoolId }, { schoolId: null }]
+        },
+        orderBy: { schoolId: 'desc' }
     })
 
     return {
@@ -1093,8 +1795,10 @@ export async function getLessonForTeacher(topicId: string, schoolId: string) {
       data: globalLesson
         ? {
             id: "",
-            aiContent: globalLesson.aiContent,
-            isCustomized: false
+            customContent: globalLesson.aiContent,
+            isCustomized: false,
+            status: LessonStatus.DRAFT,
+            globalLesson: globalLesson
           }
         : null
     }
@@ -1108,51 +1812,50 @@ export async function getLessonForTeacher(topicId: string, schoolId: string) {
 }
 
 // ─────────────────────────────────────────────
-// 5. STUDENT FETCH (ONLY PUBLISHED SCHOOL VERSION)
+// 4. STUDENT FETCH
 // ─────────────────────────────────────────────
 
 export async function getStudentLesson(topicId: string, schoolId: string) {
   try {
-    const lesson = await prisma.schoolLesson.findFirst({
+    const lesson = await prisma.schoolLesson.findUnique({
       where: {
-        topicId,
-        schoolId,
-        status: "published"
+        topicId_schoolId: { topicId, schoolId }
       },
-      include: {
-        globalLesson: true
-      }
+      include: { globalLesson: true }
     })
 
-    if (!lesson) {
-      const globalLesson = await prisma.globalLesson.findUnique({
-        where: { topicId }
-      })
-
-      if (!globalLesson) {
-        return { success: true, data: null }
-      }
-
-      return {
-        success: true,
-        data: {
-          id: "",
-          subject: "",
-          title: "",
-          aiContent: globalLesson.aiContent
+    // Logic: If school version is published, show it. Otherwise check for Global.
+    if (lesson && lesson.status === LessonStatus.PUBLISHED) {
+        return {
+            success: true,
+            data: {
+                id: lesson.id,
+                subject: "Academic Module",
+                title: lesson.globalLesson.title,
+                aiContent: (lesson.customContent ?? lesson.globalLesson.aiContent) as unknown as LessonAiContent
+            } as StudentLessonResponse
         }
-      }
     }
+
+    // Fallback to Global blueprint if no school-specific lesson exists
+    const globalLesson = await prisma.globalLesson.findFirst({
+        where: { 
+            topicId,
+            OR: [{ schoolId }, { schoolId: null }]
+        },
+        orderBy: { schoolId: 'desc' }
+    })
+
+    if (!globalLesson) return { success: true, data: null }
 
     return {
       success: true,
       data: {
-        id: lesson.id,
-        subject: "",
-        title: "",
-        aiContent:
-          lesson.customContent ?? lesson.globalLesson.aiContent
-      }
+        id: "",
+        subject: "General",
+        title: globalLesson.title,
+        aiContent: globalLesson.aiContent as unknown as LessonAiContent
+      } as StudentLessonResponse
     }
 
   } catch (err) {
@@ -1164,7 +1867,7 @@ export async function getStudentLesson(topicId: string, schoolId: string) {
 }
 
 // ─────────────────────────────────────────────
-// 6. PUBLISH LESSON (TEACHER CONTROL)
+// 5. PUBLISH LESSON
 // ─────────────────────────────────────────────
 
 export async function publishLesson({
@@ -1185,9 +1888,11 @@ export async function publishLesson({
         }
       },
       data: {
-        customContent: content as Prisma.InputJsonValue,
-        status: "published",
-        isCustomized: true
+        customContent: content as unknown as Prisma.InputJsonValue,
+        status: LessonStatus.PUBLISHED,
+        isCustomized: true,
+        // FIXED: Removed 'publishedAt' as it does not exist in your schema.
+        // Prisma's 'updatedAt' will automatically track the last update.
       }
     })
 
@@ -1204,41 +1909,47 @@ export async function publishLesson({
 }
 
 // ─────────────────────────────────────────────
-// 7. VERSION HISTORY
+// 6. SAVE LESSON
 // ─────────────────────────────────────────────
 
-export async function createLessonVersion({
-  schoolLessonId,
-  content
-}: LessonVersionInput) {
-  try {
-    await prisma.lessonVersion.create({
-      data: {
-        schoolLessonId,
-        content: content as Prisma.InputJsonValue
-      }
-    })
-
-    return { success: true }
-
-  } catch (err) {
-    return {
-      success: false,
-      error: getErrorMessage(err)
+export async function saveSchoolLesson({
+    lessonId,
+    schoolId,
+    topicId,
+    aiContent
+  }: {
+    lessonId: string
+    schoolId: string
+    topicId: string
+    aiContent: LessonAiContent
+  }) {
+    try {
+      const lesson = await prisma.schoolLesson.update({
+        where: {
+          id: lessonId,
+          schoolId: schoolId 
+        },
+        data: {
+          customContent: aiContent as unknown as Prisma.InputJsonValue,
+          isCustomized: true,
+          status: LessonStatus.DRAFT
+        }
+      })
+  
+      revalidatePath(`/teacher/lessons/${topicId}`)
+      return { success: true, data: lesson }
+    } catch (err) {
+      return { success: false, error: getErrorMessage(err) }
     }
   }
-}
 
 // ─────────────────────────────────────────────
-// MOCK AI (REMOVE IN PRODUCTION)
+// MOCK AI (Typed)
 // ─────────────────────────────────────────────
 
-async function fakeAIGeneration(topicId: string) {
+async function fakeAIGeneration(topicId: string): Promise<LessonAiContent> {
   return {
-    metadata: {
-      topicContext: topicId,
-      difficultyLevel: "medium"
-    },
+    metadata: { topicContext: topicId, difficultyLevel: "medium" },
     teacherLogic: {
       teachingMethod: "interactive",
       timeAllocation: "45 mins",
