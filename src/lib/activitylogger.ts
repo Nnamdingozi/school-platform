@@ -38,7 +38,7 @@ import { ActivityType, Prisma } from '@prisma/client'
 import { getErrorMessage } from '@/lib/error-handler'
 
 export interface LogActivityInput {
-    schoolId:    string
+    schoolId:    string | null | undefined // Allow null for independent users
     actorId:     string
     actorName?:  string | null
     actorRole?:  string | null
@@ -48,7 +48,19 @@ export interface LogActivityInput {
     metadata?:   Record<string, unknown>
 }
 
+/**
+ * Global Activity Logger
+ * Rule: Only logs to the DB if a schoolId is present (Institutional Tier).
+ * Independent user activity (Global Tier) is currently ignored by this specific logger 
+ * as the Schema requires a School relation.
+ */
 export async function logActivity(input: LogActivityInput): Promise<void> {
+    // Rule 6: Independent users don't have a school record to attach logs to.
+    if (!input.schoolId) {
+        console.log(`[Activity-Skip]: Independent User ${input.actorId} performed ${input.type} - No school context.`);
+        return;
+    }
+
     try {
         await prisma.activityLog.create({
             data: {
@@ -59,13 +71,12 @@ export async function logActivity(input: LogActivityInput): Promise<void> {
                 type:        input.type,
                 title:       input.title,
                 description: input.description,
-                // ✅ Cast to Prisma.InputJsonValue — compatible with Json field
-                metadata:    input.metadata !== undefined
-                    ? input.metadata as unknown as Prisma.InputJsonValue
-                    : undefined,
+                // ✅ Strictly typed Prisma JSON handling
+                metadata:    input.metadata ? (input.metadata as Prisma.InputJsonValue) : Prisma.JsonNull,
             },
         })
     } catch (err: unknown) {
+        // Log error but don't crash the main execution flow of the calling action
         console.error('logActivity error:', getErrorMessage(err))
     }
 }

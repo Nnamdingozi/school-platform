@@ -29,26 +29,29 @@ model School {
   gradeSubjects    GradeSubject[]
   schoolLessons    SchoolLesson[]
 
-  ParentStudent            ParentStudent[]
-  subscription             Subscription?
-  activityLogs             ActivityLog[]
-  assessments              Assessment[]
-  primaryColor             String                    @default("#f59e0b")
-  secondaryColor           String                    @default("#1e293b")
-  studentSubjects          StudentSubject[]
+  ParentStudent   ParentStudent[]
+  subscription    Subscription?
+  activityLogs    ActivityLog[]
+  assessments     Assessment[]
+  studentSubjects StudentSubject[]
+
   creditTransactions       CreditTransaction[]
   subscriptionTransactions SubscriptionTransaction[]
 
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  Question     Question[]
-  Exam         Exam[]
-  GlobalLesson GlobalLesson[]
+  // ✅ ADD THIS
+  questionOverrides QuestionOverride[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Exam          Exam[]
+  GlobalLesson  GlobalLesson[]
+  examQuestions ExamQuestion[]
 }
 
 model Profile {
   id           String  @id @default(uuid())
-  email        String  @unique
+  email        String
   name         String?
   role         Role
   phone        String?
@@ -90,6 +93,7 @@ model Profile {
   activityLogs ActivityLog[]
   createdExams Exam[]        @relation("ExamCreator")
 
+  @@unique([schoolId, email])
   @@index([schoolId])
   @@index([curriculumId])
   @@map("profiles")
@@ -106,7 +110,7 @@ model ParentStudent {
   student Profile @relation("ParentStudent_studentIdToprofiles", fields: [studentId], references: [id])
   school  School? @relation(fields: [schoolId], references: [id])
 
-  @@unique([parentId, studentId])
+  @@unique([schoolId, parentId, studentId])
   @@index([parentId])
   @@index([studentId])
   @@index([schoolId])
@@ -174,16 +178,21 @@ model Term {
 }
 
 model Subject {
-  id            String         @id @default(uuid())
-  name          String
-  curriculumId  String
-  schoolId      String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id   String @id @default(uuid())
+  name String
+
+  curriculumId String
+  schoolId     String? // null = GLOBAL subject
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  curriculum Curriculum @relation(fields: [curriculumId], references: [id])
+  school     School?    @relation(fields: [schoolId], references: [id])
+
   gradeSubjects GradeSubject[]
-  ownershipType String         @default("GLOBAL")
-  curriculum    Curriculum     @relation(fields: [curriculumId], references: [id])
-  school        School?        @relation(fields: [schoolId], references: [id])
+  questions     Question[]     @relation("SubjectQuestions")
 
   @@index([schoolId])
   @@index([curriculumId])
@@ -195,6 +204,7 @@ model Topic {
   gradeSubjectId String
   termId         String
   schoolId       String?
+  isGlobal       Boolean        @default(false)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   description    String?
@@ -206,6 +216,12 @@ model Topic {
   Question       Question[]
   GlobalLesson   GlobalLesson[]
   SchoolLesson   SchoolLesson[]
+
+  ownershipType OwnershipType @default(GLOBAL)
+  baseId        String?
+
+  parent    Topic?  @relation("TopicOverride", fields: [baseId], references: [id])
+  overrides Topic[] @relation("TopicOverride")
 
   @@index([schoolId])
 }
@@ -242,7 +258,7 @@ model ClassEnrollment {
 
 model StudentSubject {
   id             String           @id @default(uuid())
-  studentId      String
+  studentId      String?
   gradeSubjectId String
   schoolId       String
   status         EnrollmentStatus @default(APPROVED)
@@ -252,7 +268,7 @@ model StudentSubject {
   gradeSubject GradeSubject @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
   school       School       @relation(fields: [schoolId], references: [id])
 
-  @@unique([studentId, gradeSubjectId])
+  @@unique([schoolId, studentId, gradeSubjectId])
 }
 
 model Assessment {
@@ -281,25 +297,35 @@ model Assessment {
 model GlobalLesson {
   id String @id @default(uuid())
 
-  title    String
-  topicId  String
-  schoolId String? // null = global version
+  title   String
+  topicId String
+
+  schoolId String?
+  isGlobal Boolean @default(false)
 
   aiContent Json?
 
   videoScript String?
 
+  ownershipType OwnershipType @default(GLOBAL)
+  baseId        String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  school        School?        @relation(fields: [schoolId], references: [id])
-  topic         Topic          @relation(fields: [topicId], references: [id])
-  quiz          Quiz?
+  topic  Topic   @relation(fields: [topicId], references: [id])
+  school School? @relation(fields: [schoolId], references: [id])
+
+  // ❌ REMOVE THIS if quiz is derived
+  // quiz Quiz?
+
+  // OPTIONAL: keep if you want config per lesson
+  // quizConfig Quiz?
+
   schoolLessons SchoolLesson[]
 
-  @@unique([topicId, schoolId])
-  @@index([schoolId])
-  @@index([topicId])
+  base      GlobalLesson?  @relation("LessonOverride", fields: [baseId], references: [id])
+  overrides GlobalLesson[] @relation("LessonOverride")
 }
 
 model SchoolLesson {
@@ -349,39 +375,73 @@ model LessonVersion {
 }
 
 model Quiz {
-  id       String @id @default(uuid())
-  lessonId String @unique
-
-  lesson GlobalLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  quizQuestions QuizQuestion[]
+  id       String  @id @default(uuid())
+  topicId  String
+  schoolId String?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  @@index([topicId])
 }
 
 // 1. The Independent Question Bank
-
 model Question {
-  id            String           @id @default(uuid())
+  id String @id @default(uuid())
+
   text          String
-  options       Json // Array of strings
+  options       Json
   correctAnswer String
   explanation   String?
-  points        Int              @default(1)
-  category      QuestionCategory @default(PRACTICE)
+  points        Int     @default(1)
 
-  topicId  String
-  schoolId String? // null = Global, UUID = School Custom
+  // ─── Metadata for Retrieval ───
+  year      Int? // e.g. 2000
+  examBody  String? // e.g. "WAEC", "JAMB", "NECO"
+  subjectId String? // Direct link for fast filtering
+  subject   Subject? @relation("SubjectQuestions", fields: [subjectId], references: [id])
 
-  topic  Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  school School? @relation(fields: [schoolId], references: [id])
+  type       QuestionType
+  category   QuestionCategory
+  difficulty String?
+  // ─── Ownership ───
+  schoolId   String?
+  isGlobal   Boolean          @default(false)
+  creatorId  String? // For Individual Learners
 
-  quizLinks QuizQuestion[]
-  examLinks ExamQuestion[]
+  topicId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  // ✅ ADD THIS
+  overrides    QuestionOverride[]
+  ExamQuestion ExamQuestion[]
+
+  @@index([topicId])
+  @@index([subjectId, year])
+  @@index([examBody])
+}
+
+model QuestionOverride {
+  id String @id @default(uuid())
+
+  questionId String
+  schoolId   String
+
+  text          String?
+  options       Json?
+  correctAnswer String?
+  explanation   String?
+
+  isActive Boolean @default(true)
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  school   School   @relation(fields: [schoolId], references: [id])
+
+  @@unique([questionId, schoolId])
+  @@index([schoolId])
 }
 
 // 2. The High-Stakes Exam Model
@@ -444,29 +504,18 @@ model SubmissionAnswer {
   submission ExamSubmission @relation(fields: [submissionId], references: [id])
 }
 
-// 3. Junction Tables
-model QuizQuestion {
-  id         String @id @default(uuid())
-  quizId     String
-  questionId String
-  order      Int
-
-  quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-
-  @@unique([quizId, questionId])
-}
-
 model ExamQuestion {
-  id         String @id @default(uuid())
+  id         String   @id @default(uuid())
   examId     String
   questionId String
   order      Int
+  exam       Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-  exam     Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  School   School? @relation(fields: [schoolId], references: [id])
+  schoolId String?
 
-  @@unique([examId, questionId])
+  @@index([examId])
 }
 
 model ClassPerformance {
@@ -511,7 +560,7 @@ model GradeSubject {
   selectedByUsers Profile[]        @relation("UserSelectedSubjects")
   studentSubjects StudentSubject[]
 
-  @@unique([gradeId, subjectId])
+  @@unique([schoolId, gradeId, subjectId])
 }
 
 model Notification {
@@ -570,7 +619,7 @@ model Invitation {
 
 model ActivityLog {
   id          String       @id @default(uuid())
-  schoolId    String
+  schoolId    String? // 👈 Change to optional (String?)
   actorId     String
   actorName   String?
   actorRole   String?
@@ -580,7 +629,7 @@ model ActivityLog {
   metadata    Json?
   createdAt   DateTime     @default(now())
 
-  school School  @relation(fields: [schoolId], references: [id])
+  school School? @relation(fields: [schoolId], references: [id]) // 👈 Add ? here too
   actor  Profile @relation(fields: [actorId], references: [id])
 
   @@index([schoolId])
@@ -718,11 +767,6 @@ enum EnrollmentStatus {
   REJECTED
 }
 
-enum QuestionCategory {
-  PRACTICE // Generated during daily lessons
-  EXAM // Generated specifically for high-stakes exams
-}
-
 enum ExamStatus {
   DRAFT
   PUBLISHED
@@ -745,4 +789,27 @@ enum LessonStatus {
 enum OwnershipType {
   GLOBAL
   SCHOOL
+}
+
+enum QuestionType {
+  MCQ
+  ESSAY
+}
+
+enum ContentScope {
+  GLOBAL
+  SCHOOL
+}
+
+enum QuestionCategory {
+  PRACTICE
+  EXAM
+  REVISION
+  SCANNED
+}
+
+enum ContentStatus {
+  DRAFT // For raw AI scans that need checking
+  PUBLISHED // Ready for use in exams
+  VERIFIED // Human-checked platform content (usually Tier 1)
 }

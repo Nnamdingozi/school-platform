@@ -126,45 +126,124 @@
 
 
 
+// 'use server';
+
+// import { prisma } from "@/lib/prisma";
+// import { revalidatePath } from "next/cache";
+// import type { LessonAiContent } from "./ai-generator"; 
+// import { Prisma } from "@prisma/client";
+// import { getErrorMessage } from "@/lib/error-handler";
+
+// /**
+//  * Saves the permanent image URL of a generated diagram into the lesson's aiContent.
+//  * Updated to handle the nested studentContent.visualAids structure.
+//  */
+// export async function saveGeneratedImageUrlToLesson(
+//   lessonId: string,
+//   visualAidIndex: number,
+//   imageUrl: string
+// ) {
+//   try {
+//     // 1. Fetch the lesson data
+//     const lesson = await prisma.globalLesson.findUnique({
+//       where: { id: lessonId },
+//       select: { id: true, aiContent: true, topicId: true } 
+//     });
+
+//     if (!lesson || !lesson.aiContent) {
+//       throw new Error("Lesson registry or AI metadata not found for update.");
+//     }
+
+//     // 2. Cast the JSONB field to our strict LessonAiContent interface
+//     const currentAiContent = lesson.aiContent as unknown as LessonAiContent;
+
+//     // 3. Navigate the NEW nested structure: studentContent -> visualAids
+//     const visualAids = currentAiContent.studentContent?.visualAids;
+
+//     if (visualAids && visualAids[visualAidIndex]) {
+//       // ✅ Apply the persistent URL to the specific index
+//       visualAids[visualAidIndex].url = imageUrl;
+
+//       // 4. Perform an atomic update back to the database
+//       await prisma.globalLesson.update({
+//         where: { id: lessonId },
+//         data: {
+//           aiContent: currentAiContent as unknown as Prisma.InputJsonValue,
+//         },
+//       });
+
+//       console.log(`[Asset Registry] Permanent URL saved for Lesson: ${lessonId}, Aid Index: ${visualAidIndex}`);
+
+//       // 5. Revalidate paths to ensure Teachers and Students see the image immediately
+//       // Note: We use topicId for the teacher and student routes
+//       revalidatePath(`/teacher/lessons/${lesson.topicId}`); 
+//       revalidatePath(`/student/lessons/${lesson.topicId}`); 
+
+//       return { success: true };
+//     } else {
+//       throw new Error(`Syllabus node (Visual Aid) at index ${visualAidIndex} was not discovered in this content version.`);
+//     }
+//   } catch (error: unknown) {
+//     const message = getErrorMessage(error);
+//     console.error(":: image-persistence-failure ::", message);
+//     return { success: false, error: message };
+//   }
+// }
+
+
+
 'use server';
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import type { LessonAiContent } from "./ai-generator"; 
-import { Prisma } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
 import { getErrorMessage } from "@/lib/error-handler";
+import { type EnhancedLessonContent } from "@/components/TeacherDashboard/ai-learning-planner";
+import { logActivity } from "@/lib/activitylogger";
 
 /**
  * Saves the permanent image URL of a generated diagram into the lesson's aiContent.
- * Updated to handle the nested studentContent.visualAids structure.
+ * Rule 8: AI content is stored in GlobalLesson or SchoolLesson.
  */
-export async function saveGeneratedImageUrlToLesson(
-  lessonId: string,
-  visualAidIndex: number,
-  imageUrl: string
-) {
+export async function saveGeneratedImageUrlToLesson(params: {
+  lessonId: string;
+  visualAidIndex: number;
+  imageUrl: string;
+  userId: string;
+  userRole: Role;
+  schoolId: string | null;
+}) {
+  const { lessonId, visualAidIndex, imageUrl, userId, userRole, schoolId } = params;
+
   try {
-    // 1. Fetch the lesson data
+    // 1. Fetch the lesson and verify ownership (Rule 5 & 10)
     const lesson = await prisma.globalLesson.findUnique({
       where: { id: lessonId },
-      select: { id: true, aiContent: true, topicId: true } 
+      select: { id: true, aiContent: true, topicId: true, schoolId: true, title: true } 
     });
 
     if (!lesson || !lesson.aiContent) {
-      throw new Error("Lesson registry or AI metadata not found for update.");
+      throw new Error("Lesson registry or AI metadata not found.");
     }
 
-    // 2. Cast the JSONB field to our strict LessonAiContent interface
-    const currentAiContent = lesson.aiContent as unknown as LessonAiContent;
+    // Security Check: If lesson is school-specific, verify user belongs to that school
+    if (lesson.schoolId && lesson.schoolId !== schoolId) {
+        throw new Error("Unauthorized: This lesson belongs to another institution.");
+    }
 
-    // 3. Navigate the NEW nested structure: studentContent -> visualAids
+    // 2. Cast the JSONB field to our strict interface
+    // Standardized to EnhancedLessonContent to resolve Module Error
+    const currentAiContent = lesson.aiContent as unknown as EnhancedLessonContent;
+
+    // 3. Navigate structure: studentContent -> visualAids
     const visualAids = currentAiContent.studentContent?.visualAids;
 
-    if (visualAids && visualAids[visualAidIndex]) {
+    if (visualAids && Array.isArray(visualAids) && visualAids[visualAidIndex]) {
+      
       // ✅ Apply the persistent URL to the specific index
       visualAids[visualAidIndex].url = imageUrl;
 
-      // 4. Perform an atomic update back to the database
+      // 4. Perform atomic update
       await prisma.globalLesson.update({
         where: { id: lessonId },
         data: {
@@ -172,16 +251,23 @@ export async function saveGeneratedImageUrlToLesson(
         },
       });
 
-      console.log(`[Asset Registry] Permanent URL saved for Lesson: ${lessonId}, Aid Index: ${visualAidIndex}`);
+      // 5. Rule 11: Log the visual registry update
+      await logActivity({
+        schoolId,
+        actorId: userId,
+        actorRole: userRole,
+        type: "SETTINGS_UPDATED",
+        title: "Asset Registry Updated",
+        description: `Bound permanent image URL to visual aid #${visualAidIndex + 1} in lesson: ${lesson.title}`
+      });
 
-      // 5. Revalidate paths to ensure Teachers and Students see the image immediately
-      // Note: We use topicId for the teacher and student routes
+      // 6. Revalidate paths
       revalidatePath(`/teacher/lessons/${lesson.topicId}`); 
       revalidatePath(`/student/lessons/${lesson.topicId}`); 
 
       return { success: true };
     } else {
-      throw new Error(`Syllabus node (Visual Aid) at index ${visualAidIndex} was not discovered in this content version.`);
+      throw new Error(`Syllabus node (Visual Aid) at index ${visualAidIndex} was not discovered.`);
     }
   } catch (error: unknown) {
     const message = getErrorMessage(error);

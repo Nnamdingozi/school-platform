@@ -488,12 +488,239 @@
 //   );
 // }
 
+// "use client";
+
+// import { useState, useEffect } from "react";
+// import Link from "next/link";
+// import { useProfileStore } from "@/store/profileStore";
+// import { getStudentDashboardData } from "@/app/actions/student-dashboard";
+
+// // Components
+// import { Header } from "@/components/student-dashboard/header";
+// import { Navigation } from "@/components/student-dashboard/navigation";
+// import { WhatsDueWidget } from "@/components/student-dashboard/whats-due-widget";
+// import { CurrentLessonCard } from "@/components/student-dashboard/current-lesson-card";
+// import { RecentFeedback } from "@/components/student-dashboard/recent-feedback";
+// import { TeacherContact } from "@/components/student-dashboard/teacher-contact";
+// import { QuickStats } from "@/components/student-dashboard/quick-stats";
+// import { SubjectsGrid } from "@/components/student-dashboard/subjects-grid";
+// import { Sparkles, Loader2, BookOpen } from "lucide-react";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+
+// // Prisma Types
+// import { Assessment, Topic, Subject, Exam } from "@prisma/client";
+
+// // ── Utility ──────────────────────────────────────────────────────────────────
+
+// function getErrorMessage(error: unknown): string {
+//   if (error instanceof Error) return error.message;
+//   if (error && typeof error === 'object' && 'message' in error) {
+//     return String((error as { message?: string }).message);
+//   }
+//   return typeof error === 'string' ? error : "An unknown error occurred";
+// }
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface GradeSubjectDetail {
+//   id: string;
+//   subject: Pick<Subject, "name">;
+//   topics: Pick<Topic, "id" | "title">[];
+//   assessments: Assessment[];
+// }
+
+// interface StudentSubjectEnrollment {
+//   id: string;
+//   gradeSubject: GradeSubjectDetail;
+// }
+
+// interface AssessmentWithSubject extends Assessment {
+//   gradeSubject: {
+//     subject: { name: string };
+//   };
+//   feedbacks: { message: string | null; sentAt: Date | null }[];
+// }
+
+// interface DashboardData {
+//   student: { name: string | null };
+//   school: { name: string } | null;
+//   classroom: {
+//     id: string;
+//     name: string;
+//     grade: { level: number; displayName: string };
+//     teacher: { name: string | null; email: string } | null;
+//   };
+//   subjects: StudentSubjectEnrollment[];
+//   recentAssessments: AssessmentWithSubject[];
+//   upcomingExams: Exam[];
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function StudentDashboard() {
+//   const { profile, isLoading: isProfileLoading } = useProfileStore();
+//   const [activeNav, setActiveNav] = useState<string>("dashboard");
+  
+//   const [dbData, setDbData] = useState<DashboardData | null>(null);
+//   const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
+//   const [error, setError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     async function load() {
+//       if (!profile?.id) return;
+      
+//       try {
+//         setIsDataLoading(true);
+//         setError(null);
+//         const data = await getStudentDashboardData(profile.id);
+//         if (data) {
+//           setDbData(data as unknown as DashboardData);
+//         }
+//       } catch (err) {
+//         const msg = getErrorMessage(err);
+//         setError(msg);
+//         console.error("[DASHBOARD_FETCH_ERROR]:", msg);
+//       } finally {
+//         setIsDataLoading(false);
+//       }
+//     }
+//     load();
+//   }, [profile?.id]);
+
+//   if (isProfileLoading || isDataLoading) {
+//     return (
+//       <div className="h-screen flex flex-col items-center justify-center bg-slate-950">
+//         <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
+//         <p className="text-slate-500 font-black uppercase text-[10px] tracking-[0.3em]">
+//           Syncing Academic Profile...
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="h-screen flex flex-col items-center justify-center bg-slate-950 p-6 text-center">
+//         <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl mb-4">
+//            <p className="text-red-500 text-xs font-bold uppercase tracking-widest">{error}</p>
+//         </div>
+//         <Button onClick={() => window.location.reload()} variant="outline" className="border-white/10 text-slate-400">
+//             Retry Connection
+//         </Button>
+//       </div>
+//     );
+//   }
+
+//   if (!dbData?.classroom) {
+//     return (
+//       <div className="h-screen flex flex-col items-center justify-center bg-slate-950 p-6 text-center">
+//         <BookOpen className="h-16 w-16 text-slate-800 mb-6" />
+//         <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Placement Pending</h2>
+//         <p className="text-slate-500 max-w-sm mt-2 text-sm leading-relaxed">
+//           You haven&apos;t been assigned to a physical classroom yet. Please contact the administrator to finalize your enrollment.
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   const { student, school, classroom, subjects, recentAssessments, upcomingExams } = dbData;
+
+//   return (
+//     <div className="min-h-screen bg-slate-950">
+//       <Header
+//         studentName={student.name || "Student"}
+//         schoolName={school?.name || "Institution"}
+//         grade={classroom.name} 
+//       />
+
+//       <Navigation activeItem={activeNav} onNavigate={setActiveNav} />
+
+//       <main className="px-4 py-6 md:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+//         <div className="mb-6">
+//           <div className="flex items-center gap-2 mb-1">
+//             <Sparkles className="h-5 w-5 text-school-primary" />
+//             <span className="text-[10px] font-black uppercase tracking-widest text-school-primary">Standard Registry</span>
+//           </div>
+//           <h1 className="text-3xl font-black text-white uppercase italic tracking-tighter">
+//             Welcome back, {student.name?.split(" ")[0]}
+//           </h1>
+//           <p className="text-slate-500 text-sm font-medium mt-1 uppercase tracking-widest">
+//             {classroom.name} — Current Academic Session
+//           </p>
+//         </div>
+
+//         <QuickStats assessments={recentAssessments} />
+
+//         {/* 
+//             FIXED: subjects={subjects.map(s => s.gradeSubject)}
+//             We transform StudentSubject (enrollment) into GradeSubject (content) 
+//             to satisfy the SubjectsGrid requirements.
+//         */}
+//         <SubjectsGrid 
+//             subjects={subjects.map(s => s.gradeSubject)} 
+//             classTeacherName={classroom.teacher?.name || "Registry Instructor"} 
+//             gradeLevel={classroom.grade.level} 
+//         />
+
+//         <div className="grid gap-8 lg:grid-cols-3 items-start">
+//           <div className="space-y-8 lg:col-span-2">
+//             <WhatsDueWidget exams={upcomingExams} />
+//             <RecentFeedback assessments={recentAssessments} />
+//           </div>
+
+//           <div className="space-y-8">
+//             <TeacherContact teacher={classroom.teacher} />
+
+//             <CurrentLessonCard
+//               topic={subjects[0]?.gradeSubject?.topics[0]?.title || "Self Study"}
+//               subject={subjects[0]?.gradeSubject?.subject.name || "General"}
+//               progress={0} 
+//               isLive={false}
+//             />
+
+//             <Card className="bg-slate-900 border-white/5 rounded-[2rem] overflow-hidden">
+//               <CardHeader className="bg-slate-950/50">
+//                 <CardTitle className="text-xs font-black uppercase text-slate-400">Registry Control</CardTitle>
+//               </CardHeader>
+//               <CardContent className="flex flex-col gap-4 p-6">
+//                 <p className="text-xs text-slate-500 font-medium italic leading-relaxed">
+//                   Modify your registered academic modules to update your dashboard view.
+//                 </p>
+//                 <Button asChild className="bg-slate-950 border border-white/10 text-school-primary hover:bg-school-primary hover:text-slate-950 font-black rounded-xl text-[10px] uppercase">
+//                   <Link href="/subjects/manage?role=student">
+//                     Update Syllabus Registry
+//                   </Link>
+//                 </Button>
+//               </CardContent>
+//             </Card>
+//           </div>
+//         </div>
+//       </main>
+
+//       <footer className="border-t border-white/5 py-12 mt-12 bg-slate-950">
+//         <div className="px-4 md:px-6 lg:px-8 max-w-7xl mx-auto text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+//           <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">
+//              INSTITUTIONAL_ENVIRONMENT_v1.0
+//           </p>
+//           <div className="flex items-center gap-6 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+//             <button className="hover:text-school-primary transition-colors">Compliance</button>
+//             <button className="hover:text-school-primary transition-colors">Privacy</button>
+//             <button className="hover:text-school-primary transition-colors">Archive</button>
+//           </div>
+//         </div>
+//       </footer>
+//     </div>
+//   );
+// }
+
+
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useProfileStore } from "@/store/profileStore";
-import { getStudentDashboardData } from "@/app/actions/student-dashboard";
+  import { getStudentDashboardData } from "@/app/actions/student-dashboard";;
 
 // Components
 import { Header } from "@/components/student-dashboard/header";
@@ -504,35 +731,20 @@ import { RecentFeedback } from "@/components/student-dashboard/recent-feedback";
 import { TeacherContact } from "@/components/student-dashboard/teacher-contact";
 import { QuickStats } from "@/components/student-dashboard/quick-stats";
 import { SubjectsGrid } from "@/components/student-dashboard/subjects-grid";
-import { Sparkles, Loader2, BookOpen } from "lucide-react";
+import { Sparkles, Loader2, BookOpen, Zap, History, Globe } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 // Prisma Types
-import { Assessment, Topic, Subject, Exam } from "@prisma/client";
-
-// ── Utility ──────────────────────────────────────────────────────────────────
-
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (error && typeof error === 'object' && 'message' in error) {
-    return String((error as { message?: string }).message);
-  }
-  return typeof error === 'string' ? error : "An unknown error occurred";
-}
+import { Assessment, Role, Exam } from "@prisma/client";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
 interface GradeSubjectDetail {
   id: string;
-  subject: Pick<Subject, "name">;
-  topics: Pick<Topic, "id" | "title">[];
+  subject: { name: string };
+  topics: { id: string; title: string }[];
   assessments: Assessment[];
-}
-
-interface StudentSubjectEnrollment {
-  id: string;
-  gradeSubject: GradeSubjectDetail;
 }
 
 interface AssessmentWithSubject extends Assessment {
@@ -550,10 +762,11 @@ interface DashboardData {
     name: string;
     grade: { level: number; displayName: string };
     teacher: { name: string | null; email: string } | null;
-  };
-  subjects: StudentSubjectEnrollment[];
+  } | null;
+  subjects: GradeSubjectDetail[];
   recentAssessments: AssessmentWithSubject[];
   upcomingExams: Exam[];
+  isIndependent: boolean;
 }
 
 // ── Main Component ──────────────────────────────────────────────────────────
@@ -573,14 +786,14 @@ export default function StudentDashboard() {
       try {
         setIsDataLoading(true);
         setError(null);
+        // Rule 11: Call the Tier-Aware action
         const data = await getStudentDashboardData(profile.id);
         if (data) {
           setDbData(data as unknown as DashboardData);
         }
-      } catch (err) {
-        const msg = getErrorMessage(err);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Failed to load dashboard";
         setError(msg);
-        console.error("[DASHBOARD_FETCH_ERROR]:", msg);
       } finally {
         setIsDataLoading(false);
       }
@@ -612,26 +825,36 @@ export default function StudentDashboard() {
     );
   }
 
-  if (!dbData?.classroom) {
+  // Identify Tier (Rule 6)
+  const isIndependent = dbData?.isIndependent ?? true;
+
+  // Rule 5: If they are a school student but not placed in a class yet
+  if (!isIndependent && !dbData?.classroom) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-slate-950 p-6 text-center">
         <BookOpen className="h-16 w-16 text-slate-800 mb-6" />
         <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Placement Pending</h2>
         <p className="text-slate-500 max-w-sm mt-2 text-sm leading-relaxed">
-          You haven&apos;t been assigned to a physical classroom yet. Please contact the administrator to finalize your enrollment.
+          Your institutional profile is active, but you haven&apos;t been assigned to a physical classroom yet. 
+          Please contact your school administrator.
         </p>
       </div>
     );
   }
 
-  const { student, school, classroom, subjects, recentAssessments, upcomingExams } = dbData;
+  const student = dbData?.student;
+  const school = dbData?.school;
+  const classroom = dbData?.classroom;
+  const subjects = dbData?.subjects || [];
+  const recentAssessments = dbData?.recentAssessments || [];
+  const upcomingExams = dbData?.upcomingExams || [];
 
   return (
     <div className="min-h-screen bg-slate-950">
       <Header
-        studentName={student.name || "Student"}
-        schoolName={school?.name || "Institution"}
-        grade={classroom.name} 
+        studentName={student?.name || "Learner"}
+        schoolName={isIndependent ? "Global Learning Platform" : (school?.name || "Institution")}
+        grade={isIndependent ? "Self-Paced" : (classroom?.name || "Unassigned")} 
       />
 
       <Navigation activeItem={activeNav} onNavigate={setActiveNav} />
@@ -639,57 +862,80 @@ export default function StudentDashboard() {
       <main className="px-4 py-6 md:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
-            <Sparkles className="h-5 w-5 text-school-primary" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-school-primary">Standard Registry</span>
+            {isIndependent ? (
+                <Globe className="h-5 w-5 text-school-primary" />
+            ) : (
+                <Sparkles className="h-5 w-5 text-school-primary" />
+            )}
+            <span className="text-[10px] font-black uppercase tracking-widest text-school-primary">
+                {isIndependent ? "Global Knowledge Registry" : "Standard Institutional Environment"}
+            </span>
           </div>
           <h1 className="text-3xl font-black text-white uppercase italic tracking-tighter">
-            Welcome back, {student.name?.split(" ")[0]}
+            Welcome, {student?.name?.split(" ")[0]}
           </h1>
           <p className="text-slate-500 text-sm font-medium mt-1 uppercase tracking-widest">
-            {classroom.name} — Current Academic Session
+            {isIndependent ? "Personal Learning Dashboard" : `${classroom?.name} — Academic Session`}
           </p>
         </div>
 
         <QuickStats assessments={recentAssessments} />
 
-        {/* 
-            FIXED: subjects={subjects.map(s => s.gradeSubject)}
-            We transform StudentSubject (enrollment) into GradeSubject (content) 
-            to satisfy the SubjectsGrid requirements.
-        */}
         <SubjectsGrid 
-            subjects={subjects.map(s => s.gradeSubject)} 
-            classTeacherName={classroom.teacher?.name || "Registry Instructor"} 
-            gradeLevel={classroom.grade.level} 
+            subjects={subjects} 
+            classTeacherName={isIndependent ? "Platform AI Support" : (classroom?.teacher?.name || "Staff")} 
+            gradeLevel={classroom?.grade?.level || 10} 
+            isIndependent={isIndependent}
         />
 
         <div className="grid gap-8 lg:grid-cols-3 items-start">
           <div className="space-y-8 lg:col-span-2">
-            <WhatsDueWidget exams={upcomingExams} />
+            {/* Rule 6: Exams only visible to institutional students */}
+            {!isIndependent ? (
+                <WhatsDueWidget exams={upcomingExams} />
+            ) : (
+                <Card className="bg-school-primary border-none rounded-[2rem] overflow-hidden shadow-2xl">
+                  <CardContent className="p-10 space-y-6">
+                      <Zap className="h-10 w-10 text-slate-950 animate-pulse" />
+                      <div className="space-y-2">
+                        <h2 className="text-2xl font-black text-slate-950 uppercase italic tracking-tight leading-none">Practice Hub</h2>
+                        <p className="text-slate-900/60 text-xs font-bold uppercase">Generate self-paced assessments from the global bank.</p>
+                      </div>
+                      <Link href="/student/practice" className="block">
+                        <Button className="w-full bg-slate-950 text-white font-black rounded-xl py-6">
+                            INITIALIZE TEST ENGINE
+                        </Button>
+                      </Link>
+                  </CardContent>
+                </Card>
+            )}
             <RecentFeedback assessments={recentAssessments} />
           </div>
 
           <div className="space-y-8">
-            <TeacherContact teacher={classroom.teacher} />
+            {/* Rule 6: Hide teacher contact for independent learners */}
+            {!isIndependent && classroom?.teacher && (
+                <TeacherContact teacher={classroom.teacher} />
+            )}
 
             <CurrentLessonCard
-              topic={subjects[0]?.gradeSubject?.topics[0]?.title || "Self Study"}
-              subject={subjects[0]?.gradeSubject?.subject.name || "General"}
+              topic={subjects[0]?.topics[0]?.title || "Knowledge Exploration"}
+              subject={subjects[0]?.subject.name || "Core Knowledge"}
               progress={0} 
               isLive={false}
             />
 
-            <Card className="bg-slate-900 border-white/5 rounded-[2rem] overflow-hidden">
-              <CardHeader className="bg-slate-950/50">
-                <CardTitle className="text-xs font-black uppercase text-slate-400">Registry Control</CardTitle>
+            <Card className="bg-slate-900 border-white/5 rounded-[2rem] overflow-hidden shadow-xl">
+              <CardHeader className="bg-slate-950/50 p-6 border-b border-white/5">
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-slate-400">Registry Control</CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-col gap-4 p-6">
-                <p className="text-xs text-slate-500 font-medium italic leading-relaxed">
-                  Modify your registered academic modules to update your dashboard view.
+              <CardContent className="flex flex-col gap-4 p-8">
+                <p className="text-xs text-slate-500 font-bold uppercase leading-relaxed italic">
+                  Modify your registered academic modules to update your personal learning path.
                 </p>
-                <Button asChild className="bg-slate-950 border border-white/10 text-school-primary hover:bg-school-primary hover:text-slate-950 font-black rounded-xl text-[10px] uppercase">
-                  <Link href="/subjects/manage?role=student">
-                    Update Syllabus Registry
+                <Button asChild className="bg-slate-950 border border-white/10 text-school-primary hover:bg-school-primary hover:text-slate-950 font-black rounded-xl text-[10px] uppercase py-6">
+                  <Link href="/subjects/manage">
+                    {isIndependent ? "Expand Library" : "Update Syllabus Registry"}
                   </Link>
                 </Button>
               </CardContent>
@@ -701,12 +947,12 @@ export default function StudentDashboard() {
       <footer className="border-t border-white/5 py-12 mt-12 bg-slate-950">
         <div className="px-4 md:px-6 lg:px-8 max-w-7xl mx-auto text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">
-             INSTITUTIONAL_ENVIRONMENT_v1.0
+             {isIndependent ? "GLOBAL_LEARNER_CONTEXT_v1.0" : "INSTITUTIONAL_ENVIRONMENT_v1.0"}
           </p>
           <div className="flex items-center gap-6 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
             <button className="hover:text-school-primary transition-colors">Compliance</button>
             <button className="hover:text-school-primary transition-colors">Privacy</button>
-            <button className="hover:text-school-primary transition-colors">Archive</button>
+            <button className="hover:text-school-primary transition-colors">Support Registry</button>
           </div>
         </div>
       </footer>

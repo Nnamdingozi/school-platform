@@ -220,30 +220,164 @@
 // };
 
 
+// 'use server';
+
+// import { prisma } from "@/lib/prisma";
+// import { PerformanceDashboardData } from "@/types/performanceData";
+
+// export const getPerformanceDashboardData = async (
+//     gradeSubjectId: string, 
+//     schoolId: string
+// ): Promise<{ data: PerformanceDashboardData | null; error: string | null }> => {
+//     try {
+//         // 1. Fetch all assessments for this subject
+//         const assessments = await prisma.assessment.findMany({
+//             where: { gradeSubjectId, schoolId },
+//             include: {
+//                 student: true,
+//                 topic: true,
+//             }
+//         });
+
+//         // 2. Fetch all topics to calculate curriculum completion
+//         const totalTopics = await prisma.topic.count({
+//             where: { gradeSubjectId }
+//         });
+
+//         if (assessments.length === 0) {
+//             return {
+//                 data: {
+//                     topicScores: [],
+//                     studentsNeedingAttention: [],
+//                     curriculumCompletion: {
+//                         percentage: 0,
+//                         completedTopics: 0,
+//                         totalTopics,
+//                         completionData: [
+//                             { name: "Completed", value: 0 },
+//                             { name: "Remaining", value: totalTopics }
+//                         ]
+//                     }
+//                 },
+//                 error: null
+//             };
+//         }
+
+//         // --- Calculate Topic Scores ---
+//         const topicMap: Record<string, { total: number; count: number }> = {};
+//         assessments.forEach(a => {
+//             if (a.topic && a.score !== null && a.maxScore) {
+//                 const percentage = (a.score / a.maxScore) * 100;
+//                 const title = a.topic.title;
+//                 if (!topicMap[title]) topicMap[title] = { total: 0, count: 0 };
+//                 topicMap[title].total += percentage;
+//                 topicMap[title].count += 1;
+//             }
+//         });
+
+//         const topicScores = Object.entries(topicMap).map(([topic, data]) => ({
+//             topic,
+//             score: Math.round(data.total / data.count)
+//         }));
+
+//         // --- Calculate Students Needing Attention (< 50% average) ---
+//         const studentMap: Record<string, { name: string; total: number; count: number }> = {};
+//         assessments.forEach(a => {
+//             if (a.score !== null && a.maxScore) {
+//                 const percentage = (a.score / a.maxScore) * 100;
+//                 const sId = a.studentId;
+//                 if (!studentMap[sId]) studentMap[sId] = { name: a.student.name || "Unknown", total: 0, count: 0 };
+//                 studentMap[sId].total += percentage;
+//                 studentMap[sId].count += 1;
+//             }
+//         });
+
+//         const studentsNeedingAttention = Object.values(studentMap)
+//             .map(s => ({ name: s.name, score: Math.round(s.total / s.count) }))
+//             .filter(s => s.score < 50)
+//             .sort((a, b) => a.score - b.score);
+
+//         // --- Calculate Curriculum Completion ---
+//         const uniqueAssessedTopicIds = new Set(assessments.map(a => a.topicId).filter(Boolean));
+//         const completedTopicsCount = uniqueAssessedTopicIds.size;
+//         const completionPercentage = totalTopics > 0 ? Math.round((completedTopicsCount / totalTopics) * 100) : 0;
+
+//         const curriculumCompletion = {
+//             percentage: completionPercentage,
+//             completedTopics: completedTopicsCount,
+//             totalTopics,
+//             completionData: [
+//                 { name: "Completed", value: completedTopicsCount },
+//                 { name: "Remaining", value: Math.max(0, totalTopics - completedTopicsCount) }
+//             ]
+//         };
+
+//         return {
+//             data: {
+//                 topicScores,
+//                 studentsNeedingAttention,
+//                 curriculumCompletion
+//             },
+//             error: null
+//         };
+
+//     } catch (error) {
+//         console.error("Error fetching performance data:", error);
+//         return { data: null, error: "Failed to load performance data" };
+//     }
+// };
+
+
 'use server';
 
 import { prisma } from "@/lib/prisma";
+import { getErrorMessage } from "@/lib/error-handler";
+import { contentScope, academicCoreScope } from "@/lib/content-scope";
 import { PerformanceDashboardData } from "@/types/performanceData";
 
+/**
+ * FETCH PERFORMANCE ANALYTICS
+ * Rule 5: Strict school isolation for assessments.
+ * Rule 7: Topic counts must respect Tier-1 (Global) and Tier-2 (School) visibility.
+ */
 export const getPerformanceDashboardData = async (
     gradeSubjectId: string, 
-    schoolId: string
+    schoolId: string | null
 ): Promise<{ data: PerformanceDashboardData | null; error: string | null }> => {
     try {
-        // 1. Fetch all assessments for this subject
-        const assessments = await prisma.assessment.findMany({
-            where: { gradeSubjectId, schoolId },
-            include: {
-                student: true,
-                topic: true,
+        // 1. Security Check: Ensure the GradeSubject is accessible (Rule 10)
+        const gsRecord = await prisma.gradeSubject.findFirst({
+            where: {
+                id: gradeSubjectId,
+                ...academicCoreScope({ schoolId })
             }
         });
 
-        // 2. Fetch all topics to calculate curriculum completion
-        const totalTopics = await prisma.topic.count({
-            where: { gradeSubjectId }
+        if (!gsRecord) {
+            return { data: null, error: "Access Denied: Subject not found in your institution." };
+        }
+
+        // 2. Fetch all assessments for this subject (Tier 2 - School Only)
+        const assessments = await prisma.assessment.findMany({
+            where: { 
+                gradeSubjectId, 
+                schoolId: schoolId ?? undefined // If null, fetches global practice scores
+            },
+            include: {
+                student: { select: { id: true, name: true } },
+                topic: { select: { id: true, title: true } },
+            }
         });
 
+        // 3. Fetch all topics count (Rule 7: Global + School Scoped)
+        const totalTopics = await prisma.topic.count({
+            where: { 
+                gradeSubjectId,
+                ...contentScope({ schoolId })
+            }
+        });
+
+        // Default empty state
         if (assessments.length === 0) {
             return {
                 data: {
@@ -286,7 +420,7 @@ export const getPerformanceDashboardData = async (
             if (a.score !== null && a.maxScore) {
                 const percentage = (a.score / a.maxScore) * 100;
                 const sId = a.studentId;
-                if (!studentMap[sId]) studentMap[sId] = { name: a.student.name || "Unknown", total: 0, count: 0 };
+                if (!studentMap[sId]) studentMap[sId] = { name: a.student.name || "Unknown Student", total: 0, count: 0 };
                 studentMap[sId].total += percentage;
                 studentMap[sId].count += 1;
             }
@@ -321,8 +455,8 @@ export const getPerformanceDashboardData = async (
             error: null
         };
 
-    } catch (error) {
-        console.error("Error fetching performance data:", error);
+    } catch (error: unknown) {
+        console.error("Error fetching performance data:", getErrorMessage(error));
         return { data: null, error: "Failed to load performance data" };
     }
 };

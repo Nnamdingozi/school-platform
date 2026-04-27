@@ -1498,16 +1498,765 @@
 // }
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { createClient } from '@/lib/supabase/server'
+// import { revalidatePath } from 'next/cache'
+// import { EnrollmentStatus, ActivityType } from '@prisma/client'
+// import { logActivity } from '@/lib/activitylogger'
+// import { classifyNigerianSubject } from '@/lib/curriculum/nigeria'
+
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// export type NigerianStream = 'science' | 'arts' | 'commercial' | 'general' | 'trade'
+
+// export interface SubjectAllocationData {
+//     isNigerianCurriculum: boolean
+//     grade: {
+//         id:          string
+//         displayName: string
+//         level:       number
+//         isJSS:       boolean
+//         isSSS:       boolean
+//     }
+//     students: {
+//         id:       string
+//         name:     string | null
+//         email:    string
+//         stream:   NigerianStream | null
+//         subjects: string[] 
+//     }[]
+//     availableSubjects: {
+//         id:          string
+//         subjectName: string
+//         isCompulsory: boolean
+//         stream:      NigerianStream | null
+//     }[]
+// }
+
+// // ── Helpers ────────────────────────────────────────────────────────────────────
+
+// /**
+//  * Validates session and returns the current user.
+//  */
+// async function getAuthUser() {
+//     const supabase = await createClient()
+//     const { data: { user }, error } = await supabase.auth.getUser()
+//     if (error || !user) return null
+//     return user
+// }
+
+// async function getCurriculumContext(schoolId: string) {
+//     const school = await prisma.school.findUnique({
+//         where: { id: schoolId },
+//         include: { curriculum: true }
+//     });
+//     const isNigeria = school?.curriculum.type === 'nigerian' || school?.curriculum.name.toLowerCase().includes('nigeria') || false;
+//     return { isNigeria, curriculum: school?.curriculum };
+// }
+
+
+// // ── Core Actions ──────────────────────────────────────────────────────────
+
+// export async function getClassAllocationData(classId: string, schoolId: string) {
+//     try {
+//         const [targetClass, enrollments, existingAllocations] = await Promise.all([
+//             prisma.class.findUnique({
+//                 where: { id: classId },
+//                 include: { grade: { include: { gradeSubjects: { include: { subject: true } } } } }
+//             }),
+//             prisma.classEnrollment.findMany({
+//                 where: { classId, schoolId },
+//                 include: { student: { select: { id: true, name: true, email: true } } }
+//             }),
+//             prisma.studentSubject.findMany({
+//                 where: { schoolId, student: { classEnrollments: { some: { classId } } } },
+//                 select: { studentId: true, gradeSubjectId: true }
+//             })
+//         ]);
+
+//         if (!targetClass) throw new Error("Classroom not found.");
+
+//         return {
+//             success: true,
+//             data: {
+//                 className: targetClass.name,
+//                 gradeName: targetClass.grade.displayName,
+//                 gradeLevel: targetClass.grade.level,
+//                 subjects: targetClass.grade.gradeSubjects.map(gs => ({ id: gs.id, name: gs.subject.name })),
+//                 students: enrollments.map(e => e.student),
+//                 existingMap: existingAllocations
+//             }
+//         };
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// export async function allocateStudentSubjects(
+//     schoolId: string, 
+//     studentId: string,
+//     gradeSubjectIds: string[]
+// ) {
+//     try {
+//         const user = await getAuthUser();
+//         if (!user) throw new Error("Unauthorized");
+
+//         const enrollment = await prisma.classEnrollment.findFirst({
+//             where: { studentId, schoolId },
+//             include: { class: { include: { grade: true } } }
+//         });
+//         const { isNigeria } = await getCurriculumContext(schoolId);
+//         const gradeLevel = enrollment?.class?.grade.level ?? 0;
+
+//         if (isNigeria && gradeLevel >= 10 && gradeSubjectIds.length < 9) {
+//             throw new Error(`Academic Standard: Senior students must have at least 9 subjects.`);
+//         }
+
+//         const result = await prisma.$transaction(async (tx) => {
+//             await tx.studentSubject.deleteMany({ where: { studentId, schoolId } });
+//             if (gradeSubjectIds.length > 0) {
+//                 await tx.studentSubject.createMany({
+//                     data: gradeSubjectIds.map(gsId => ({
+//                         studentId,
+//                         gradeSubjectId: gsId,
+//                         schoolId,
+//                         status: EnrollmentStatus.APPROVED 
+//                     }))
+//                 });
+//             }
+//             return { success: true };
+//         });
+
+//         await logActivity({
+//             schoolId,
+//             actorId: user.id,
+//             type: ActivityType.CURRICULUM_UPDATED,
+//             title: "Subjects Allocated",
+//             description: `Manual subject allocation updated for student ID: ${studentId}`,
+//         });
+
+//         revalidatePath('/admin/curriculum/allocation');
+//         return result;
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// export async function submitSeniorSubjects(
+//     schoolId: string,
+//     studentId: string, 
+//     gradeSubjectIds: string[]
+// ) {
+//     try {
+//         const user = await getAuthUser();
+//         if (!user) throw new Error("Unauthorized");
+
+//         const { isNigeria } = await getCurriculumContext(schoolId);
+//         const enrollment = await prisma.classEnrollment.findFirst({
+//             where: { studentId },
+//             include: { class: { include: { grade: true } } }
+//         });
+//         const isSenior = (enrollment?.class?.grade.level ?? 0) >= 10;
+
+//         if (isNigeria && isSenior && gradeSubjectIds.length < 9) {
+//             throw new Error("WAEC standard requires a minimum of 9 subjects.");
+//         }
+
+//         await prisma.$transaction(async (tx) => {
+//             await tx.studentSubject.deleteMany({ where: { studentId, schoolId } });
+//             await tx.studentSubject.createMany({
+//                 data: gradeSubjectIds.map(id => ({
+//                     studentId,
+//                     gradeSubjectId: id,
+//                     schoolId,
+//                     status: isNigeria && isSenior ? EnrollmentStatus.PENDING : EnrollmentStatus.APPROVED
+//                 }))
+//             });
+//         });
+
+//         await logActivity({
+//             schoolId,
+//             actorId: user.id,
+//             type: ActivityType.SETTINGS_UPDATED,
+//             title: "Electives Submitted",
+//             description: `Student ${user.email} submitted ${gradeSubjectIds.length} electives for approval.`,
+//         });
+
+//         revalidatePath('/parent/dashboard');
+//         return { success: true };
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// export async function removeStudentSubject(studentId: string, gradeSubjectId: string, schoolId: string) {
+//     try {
+//         const user = await getAuthUser();
+//         if (!user) throw new Error("Unauthorized");
+
+//         await prisma.studentSubject.delete({ 
+//             where: { 
+//                 studentId_gradeSubjectId: { studentId, gradeSubjectId },
+//                 schoolId // ✅ Security: Ensure school ownership
+//             } 
+//         });
+
+//         await logActivity({
+//             schoolId,
+//             actorId: user.id,
+//             type: ActivityType.CURRICULUM_UPDATED,
+//             title: "Subject Removed",
+//             description: `Removed gradeSubject ${gradeSubjectId} from student ${studentId}`,
+//         });
+
+//         revalidatePath('/admin/curriculum/allocation');
+//         return { success: true };
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// export async function autoAllocateCompulsorySubjects(
+//     classId: string,
+//     schoolId: string
+// ): Promise<{ success: boolean; error?: string; allocated?: number }> {
+//     try {
+//         const user = await getAuthUser();
+//         if (!user) throw new Error("Unauthorized");
+
+//         const cls = await prisma.class.findUnique({
+//             where: { id: classId },
+//             select: { gradeId: true, name: true }
+//         });
+
+//         if (!cls) throw new Error("Class not found");
+
+//         const enrollments = await prisma.classEnrollment.findMany({
+//             where: { classId, schoolId },
+//             select: { studentId: true }
+//         });
+
+//         const gradeSubjects = await prisma.gradeSubject.findMany({
+//             where: { 
+//                 gradeId: cls.gradeId,
+//                 OR: [{ schoolId }, { schoolId: null }]
+//             },
+//             include: { subject: { select: { name: true } } }
+//         });
+//         const isJSS = cls.name.toLowerCase().includes('jss');
+
+//         const compulsoryIds = gradeSubjects
+//             .filter(gs => {
+//                 const { isCompulsory } = classifyNigerianSubject(
+//                     gs.subject.name,
+//                     isJSS
+//                 );
+//                 return isCompulsory;
+//             })
+//             .map(gs => gs.id);
+
+//         if (compulsoryIds.length === 0) return { success: true, allocated: 0 };
+
+//         const dataToCreate = enrollments.flatMap(enrollment => 
+//             compulsoryIds.map(gsId => ({
+//                 studentId: enrollment.studentId,
+//                 gradeSubjectId: gsId,
+//                 schoolId,
+//                 status: EnrollmentStatus.APPROVED,
+//                 isCompulsory: true
+//             }))
+//         );
+
+//         const result = await prisma.studentSubject.createMany({
+//             data: dataToCreate,
+//             skipDuplicates: true
+//         });
+
+//         await logActivity({
+//             schoolId,
+//             actorId: user.id,
+//             type: ActivityType.CURRICULUM_UPDATED,
+//             title: "Bulk Auto-Allocation",
+//             description: `Auto-allocated core subjects for class: ${cls.name}`,
+//         });
+
+//         revalidatePath('/admin/curriculum/allocation');
+//         return { success: true, allocated: result.count };
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// // ── Standard Getters ──────────────────────────────────────────────────────────
+
+// export async function getClassSubjectAllocation(classId: string, schoolId: string): Promise<SubjectAllocationData | null> {
+//     try {
+//         const cls = await prisma.class.findUnique({
+//             where: { id: classId },
+//             include: {
+//                 grade: true,
+//                 enrollments: { include: { student: { include: { studentSubjects: { where: { schoolId } } } } } }
+//             }
+//         })
+//         if (!cls) return null;
+//         const { isNigeria } = await getCurriculumContext(schoolId);
+//         const gradeSubjects = await prisma.gradeSubject.findMany({
+//             where: { gradeId: cls.gradeId, OR: [{ schoolId }, { schoolId: null }] },
+//             include: { subject: { select: { name: true } } },
+//             orderBy: { subject: { name: 'asc' } }
+//         })
+//         const availableSubjects = gradeSubjects.map(gs => {
+//             const { isCompulsory, stream } = isNigeria ? classifyNigerianSubject(gs.subject.name, cls.grade.level <= 9) : { isCompulsory: false, stream: null }
+//             return { id: gs.id, subjectName: gs.subject.name, isCompulsory, stream }
+//         })
+//         return {
+//             isNigerianCurriculum: isNigeria,
+//             grade: { id: cls.grade.id, displayName: cls.grade.displayName, level: cls.grade.level, isJSS: cls.grade.level <= 9, isSSS: cls.grade.level >= 10 },
+//             students: cls.enrollments.map(e => ({ id: e.student.id, name: e.student.name, email: e.student.email, stream: null, subjects: e.student.studentSubjects.map(ss => ss.gradeSubjectId) })),
+//             availableSubjects
+//         }
+//     } catch (err) {
+//         console.error(getErrorMessage(err));
+//         return null;
+//     }
+// }
+
+// export async function getSchoolClassesWithGrades(schoolId: string) {
+//     return await prisma.class.findMany({
+//         where: { schoolId },
+//         include: { grade: true, _count: { select: { enrollments: true } } },
+//         orderBy: { grade: { level: 'asc' } }
+//     });
+// }
+
+// export async function allocateSubjectsToStudent(input: {
+//     studentId: string;
+//     gradeSubjectIds: string[];
+//     schoolId: string;
+//     isCompulsory: boolean;
+// }): Promise<{ success: boolean; error?: string }> {
+//     try {
+//         const user = await getAuthUser();
+//         if (!user) throw new Error("Unauthorized");
+
+//         await prisma.studentSubject.createMany({
+//             data: input.gradeSubjectIds.map(id => ({
+//                 studentId: input.studentId,
+//                 gradeSubjectId: id,
+//                 schoolId: input.schoolId,
+//                 status: EnrollmentStatus.APPROVED,
+//                 isCompulsory: input.isCompulsory
+//             })),
+//             skipDuplicates: true
+//         });
+
+//         await logActivity({
+//             schoolId: input.schoolId,
+//             actorId: user.id,
+//             type: ActivityType.CURRICULUM_UPDATED,
+//             title: "Subjects Added",
+//             description: `Manually added ${input.gradeSubjectIds.length} subjects to student ${input.studentId}`,
+//         });
+
+//         revalidatePath('/admin/curriculum/allocation');
+//         return { success: true };
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// export async function allocateStreamSubjects(studentId: string, stream: NigerianStream, classId: string, schoolId: string) {
+//     const data = await getClassSubjectAllocation(classId, schoolId);
+//     if (!data) return { success: false };
+//     const streamIds = data.availableSubjects.filter(s => s.isCompulsory || s.stream === stream).map(s => s.id);
+//     return await allocateStudentSubjects(schoolId, studentId, streamIds);
+// }
+
+
+
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { createClient } from '@/lib/supabase/server'
+// import { revalidatePath } from 'next/cache'
+// import { EnrollmentStatus, ActivityType, Role, Prisma } from '@prisma/client'
+// import { logActivity } from "@/lib/activitylogger";
+// import { classifyNigerianSubject } from '@/lib/curriculum/nigeria'
+// import { academicCoreScope } from '@/lib/content-scope'
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// export type NigerianStream = 'science' | 'arts' | 'commercial' | 'general' | 'trade'
+
+// export interface SubjectAllocationData {
+//     isNigerianCurriculum: boolean
+//     grade: {
+//         id:          string
+//         displayName: string
+//         level:       number
+//         isJSS:       boolean
+//         isSSS:       boolean
+//     }
+//     students: {
+//         id:       string
+//         name:     string | null
+//         email:    string
+//         stream:   NigerianStream | null
+//         subjects: string[] 
+//     }[]
+//     availableSubjects: {
+//         id:          string
+//         subjectName: string
+//         isCompulsory: boolean
+//         stream:      NigerianStream | null
+//     }[]
+// }
+
+// // ── Internal Helpers ───────────────────────────────────────────────────────────
+
+// async function getAuthenticatedActor() {
+//     const supabase = await createClient()
+//     const { data: { user } } = await supabase.auth.getUser()
+//     if (!user) return null
+//     return await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { id: true, schoolId: true, role: true, name: true }
+//     })
+// }
+
+// async function getCurriculumContext(schoolId: string) {
+//     const school = await prisma.school.findUnique({
+//         where: { id: schoolId },
+//         include: { curriculum: true }
+//     });
+//     const isNigeria = school?.curriculum.type === 'nigerian' || 
+//                       school?.curriculum.name.toLowerCase().includes('nigeria') || false;
+//     return { isNigeria, curriculum: school?.curriculum };
+// }
+
+// // ── Mutation Actions (Tier 2 Logic) ──────────────────────────────────────────
+
+// /**
+//  * UPDATES STUDENT SUBJECTS
+//  * Rule 5: Strict school isolation.
+//  * Rule 11: Transactional sync of institutional records.
+//  */
+// export async function allocateStudentSubjects(params: {
+//     schoolId: string, 
+//     studentId: string,
+//     gradeSubjectIds: string[]
+// }) {
+//     const { schoolId, studentId, gradeSubjectIds } = params;
+
+//     try {
+//         const actor = await getAuthenticatedActor();
+//         if (!actor || actor.schoolId !== schoolId) throw new Error("Unauthorized institutional access.");
+
+//         const enrollment = await prisma.classEnrollment.findFirst({
+//             where: { studentId, schoolId },
+//             include: { class: { include: { grade: true } } }
+//         });
+
+//         const { isNigeria } = await getCurriculumContext(schoolId);
+//         const gradeLevel = enrollment?.class?.grade.level ?? 0;
+
+//         // WAEC / Academic Standards Guard
+//         if (isNigeria && gradeLevel >= 10 && gradeSubjectIds.length < 9) {
+//             throw new Error(`Academic Standard: Senior students must offer at least 9 subjects.`);
+//         }
+
+//         const result = await prisma.$transaction(async (tx) => {
+//             // Rule 11: Clear existing institutional allocation for this student
+//             await tx.studentSubject.deleteMany({ where: { studentId, schoolId } });
+
+//             // Create new map
+//             if (gradeSubjectIds.length > 0) {
+//                 await tx.studentSubject.createMany({
+//                     data: gradeSubjectIds.map(gsId => ({
+//                         studentId,
+//                         gradeSubjectId: gsId,
+//                         schoolId,
+//                         status: EnrollmentStatus.APPROVED 
+//                     }))
+//                 });
+//             }
+//             return { success: true };
+//         });
+
+//         await logActivity({
+//             schoolId,
+//             actorId: actor.id,
+//             actorRole: actor.role,
+//             type: ActivityType.CURRICULUM_UPDATED,
+//             title: "Student Syllabus Updated",
+//             description: `Modified subject allocations for student ID: ${studentId}`,
+//         });
+
+//         revalidatePath('/admin/curriculum/allocation');
+//         return result;
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// /**
+//  * AUTO ALLOCATION (Compulsory Core)
+//  * Rule 7: Pulls core subjects from Global + School extensions.
+//  */
+// export async function autoAllocateCompulsorySubjects(
+//     classId: string,
+//     schoolId: string
+// ): Promise<{ success: boolean; error?: string; allocated?: number }> {
+//     try {
+//         const actor = await getAuthenticatedActor();
+//         if (!actor || actor.schoolId !== schoolId) throw new Error("Unauthorized.");
+
+//         const cls = await prisma.class.findUnique({
+//             where: { id: classId, schoolId },
+//             select: { gradeId: true, name: true }
+//         });
+
+//         if (!cls) throw new Error("Classroom not found.");
+
+//         const enrollments = await prisma.classEnrollment.findMany({
+//             where: { classId, schoolId },
+//             select: { studentId: true }
+//         });
+
+//         // Rule 7: Find compulsory subjects in this institutional context
+//         const gradeSubjects = await prisma.gradeSubject.findMany({
+//             where: { 
+//                 gradeId: cls.gradeId,
+//                 ...academicCoreScope({ schoolId })
+//             },
+//             include: { subject: { select: { name: true } } }
+//         });
+
+//         const isJSS = cls.name.toLowerCase().includes('jss');
+//         const compulsoryIds = gradeSubjects
+//             .filter(gs => classifyNigerianSubject(gs.subject.name, isJSS).isCompulsory)
+//             .map(gs => gs.id);
+
+//         if (compulsoryIds.length === 0) return { success: true, allocated: 0 };
+
+//         const dataToCreate = enrollments.flatMap(enrollment => 
+//             compulsoryIds.map(gsId => ({
+//                 studentId: enrollment.studentId,
+//                 gradeSubjectId: gsId,
+//                 schoolId,
+//                 status: EnrollmentStatus.APPROVED,
+//                 isCompulsory: true
+//             }))
+//         );
+
+//         const result = await prisma.studentSubject.createMany({
+//             data: dataToCreate,
+//             skipDuplicates: true
+//         });
+
+//         await logActivity({
+//             schoolId,
+//             actorId: actor.id,
+//             actorRole: actor.role,
+//             type: ActivityType.CURRICULUM_UPDATED,
+//             title: "Institutional Auto-Allocation",
+//             description: `Assigned core subjects to ${result.count} students in ${cls.name}.`,
+//         });
+
+//         revalidatePath('/admin/curriculum/allocation');
+//         return { success: true, allocated: result.count };
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// // ── Query Actions (Tier 2 Scope) ──────────────────────────────────────────────
+
+// /**
+//  * FETCH ALLOCATION MATRIX
+//  * Rule 5: Strictly isolated by schoolId.
+//  * Rule 7: Includes Global core subjects.
+//  */
+// export async function getClassSubjectAllocation(classId: string, schoolId: string): Promise<SubjectAllocationData | null> {
+//     try {
+//         const cls = await prisma.class.findUnique({
+//             where: { id: classId, schoolId },
+//             include: {
+//                 grade: true,
+//                 enrollments: { 
+//                     include: { 
+//                         student: { 
+//                             include: { 
+//                                 studentSubjects: { where: { schoolId } } 
+//                             } 
+//                         } 
+//                     } 
+//                 }
+//             }
+//         });
+
+//         if (!cls) return null;
+
+//         const { isNigeria } = await getCurriculumContext(schoolId);
+
+//         // Rule 7: Fetch visible subjects
+//         const gradeSubjects = await prisma.gradeSubject.findMany({
+//             where: { 
+//                 gradeId: cls.gradeId, 
+//                 ...academicCoreScope({ schoolId }) 
+//             },
+//             include: { subject: { select: { name: true } } },
+//             orderBy: { subject: { name: 'asc' } }
+//         });
+
+//         const availableSubjects = gradeSubjects.map(gs => {
+//             const { isCompulsory, stream } = isNigeria 
+//                 ? classifyNigerianSubject(gs.subject.name, cls.grade.level <= 9) 
+//                 : { isCompulsory: false, stream: null as NigerianStream | null };
+            
+//             return { id: gs.id, subjectName: gs.subject.name, isCompulsory, stream };
+//         });
+
+//         return {
+//             isNigerianCurriculum: isNigeria,
+//             grade: { 
+//                 id: cls.grade.id, 
+//                 displayName: cls.grade.displayName, 
+//                 level: cls.grade.level, 
+//                 isJSS: cls.grade.level <= 9, 
+//                 isSSS: cls.grade.level >= 10 
+//             },
+//             students: cls.enrollments.map(e => ({ 
+//                 id: e.student.id, 
+//                 name: e.student.name, 
+//                 email: e.student.email, 
+//                 stream: null, 
+//                 subjects: e.student.studentSubjects.map(ss => ss.gradeSubjectId) 
+//             })),
+//             availableSubjects
+//         };
+//     } catch (err: unknown) {
+//         console.error("Allocation Data Error:", getErrorMessage(err));
+//         return null;
+//     }
+// }
+
+// /**
+//  * REMOVE SPECIFIC ALLOCATION
+//  */
+// export async function removeStudentSubject(params: { studentId: string, gradeSubjectId: string, schoolId: string }) {
+//     const { studentId, gradeSubjectId, schoolId } = params;
+
+//     try {
+//         const actor = await getAuthenticatedActor();
+//         if (!actor || actor.schoolId !== schoolId) throw new Error("Unauthorized.");
+
+//         await prisma.studentSubject.delete({ 
+//             where: { 
+//                 schoolId_studentId_gradeSubjectId: { 
+//                     schoolId,
+//                     studentId, 
+//                     gradeSubjectId 
+//                 }
+//             } 
+//         });
+
+//         await logActivity({
+//             schoolId,
+//             actorId: actor.id,
+//             actorRole: actor.role,
+//             type: ActivityType.CURRICULUM_UPDATED,
+//             title: "Subject Mapping Removed",
+//             description: `Removed assignment of gradeSubject ${gradeSubjectId} for student ${studentId}`,
+//         });
+
+//         revalidatePath('/admin/curriculum/allocation');
+//         return { success: true };
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// /**
+//  * SELECT PERSONAL SUBJECTS
+//  * Rule 6: Allows Independent Learners to build a personal syllabus.
+//  * Rule 4: Limits selection strictly to Global Core content.
+//  */
+// export async function selectPersonalSubjects(params: {
+//     userId: string,
+//     gradeSubjectIds: string[]
+// }) {
+//     const { userId, gradeSubjectIds } = params;
+
+//     try {
+//         // 1. Security Check: Verify these subjects are GLOBAL (Rule 4)
+//         const globalSubjects = await prisma.gradeSubject.findMany({
+//             where: {
+//                 id: { in: gradeSubjectIds },
+//                 schoolId: null // Tier 1 Core only
+//             }
+//         });
+
+//         if (globalSubjects.length !== gradeSubjectIds.length) {
+//             throw new Error("Access Denied: One or more subjects are private to an institution.");
+//         }
+
+//         // 2. Atomic Update (Rule 11)
+//         await prisma.$transaction(async (tx) => {
+//             // Remove old personal choices
+//             await tx.studentSubject.deleteMany({
+//                 where: { studentId: userId, schoolId: null }
+//             });
+
+//             // Save new personal syllabus
+//             if (gradeSubjectIds.length > 0) {
+//                 await tx.studentSubject.createMany({
+//                     data: gradeSubjectIds.map(gsId => ({
+//                         studentId: userId,
+//                         gradeSubjectId: gsId,
+//                         schoolId: null, // Marks as Tier-3 personal data
+//                         status: EnrollmentStatus.APPROVED
+//                     }))
+//                 });
+//             }
+//         });
+
+//         // 3. Log Personal Activity (Rule 6)
+//         await logActivity({
+//             schoolId: null, // Personal Layer
+//             actorId: userId,
+//             actorRole: Role.INDIVIDUAL_LEARNER,
+//             type: ActivityType.SETTINGS_UPDATED,
+//             title: "Personal Syllabus Updated",
+//             description: `Learner selected ${gradeSubjectIds.length} global subjects for study.`
+//         });
+
+//         revalidatePath('/student/dashboard');
+//         return { success: true };
+
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { EnrollmentStatus, ActivityType } from '@prisma/client'
-import { logActivity } from '@/lib/activitylogger'
+import { EnrollmentStatus, ActivityType, Role, Prisma } from '@prisma/client'
+import { logActivity } from "@/lib/activitylogger";
 import { classifyNigerianSubject } from '@/lib/curriculum/nigeria'
-
+import { academicCoreScope } from '@/lib/content-scope'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -1537,16 +2286,19 @@ export interface SubjectAllocationData {
     }[]
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// ── Internal Helpers ───────────────────────────────────────────────────────────
 
 /**
- * Validates session and returns the current user.
+ * Rule 10: Server-side validation of actor context.
  */
-async function getAuthUser() {
+async function getAuthenticatedActor() {
     const supabase = await createClient()
-    const { data: { user }, error } = await supabase.auth.getUser()
-    if (error || !user) return null
-    return user
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
+    return await prisma.profile.findUnique({
+        where: { id: user.id },
+        select: { id: true, schoolId: true, role: true, name: true }
+    })
 }
 
 async function getCurriculumContext(schoolId: string) {
@@ -1554,70 +2306,49 @@ async function getCurriculumContext(schoolId: string) {
         where: { id: schoolId },
         include: { curriculum: true }
     });
-    const isNigeria = school?.curriculum.type === 'nigerian' || school?.curriculum.name.toLowerCase().includes('nigeria') || false;
+    const isNigeria = school?.curriculum.type === 'nigerian' || 
+                      school?.curriculum.name.toLowerCase().includes('nigeria') || false;
     return { isNigeria, curriculum: school?.curriculum };
 }
 
+// ── Mutation Actions (Tier 2 Logic) ──────────────────────────────────────────
 
-// ── Core Actions ──────────────────────────────────────────────────────────
-
-export async function getClassAllocationData(classId: string, schoolId: string) {
-    try {
-        const [targetClass, enrollments, existingAllocations] = await Promise.all([
-            prisma.class.findUnique({
-                where: { id: classId },
-                include: { grade: { include: { gradeSubjects: { include: { subject: true } } } } }
-            }),
-            prisma.classEnrollment.findMany({
-                where: { classId, schoolId },
-                include: { student: { select: { id: true, name: true, email: true } } }
-            }),
-            prisma.studentSubject.findMany({
-                where: { schoolId, student: { classEnrollments: { some: { classId } } } },
-                select: { studentId: true, gradeSubjectId: true }
-            })
-        ]);
-
-        if (!targetClass) throw new Error("Classroom not found.");
-
-        return {
-            success: true,
-            data: {
-                className: targetClass.name,
-                gradeName: targetClass.grade.displayName,
-                gradeLevel: targetClass.grade.level,
-                subjects: targetClass.grade.gradeSubjects.map(gs => ({ id: gs.id, name: gs.subject.name })),
-                students: enrollments.map(e => e.student),
-                existingMap: existingAllocations
-            }
-        };
-    } catch (err) {
-        return { success: false, error: getErrorMessage(err) };
-    }
-}
-
-export async function allocateStudentSubjects(
+/**
+ * UPDATES STUDENT SUBJECTS
+ * Rule 5: Strict school isolation.
+ * Rule 11: Transactional sync of institutional records.
+ */
+export async function allocateStudentSubjects(params: {
     schoolId: string, 
     studentId: string,
     gradeSubjectIds: string[]
-) {
+}) {
+    const { schoolId, studentId, gradeSubjectIds } = params;
+
     try {
-        const user = await getAuthUser();
-        if (!user) throw new Error("Unauthorized");
+        const actor = await getAuthenticatedActor();
+        if (!actor || actor.schoolId !== schoolId) throw new Error("Unauthorized institutional access.");
 
         const enrollment = await prisma.classEnrollment.findFirst({
             where: { studentId, schoolId },
             include: { class: { include: { grade: true } } }
         });
+
         const { isNigeria } = await getCurriculumContext(schoolId);
         const gradeLevel = enrollment?.class?.grade.level ?? 0;
 
+        // WAEC / Academic Standards Guard
         if (isNigeria && gradeLevel >= 10 && gradeSubjectIds.length < 9) {
-            throw new Error(`Academic Standard: Senior students must have at least 9 subjects.`);
+            throw new Error(`Academic Standard: Senior students must offer at least 9 subjects.`);
         }
 
         const result = await prisma.$transaction(async (tx) => {
-            await tx.studentSubject.deleteMany({ where: { studentId, schoolId } });
+            // Rule 11: Clear existing institutional allocation for this student
+            await tx.studentSubject.deleteMany({ 
+                where: { studentId, schoolId } 
+            });
+
+            // Create new map
             if (gradeSubjectIds.length > 0) {
                 await tx.studentSubject.createMany({
                     data: gradeSubjectIds.map(gsId => ({
@@ -1632,131 +2363,57 @@ export async function allocateStudentSubjects(
         });
 
         await logActivity({
-            schoolId,
-            actorId: user.id,
+            schoolId: schoolId,
+            actorId: actor.id,
+            actorRole: actor.role,
             type: ActivityType.CURRICULUM_UPDATED,
-            title: "Subjects Allocated",
-            description: `Manual subject allocation updated for student ID: ${studentId}`,
+            title: "Student Syllabus Updated",
+            description: `Modified subject allocations for student ID: ${studentId}`,
         });
 
         revalidatePath('/admin/curriculum/allocation');
         return result;
-    } catch (err) {
+    } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) };
     }
 }
 
-export async function submitSeniorSubjects(
-    schoolId: string,
-    studentId: string, 
-    gradeSubjectIds: string[]
-) {
-    try {
-        const user = await getAuthUser();
-        if (!user) throw new Error("Unauthorized");
-
-        const { isNigeria } = await getCurriculumContext(schoolId);
-        const enrollment = await prisma.classEnrollment.findFirst({
-            where: { studentId },
-            include: { class: { include: { grade: true } } }
-        });
-        const isSenior = (enrollment?.class?.grade.level ?? 0) >= 10;
-
-        if (isNigeria && isSenior && gradeSubjectIds.length < 9) {
-            throw new Error("WAEC standard requires a minimum of 9 subjects.");
-        }
-
-        await prisma.$transaction(async (tx) => {
-            await tx.studentSubject.deleteMany({ where: { studentId, schoolId } });
-            await tx.studentSubject.createMany({
-                data: gradeSubjectIds.map(id => ({
-                    studentId,
-                    gradeSubjectId: id,
-                    schoolId,
-                    status: isNigeria && isSenior ? EnrollmentStatus.PENDING : EnrollmentStatus.APPROVED
-                }))
-            });
-        });
-
-        await logActivity({
-            schoolId,
-            actorId: user.id,
-            type: ActivityType.SETTINGS_UPDATED,
-            title: "Electives Submitted",
-            description: `Student ${user.email} submitted ${gradeSubjectIds.length} electives for approval.`,
-        });
-
-        revalidatePath('/parent/dashboard');
-        return { success: true };
-    } catch (err) {
-        return { success: false, error: getErrorMessage(err) };
-    }
-}
-
-export async function removeStudentSubject(studentId: string, gradeSubjectId: string, schoolId: string) {
-    try {
-        const user = await getAuthUser();
-        if (!user) throw new Error("Unauthorized");
-
-        await prisma.studentSubject.delete({ 
-            where: { 
-                studentId_gradeSubjectId: { studentId, gradeSubjectId },
-                schoolId // ✅ Security: Ensure school ownership
-            } 
-        });
-
-        await logActivity({
-            schoolId,
-            actorId: user.id,
-            type: ActivityType.CURRICULUM_UPDATED,
-            title: "Subject Removed",
-            description: `Removed gradeSubject ${gradeSubjectId} from student ${studentId}`,
-        });
-
-        revalidatePath('/admin/curriculum/allocation');
-        return { success: true };
-    } catch (err) {
-        return { success: false, error: getErrorMessage(err) };
-    }
-}
-
+/**
+ * AUTO ALLOCATION (Compulsory Core)
+ * Rule 7: Pulls core subjects from Global + School extensions.
+ */
 export async function autoAllocateCompulsorySubjects(
     classId: string,
     schoolId: string
 ): Promise<{ success: boolean; error?: string; allocated?: number }> {
     try {
-        const user = await getAuthUser();
-        if (!user) throw new Error("Unauthorized");
+        const actor = await getAuthenticatedActor();
+        if (!actor || actor.schoolId !== schoolId) throw new Error("Unauthorized.");
 
         const cls = await prisma.class.findUnique({
-            where: { id: classId },
+            where: { id: classId, schoolId },
             select: { gradeId: true, name: true }
         });
 
-        if (!cls) throw new Error("Class not found");
+        if (!cls) throw new Error("Classroom not found.");
 
         const enrollments = await prisma.classEnrollment.findMany({
             where: { classId, schoolId },
             select: { studentId: true }
         });
 
+        // Rule 7: Find compulsory subjects in this institutional context
         const gradeSubjects = await prisma.gradeSubject.findMany({
             where: { 
                 gradeId: cls.gradeId,
-                OR: [{ schoolId }, { schoolId: null }]
+                ...academicCoreScope({ schoolId })
             },
             include: { subject: { select: { name: true } } }
         });
-        const isJSS = cls.name.toLowerCase().includes('jss');
 
+        const isJSS = cls.name.toLowerCase().includes('jss');
         const compulsoryIds = gradeSubjects
-            .filter(gs => {
-                const { isCompulsory } = classifyNigerianSubject(
-                    gs.subject.name,
-                    isJSS
-                );
-                return isCompulsory;
-            })
+            .filter(gs => classifyNigerianSubject(gs.subject.name, isJSS).isCompulsory)
             .map(gs => gs.id);
 
         if (compulsoryIds.length === 0) return { success: true, allocated: 0 };
@@ -1777,101 +2434,189 @@ export async function autoAllocateCompulsorySubjects(
         });
 
         await logActivity({
-            schoolId,
-            actorId: user.id,
+            schoolId: schoolId,
+            actorId: actor.id,
+            actorRole: actor.role,
             type: ActivityType.CURRICULUM_UPDATED,
-            title: "Bulk Auto-Allocation",
-            description: `Auto-allocated core subjects for class: ${cls.name}`,
+            title: "Institutional Auto-Allocation",
+            description: `Assigned core subjects to ${result.count} students in ${cls.name}.`,
         });
 
         revalidatePath('/admin/curriculum/allocation');
         return { success: true, allocated: result.count };
-    } catch (err) {
+    } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) };
     }
 }
 
-// ── Standard Getters ──────────────────────────────────────────────────────────
+// ── Query Actions (Tier 2 Scope) ──────────────────────────────────────────────
 
+/**
+ * FETCH ALLOCATION MATRIX
+ * Rule 5: Strictly isolated by schoolId.
+ */
 export async function getClassSubjectAllocation(classId: string, schoolId: string): Promise<SubjectAllocationData | null> {
     try {
         const cls = await prisma.class.findUnique({
-            where: { id: classId },
+            where: { id: classId, schoolId },
             include: {
                 grade: true,
-                enrollments: { include: { student: { include: { studentSubjects: { where: { schoolId } } } } } }
+                enrollments: { 
+                    include: { 
+                        student: { 
+                            include: { 
+                                studentSubjects: { where: { schoolId } } 
+                            } 
+                        } 
+                    } 
+                }
             }
-        })
+        });
+
         if (!cls) return null;
+
         const { isNigeria } = await getCurriculumContext(schoolId);
+
+        // Rule 7: Fetch visible subjects
         const gradeSubjects = await prisma.gradeSubject.findMany({
-            where: { gradeId: cls.gradeId, OR: [{ schoolId }, { schoolId: null }] },
+            where: { 
+                gradeId: cls.gradeId, 
+                ...academicCoreScope({ schoolId }) 
+            },
             include: { subject: { select: { name: true } } },
             orderBy: { subject: { name: 'asc' } }
-        })
+        });
+
         const availableSubjects = gradeSubjects.map(gs => {
-            const { isCompulsory, stream } = isNigeria ? classifyNigerianSubject(gs.subject.name, cls.grade.level <= 9) : { isCompulsory: false, stream: null }
-            return { id: gs.id, subjectName: gs.subject.name, isCompulsory, stream }
-        })
+            const { isCompulsory, stream } = isNigeria 
+                ? classifyNigerianSubject(gs.subject.name, cls.grade.level <= 9) 
+                : { isCompulsory: false, stream: null as NigerianStream | null };
+            
+            return { id: gs.id, subjectName: gs.subject.name, isCompulsory, stream };
+        });
+
         return {
             isNigerianCurriculum: isNigeria,
-            grade: { id: cls.grade.id, displayName: cls.grade.displayName, level: cls.grade.level, isJSS: cls.grade.level <= 9, isSSS: cls.grade.level >= 10 },
-            students: cls.enrollments.map(e => ({ id: e.student.id, name: e.student.name, email: e.student.email, stream: null, subjects: e.student.studentSubjects.map(ss => ss.gradeSubjectId) })),
+            grade: { 
+                id: cls.grade.id, 
+                displayName: cls.grade.displayName, 
+                level: cls.grade.level, 
+                isJSS: cls.grade.level <= 9, 
+                isSSS: cls.grade.level >= 10 
+            },
+            students: cls.enrollments.map(e => ({ 
+                id: e.student.id, 
+                name: e.student.name, 
+                email: e.student.email, 
+                stream: null, 
+                subjects: e.student.studentSubjects.map(ss => ss.gradeSubjectId) 
+            })),
             availableSubjects
-        }
-    } catch (err) {
-        console.error(getErrorMessage(err));
+        };
+    } catch (err: unknown) {
+        console.error("Allocation Data Error:", getErrorMessage(err));
         return null;
     }
 }
 
-export async function getSchoolClassesWithGrades(schoolId: string) {
-    return await prisma.class.findMany({
-        where: { schoolId },
-        include: { grade: true, _count: { select: { enrollments: true } } },
-        orderBy: { grade: { level: 'asc' } }
-    });
-}
+/**
+ * REMOVE SPECIFIC ALLOCATION
+ */
+export async function removeStudentSubject(params: { studentId: string, gradeSubjectId: string, schoolId: string }) {
+    const { studentId, gradeSubjectId, schoolId } = params;
 
-export async function allocateSubjectsToStudent(input: {
-    studentId: string;
-    gradeSubjectIds: string[];
-    schoolId: string;
-    isCompulsory: boolean;
-}): Promise<{ success: boolean; error?: string }> {
     try {
-        const user = await getAuthUser();
-        if (!user) throw new Error("Unauthorized");
+        const actor = await getAuthenticatedActor();
+        if (!actor || actor.schoolId !== schoolId) throw new Error("Unauthorized.");
 
-        await prisma.studentSubject.createMany({
-            data: input.gradeSubjectIds.map(id => ({
-                studentId: input.studentId,
-                gradeSubjectId: id,
-                schoolId: input.schoolId,
-                status: EnrollmentStatus.APPROVED,
-                isCompulsory: input.isCompulsory
-            })),
-            skipDuplicates: true
+        await prisma.studentSubject.delete({ 
+            where: { 
+                schoolId_studentId_gradeSubjectId: { 
+                    schoolId,
+                    studentId, 
+                    gradeSubjectId 
+                }
+            } 
         });
 
         await logActivity({
-            schoolId: input.schoolId,
-            actorId: user.id,
+            schoolId: schoolId,
+            actorId: actor.id,
+            actorRole: actor.role,
             type: ActivityType.CURRICULUM_UPDATED,
-            title: "Subjects Added",
-            description: `Manually added ${input.gradeSubjectIds.length} subjects to student ${input.studentId}`,
+            title: "Subject Mapping Removed",
+            description: `Removed assignment of gradeSubject ${gradeSubjectId} for student ${studentId}`,
         });
 
         revalidatePath('/admin/curriculum/allocation');
         return { success: true };
-    } catch (err) {
+    } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) };
     }
 }
 
-export async function allocateStreamSubjects(studentId: string, stream: NigerianStream, classId: string, schoolId: string) {
-    const data = await getClassSubjectAllocation(classId, schoolId);
-    if (!data) return { success: false };
-    const streamIds = data.availableSubjects.filter(s => s.isCompulsory || s.stream === stream).map(s => s.id);
-    return await allocateStudentSubjects(schoolId, studentId, streamIds);
+/**
+ * SELECT PERSONAL SUBJECTS
+ * Rule 6: Allows Independent Learners to build a personal syllabus.
+ * Rule 4: Limits selection strictly to Global Core content.
+ */
+export async function selectPersonalSubjects(params: {
+    userId: string,
+    gradeSubjectIds: string[]
+}) {
+    const { userId, gradeSubjectIds } = params;
+
+    try {
+        // 1. Security Check: Verify these subjects are GLOBAL (Rule 4)
+        const globalSubjects = await prisma.gradeSubject.findMany({
+            where: {
+                id: { in: gradeSubjectIds },
+                schoolId: null // Tier 1 Core only
+            }
+        });
+
+        if (globalSubjects.length !== gradeSubjectIds.length) {
+            throw new Error("Access Denied: One or more subjects are private to an institution.");
+        }
+
+        // 2. Atomic Update (Rule 11)
+        await prisma.$transaction(async (tx) => {
+            // ✅ FIX: Using Type Assertion to handle schoolId: null if schema hasn't been updated yet
+            await tx.studentSubject.deleteMany({
+                where: { 
+                    studentId: userId, 
+                    schoolId: null as unknown as string 
+                }
+            });
+
+            // Save new personal syllabus
+            if (gradeSubjectIds.length > 0) {
+                await tx.studentSubject.createMany({
+                    data: gradeSubjectIds.map(gsId => ({
+                        studentId: userId,
+                        gradeSubjectId: gsId,
+                        // ✅ FIX: Using Type Assertion to handle schoolId: null
+                        schoolId: null as unknown as string, 
+                        status: EnrollmentStatus.APPROVED
+                    }))
+                });
+            }
+        });
+
+        // 3. Log Personal Activity (Rule 6)
+        await logActivity({
+            schoolId: null, 
+            actorId: userId,
+            actorRole: Role.INDIVIDUAL_LEARNER,
+            type: ActivityType.SETTINGS_UPDATED,
+            title: "Personal Syllabus Updated",
+            description: `Learner selected ${gradeSubjectIds.length} global subjects for study.`
+        });
+
+        revalidatePath('/student/dashboard');
+        return { success: true };
+
+    } catch (err: unknown) {
+        return { success: false, error: getErrorMessage(err) };
+    }
 }

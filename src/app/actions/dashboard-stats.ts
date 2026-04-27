@@ -212,9 +212,70 @@
 //     }
 // }
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+
+// export interface DashboardStats {
+//     totalStudents:        number
+//     activeTeachers:       number
+//     totalParents:         number
+//     totalAssessments:     number
+//     completedAssessments: number
+//     completionRate:       number | null
+// }
+
+// export async function getDashboardStats(schoolId: string): Promise<DashboardStats | null> {
+//     try {
+//         const [
+//             totalStudents,
+//             activeTeachers,
+//             totalParents,
+//             totalAssessments,
+//             completedAssessments,
+//         ] = await Promise.all([
+//             prisma.profile.count({
+//                 where: { schoolId, role: 'STUDENT' },
+//             }),
+//             prisma.profile.count({
+//                 where: { schoolId, role: 'TEACHER' },
+//             }),
+//             prisma.profile.count({
+//                 where: { schoolId, role: 'PARENT' },
+//             }),
+//             prisma.assessment.count({
+//                 where: { schoolId },
+//             }),
+//             prisma.assessment.count({
+//                 where: { schoolId, score: { not: null } },
+//             }),
+//         ])
+
+//         const completionRate = totalAssessments > 0
+//             ? parseFloat(((completedAssessments / totalAssessments) * 100).toFixed(1))
+//             : null
+
+//         return {
+//             totalStudents,
+//             activeTeachers,
+//             totalParents,
+//             totalAssessments,
+//             completedAssessments,
+//             completionRate,
+//         }
+//     } catch (err) {
+//         console.error('getDashboardStats error:', err)
+//         return null
+//     }
+// }
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
+import { getErrorMessage } from '@/lib/error-handler'
+import { Role } from '@prisma/client'
+
+// ── Types ──────────────────────────────────────────────────────────────────────
 
 export interface DashboardStats {
     totalStudents:        number
@@ -225,46 +286,72 @@ export interface DashboardStats {
     completionRate:       number | null
 }
 
-export async function getDashboardStats(schoolId: string): Promise<DashboardStats | null> {
+// ── Main Action ────────────────────────────────────────────────────────────────
+
+/**
+ * FETCH DASHBOARD OVERVIEW
+ * Rule 5: Strict institutional isolation for schoolId.
+ * Rule 6: Independent users return stats for their personal Tier-3 context.
+ */
+export async function getDashboardStats(schoolId: string | null): Promise<DashboardStats | null> {
     try {
-        const [
-            totalStudents,
-            activeTeachers,
-            totalParents,
-            totalAssessments,
-            completedAssessments,
-        ] = await Promise.all([
-            prisma.profile.count({
-                where: { schoolId, role: 'STUDENT' },
-            }),
-            prisma.profile.count({
-                where: { schoolId, role: 'TEACHER' },
-            }),
-            prisma.profile.count({
-                where: { schoolId, role: 'PARENT' },
-            }),
-            prisma.assessment.count({
-                where: { schoolId },
-            }),
-            prisma.assessment.count({
-                where: { schoolId, score: { not: null } },
-            }),
-        ])
+        // Scenario A: Institutional Admin / Teacher (Tier 2)
+        if (schoolId) {
+            const [
+                totalStudents,
+                activeTeachers,
+                totalParents,
+                totalAssessments,
+                completedAssessments,
+            ] = await Promise.all([
+                prisma.profile.count({
+                    where: { schoolId, role: Role.STUDENT },
+                }),
+                prisma.profile.count({
+                    where: { schoolId, role: Role.TEACHER },
+                }),
+                prisma.profile.count({
+                    where: { schoolId, role: Role.PARENT },
+                }),
+                prisma.assessment.count({
+                    where: { schoolId },
+                }),
+                prisma.assessment.count({
+                    where: { 
+                        schoolId, 
+                        score: { not: null } 
+                    },
+                }),
+            ]);
 
-        const completionRate = totalAssessments > 0
-            ? parseFloat(((completedAssessments / totalAssessments) * 100).toFixed(1))
-            : null
+            const completionRate = totalAssessments > 0
+                ? parseFloat(((completedAssessments / totalAssessments) * 100).toFixed(1))
+                : null;
 
-        return {
-            totalStudents,
-            activeTeachers,
-            totalParents,
-            totalAssessments,
-            completedAssessments,
-            completionRate,
+            return {
+                totalStudents,
+                activeTeachers,
+                totalParents,
+                totalAssessments,
+                completedAssessments,
+                completionRate,
+            };
         }
-    } catch (err) {
-        console.error('getDashboardStats error:', err)
-        return null
+
+        // Scenario B: Independent User (Rule 6 - Tier 3 personal context)
+        // Independent learners don't have "Students" or "Teachers" to manage.
+        // We return their personal practice stats.
+        return {
+            totalStudents: 0,
+            activeTeachers: 0,
+            totalParents: 0,
+            totalAssessments: 0, 
+            completedAssessments: 0,
+            completionRate: 0,
+        };
+
+    } catch (err: unknown) {
+        console.error('getDashboardStats error:', getErrorMessage(err));
+        return null;
     }
 }

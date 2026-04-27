@@ -570,40 +570,282 @@
 
 
 
+// import { getStudentExam } from "@/app/actions/studentExam";
+// import ExamClient, { StudentExamPayload } from "@/components/student-dashboard/exams/examClient";
+// import { notFound } from "next/navigation";
+
+// type PageProps = {
+//   params: Promise<{ id: string }>;
+// };
+
+// export default async function Page({ params }: PageProps) {
+//   try {
+//     const { id } = await params;
+    
+//     // The server action result is typed as StudentExamResponse
+//     const rawExam = await getStudentExam(id, "");
+
+//     if (!rawExam) {
+//       return notFound();
+//     }
+
+//     /**
+//      * FIXED: Explicitly cast the raw response to StudentExamPayload.
+//      * This removes the requirement for schoolId, createdAt, etc.
+//      */
+//     const examPayload = rawExam as unknown as StudentExamPayload;
+
+//     return <ExamClient exam={examPayload} />;
+//   } catch (error) {
+//     console.error("[EXAM_PAGE_ERROR]:", error);
+//     return (
+//       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+//         <p className="text-red-500 font-bold uppercase tracking-widest text-xs">
+//           Registry Connection Failed
+//         </p>
+//       </div>
+//     );
+//   }
+// }
+
+
+// import { getStudentExam, StudentExamResponse } from "@/app/actions/studentExam";
+// import ExamClient, { StudentExamPayload } from "@/components/student-dashboard/exams/examClient";
+// import { notFound, redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { Role } from "@prisma/client";
+
+// interface PageProps {
+//   params: Promise<{ id: string }>;
+// }
+
+// /**
+//  * EXAM RUNNER SERVER PAGE 
+//  * Rule 5: Strict school isolation.
+//  * Rule 6: Independent learners are redirected (Institutional feature only).
+//  * Rule 10: Server-side identity and context validation.
+//  */
+// export default async function ExamRunnerPage({ params }: PageProps) {
+//   try {
+//     const { id: examId } = await params;
+
+//     // 1. Resolve Identity & Context (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     if (!profile) redirect("/login");
+
+//     // 2. Rule 6: Block Independent Learners
+//     // Institutional exams require a school membership.
+//     if (!profile.schoolId || profile.role === Role.INDIVIDUAL_LEARNER) {
+//         redirect("/student?error=exams_restricted_to_schools");
+//     }
+
+//     // 3. Fetch Exam Data (Rule 5 Isolation inside action)
+//     const result = await getStudentExam({
+//         examId,
+//         userId: profile.id,
+//         schoolId: profile.schoolId
+//     });
+
+//     if (!result.success || !result.data) {
+//         // If forbidden or not found, return 404 to prevent ID enumeration
+//         return notFound();
+//     }
+
+//     /**
+//      * 4. Rule 11: Pass sanitized data to the Client Runner.
+//      * We map the StudentExamResponse to the Payload expected by the UI.
+//      */
+//     const examPayload: StudentExamPayload = {
+//         id: result.data.id,
+//         title: result.data.title,
+//         duration: result.data.duration,
+//         startTime: result.data.startTime,
+//         endTime: result.data.endTime,
+//         status: result.data.status,
+//         classId: result.data.classId,
+//         questions: result.data.questions.map(q => ({
+//             id: q.id,
+//             text: q.text,
+//             options: q.options,
+//             points: 1 // Defaulting to 1 for the runner display if not specified
+//         }))
+//     };
+
+//     return (
+//         <main className="min-h-screen bg-slate-950">
+//             <ExamClient exam={examPayload} />
+//         </main>
+//     );
+
+//   } catch (error: unknown) {
+//     console.error("[EXAM_PAGE_SECURITY_FAILURE]:", error);
+//     return (
+//       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+//         <div className="h-16 w-16 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center text-red-500 mb-6">
+//             <ShieldAlert className="h-8 w-8" />
+//         </div>
+//         <h2 className="text-xl font-black text-white uppercase italic tracking-tighter mb-2">
+//             Registry Sync Error
+//         </h2>
+//         <p className="text-slate-500 text-xs font-bold uppercase tracking-widest max-w-xs">
+//           Unable to establish a secure connection to the institutional exam registry.
+//         </p>
+//       </div>
+//     );
+//   }
+// }
+
+// /**
+//  * Local helper component for error state icon
+//  */
+// function ShieldAlert({ className }: { className?: string }) {
+//     return (
+//         <svg 
+//             xmlns="http://www.w3.org/2000/svg" 
+//             viewBox="0 0 24 24" 
+//             fill="none" 
+//             stroke="currentColor" 
+//             strokeWidth="2" 
+//             strokeLinecap="round" 
+//             strokeLinejoin="round" 
+//             className={className}
+//         >
+//             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+//             <path d="M12 8v4" />
+//             <path d="M12 16h.01" />
+//         </svg>
+//     );
+// }
+
+
+
 import { getStudentExam } from "@/app/actions/studentExam";
 import ExamClient, { StudentExamPayload } from "@/components/student-dashboard/exams/examClient";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { Role } from "@prisma/client";
 
-type PageProps = {
+interface PageProps {
   params: Promise<{ id: string }>;
-};
+}
 
-export default async function Page({ params }: PageProps) {
+/**
+ * EXAM RUNNER SERVER PAGE 
+ * Rule 5: Strict school isolation.
+ * Rule 6: Independent learners are redirected (Institutional feature only).
+ * Rule 10: Server-side identity and context validation.
+ */
+export default async function ExamRunnerPage({ params }: PageProps) {
   try {
-    const { id } = await params;
-    
-    // The server action result is typed as StudentExamResponse
-    const rawExam = await getStudentExam(id, "");
+    const { id: examId } = await params;
 
-    if (!rawExam) {
-      return notFound();
+    // 1. Establish Identity & Context (Rule 10)
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
+
+    // Fetch profile to verify schoolId and role
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        select: { id: true, schoolId: true, role: true }
+    });
+
+    if (!profile) redirect("/login");
+
+    // 2. Rule 6: Block Independent Learners from high-stakes exams
+    if (!profile.schoolId || profile.role === Role.INDIVIDUAL_LEARNER) {
+        redirect("/student?error=exams_restricted_to_schools");
     }
 
-    /**
-     * FIXED: Explicitly cast the raw response to StudentExamPayload.
-     * This removes the requirement for schoolId, createdAt, etc.
-     */
-    const examPayload = rawExam as unknown as StudentExamPayload;
+    // 3. Fetch Exam Data with verified school isolation (Rule 5)
+    const result = await getStudentExam({
+        examId,
+        userId: profile.id,
+        schoolId: profile.schoolId
+    });
 
-    return <ExamClient exam={examPayload} />;
-  } catch (error) {
-    console.error("[EXAM_PAGE_ERROR]:", error);
+    // 4. Verification & Sanitization
+    if (!result.success || !result.data) {
+        // Return 404 to prevent ID enumeration/leaking exam existence
+        return notFound();
+    }
+
+    // Map the response to the StudentExamPayload interface required by the client
+    const examPayload: StudentExamPayload = {
+        id: result.data.id,
+        title: result.data.title,
+        duration: result.data.duration,
+        startTime: result.data.startTime,
+        status: result.data.status,
+        classId: result.data.classId,
+        questions: result.data.questions.map(q => ({
+            id: q.id,
+            text: q.text,
+            options: q.options,
+            points: 1 // Default point value for UI display
+        }))
+    };
+
+    /**
+     * 5. Render Client Component
+     * ✅ FIXED: Now passing the missing userId and schoolId props
+     */
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <p className="text-red-500 font-bold uppercase tracking-widest text-xs">
-          Registry Connection Failed
+        <main className="min-h-screen bg-slate-950">
+            <ExamClient 
+                exam={examPayload} 
+                userId={profile.id} 
+                schoolId={profile.schoolId} 
+            />
+        </main>
+    );
+
+  } catch (error: unknown) {
+    console.error("[EXAM_PAGE_SECURITY_FAILURE]:", error);
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+        <div className="h-16 w-16 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center text-red-500 mb-6">
+            <ShieldAlert className="h-8 w-8" />
+        </div>
+        <h2 className="text-xl font-black text-white uppercase italic tracking-tighter mb-2">
+            Registry Sync Error
+        </h2>
+        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest max-w-xs">
+          Establishing secure institutional context failed. Registry access denied.
         </p>
       </div>
     );
   }
+}
+
+/**
+ * Local SVG Helper
+ */
+function ShieldAlert({ className }: { className?: string }) {
+    return (
+        <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            className={className}
+        >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+            <path d="M12 8v4" />
+            <path d="M12 16h.01" />
+        </svg>
+    );
 }

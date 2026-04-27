@@ -129,43 +129,133 @@
 
 
 
+// "use server"
+
+// import { prisma } from "@/lib/prisma";
+
+// export async function getTeacherAssessmentData(teacherId: string, schoolId: string) {
+//   try {
+//     // 1. Fetch Subject-Centric Data with School Isolation Logic
+//     const subjectView = await prisma.gradeSubject.findMany({
+//       where: { 
+//         AND: [
+//           // A: User must be linked to the subject
+//           {
+//             OR: [
+//               { profileId: teacherId },           // Case: Lead Teacher
+//               { teachers: { some: { id: teacherId } } } // Case: Subject Instructor
+//             ]
+//           },
+//           // B: Subject must be either GLOBAL or specific to THIS school
+//           {
+//             OR: [
+//               { schoolId: null },      // Global subjects (like Biology)
+//               { schoolId: schoolId }   // Custom subjects (like Coding)
+//             ]
+//           }
+//         ]
+//       },
+//       include: {
+//         subject: { select: { name: true } },
+//         grade: { select: { displayName: true } },
+//         studentSubjects: {
+//           // We only want students who offer this subject WITHIN this specific school
+//           where: { schoolId: schoolId },
+//           include: {
+//             student: {
+//               include: {
+//                 assessments: {
+//                   where: { schoolId: schoolId }, // Only scores from this institution
+//                   orderBy: { createdAt: 'desc' },
+//                   include: { 
+//                     topic: { select: { title: true } },
+//                     gradeSubject: { include: { subject: true } } 
+//                   }
+//                 }
+//               }
+//             }
+//           }
+//         }
+//       }
+//     });
+
+//     // 2. Fetch Class-Centric Data
+//     // Classrooms are ALWAYS school-specific, so we keep the schoolId check here
+//     const classView = await prisma.class.findMany({
+//       where: { 
+//         teacherId: teacherId,
+//         schoolId: schoolId 
+//       },
+//       include: {
+//         grade: true,
+//         enrollments: {
+//           include: {
+//             student: {
+//               include: {
+//                 assessments: {
+//                   where: { schoolId: schoolId },
+//                   include: { 
+//                     gradeSubject: { include: { subject: true } } 
+//                   },
+//                   orderBy: { createdAt: 'desc' }
+//                 }
+//               }
+//             }
+//           }
+//         }
+//       }
+//     });
+
+//     return { subjectView, classView };
+//   } catch (error) {
+//     console.error("Assessment Data Error:", error);
+//     return null;
+//   }
+// }
+
+
+
 "use server"
 
 import { prisma } from "@/lib/prisma";
+import { academicCoreScope } from "@/lib/content-scope";
+import { Prisma } from "@prisma/client";
 
-export async function getTeacherAssessmentData(teacherId: string, schoolId: string) {
+/**
+ * FETCH TEACHER ASSESSMENT DASHBOARD
+ * Rule 5: Assessments and Classes are strictly isolated by schoolId.
+ * Rule 9: Subjects can be Global (null) or School-specific.
+ */
+export async function getTeacherAssessmentData(teacherId: string, schoolId: string | null) {
   try {
-    // 1. Fetch Subject-Centric Data with School Isolation Logic
+    // 1. Fetch Subject-Centric View
+    // This allows teachers to see performance across all students taking their subjects
     const subjectView = await prisma.gradeSubject.findMany({
       where: { 
         AND: [
-          // A: User must be linked to the subject
+          // Rule 2: Access context - User must be the teacher/instructor
           {
             OR: [
-              { profileId: teacherId },           // Case: Lead Teacher
-              { teachers: { some: { id: teacherId } } } // Case: Subject Instructor
+              { profileId: teacherId },
+              { teachers: { some: { id: teacherId } } }
             ]
           },
-          // B: Subject must be either GLOBAL or specific to THIS school
-          {
-            OR: [
-              { schoolId: null },      // Global subjects (like Biology)
-              { schoolId: schoolId }   // Custom subjects (like Coding)
-            ]
-          }
+          // Rule 7: Mandatory Query Resolution (Global + School)
+          academicCoreScope({ schoolId })
         ]
       },
       include: {
         subject: { select: { name: true } },
         grade: { select: { displayName: true } },
         studentSubjects: {
-          // We only want students who offer this subject WITHIN this specific school
-          where: { schoolId: schoolId },
+          // Rule 5: Only fetch enrollments for this specific school
+          where: { schoolId: schoolId ?? undefined }, 
           include: {
             student: {
               include: {
                 assessments: {
-                  where: { schoolId: schoolId }, // Only scores from this institution
+                  // Rule 7: Fetch assessments within this school scope
+                  where: academicCoreScope({ schoolId }),
                   orderBy: { createdAt: 'desc' },
                   include: { 
                     topic: { select: { title: true } },
@@ -179,9 +269,10 @@ export async function getTeacherAssessmentData(teacherId: string, schoolId: stri
       }
     });
 
-    // 2. Fetch Class-Centric Data
-    // Classrooms are ALWAYS school-specific, so we keep the schoolId check here
-    const classView = await prisma.class.findMany({
+    // 2. Fetch Class-Centric View
+    // Rule 1: Classes are 100% Tier 2 (School Layer). 
+    // If schoolId is null, this will return an empty array (Rule 6).
+    const classView = schoolId ? await prisma.class.findMany({
       where: { 
         teacherId: teacherId,
         schoolId: schoolId 
@@ -204,10 +295,28 @@ export async function getTeacherAssessmentData(teacherId: string, schoolId: stri
           }
         }
       }
-    });
+    }) : [];
 
-    return { subjectView, classView };
-  } catch (error) {
+    return { 
+        subjectView, 
+        classView: classView as Prisma.ClassGetPayload<{
+            include: {
+                grade: true,
+                enrollments: {
+                    include: {
+                        student: {
+                            include: {
+                                assessments: {
+                                    include: { gradeSubject: { include: { subject: true } } }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }>[] 
+    };
+  } catch (error: unknown) {
     console.error("Assessment Data Error:", error);
     return null;
   }

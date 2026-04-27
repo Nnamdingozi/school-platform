@@ -734,15 +734,245 @@
 
 
 
+// 'use client'
+
+// import { use, useEffect, useState, useCallback } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import {
+//   getLessonForTeacher,
+//   generateLessonForTopic,
+//   getOrCreateSchoolLesson
+// } from "@/app/actions/lesson.actions"
+
+// import {
+//   ArrowLeft,
+//   BookOpen,
+//   Loader2,
+//   Sparkles
+// } from "lucide-react"
+
+// import Link from "next/link"
+// import { Badge } from "@/components/ui/badge"
+// import { AILessonPlanner, type EnhancedLessonContent } from "@/components/TeacherDashboard/ai-learning-planner"
+// import { toast } from "sonner"
+// import { getErrorMessage } from "@/lib/error-handler"
+// import { SchoolLesson, GlobalLesson } from "@prisma/client"
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// /**
+//  * Represents the structure of the data returned by getLessonForTeacher.
+//  * Standardizes the union between SchoolLesson and the fallback GlobalLesson.
+//  */
+// interface TeacherLessonResponse {
+//   id: string;
+//   customContent: unknown;
+//   isCustomized: boolean;
+//   globalLesson?: GlobalLesson;
+// }
+
+// interface PageProps {
+//   params: Promise<{ topicId: string }>
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function LessonStudioPage({ params }: PageProps) {
+//   const { topicId } = use(params)
+//   const { profile, isLoading: isProfileLoading } = useProfileStore()
+
+//   const schoolId = profile?.schoolId ?? ""
+
+//   const [lessonId, setLessonId] = useState<string>("")
+//   const [lessonContent, setLessonContent] = useState<EnhancedLessonContent | null>(null)
+
+//   const [loading, setLoading] = useState(true)
+//   const [isGenerating, setIsGenerating] = useState(false)
+//   const [isCustomized, setIsCustomized] = useState(false)
+
+//   // ─────────────────────────────────────────────
+//   // LOAD SCHOOL LESSON
+//   // ─────────────────────────────────────────────
+//   const loadLesson = useCallback(async () => {
+//     if (!schoolId || !topicId) return
+//     setLoading(true)
+
+//     try {
+//       const res = await getLessonForTeacher(topicId, schoolId)
+//       const scannedQuestions = await getScannedQuestions({
+//         topicId: params.topicId,
+//         schoolId: user.schoolId,
+//         userId: user.id
+//     });
+
+//       if (res.success && res.data) {
+//         // Safe casting from the action's standard return
+//         const data = res.data as TeacherLessonResponse;
+        
+//         setLessonId(data.id)
+//         setLessonContent(data.customContent as EnhancedLessonContent)
+//         setIsCustomized(data.isCustomized)
+//       }
+//     } catch (err) {
+//       console.error("[LOAD_LESSON_ERROR]:", getErrorMessage(err))
+//     } finally {
+//       setLoading(false)
+//     }
+//   }, [schoolId, topicId])
+
+//   useEffect(() => {
+//     loadLesson()
+//   }, [loadLesson])
+
+//   // ─────────────────────────────────────────────
+//   // GENERATE AI LESSON
+//   // ─────────────────────────────────────────────
+//   const handleGenerate = async () => {
+//     if (!schoolId) return toast.error("Institutional ID missing")
+
+//     setIsGenerating(true)
+
+//     try {
+//       const res = await generateLessonForTopic(topicId, schoolId)
+
+//       if (!res.success || !res.aiContent) {
+//         toast.error(res.error || "Generation failed")
+//         return
+//       }
+
+//       const schoolRes = await getOrCreateSchoolLesson({
+//         topicId,
+//         schoolId,
+//       })
+
+//       if (schoolRes.success && schoolRes.data) {
+//         const data = schoolRes.data as SchoolLesson;
+//         setLessonId(data.id)
+        
+//         // Use the customContent generated during the creation process
+//         setLessonContent(data.customContent as unknown as EnhancedLessonContent)
+//         setIsCustomized(false)
+
+//         toast.success("Lesson generated successfully")
+//       }
+
+//     } catch (err) {
+//       toast.error(getErrorMessage(err))
+//     } finally {
+//       setIsGenerating(false)
+//     }
+//   }
+
+//   // ─────────────────────────────────────────────
+//   // UI STATES
+//   // ─────────────────────────────────────────────
+//   if (isProfileLoading || loading) {
+//     return (
+//       <div className="h-screen flex flex-col items-center justify-center bg-slate-950">
+//         <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
+//         <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em] mt-4 animate-pulse">
+//           Syncing Lesson Vault...
+//         </p>
+//       </div>
+//     )
+//   }
+
+//   return (
+//     <div className="max-w-7xl mx-auto p-6 md:p-10 space-y-8 bg-slate-950 min-h-screen text-white">
+
+//       {/* HEADER */}
+//       <header className="space-y-6">
+//         <Link
+//           href="/teacher"
+//           className="text-school-primary text-[10px] font-black uppercase flex items-center gap-2 hover:opacity-70 w-fit"
+//         >
+//           <ArrowLeft className="h-3 w-3" />
+//           Dashboard
+//         </Link>
+
+//         <div className="flex items-center justify-between border-b border-white/5 pb-6">
+//           <div className="flex items-center gap-4">
+//             <div className="h-14 w-14 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center">
+//               <BookOpen className="h-7 w-7 text-school-primary" />
+//             </div>
+
+//             <div>
+//               <h1 className="text-3xl font-black uppercase italic tracking-tighter leading-none">
+//                 Lesson Studio
+//               </h1>
+//               <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">
+//                 Topic Builder Console
+//               </p>
+//             </div>
+//           </div>
+
+//           {isCustomized && (
+//             <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] font-black uppercase px-4 py-1 rounded-full">
+//               Customized
+//             </Badge>
+//           )}
+//         </div>
+//       </header>
+
+//       {/* MAIN WORKSPACE */}
+//       <main className="max-w-5xl mx-auto">
+//         {!lessonContent ? (
+//           <div className="text-center py-32 bg-slate-900/50 rounded-[3rem] border border-white/5 space-y-6 shadow-2xl">
+//             <div className="h-20 w-20 bg-school-primary/10 rounded-full flex items-center justify-center mx-auto border border-school-primary/20">
+//                 <Sparkles className="h-10 w-10 text-school-primary animate-pulse" />
+//             </div>
+
+//             <h2 className="text-2xl font-black uppercase italic tracking-tighter text-white">
+//               Registry Empty
+//             </h2>
+
+//             <p className="text-slate-500 text-xs uppercase font-bold tracking-widest leading-relaxed max-w-xs mx-auto">
+//               Initialize the AI engine to synthesize a lesson blueprint for this topic.
+//             </p>
+
+//             <button
+//               onClick={handleGenerate}
+//               disabled={isGenerating}
+//               className="px-10 py-5 bg-school-primary text-slate-950 font-black rounded-2xl uppercase text-[10px] tracking-widest hover:scale-105 transition-all disabled:opacity-20 shadow-xl shadow-school-primary/10"
+//             >
+//               {isGenerating ? (
+//                 <span className="flex items-center gap-2">
+//                   <Loader2 className="animate-spin w-4 h-4" />
+//                   Generating...
+//                 </span>
+//               ) : (
+//                 "Generate Lesson"
+//               )}
+//             </button>
+//           </div>
+//         ) : (
+//           <AILessonPlanner
+//             topicId={topicId}
+//             lessonId={lessonId}
+//             schoolId={schoolId}
+//             topicTitle={lessonContent.studentContent.title}
+//             initialData={lessonContent}
+//             mode="teacher"
+//           />
+//         )}
+//       </main>
+//     </div>
+//   )
+// }
+
+
+
 'use client'
 
 import { use, useEffect, useState, useCallback } from "react"
 import { useProfileStore } from "@/store/profileStore"
 import {
   getLessonForTeacher,
-  generateLessonForTopic,
-  getOrCreateSchoolLesson
+  publishLesson,
+  getStudentLesson
 } from "@/app/actions/lesson.actions"
+import { generateTopicContent } from "@/app/actions/ai-generator"
+import { getScannedQuestions } from "@/app/actions/scanned-question-bank"
 
 import {
   ArrowLeft,
@@ -753,22 +983,18 @@ import {
 
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
-import { AILessonPlanner, type EnhancedLessonContent } from "@/components/TeacherDashboard/ai-learning-planner"
+import { AILessonPlanner, type EnhancedLessonContent } from "@/components//TeacherDashboard/ai-learning-planner"
 import { toast } from "sonner"
 import { getErrorMessage } from "@/lib/error-handler"
-import { SchoolLesson, GlobalLesson } from "@prisma/client"
+import { Question, Role, GlobalLesson } from "@prisma/client"
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
-/**
- * Represents the structure of the data returned by getLessonForTeacher.
- * Standardizes the union between SchoolLesson and the fallback GlobalLesson.
- */
 interface TeacherLessonResponse {
   id: string;
-  customContent: unknown;
-  isCustomized: boolean;
-  globalLesson?: GlobalLesson;
+  customContent: any; // Prisma JsonValue
+  status: string;
+  globalLesson: GlobalLesson;
 }
 
 interface PageProps {
@@ -781,77 +1007,85 @@ export default function LessonStudioPage({ params }: PageProps) {
   const { topicId } = use(params)
   const { profile, isLoading: isProfileLoading } = useProfileStore()
 
-  const schoolId = profile?.schoolId ?? ""
+  // Derived from Global Profile Store
+  const userId = profile?.id ?? ""
+  const schoolId = profile?.schoolId ?? null
+  const userRole = profile?.role ?? Role.TEACHER
 
   const [lessonId, setLessonId] = useState<string>("")
   const [lessonContent, setLessonContent] = useState<EnhancedLessonContent | null>(null)
+  const [scannedQuestions, setScannedQuestions] = useState<Question[]>([])
 
   const [loading, setLoading] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
   const [isCustomized, setIsCustomized] = useState(false)
 
   // ─────────────────────────────────────────────
-  // LOAD SCHOOL LESSON
+  // LOAD LESSON & ASSETS
   // ─────────────────────────────────────────────
-  const loadLesson = useCallback(async () => {
-    if (!schoolId || !topicId) return
+  const loadStudioData = useCallback(async () => {
+    if (!userId || !topicId) return
     setLoading(true)
 
     try {
-      const res = await getLessonForTeacher(topicId, schoolId)
+      // 1. Fetch Lesson Content (Rule 5 & 7)
+      // Note: schoolId can be null for Independent Learners
+      const lessonRes = await getLessonForTeacher(topicId, schoolId ?? "")
+      
+      // 2. Fetch Scanned Questions specifically for this topic (Rule 11)
+      const questionsRes = await getScannedQuestions({
+        topicId,
+        schoolId,
+        userId
+      })
 
-      if (res.success && res.data) {
-        // Safe casting from the action's standard return
-        const data = res.data as TeacherLessonResponse;
-        
+      if (lessonRes.success && lessonRes.data) {
+        const data = lessonRes.data as TeacherLessonResponse;
         setLessonId(data.id)
-        setLessonContent(data.customContent as EnhancedLessonContent)
-        setIsCustomized(data.isCustomized)
+        setLessonContent(data.customContent as unknown as EnhancedLessonContent)
+        setIsCustomized(data.status === "PUBLISHED")
       }
-    } catch (err) {
-      console.error("[LOAD_LESSON_ERROR]:", getErrorMessage(err))
+
+      setScannedQuestions(questionsRes)
+      
+    } catch (err: unknown) {
+      console.error("[STUDIO_LOAD_ERROR]:", getErrorMessage(err))
+      toast.error("Failed to sync studio data.")
     } finally {
       setLoading(false)
     }
-  }, [schoolId, topicId])
+  }, [userId, schoolId, topicId])
 
   useEffect(() => {
-    loadLesson()
-  }, [loadLesson])
+    loadStudioData()
+  }, [loadStudioData])
 
   // ─────────────────────────────────────────────
   // GENERATE AI LESSON
   // ─────────────────────────────────────────────
   const handleGenerate = async () => {
-    if (!schoolId) return toast.error("Institutional ID missing")
+    if (!userId) return toast.error("Session identity missing")
 
     setIsGenerating(true)
-
     try {
-      const res = await generateLessonForTopic(topicId, schoolId)
+      // Rule 8: AI Content Generation (Tiered)
+      const res = await generateTopicContent({
+        topicId,
+        userId,
+        schoolId,
+        userRole
+      })
 
-      if (!res.success || !res.aiContent) {
-        toast.error(res.error || "Generation failed")
+      if (!res.success) {
+        toast.error(res.error || "Synthesis failed")
         return
       }
 
-      const schoolRes = await getOrCreateSchoolLesson({
-        topicId,
-        schoolId,
-      })
+      toast.success("AI Synthesis Complete")
+      // Reload to hydrate UI with new content
+      await loadStudioData()
 
-      if (schoolRes.success && schoolRes.data) {
-        const data = schoolRes.data as SchoolLesson;
-        setLessonId(data.id)
-        
-        // Use the customContent generated during the creation process
-        setLessonContent(data.customContent as unknown as EnhancedLessonContent)
-        setIsCustomized(false)
-
-        toast.success("Lesson generated successfully")
-      }
-
-    } catch (err) {
+    } catch (err: unknown) {
       toast.error(getErrorMessage(err))
     } finally {
       setIsGenerating(false)
@@ -866,7 +1100,7 @@ export default function LessonStudioPage({ params }: PageProps) {
       <div className="h-screen flex flex-col items-center justify-center bg-slate-950">
         <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
         <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em] mt-4 animate-pulse">
-          Syncing Lesson Vault...
+          Syncing Studio Registry...
         </p>
       </div>
     )
@@ -878,11 +1112,11 @@ export default function LessonStudioPage({ params }: PageProps) {
       {/* HEADER */}
       <header className="space-y-6">
         <Link
-          href="/teacher"
+          href={userRole === Role.STUDENT ? "/student" : "/teacher"}
           className="text-school-primary text-[10px] font-black uppercase flex items-center gap-2 hover:opacity-70 w-fit"
         >
           <ArrowLeft className="h-3 w-3" />
-          Dashboard
+          Return to Dashboard
         </Link>
 
         <div className="flex items-center justify-between border-b border-white/5 pb-6">
@@ -893,17 +1127,17 @@ export default function LessonStudioPage({ params }: PageProps) {
 
             <div>
               <h1 className="text-3xl font-black uppercase italic tracking-tighter leading-none">
-                Lesson Studio
+                Studio console
               </h1>
               <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">
-                Topic Builder Console
+                {isCustomized ? "Institutional customization active" : "Standardized Blueprint"}
               </p>
             </div>
           </div>
 
           {isCustomized && (
             <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] font-black uppercase px-4 py-1 rounded-full">
-              Customized
+              Published
             </Badge>
           )}
         </div>
@@ -922,7 +1156,7 @@ export default function LessonStudioPage({ params }: PageProps) {
             </h2>
 
             <p className="text-slate-500 text-xs uppercase font-bold tracking-widest leading-relaxed max-w-xs mx-auto">
-              Initialize the AI engine to synthesize a lesson blueprint for this topic.
+              Initialize the AI engine to synthesize a learning package for this topic.
             </p>
 
             <button
@@ -936,7 +1170,7 @@ export default function LessonStudioPage({ params }: PageProps) {
                   Generating...
                 </span>
               ) : (
-                "Generate Lesson"
+                "Synthesize Module"
               )}
             </button>
           </div>
@@ -945,9 +1179,12 @@ export default function LessonStudioPage({ params }: PageProps) {
             topicId={topicId}
             lessonId={lessonId}
             schoolId={schoolId}
+            userId={userId}
+            userRole={userRole}
             topicTitle={lessonContent.studentContent.title}
             initialData={lessonContent}
-            mode="teacher"
+            initialScannedQuestions={scannedQuestions}
+            mode={userRole === Role.STUDENT ? "student" : "teacher"}
           />
         )}
       </main>

@@ -284,10 +284,83 @@
 // }
 
 
-import { LessonAiContent } from "@/app/actions/ai-generator";
+
+// import { LessonAiContent } from "@/app/actions/ai-generator";
+// import { type ParentViewPerformance } from "@/app/actions/getParetnsLesson";
+
+// interface ParentLessonView {
+//   topic: string;
+//   simpleSummary: string;
+//   whatWasTaught: string[];
+//   keyPoints: string;
+//   performance: {
+//     score: number;
+//     grade: string;
+//     totalTests: number;
+//   };
+//   advice: string;
+// }
+
+// export function transformParentLesson(
+//   ai: LessonAiContent, 
+//   assessments: ParentViewPerformance
+// ): ParentLessonView {
+  
+//   const stats = calculateAggregateStats(assessments);
+
+//   return {
+//     topic: ai.studentContent.title,
+//     simpleSummary: `Your child is currently exploring ${ai.studentContent.title}.`,
+//     whatWasTaught: ai.studentContent.learningObjectives,
+//     keyPoints: ai.studentContent.summary,
+//     performance: {
+//       score: stats.percentage,
+//       grade: stats.grade,
+//       totalTests: assessments.length
+//     },
+//     advice: generateParentAdvice(stats.percentage, assessments.length),
+//   };
+// }
+
+// function calculateAggregateStats(assessments: ParentViewPerformance) {
+//   if (assessments.length === 0) return { percentage: 0, grade: "N/A" };
+
+//   let totalScore = 0;
+//   let totalMax = 0;
+
+//   assessments.forEach(a => {
+//     if (a.score !== null && a.maxScore !== null) {
+//       totalScore += a.score;
+//       totalMax += a.maxScore;
+//     }
+//   });
+
+//   const percentage = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
+  
+//   let grade = "F";
+//   if (percentage >= 75) grade = "A";
+//   else if (percentage >= 60) grade = "B";
+//   else if (percentage >= 50) grade = "C";
+//   else if (percentage >= 45) grade = "D";
+
+//   return { percentage, grade };
+// }
+
+// function generateParentAdvice(score: number, testCount: number): string {
+//   if (testCount === 0) return "No performance data discovered for this module yet.";
+//   if (score < 50) return "Intervention suggested: Your child would benefit from extra practice with these concepts.";
+//   if (score < 75) return "Steady progress: Your child has a good foundation; encourage them to continue revising.";
+//   return "Academic Excellence: Your child has demonstrated high proficiency in this topic.";
+// }
+
+
+import { type EnhancedLessonContent } from "@/components/TeacherDashboard/ai-learning-planner";
 import { type ParentViewPerformance } from "@/app/actions/getParetnsLesson";
 
-interface ParentLessonView {
+/**
+ * Interface representing the simplified parent-friendly view.
+ */
+export interface ParentLessonView {
   topic: string;
   simpleSummary: string;
   whatWasTaught: string[];
@@ -300,8 +373,11 @@ interface ParentLessonView {
   advice: string;
 }
 
+/**
+ * Transforms complex AI content and student scores into a parent-friendly format.
+ */
 export function transformParentLesson(
-  ai: LessonAiContent, 
+  ai: EnhancedLessonContent, 
   assessments: ParentViewPerformance
 ): ParentLessonView {
   

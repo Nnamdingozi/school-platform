@@ -489,23 +489,240 @@
 
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { createClient } from '@/lib/supabase/server'
+// import { revalidatePath } from 'next/cache'
+// import { logActivity } from '@/lib/activitylogger'
+// import { ActivityType } from '@prisma/client'
+// import { InitiatePaymentResult, VerifyPaymentResult } from '@/types/credits'
+
+// // ── Interfaces ──────────────────────────────────────────────────────────────
+
+
+// // ── Server Actions ────────────────────────────────────────────────────────────
+
+// /**
+//  * Fetches available credit bundles from the database.
+//  */
+// export async function getCreditPackages() {
+//     try {
+//         const packages = await prisma.creditPackage.findMany({
+//             where: { active: true },
+//             orderBy: { sortOrder: 'asc' }
+//         });
+//         return { success: true, data: packages };
+//     } catch (err: unknown) {
+//         console.error('getCreditPackages error:', getErrorMessage(err));
+//         return { success: false, error: getErrorMessage(err), data: [] };
+//     }
+// }
+
+// /**
+//  * Initiates a Paystack transaction for purchasing WhatsApp credits.
+//  */
+// export async function initiateCreditsPayment(
+//     schoolId: string,
+//     packageId: string
+// ): Promise<InitiatePaymentResult> {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user }, error: authError } = await supabase.auth.getUser()
+//         if (authError || !user) {
+//             return { success: false, error: 'Session expired. Please log in again.' }
+//         }
+
+//         const pkg = await prisma.creditPackage.findUnique({
+//             where: { id: packageId }
+//         });
+
+//         if (!pkg || !pkg.active) {
+//             return { success: false, error: 'The selected bundle is no longer active.' };
+//         }
+
+//         const school = await prisma.school.findUnique({
+//             where: { id: schoolId },
+//             select: { id: true, name: true }
+//         });
+
+//         if (!school) {
+//             return { success: false, error: 'Institutional record not found.' };
+//         }
+
+//         const reference = `credits_${schoolId.slice(0, 8)}_${Date.now()}`;
+
+//         await prisma.creditTransaction.create({
+//             data: {
+//                 schoolId,
+//                 packageId: pkg.id,
+//                 credits: pkg.credits,
+//                 amountNGN: pkg.priceNGN,
+//                 amountKobo: pkg.priceKobo,
+//                 reference,
+//                 status: 'PENDING',
+//                 initiatedBy: user.id,
+//             },
+//         });
+
+//         const response = await fetch('https://api.paystack.co/transaction/initialize', {
+//             method: 'POST',
+//             headers: {
+//                 Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({
+//                 email: user.email,
+//                 amount: pkg.priceKobo,
+//                 reference,
+//                 currency: 'NGN',
+//                 metadata: {
+//                     schoolId,
+//                     packageId: pkg.id,
+//                     credits: pkg.credits,
+//                     schoolName: school.name,
+//                 },
+//                 callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/admin/communication/verify?reference=${reference}`,
+//             }),
+//         });
+
+//         const paystackData = await response.json();
+
+//         if (!paystackData.status) {
+//             return { success: false, error: paystackData.message ?? 'Gateway communication failure.' };
+//         }
+
+//         return {
+//             success: true,
+//             authorizationUrl: paystackData.data.authorization_url,
+//             reference,
+//         };
+
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// /**
+//  * Verifies the Paystack transaction and updates school credit balance.
+//  */
+// export async function verifyCreditsPayment(
+//     reference: string,
+// ): Promise<VerifyPaymentResult> {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user }, error: authError } = await supabase.auth.getUser()
+//         if (authError || !user) return { success: false, error: 'Unauthorized.' }
+
+//         const transaction = await prisma.creditTransaction.findUnique({
+//             where: { reference },
+//             select: {
+//                 id: true,
+//                 status: true,
+//                 credits: true,
+//                 schoolId: true,
+//                 packageId: true,
+//             },
+//         })
+
+//         if (!transaction) return { success: false, error: 'Transaction not found.' }
+//         if (transaction.status === 'SUCCESS') return { success: true, credits: transaction.credits }
+//         if (transaction.status === 'FAILED') return { success: false, error: 'Transaction failed previously.' }
+
+//         // Verify with Paystack API
+//         const response = await fetch(
+//             `https://api.paystack.co/transaction/verify/${reference}`,
+//             {
+//                 headers: {
+//                     Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+//                 },
+//             }
+//         )
+
+//         const paystackData = await response.json()
+
+//         if (!paystackData.status || paystackData.data.status !== 'success') {
+//             await prisma.creditTransaction.update({
+//                 where: { reference },
+//                 data: { status: 'FAILED' },
+//             })
+//             return { success: false, error: 'Payment verification failed at gateway.' }
+//         }
+
+//         // Top up credits and mark transaction as successful
+//         await prisma.$transaction([
+//             prisma.school.update({
+//                 where: { id: transaction.schoolId },
+//                 data: { whatsappCredits: { increment: transaction.credits } },
+//             }),
+//             prisma.creditTransaction.update({
+//                 where: { reference },
+//                 data: { status: 'SUCCESS', paidAt: new Date() },
+//             }),
+//         ])
+
+//         // Fetch profile for logging
+//         const profile = await prisma.profile.findFirst({
+//             where: { email: user.email },
+//             select: { id: true, name: true, role: true }
+//         });
+
+//         // Log the successful purchase
+//         if (profile) {
+//             await logActivity({
+//                 schoolId: transaction.schoolId,
+//                 actorId: profile.id,
+//                 actorName: profile.name,
+//                 actorRole: profile.role,
+//                 type: ActivityType.SETTINGS_UPDATED, // Or a custom purchase type if available
+//                 title: 'Credits Replenished',
+//                 description: `Purchased ${transaction.credits} WhatsApp units via Paystack.`,
+//                 metadata: { reference, packageId: transaction.packageId }
+//             });
+//         }
+
+//         // Update UI caches
+//         revalidatePath('/admin/communication')
+        
+//         return { success: true, credits: transaction.credits }
+
+//     } catch (err: unknown) {
+//         console.error('verifyCreditsPayment error:', getErrorMessage(err));
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { getErrorMessage } from '@/lib/error-handler'
 import { createClient } from '@/lib/supabase/server'
+import { getErrorMessage } from '@/lib/error-handler'
 import { revalidatePath } from 'next/cache'
 import { logActivity } from '@/lib/activitylogger'
-import { ActivityType } from '@prisma/client'
-import { InitiatePaymentResult, VerifyPaymentResult } from '@/types/credits'
+import { ActivityType, TxStatus, Role, Prisma } from '@prisma/client'
 
-// ── Interfaces ──────────────────────────────────────────────────────────────
+// ── Types ──────────────────────────────────────────────────────────────────────
 
+export interface InitiatePaymentResult {
+    success: boolean
+    error?: string
+    authorizationUrl?: string
+    reference?: string
+}
+
+export interface VerifyPaymentResult {
+    success: boolean
+    error?: string
+    credits?: number
+}
 
 // ── Server Actions ────────────────────────────────────────────────────────────
 
 /**
  * Fetches available credit bundles from the database.
+ * Tier 1: Global packages available to all school admins.
  */
 export async function getCreditPackages() {
     try {
@@ -522,6 +739,7 @@ export async function getCreditPackages() {
 
 /**
  * Initiates a Paystack transaction for purchasing WhatsApp credits.
+ * Rule 10: Backend validation ensures user belongs to the school.
  */
 export async function initiateCreditsPayment(
     schoolId: string,
@@ -532,6 +750,16 @@ export async function initiateCreditsPayment(
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) {
             return { success: false, error: 'Session expired. Please log in again.' }
+        }
+
+        // Rule 10 Security: Fetch profile to verify school membership
+        const profile = await prisma.profile.findFirst({
+            where: { id: user.id },
+            select: { schoolId: true, name: true, role: true }
+        });
+
+        if (!profile || profile.schoolId !== schoolId) {
+            return { success: false, error: 'Unauthorized: You do not belong to this institution.' };
         }
 
         const pkg = await prisma.creditPackage.findUnique({
@@ -553,6 +781,7 @@ export async function initiateCreditsPayment(
 
         const reference = `credits_${schoolId.slice(0, 8)}_${Date.now()}`;
 
+        // Create transaction record
         await prisma.creditTransaction.create({
             data: {
                 schoolId,
@@ -561,7 +790,7 @@ export async function initiateCreditsPayment(
                 amountNGN: pkg.priceNGN,
                 amountKobo: pkg.priceKobo,
                 reference,
-                status: 'PENDING',
+                status: TxStatus.PENDING,
                 initiatedBy: user.id,
             },
         });
@@ -595,7 +824,7 @@ export async function initiateCreditsPayment(
 
         return {
             success: true,
-            authorizationUrl: paystackData.data.authorization_url,
+            authorizationUrl: paystackData.data.authorization_url as string,
             reference,
         };
 
@@ -606,6 +835,7 @@ export async function initiateCreditsPayment(
 
 /**
  * Verifies the Paystack transaction and updates school credit balance.
+ * Rule 11: Final Truth - Updates institutional credits and logs activity.
  */
 export async function verifyCreditsPayment(
     reference: string,
@@ -626,9 +856,19 @@ export async function verifyCreditsPayment(
             },
         })
 
-        if (!transaction) return { success: false, error: 'Transaction not found.' }
-        if (transaction.status === 'SUCCESS') return { success: true, credits: transaction.credits }
-        if (transaction.status === 'FAILED') return { success: false, error: 'Transaction failed previously.' }
+        if (!transaction) return { success: false, error: 'Transaction record not found.' }
+        if (transaction.status === TxStatus.SUCCESS) return { success: true, credits: transaction.credits }
+        if (transaction.status === TxStatus.FAILED) return { success: false, error: 'Transaction failed previously.' }
+
+        // Rule 10 Security: Ensure the user verifying the payment belongs to the school credited
+        const profile = await prisma.profile.findFirst({
+            where: { id: user.id },
+            select: { schoolId: true, name: true, role: true, id: true}
+        });
+
+        if (!profile || profile.schoolId !== transaction.schoolId) {
+            return { success: false, error: 'Unauthorized: Security context mismatch.' };
+        }
 
         // Verify with Paystack API
         const response = await fetch(
@@ -645,12 +885,12 @@ export async function verifyCreditsPayment(
         if (!paystackData.status || paystackData.data.status !== 'success') {
             await prisma.creditTransaction.update({
                 where: { reference },
-                data: { status: 'FAILED' },
+                data: { status: TxStatus.FAILED },
             })
             return { success: false, error: 'Payment verification failed at gateway.' }
         }
 
-        // Top up credits and mark transaction as successful
+        // Atomic Transaction: Top up credits and mark successful
         await prisma.$transaction([
             prisma.school.update({
                 where: { id: transaction.schoolId },
@@ -658,31 +898,22 @@ export async function verifyCreditsPayment(
             }),
             prisma.creditTransaction.update({
                 where: { reference },
-                data: { status: 'SUCCESS', paidAt: new Date() },
+                data: { status: TxStatus.SUCCESS, paidAt: new Date() },
             }),
         ])
 
-        // Fetch profile for logging
-        const profile = await prisma.profile.findFirst({
-            where: { email: user.email },
-            select: { id: true, name: true, role: true }
+        // Rule 11: Log the successful replenishment
+        await logActivity({
+            schoolId: transaction.schoolId,
+            actorId: profile.id,
+            actorName: profile.name,
+            actorRole: profile.role,
+            type: ActivityType.SETTINGS_UPDATED,
+            title: 'Credits Replenished',
+            description: `Successfully purchased ${transaction.credits} WhatsApp units via Paystack.`,
+            metadata: { reference, packageId: transaction.packageId }
         });
 
-        // Log the successful purchase
-        if (profile) {
-            await logActivity({
-                schoolId: transaction.schoolId,
-                actorId: profile.id,
-                actorName: profile.name,
-                actorRole: profile.role,
-                type: ActivityType.SETTINGS_UPDATED, // Or a custom purchase type if available
-                title: 'Credits Replenished',
-                description: `Purchased ${transaction.credits} WhatsApp units via Paystack.`,
-                metadata: { reference, packageId: transaction.packageId }
-            });
-        }
-
-        // Update UI caches
         revalidatePath('/admin/communication')
         
         return { success: true, credits: transaction.credits }

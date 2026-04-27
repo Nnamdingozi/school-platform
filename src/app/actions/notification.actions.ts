@@ -220,13 +220,265 @@
 //     }
 // }
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { createClient } from '@/lib/supabase/server'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { revalidatePath } from 'next/cache'
+// import type { Notification } from '@prisma/client'
+
+// interface ActionResult<T = unknown> {
+//     success: boolean
+//     data?: T
+//     error?: string
+// }
+
+// // ── Auth helper ────────────────────────────────────────────────────────────────
+// async function getAuthUser() {
+//     try {
+//         const supabase = await createClient()
+//         const { data, error } = await supabase.auth.getUser()
+//         if (error || !data.user) return null
+//         return data.user
+//     } catch (err) {
+//         console.error('getAuthUser (notifications) failed:', err)
+//         return null
+//     }
+// }
+
+// /**
+//  * Internal helper to get the profile ID for the current authenticated user.
+//  */
+// async function getCurrentProfileId(): Promise<string | null> {
+//     const user = await getAuthUser()
+//     if (!user?.email) return null
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { email: user.email },
+//         select: { id: true },
+//     })
+    
+//     return profile?.id ?? null
+// }
+
+// // ── Notification Creation ─────────────────────────────────────────────────────
+
+// export async function createNotificationForUserAction(params: {
+//     userId: string
+//     message: string
+//     link?: string
+// }): Promise<ActionResult<Notification>> {
+//     try {
+//         if (!params.userId || !params.message.trim()) {
+//             return { success: false, error: 'userId and message are required.' }
+//         }
+
+//         const notification = await prisma.notification.create({
+//             data: {
+//                 userId: params.userId,
+//                 message: params.message.trim(),
+//                 link: params.link,
+//             },
+//         })
+
+//         revalidatePath('/notifications')
+//         return { success: true, data: notification }
+//     } catch (err: unknown) {
+//         console.error('createNotificationForUserAction error:', err)
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// export async function createNotificationsForUsersAction(params: {
+//     userIds: string[]
+//     message: string
+//     link?: string
+// }): Promise<ActionResult<number>> {
+//     try {
+//         const { userIds, message, link } = params
+//         const trimmed = message.trim()
+
+//         if (!Array.isArray(userIds) || userIds.length === 0) {
+//             return { success: false, error: 'At least one userId is required.' }
+//         }
+//         if (!trimmed) {
+//             return { success: false, error: 'Message is required.' }
+//         }
+
+//         const created = await prisma.notification.createMany({
+//             data: userIds.map((id) => ({
+//                 userId: id,
+//                 message: trimmed,
+//                 link,
+//             })),
+//         })
+
+//         revalidatePath('/notifications')
+//         return { success: true, data: created.count }
+//     } catch (err: unknown) {
+//         console.error('createNotificationsForUsersAction error:', err)
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// export async function createNotificationForCurrentUserAction(params: {
+//     message: string
+//     link?: string
+// }): Promise<ActionResult<Notification>> {
+//     try {
+//         const profileId = await getCurrentProfileId()
+//         if (!profileId) return { success: false, error: 'Unauthorized or Profile not found.' }
+
+//         return createNotificationForUserAction({
+//             userId: profileId,
+//             message: params.message,
+//             link: params.link,
+//         })
+//     } catch (err: unknown) {
+//         console.error('createNotificationForCurrentUserAction error:', err)
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// // ── Fetching Notifications ────────────────────────────────────────────────────
+
+// export async function getMyNotificationsAction(params?: {
+//     take?: number
+//     skip?: number
+// }): Promise<
+//     ActionResult<{
+//         notifications: Notification[]
+//         unreadCount: number
+//     }>
+// > {
+//     try {
+//         const profileId = await getCurrentProfileId()
+//         if (!profileId) return { success: false, error: 'Unauthorized.' }
+
+//         const take = params?.take ?? 50
+//         const skip = params?.skip ?? 0
+
+//         const [notifications, unreadCount] = await Promise.all([
+//             prisma.notification.findMany({
+//                 where: { userId: profileId },
+//                 orderBy: { createdAt: 'desc' },
+//                 take,
+//                 skip,
+//             }),
+//             prisma.notification.count({
+//                 where: { userId: profileId, read: false },
+//             }),
+//         ])
+
+//         return {
+//             success: true,
+//             data: {
+//                 notifications,
+//                 unreadCount,
+//             },
+//         }
+//     } catch (err: unknown) {
+//         console.error('getMyNotificationsAction error:', err)
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// // ── Mark as Read Logic ────────────────────────────────────────────────────────
+
+// export async function markNotificationReadAction(id: string): Promise<ActionResult> {
+//     try {
+//         const profileId = await getCurrentProfileId()
+//         if (!profileId) return { success: false, error: 'Unauthorized.' }
+
+//         await prisma.notification.updateMany({
+//             where: {
+//                 id,
+//                 userId: profileId, // Security: Ensure user owns this notification
+//             },
+//             data: { read: true },
+//         })
+
+//         revalidatePath('/notifications')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         console.error('markNotificationReadAction error:', err)
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// export async function markAllNotificationsReadAction(): Promise<ActionResult<number>> {
+//     try {
+//         const profileId = await getCurrentProfileId()
+//         if (!profileId) return { success: false, error: 'Unauthorized.' }
+
+//         const result = await prisma.notification.updateMany({
+//             where: { userId: profileId, read: false },
+//             data: { read: true },
+//         })
+
+//         revalidatePath('/notifications')
+//         return { success: true, data: result.count }
+//     } catch (err: unknown) {
+//         console.error('markAllNotificationsReadAction error:', err)
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// // ── Deletion Logic ────────────────────────────────────────────────────────────
+
+// /**
+//  * Deletes a specific notification.
+//  * Uses updateMany to ensure only the owner can delete it.
+//  */
+// export async function deleteNotificationAction(id: string): Promise<ActionResult> {
+//     try {
+//         const profileId = await getCurrentProfileId()
+//         if (!profileId) return { success: false, error: 'Unauthorized.' }
+
+//         await prisma.notification.deleteMany({
+//             where: {
+//                 id,
+//                 userId: profileId, // Security: Ensure user owns this notification
+//             },
+//         })
+
+//         revalidatePath('/notifications')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         console.error('deleteNotificationAction error:', err)
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+
+// export async function deleteAllNotificationsAction(): Promise<ActionResult> {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user }, error } = await supabase.auth.getUser()
+//         if (error || !user) return { success: false, error: 'Unauthorized.' }
+
+//         await prisma.notification.deleteMany({
+//             where: { userId: user.id },
+//         })
+
+//         return { success: true }
+//     } catch (err) {
+//         console.error('deleteAllNotificationsAction error:', getErrorMessage(err))
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
 import { getErrorMessage } from '@/lib/error-handler'
 import { revalidatePath } from 'next/cache'
-import type { Notification } from '@prisma/client'
+import { Notification, Prisma } from '@prisma/client'
+
+// ── Interfaces ──────────────────────────────────────────────────────────────
 
 interface ActionResult<T = unknown> {
     success: boolean
@@ -235,35 +487,43 @@ interface ActionResult<T = unknown> {
 }
 
 // ── Auth helper ────────────────────────────────────────────────────────────────
+
+/**
+ * Rule 10: Backend validation of the current session.
+ */
 async function getAuthUser() {
     try {
         const supabase = await createClient()
         const { data, error } = await supabase.auth.getUser()
         if (error || !data.user) return null
         return data.user
-    } catch (err) {
-        console.error('getAuthUser (notifications) failed:', err)
+    } catch (err: unknown) {
+        console.error('getAuthUser failed:', getErrorMessage(err))
         return null
     }
 }
 
 /**
- * Internal helper to get the profile ID for the current authenticated user.
+ * Internal helper to resolve the Profile ID (Rule 11 System Truth).
  */
 async function getCurrentProfileId(): Promise<string | null> {
     const user = await getAuthUser()
-    if (!user?.email) return null
+    if (!user?.id) return null
 
+    // Profiles are linked via ID to Supabase Auth ID
     const profile = await prisma.profile.findUnique({
-        where: { email: user.email },
+        where: { id: user.id },
         select: { id: true },
     })
     
     return profile?.id ?? null
 }
 
-// ── Notification Creation ─────────────────────────────────────────────────────
+// ── Notification Creation (Tier 3 Content) ────────────────────────────────────
 
+/**
+ * Rule 11: Used by Tier-2 actions (like exam publication) to notify users.
+ */
 export async function createNotificationForUserAction(params: {
     userId: string
     message: string
@@ -282,14 +542,16 @@ export async function createNotificationForUserAction(params: {
             },
         })
 
-        revalidatePath('/notifications')
+        revalidatePath('/', 'layout') // Update bell icon everywhere
         return { success: true, data: notification }
     } catch (err: unknown) {
-        console.error('createNotificationForUserAction error:', err)
         return { success: false, error: getErrorMessage(err) }
     }
 }
 
+/**
+ * Bulk notification (e.g., notifying a whole class).
+ */
 export async function createNotificationsForUsersAction(params: {
     userIds: string[]
     message: string
@@ -302,11 +564,9 @@ export async function createNotificationsForUsersAction(params: {
         if (!Array.isArray(userIds) || userIds.length === 0) {
             return { success: false, error: 'At least one userId is required.' }
         }
-        if (!trimmed) {
-            return { success: false, error: 'Message is required.' }
-        }
+        if (!trimmed) return { success: false, error: 'Message is required.' }
 
-        const created = await prisma.notification.createMany({
+        const result = await prisma.notification.createMany({
             data: userIds.map((id) => ({
                 userId: id,
                 message: trimmed,
@@ -314,35 +574,18 @@ export async function createNotificationsForUsersAction(params: {
             })),
         })
 
-        revalidatePath('/notifications')
-        return { success: true, data: created.count }
+        revalidatePath('/', 'layout')
+        return { success: true, data: result.count }
     } catch (err: unknown) {
-        console.error('createNotificationsForUsersAction error:', err)
         return { success: false, error: getErrorMessage(err) }
     }
 }
 
-export async function createNotificationForCurrentUserAction(params: {
-    message: string
-    link?: string
-}): Promise<ActionResult<Notification>> {
-    try {
-        const profileId = await getCurrentProfileId()
-        if (!profileId) return { success: false, error: 'Unauthorized or Profile not found.' }
+// ── Fetching (Tier 3 Isolation) ───────────────────────────────────────────────
 
-        return createNotificationForUserAction({
-            userId: profileId,
-            message: params.message,
-            link: params.link,
-        })
-    } catch (err: unknown) {
-        console.error('createNotificationForCurrentUserAction error:', err)
-        return { success: false, error: getErrorMessage(err) }
-    }
-}
-
-// ── Fetching Notifications ────────────────────────────────────────────────────
-
+/**
+ * Rule 3: A user can only access their own notifications.
+ */
 export async function getMyNotificationsAction(params?: {
     take?: number
     skip?: number
@@ -379,30 +622,29 @@ export async function getMyNotificationsAction(params?: {
             },
         }
     } catch (err: unknown) {
-        console.error('getMyNotificationsAction error:', err)
         return { success: false, error: getErrorMessage(err) }
     }
 }
 
-// ── Mark as Read Logic ────────────────────────────────────────────────────────
+// ── Mark as Read (Security Rule 10) ───────────────────────────────────────────
 
 export async function markNotificationReadAction(id: string): Promise<ActionResult> {
     try {
         const profileId = await getCurrentProfileId()
         if (!profileId) return { success: false, error: 'Unauthorized.' }
 
+        // Security: userId check prevents marking other people's notifications
         await prisma.notification.updateMany({
             where: {
                 id,
-                userId: profileId, // Security: Ensure user owns this notification
+                userId: profileId,
             },
             data: { read: true },
         })
 
-        revalidatePath('/notifications')
+        revalidatePath('/', 'layout')
         return { success: true }
     } catch (err: unknown) {
-        console.error('markNotificationReadAction error:', err)
         return { success: false, error: getErrorMessage(err) }
     }
 }
@@ -417,54 +659,47 @@ export async function markAllNotificationsReadAction(): Promise<ActionResult<num
             data: { read: true },
         })
 
-        revalidatePath('/notifications')
+        revalidatePath('/', 'layout')
         return { success: true, data: result.count }
     } catch (err: unknown) {
-        console.error('markAllNotificationsReadAction error:', err)
         return { success: false, error: getErrorMessage(err) }
     }
 }
 
-// ── Deletion Logic ────────────────────────────────────────────────────────────
+// ── Deletion (Rule 3 Forbidden Access) ────────────────────────────────────────
 
-/**
- * Deletes a specific notification.
- * Uses updateMany to ensure only the owner can delete it.
- */
 export async function deleteNotificationAction(id: string): Promise<ActionResult> {
     try {
         const profileId = await getCurrentProfileId()
         if (!profileId) return { success: false, error: 'Unauthorized.' }
 
+        // Security: Must match profileId
         await prisma.notification.deleteMany({
             where: {
                 id,
-                userId: profileId, // Security: Ensure user owns this notification
+                userId: profileId,
             },
         })
 
-        revalidatePath('/notifications')
+        revalidatePath('/', 'layout')
         return { success: true }
     } catch (err: unknown) {
-        console.error('deleteNotificationAction error:', err)
         return { success: false, error: getErrorMessage(err) }
     }
 }
 
-
 export async function deleteAllNotificationsAction(): Promise<ActionResult> {
     try {
-        const supabase = await createClient()
-        const { data: { user }, error } = await supabase.auth.getUser()
-        if (error || !user) return { success: false, error: 'Unauthorized.' }
+        const profileId = await getCurrentProfileId()
+        if (!profileId) return { success: false, error: 'Unauthorized.' }
 
-        await prisma.notification.deleteMany({
-            where: { userId: user.id },
+        const result = await prisma.notification.deleteMany({
+            where: { userId: profileId },
         })
 
-        return { success: true }
-    } catch (err) {
-        console.error('deleteAllNotificationsAction error:', getErrorMessage(err))
+        revalidatePath('/', 'layout')
+        return { success: true, data: result.count }
+    } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) }
     }
 }

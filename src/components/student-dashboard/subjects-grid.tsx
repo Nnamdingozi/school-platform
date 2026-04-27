@@ -1941,6 +1941,328 @@
 // }
 
 
+// "use client";
+
+// import React, { useState, useMemo } from "react";
+// import { Card, CardContent, CardHeader } from "@/components/ui/card";
+// import { Badge } from "@/components/ui/badge";
+// import { Button } from "@/components/ui/button";
+// import { Progress } from "@/components/ui/progress";
+// import {
+//   BookOpen,
+//   CheckCircle2,
+//   ArrowLeft,
+//   User,
+//   ChevronRight,
+//   BookX,
+// } from "lucide-react";
+// import { cn } from "@/lib/utils";
+// import { classifyNigerianSubject } from "@/lib/curriculum/nigeria";
+// import { computeSubjectPerformance } from "@/lib/academics/compute-performance";
+// import { useRouter } from "next/navigation";
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface Topic {
+//   id: string;
+//   title: string;
+//   weekNumber?: number | null;
+//   term?: {
+//     index: number;
+//   } | null;
+// }
+
+// interface Assessment {
+//   id: string;
+//   score: number | null;
+//   maxScore: number | null;
+//   type: string;
+// }
+
+// interface GradeSubject {
+//   id: string;
+//   subject: {
+//     name: string;
+//   };
+//   topics: Topic[];
+//   assessments: Assessment[];
+// }
+
+// interface SubjectsGridProps {
+//   subjects: GradeSubject[];
+//   classTeacherName: string;
+//   gradeLevel: number;
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export function SubjectsGrid({
+//   subjects,
+//   classTeacherName,
+//   gradeLevel,
+// }: SubjectsGridProps) {
+//   const [selectedSubject, setSelectedSubject] = useState<GradeSubject | null>(null);
+
+//   if (selectedSubject) {
+//     return (
+//       <CurriculumView
+//         subject={selectedSubject}
+//         classTeacherName={classTeacherName}
+//         onBack={() => setSelectedSubject(null)}
+//       />
+//     );
+//   }
+
+//   return (
+//     <div className="space-y-6">
+//       <div className="flex items-center justify-between">
+//         <div>
+//           <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">
+//             {gradeLevel <= 9 ? "Full Curriculum" : "My Academic Load"}
+//           </h2>
+//           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">
+//             {gradeLevel <= 9
+//               ? "Standard JSS syllabus automatically allocated"
+//               : "Core subjects and selected electives"}
+//           </p>
+//         </div>
+
+//         <Badge
+//           variant="outline"
+//           className="border-white/10 text-school-primary px-4 rounded-full font-black text-[10px] uppercase"
+//         >
+//           {subjects.length} Modules
+//         </Badge>
+//       </div>
+
+//       {subjects.length === 0 ? (
+//         <div className="py-20 text-center bg-slate-900/40 rounded-[2rem] border border-dashed border-white/5">
+//           <BookX className="h-10 w-10 text-slate-800 mx-auto mb-4" />
+//           <p className="text-slate-600 uppercase text-[10px] font-black tracking-widest">
+//             No subjects found for this grade level
+//           </p>
+//         </div>
+//       ) : (
+//         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+//           {subjects.map((gs) => (
+//             <SubjectCard
+//               key={gs.id}
+//               gs={gs}
+//               classTeacherName={classTeacherName}
+//               isSSS={gradeLevel >= 10}
+//               onSelect={() => setSelectedSubject(gs)}
+//             />
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+// // ── Subject Card ─────────────────────────────────────────────────────────────
+
+// interface SubjectCardProps {
+//   gs: GradeSubject;
+//   classTeacherName: string;
+//   isSSS: boolean;
+//   onSelect: () => void;
+// }
+
+// function SubjectCard({ gs, classTeacherName, isSSS, onSelect }: SubjectCardProps) {
+//   const totalTopics = gs.topics?.length || 0;
+//   const gradedTopics = gs.assessments?.length || 0;
+
+//   const progressPercent =
+//     totalTopics > 0 ? (gradedTopics / totalTopics) * 100 : 0;
+
+//   const { isCompulsory, stream } = classifyNigerianSubject(
+//     gs.subject.name,
+//     !isSSS
+//   );
+
+//   const isCore = isSSS && isCompulsory;
+
+//   // Assuming computeSubjectPerformance accepts the typed assessment array
+//   const performance = computeSubjectPerformance(gs.assessments || []);
+
+//   return (
+//     <Card
+//       className={cn(
+//         "group cursor-pointer bg-slate-900 border-white/5 rounded-[2rem] transition-all hover:border-school-primary/30 shadow-xl overflow-hidden",
+//         isCore && "border-school-primary/20 bg-school-primary/[0.02]"
+//       )}
+//       onClick={onSelect}
+//     >
+//       <CardContent className="p-6">
+//         <div className="flex items-start justify-between mb-6">
+//           <div className="flex-1 min-w-0 space-y-3">
+//             <div
+//               className={cn(
+//                 "p-3 rounded-xl w-fit",
+//                 isCore
+//                   ? "bg-school-primary text-slate-950"
+//                   : "bg-school-primary/10 text-school-primary"
+//               )}
+//             >
+//               <BookOpen className="h-5 w-5" />
+//             </div>
+
+//             <div className="min-w-0">
+//               <h3 className="text-sm font-black text-white uppercase italic tracking-tighter truncate">
+//                 {gs.subject.name}
+//               </h3>
+//               <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1 truncate">
+//                 {classTeacherName}
+//               </p>
+//             </div>
+//           </div>
+
+//           <div className="flex gap-1 shrink-0">
+//             {isCore && (
+//               <Badge className="bg-school-primary text-slate-950 text-[8px] font-black uppercase px-2 py-0">
+//                 Core
+//               </Badge>
+//             )}
+//             {stream && !isCore && (
+//               <Badge className="bg-white/10 text-white text-[8px] font-black uppercase px-2 py-0">
+//                 {stream}
+//               </Badge>
+//             )}
+//           </div>
+//         </div>
+
+//         <div className="mb-6 space-y-3">
+//           <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+//             <span className="text-slate-500">Score</span>
+//             <span className="text-white">
+//               {performance.total}%
+//               <span className="ml-2 text-school-primary">
+//                 ({performance.grade})
+//               </span>
+//             </span>
+//           </div>
+//           <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-slate-400">
+//             <span>CA: {performance.ca}</span>
+//             <span>Exam: {performance.exam}</span>
+//           </div>
+//         </div>
+
+//         <div className="mb-6 space-y-2">
+//           <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
+//             <span className="text-slate-500">Coverage</span>
+//             <span className="text-slate-300">
+//               {gradedTopics}/{totalTopics}
+//             </span>
+//           </div>
+//           <Progress
+//             value={progressPercent}
+//             className="h-1 bg-slate-950 [&>div]:bg-school-primary"
+//           />
+//         </div>
+
+//         <div className="flex items-center justify-between pt-4 border-t border-white/5">
+//           <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em]">
+//             Open Syllabus
+//           </p>
+//           <ChevronRight className="h-4 w-4 text-slate-800 group-hover:text-school-primary transition-all group-hover:translate-x-1" />
+//         </div>
+//       </CardContent>
+//     </Card>
+//   );
+// }
+
+// // ── Curriculum View ──────────────────────────────────────────────────────────
+
+// interface CurriculumViewProps {
+//   subject: GradeSubject;
+//   classTeacherName: string;
+//   onBack: () => void;
+// }
+
+// function CurriculumView({ subject: gs, classTeacherName, onBack }: CurriculumViewProps) {
+//   const [selectedTerm, setSelectedTerm] = useState<number>(1);
+//   const router = useRouter();
+
+//   const terms = useMemo(() => {
+//     const map: Record<number, Topic[]> = { 1: [], 2: [], 3: [] };
+
+//     gs.topics?.forEach((t: Topic) => {
+//       const idx = t.term?.index || 1;
+//       if (map[idx]) map[idx].push(t);
+//     });
+
+//     return map;
+//   }, [gs.topics]);
+
+//   return (
+//     <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl animate-in slide-in-from-right-4">
+//       <CardHeader className="bg-slate-950/50 p-8 border-b border-white/5">
+//         <div className="flex items-center gap-4 mb-8">
+//           <Button variant="ghost" size="icon" onClick={onBack} className="rounded-xl hover:bg-white/5">
+//             <ArrowLeft className="h-5 w-5 text-slate-400" />
+//           </Button>
+
+//           <div className="flex-1">
+//             <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter">
+//               {gs.subject.name}
+//             </h2>
+//             <p className="text-xs text-slate-500 font-bold uppercase mt-2 flex items-center gap-2">
+//               <User className="h-3 w-3 text-school-primary" />
+//               Instructor: {classTeacherName}
+//             </p>
+//           </div>
+//         </div>
+
+//         <div className="grid grid-cols-3 gap-3">
+//           {[1, 2, 3].map((idx) => (
+//             <button
+//               key={idx}
+//               onClick={() => setSelectedTerm(idx)}
+//               className={cn(
+//                 "p-4 rounded-2xl border text-left transition-all",
+//                 selectedTerm === idx
+//                   ? "bg-school-primary text-slate-950 border-school-primary shadow-lg"
+//                   : "bg-slate-950 border-white/5 text-slate-500"
+//               )}
+//             >
+//               <p className="text-[9px] font-black uppercase tracking-widest">Term</p>
+//               <p className="text-lg font-black italic">0{idx}</p>
+//             </button>
+//           ))}
+//         </div>
+//       </CardHeader>
+
+//       <div className="p-8 space-y-3">
+//         {!terms[selectedTerm] || terms[selectedTerm].length === 0 ? (
+//           <p className="text-center py-10 text-slate-700 text-[10px] font-black uppercase italic tracking-widest">
+//             No roadmap defined for this term
+//           </p>
+//         ) : (
+//           terms[selectedTerm].map((topic: Topic, index: number) => (
+//               <div
+//                 key={topic.id}
+//                 onClick={() => router.push(`/student/lessons/${topic.id}`)}
+//                 className="flex items-center gap-4 p-5 rounded-2xl bg-slate-950 border border-white/5 cursor-pointer hover:border-school-primary/30 transition-all group"
+//               >
+//               <div className="h-8 w-8 flex items-center justify-center text-[10px] font-black text-slate-500">
+//                 {topic.weekNumber || index + 1}
+//               </div>
+
+//               <div className="flex-1">
+//                 <p className="text-sm font-black text-slate-200 uppercase italic">
+//                   {topic.title}
+//                 </p>
+//               </div>
+
+//               <CheckCircle2 className="h-4 w-4 text-slate-800 group-hover:text-school-primary transition-colors" />
+//             </div>
+//           ))
+//         )}
+//       </div>
+//     </Card>
+//   );
+// }
+
 "use client";
 
 import React, { useState, useMemo } from "react";
@@ -1950,11 +2272,10 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   BookOpen,
-  CheckCircle2,
   ArrowLeft,
-  User,
   ChevronRight,
   BookX,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { classifyNigerianSubject } from "@/lib/curriculum/nigeria";
@@ -1992,6 +2313,7 @@ interface SubjectsGridProps {
   subjects: GradeSubject[];
   classTeacherName: string;
   gradeLevel: number;
+  isIndependent: boolean; // Rule 6: Contextual toggle
 }
 
 // ── Main Component ──────────────────────────────────────────────────────────
@@ -2000,56 +2322,63 @@ export function SubjectsGrid({
   subjects,
   classTeacherName,
   gradeLevel,
+  isIndependent,
 }: SubjectsGridProps) {
   const [selectedSubject, setSelectedSubject] = useState<GradeSubject | null>(null);
 
+  /**
+   * Tiers View Logic:
+   * If a subject is selected, render the Syllabus/Curriculum deep dive.
+   */
   if (selectedSubject) {
     return (
       <CurriculumView
         subject={selectedSubject}
-        classTeacherName={classTeacherName}
+        classTeacherName={isIndependent ? "Global Academic AI" : classTeacherName}
         onBack={() => setSelectedSubject(null)}
       />
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">
-            {gradeLevel <= 9 ? "Full Curriculum" : "My Academic Load"}
+    <div className="space-y-8">
+      {/* Header logic based on Rule 6 (Independent Learners vs School Users) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter">
+            {isIndependent ? "Learning Library" : (gradeLevel <= 9 ? "Full Curriculum" : "My Academic Load")}
           </h2>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">
-            {gradeLevel <= 9
-              ? "Standard JSS syllabus automatically allocated"
-              : "Core subjects and selected electives"}
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">
+            {isIndependent 
+              ? "Self-paced global knowledge modules" 
+              : "Standardized institutional syllabus for your grade level"}
           </p>
         </div>
 
         <Badge
           variant="outline"
-          className="border-white/10 text-school-primary px-4 rounded-full font-black text-[10px] uppercase"
+          className="bg-slate-900 border-white/10 text-school-primary px-6 py-2 rounded-2xl font-black text-xs uppercase w-fit"
         >
-          {subjects.length} Modules
+          {subjects.length} Active Modules
         </Badge>
       </div>
 
       {subjects.length === 0 ? (
-        <div className="py-20 text-center bg-slate-900/40 rounded-[2rem] border border-dashed border-white/5">
-          <BookX className="h-10 w-10 text-slate-800 mx-auto mb-4" />
+        <div className="py-32 text-center bg-slate-900/40 rounded-[3rem] border border-dashed border-white/5">
+          <BookX className="h-12 w-12 text-slate-800 mx-auto mb-4" />
           <p className="text-slate-600 uppercase text-[10px] font-black tracking-widest">
-            No subjects found for this grade level
+            Registry Empty: Add modules to your learning path to begin.
           </p>
         </div>
       ) : (
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {subjects.map((gs) => (
             <SubjectCard
               key={gs.id}
               gs={gs}
-              classTeacherName={classTeacherName}
+              classTeacherName={isIndependent ? "Platform AI Support" : classTeacherName}
               isSSS={gradeLevel >= 10}
+              isIndependent={isIndependent}
               onSelect={() => setSelectedSubject(gs)}
             />
           ))}
@@ -2065,113 +2394,84 @@ interface SubjectCardProps {
   gs: GradeSubject;
   classTeacherName: string;
   isSSS: boolean;
+  isIndependent: boolean;
   onSelect: () => void;
 }
 
-function SubjectCard({ gs, classTeacherName, isSSS, onSelect }: SubjectCardProps) {
+function SubjectCard({ gs, classTeacherName, isSSS, isIndependent, onSelect }: SubjectCardProps) {
   const totalTopics = gs.topics?.length || 0;
-  const gradedTopics = gs.assessments?.length || 0;
+  const gradedCount = gs.assessments?.length || 0;
+  const progressPercent = totalTopics > 0 ? (gradedCount / totalTopics) * 100 : 0;
 
-  const progressPercent =
-    totalTopics > 0 ? (gradedTopics / totalTopics) * 100 : 0;
+  // Rule 9: Classify subject streams only for school context
+  const { isCompulsory, stream } = classifyNigerianSubject(gs.subject.name, !isSSS);
+  const isCore = !isIndependent && isSSS && isCompulsory;
 
-  const { isCompulsory, stream } = classifyNigerianSubject(
-    gs.subject.name,
-    !isSSS
-  );
-
-  const isCore = isSSS && isCompulsory;
-
-  // Assuming computeSubjectPerformance accepts the typed assessment array
+  // Rule 11: Performance derived from database assessments
   const performance = computeSubjectPerformance(gs.assessments || []);
 
   return (
     <Card
       className={cn(
-        "group cursor-pointer bg-slate-900 border-white/5 rounded-[2rem] transition-all hover:border-school-primary/30 shadow-xl overflow-hidden",
+        "group cursor-pointer bg-slate-900 border-white/5 rounded-[2.5rem] transition-all hover:border-school-primary/30 shadow-2xl overflow-hidden flex flex-col",
         isCore && "border-school-primary/20 bg-school-primary/[0.02]"
       )}
       onClick={onSelect}
     >
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex-1 min-w-0 space-y-3">
-            <div
-              className={cn(
-                "p-3 rounded-xl w-fit",
-                isCore
-                  ? "bg-school-primary text-slate-950"
-                  : "bg-school-primary/10 text-school-primary"
-              )}
-            >
-              <BookOpen className="h-5 w-5" />
+      <div className="p-8 space-y-6 flex-1">
+        <div className="flex items-start justify-between">
+          <div className="space-y-4 flex-1">
+            <div className={cn(
+                "p-4 rounded-2xl w-fit transition-colors",
+                isCore ? "bg-school-primary text-slate-950" : "bg-slate-950 text-school-primary group-hover:bg-school-primary/10"
+              )}>
+              {isIndependent ? <Globe className="h-6 w-6" /> : <BookOpen className="h-6 w-6" />}
             </div>
-
-            <div className="min-w-0">
-              <h3 className="text-sm font-black text-white uppercase italic tracking-tighter truncate">
+            <div>
+              <h3 className="text-xl font-black text-white uppercase italic tracking-tighter leading-tight">
                 {gs.subject.name}
               </h3>
-              <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1 truncate">
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">
                 {classTeacherName}
               </p>
             </div>
           </div>
 
-          <div className="flex gap-1 shrink-0">
-            {isCore && (
-              <Badge className="bg-school-primary text-slate-950 text-[8px] font-black uppercase px-2 py-0">
-                Core
-              </Badge>
-            )}
-            {stream && !isCore && (
-              <Badge className="bg-white/10 text-white text-[8px] font-black uppercase px-2 py-0">
-                {stream}
-              </Badge>
-            )}
+          <div className="flex flex-col gap-2 items-end">
+            {isCore && <Badge className="bg-school-primary text-slate-950 text-[8px] font-black uppercase px-2">Core</Badge>}
+            {stream && !isIndependent && <Badge className="bg-white/10 text-white text-[8px] font-black uppercase px-2">{stream}</Badge>}
           </div>
         </div>
 
-        <div className="mb-6 space-y-3">
+        <div className="space-y-4">
           <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-            <span className="text-slate-500">Score</span>
+            <span className="text-slate-500">Subject Proficiency</span>
             <span className="text-white">
-              {performance.total}%
-              <span className="ml-2 text-school-primary">
-                ({performance.grade})
-              </span>
+              {performance.total}% <span className="text-school-primary ml-1">[{performance.grade}]</span>
             </span>
           </div>
-          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-slate-400">
-            <span>CA: {performance.ca}</span>
-            <span>Exam: {performance.exam}</span>
+          
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-[9px] font-black uppercase text-slate-600">
+                <span>Course Completion</span>
+                <span>{gradedCount} / {totalTopics}</span>
+            </div>
+            <Progress value={progressPercent} className="h-1 bg-slate-950 [&>div]:bg-school-primary" />
           </div>
         </div>
+      </div>
 
-        <div className="mb-6 space-y-2">
-          <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
-            <span className="text-slate-500">Coverage</span>
-            <span className="text-slate-300">
-              {gradedTopics}/{totalTopics}
-            </span>
-          </div>
-          <Progress
-            value={progressPercent}
-            className="h-1 bg-slate-950 [&>div]:bg-school-primary"
-          />
-        </div>
-
-        <div className="flex items-center justify-between pt-4 border-t border-white/5">
-          <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em]">
-            Open Syllabus
-          </p>
-          <ChevronRight className="h-4 w-4 text-slate-800 group-hover:text-school-primary transition-all group-hover:translate-x-1" />
-        </div>
-      </CardContent>
+      <div className="px-8 py-6 bg-slate-950/50 border-t border-white/5 flex items-center justify-between">
+        <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.3em] group-hover:text-school-primary transition-colors">
+            Analyze Syllabus
+        </p>
+        <ChevronRight className="h-4 w-4 text-slate-800 group-hover:translate-x-1 group-hover:text-school-primary transition-all" />
+      </div>
     </Card>
   );
 }
 
-// ── Curriculum View ──────────────────────────────────────────────────────────
+// ── Curriculum View (Deep Dive Syllabus) ──────────────────────────────────────
 
 interface CurriculumViewProps {
   subject: GradeSubject;
@@ -2183,82 +2483,79 @@ function CurriculumView({ subject: gs, classTeacherName, onBack }: CurriculumVie
   const [selectedTerm, setSelectedTerm] = useState<number>(1);
   const router = useRouter();
 
-  const terms = useMemo(() => {
+  // Group topics by term for the UI
+  const termMap = useMemo(() => {
     const map: Record<number, Topic[]> = { 1: [], 2: [], 3: [] };
-
-    gs.topics?.forEach((t: Topic) => {
+    gs.topics?.forEach(t => {
       const idx = t.term?.index || 1;
       if (map[idx]) map[idx].push(t);
     });
-
     return map;
   }, [gs.topics]);
 
   return (
-    <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl animate-in slide-in-from-right-4">
-      <CardHeader className="bg-slate-950/50 p-8 border-b border-white/5">
-        <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="icon" onClick={onBack} className="rounded-xl hover:bg-white/5">
-            <ArrowLeft className="h-5 w-5 text-slate-400" />
-          </Button>
+    <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+      <Button 
+        variant="ghost" 
+        onClick={onBack} 
+        className="text-slate-500 hover:text-white uppercase font-black text-[10px] tracking-widest"
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
+      </Button>
 
-          <div className="flex-1">
-            <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter">
-              {gs.subject.name}
-            </h2>
-            <p className="text-xs text-slate-500 font-bold uppercase mt-2 flex items-center gap-2">
-              <User className="h-3 w-3 text-school-primary" />
-              Instructor: {classTeacherName}
+      <Card className="bg-slate-900 border-white/5 rounded-[3rem] overflow-hidden shadow-2xl">
+        <CardHeader className="bg-slate-950/50 p-10 border-b border-white/5">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">
+                        {gs.subject.name}
+                    </h2>
+                    <p className="text-xs text-slate-500 font-bold uppercase mt-2">
+                        Instructor Context: {classTeacherName}
+                    </p>
+                </div>
+                
+                <div className="flex gap-2 p-1.5 bg-slate-900 rounded-2xl w-fit border border-white/5">
+                    {[1, 2, 3].map(idx => (
+                        <button
+                            key={idx}
+                            onClick={() => setSelectedTerm(idx)}
+                            className={cn(
+                                "px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                                selectedTerm === idx ? "bg-school-primary text-slate-950 shadow-lg" : "text-slate-500 hover:text-white"
+                            )}
+                        >
+                            Term 0{idx}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </CardHeader>
+
+        <div className="p-10 grid gap-4 grid-cols-1 md:grid-cols-2">
+          {termMap[selectedTerm].length === 0 ? (
+            <p className="col-span-full py-20 text-center text-slate-700 text-xs font-black uppercase italic tracking-widest">
+              No academic roadmap defined for this term.
             </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-3">
-          {[1, 2, 3].map((idx) => (
-            <button
-              key={idx}
-              onClick={() => setSelectedTerm(idx)}
-              className={cn(
-                "p-4 rounded-2xl border text-left transition-all",
-                selectedTerm === idx
-                  ? "bg-school-primary text-slate-950 border-school-primary shadow-lg"
-                  : "bg-slate-950 border-white/5 text-slate-500"
-              )}
-            >
-              <p className="text-[9px] font-black uppercase tracking-widest">Term</p>
-              <p className="text-lg font-black italic">0{idx}</p>
-            </button>
-          ))}
-        </div>
-      </CardHeader>
-
-      <div className="p-8 space-y-3">
-        {!terms[selectedTerm] || terms[selectedTerm].length === 0 ? (
-          <p className="text-center py-10 text-slate-700 text-[10px] font-black uppercase italic tracking-widest">
-            No roadmap defined for this term
-          </p>
-        ) : (
-          terms[selectedTerm].map((topic: Topic, index: number) => (
+          ) : (
+            termMap[selectedTerm].map((topic, i) => (
               <div
                 key={topic.id}
                 onClick={() => router.push(`/student/lessons/${topic.id}`)}
-                className="flex items-center gap-4 p-5 rounded-2xl bg-slate-950 border border-white/5 cursor-pointer hover:border-school-primary/30 transition-all group"
+                className="flex items-center gap-6 p-6 rounded-3xl bg-slate-950 border border-white/5 cursor-pointer hover:border-school-primary/30 transition-all group shadow-xl"
               >
-              <div className="h-8 w-8 flex items-center justify-center text-[10px] font-black text-slate-500">
-                {topic.weekNumber || index + 1}
-              </div>
-
-              <div className="flex-1">
-                <p className="text-sm font-black text-slate-200 uppercase italic">
-                  {topic.title}
+                <div className="h-10 w-10 bg-slate-900 rounded-xl flex items-center justify-center text-xs font-black text-slate-600 group-hover:text-school-primary transition-colors">
+                  {topic.weekNumber || i + 1}
+                </div>
+                <p className="flex-1 text-sm font-bold text-slate-300 uppercase tracking-tight group-hover:text-white">
+                    {topic.title}
                 </p>
+                <ChevronRight className="h-4 w-4 text-slate-800 group-hover:text-school-primary transition-all" />
               </div>
-
-              <CheckCircle2 className="h-4 w-4 text-slate-800 group-hover:text-school-primary transition-colors" />
-            </div>
-          ))
-        )}
-      </div>
-    </Card>
+            ))
+          )}
+        </div>
+      </Card>
+    </div>
   );
 }

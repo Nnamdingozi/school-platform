@@ -286,7 +286,7 @@
 
 import { useEffect, useState } from 'react'
 import { useProfileStore } from '@/store/profileStore'
-import { getActivityFeed, ActivityItem } from '@/app/actions/activitylog.action'
+import { getActivityFeed, ActivityItem } from '@/app/actions/activitylog'
 import { ActivityType } from '@prisma/client'
 import {
     ClipboardCheck, FileText, UserPlus,

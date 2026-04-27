@@ -645,11 +645,286 @@
 // }
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// export interface GradeDistributionItem {
+//     name:  string
+//     value: number
+// }
+
+// export interface AssessmentScoreItem {
+//     subject: string
+//     average: number
+//     highest: number
+// }
+
+// export interface StatusDistributionItem {
+//     name:  string
+//     value: number
+// }
+
+// export interface CommunicationTrendItem {
+//     date: string
+//     count: number
+// }
+
+// export interface ContentHealthData {
+//     totalTopics: number
+//     withLessons: number
+//     withQuizzes: number
+// }
+
+// export interface AnalyticsData {
+//     gradeDistribution:  GradeDistributionItem[]
+//     assessmentScores:   AssessmentScoreItem[]
+//     statusDistribution: StatusDistributionItem[]
+//     communicationTrend: CommunicationTrendItem[]
+//     contentHealth:      ContentHealthData
+// }
+
+// export interface UnassignedStudent {
+//     id:        string
+//     name:      string | null
+//     email:     string
+//     phone:     string | null
+//     createdAt: Date
+// }
+
+// export interface UnassignedStudentsData {
+//     students:      UnassignedStudent[]
+//     total:         number
+//     totalStudents: number
+// }
+
+// // ── Main Analytics Fetcher ─────────────────────────────────────────────────────
+
+// export async function getAnalyticsData(schoolId: string): Promise<AnalyticsData | null> {
+//     try {
+//         const [
+//             gradeGroups,
+//             assessments,
+//             activeCount,
+//             totalStudents,
+//             whatsappLogs,
+//             topicsCount,
+//             schoolLessonsCount,
+//             quizzesCount
+//         ] = await Promise.all([
+//             // 1. Placement Data (Students per Class)
+//             prisma.classEnrollment.groupBy({
+//                 by: ['classId'],
+//                 where: { schoolId },
+//                 _count: { studentId: true },
+//             }),
+
+//             // 2. Performance Data
+//             prisma.assessment.findMany({
+//                 where: {
+//                     schoolId,
+//                     score: { not: null },
+//                     maxScore: { not: null },
+//                 },
+//                 select: {
+//                     score: true,
+//                     maxScore: true,
+//                     gradeSubject: {
+//                         select: {
+//                             subject: { select: { name: true } },
+//                         },
+//                     },
+//                 },
+//             }),
+
+//             // 3. Status Check
+//             prisma.profile.count({
+//                 where: {
+//                     schoolId,
+//                     role: 'STUDENT',
+//                     classEnrollments: { some: {} },
+//                 },
+//             }),
+
+//             // 4. Total Population
+//             prisma.profile.count({ where: { schoolId, role: 'STUDENT' } }),
+
+//             // 5. Communication Activity
+//             prisma.activityLog.findMany({
+//                 where: { 
+//                     schoolId, 
+//                     type: 'WHATSAPP_SENT',
+//                     createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
+//                 },
+//                 select: { createdAt: true }
+//             }),
+
+//             // 6. Academic Content Coverage
+//             // Total topics available to this school
+//             prisma.topic.count({ 
+//                 where: { 
+//                     OR: [
+//                         { schoolId },
+//                         { schoolId: null }
+//                     ]
+//                 } 
+//             }),
+//             // FIXED: Reference SchoolLesson to see what the school has actively used/customized
+//             prisma.schoolLesson.count({ where: { schoolId } }),
+//             // FIXED: Reference Quiz which is linked to GlobalLesson
+//             prisma.quiz.count({ 
+//                 where: { 
+//                     lesson: {
+//                         OR: [
+//                             { schoolId },
+//                             { schoolId: null }
+//                         ]
+//                     }
+//                 } 
+//             })
+//         ])
+
+//         // ── Process Grade Distribution ─────────────────────────────────
+//         const classIds = gradeGroups.map(g => g.classId).filter((id): id is string => id !== null);
+//         const classes = await prisma.class.findMany({
+//             where: { id: { in: classIds } },
+//             select: { id: true, grade: { select: { displayName: true } } }
+//         });
+
+//         const classGradeMap = new Map(classes.map(c => [c.id, c.grade.displayName]));
+//         const gradeCountMap = new Map<string, number>();
+
+//         for (const group of gradeGroups) {
+//             if (!group.classId) continue;
+//             const gradeName = classGradeMap.get(group.classId) ?? 'Unknown';
+//             gradeCountMap.set(gradeName, (gradeCountMap.get(gradeName) ?? 0) + group._count.studentId);
+//         }
+
+//         const gradeDistribution: GradeDistributionItem[] = Array.from(gradeCountMap.entries())
+//             .map(([name, value]) => ({ name, value }))
+//             .sort((a, b) => a.name.localeCompare(b.name));
+
+//         // ── Process Assessment Scores ──────────────────────────────────
+//         const subjectScoreMap = new Map<string, { scores: number[]; highest: number }>()
+//         for (const a of assessments) {
+//             const subjectName = a.gradeSubject?.subject?.name
+//             if (!subjectName || a.score === null || !a.maxScore) continue
+//             const pct = (a.score / a.maxScore) * 100
+//             const existing = subjectScoreMap.get(subjectName)
+//             if (existing) {
+//                 existing.scores.push(pct)
+//                 existing.highest = Math.max(existing.highest, pct)
+//             } else {
+//                 subjectScoreMap.set(subjectName, { scores: [pct], highest: pct })
+//             }
+//         }
+
+//         const assessmentScores: AssessmentScoreItem[] = Array.from(subjectScoreMap.entries())
+//             .map(([subject, { scores, highest }]) => ({
+//                 subject: subject.length > 12 ? subject.slice(0, 12) + '...' : subject,
+//                 average: Math.round(scores.reduce((s, v) => s + v, 0) / scores.length),
+//                 highest: Math.round(highest),
+//             }))
+//             .sort((a, b) => b.average - a.average)
+//             .slice(0, 6)
+
+//         // ── Process Status Distribution ────────────────────────────────
+//         const unassignedCount = totalStudents - activeCount
+//         const statusDistribution: StatusDistributionItem[] = [
+//             { name: 'Enrolled',   value: activeCount },
+//             { name: 'Unassigned', value: unassignedCount  },
+//         ].filter(s => s.value > 0)
+
+//         // ── Process Communication Trend ────────────────────────
+//         const trendMap = new Map<string, number>()
+//         for (let i = 6; i >= 0; i--) {
+//             const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+//             trendMap.set(d, 0)
+//         }
+
+//         whatsappLogs.forEach(log => {
+//             const dateKey = new Date(log.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+//             if (trendMap.has(dateKey)) trendMap.set(dateKey, (trendMap.get(dateKey) || 0) + 1)
+//         })
+
+//         const communicationTrend = Array.from(trendMap.entries()).map(([date, count]) => ({ date, count }))
+
+//         // ── Final Return ───────────────────────────────────────────────
+//         return {
+//             gradeDistribution,
+//             assessmentScores,
+//             statusDistribution,
+//             communicationTrend,
+//             contentHealth: {
+//                 totalTopics: topicsCount,
+//                 withLessons: schoolLessonsCount,
+//                 withQuizzes: quizzesCount
+//             }
+//         }
+
+//     } catch (err) {
+//         console.error('getAnalyticsData error:', getErrorMessage(err))
+//         return null
+//     }
+// }
+
+// // ── Get Unassigned Students ────────────────────────────────────────────────────
+
+// export async function getUnassignedStudents(schoolId: string): Promise<UnassignedStudentsData | null> {
+//     try {
+//         const [unassignedProfiles, totalStudents] = await Promise.all([
+//             prisma.profile.findMany({
+//                 where: {
+//                     schoolId,
+//                     role: 'STUDENT',
+//                     classEnrollments: { none: {} },
+//                 },
+//                 orderBy: { createdAt: 'desc' },
+//                 select: {
+//                     id:        true,
+//                     name:      true,
+//                     email:     true,
+//                     phone:     true,
+//                     createdAt: true,
+//                 },
+//             }),
+//             prisma.profile.count({
+//                 where: { schoolId, role: 'STUDENT' },
+//             }),
+//         ])
+
+//         // FIXED: Explicit mapping to ensure string | null compliance
+//         const students: UnassignedStudent[] = unassignedProfiles.map(p => ({
+//             id: p.id,
+//             name: p.name,
+//             email: p.email,
+//             phone: p.phone,
+//             createdAt: p.createdAt
+//         }))
+
+//         return {
+//             students,
+//             total:         students.length,
+//             totalStudents,
+//         }
+//     } catch (err) {
+//         console.error('getUnassignedStudents error:', getErrorMessage(err))
+//         return null
+//     }
+// }
+
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
-
+import { academicCoreScope } from '@/lib/content-scope'
+import { Role } from '@prisma/client'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -704,6 +979,10 @@ export interface UnassignedStudentsData {
 
 // ── Main Analytics Fetcher ─────────────────────────────────────────────────────
 
+/**
+ * Fetches institutional analytics for a specific school.
+ * Rule 5: Strictly isolated to the schoolId provided.
+ */
 export async function getAnalyticsData(schoolId: string): Promise<AnalyticsData | null> {
     try {
         const [
@@ -714,16 +993,16 @@ export async function getAnalyticsData(schoolId: string): Promise<AnalyticsData 
             whatsappLogs,
             topicsCount,
             schoolLessonsCount,
-            quizzesCount
+            globalQuestionsCount
         ] = await Promise.all([
-            // 1. Placement Data (Students per Class)
+            // 1. Placement Data (Tier 2)
             prisma.classEnrollment.groupBy({
                 by: ['classId'],
                 where: { schoolId },
                 _count: { studentId: true },
             }),
 
-            // 2. Performance Data
+            // 2. Performance Data (Tier 2)
             prisma.assessment.findMany({
                 where: {
                     schoolId,
@@ -741,19 +1020,19 @@ export async function getAnalyticsData(schoolId: string): Promise<AnalyticsData 
                 },
             }),
 
-            // 3. Status Check
+            // 3. User Context (Tier 2)
             prisma.profile.count({
                 where: {
                     schoolId,
-                    role: 'STUDENT',
+                    role: Role.STUDENT,
                     classEnrollments: { some: {} },
                 },
             }),
 
-            // 4. Total Population
-            prisma.profile.count({ where: { schoolId, role: 'STUDENT' } }),
+            // 4. Total Population (Tier 2)
+            prisma.profile.count({ where: { schoolId, role: Role.STUDENT } }),
 
-            // 5. Communication Activity
+            // 5. Communication Activity (Tier 2 Activity Logs)
             prisma.activityLog.findMany({
                 where: { 
                     schoolId, 
@@ -763,35 +1042,25 @@ export async function getAnalyticsData(schoolId: string): Promise<AnalyticsData 
                 select: { createdAt: true }
             }),
 
-            // 6. Academic Content Coverage
-            // Total topics available to this school
+            // 6. Academic Coverage (Tier 1 + Tier 2)
+            // Rule 7: Show topics the school can see (Global + School specific)
             prisma.topic.count({ 
-                where: { 
-                    OR: [
-                        { schoolId },
-                        { schoolId: null }
-                    ]
-                } 
+                where: academicCoreScope({ schoolId })
             }),
-            // FIXED: Reference SchoolLesson to see what the school has actively used/customized
+            
+            // Tier 2: Lessons specifically customized or generated by this school
             prisma.schoolLesson.count({ where: { schoolId } }),
-            // FIXED: Reference Quiz which is linked to GlobalLesson
-            prisma.quiz.count({ 
-                where: { 
-                    lesson: {
-                        OR: [
-                            { schoolId },
-                            { schoolId: null }
-                        ]
-                    }
-                } 
+            
+            // Tier 1: Global Questions available to use
+            prisma.question.count({ 
+                where: { isGlobal: true } 
             })
         ])
 
         // ── Process Grade Distribution ─────────────────────────────────
         const classIds = gradeGroups.map(g => g.classId).filter((id): id is string => id !== null);
         const classes = await prisma.class.findMany({
-            where: { id: { in: classIds } },
+            where: { id: { in: classIds }, schoolId },
             select: { id: true, grade: { select: { displayName: true } } }
         });
 
@@ -800,7 +1069,7 @@ export async function getAnalyticsData(schoolId: string): Promise<AnalyticsData 
 
         for (const group of gradeGroups) {
             if (!group.classId) continue;
-            const gradeName = classGradeMap.get(group.classId) ?? 'Unknown';
+            const gradeName = classGradeMap.get(group.classId) ?? 'Unassigned';
             gradeCountMap.set(gradeName, (gradeCountMap.get(gradeName) ?? 0) + group._count.studentId);
         }
 
@@ -833,7 +1102,7 @@ export async function getAnalyticsData(schoolId: string): Promise<AnalyticsData 
             .slice(0, 6)
 
         // ── Process Status Distribution ────────────────────────────────
-        const unassignedCount = totalStudents - activeCount
+        const unassignedCount = Math.max(0, totalStudents - activeCount)
         const statusDistribution: StatusDistributionItem[] = [
             { name: 'Enrolled',   value: activeCount },
             { name: 'Unassigned', value: unassignedCount  },
@@ -853,7 +1122,6 @@ export async function getAnalyticsData(schoolId: string): Promise<AnalyticsData 
 
         const communicationTrend = Array.from(trendMap.entries()).map(([date, count]) => ({ date, count }))
 
-        // ── Final Return ───────────────────────────────────────────────
         return {
             gradeDistribution,
             assessmentScores,
@@ -862,7 +1130,7 @@ export async function getAnalyticsData(schoolId: string): Promise<AnalyticsData 
             contentHealth: {
                 totalTopics: topicsCount,
                 withLessons: schoolLessonsCount,
-                withQuizzes: quizzesCount
+                withQuizzes: globalQuestionsCount // Representing question bank depth
             }
         }
 
@@ -874,13 +1142,17 @@ export async function getAnalyticsData(schoolId: string): Promise<AnalyticsData 
 
 // ── Get Unassigned Students ────────────────────────────────────────────────────
 
+/**
+ * Lists students in a school who haven't been assigned to a class.
+ * Rule 5: Strict school isolation.
+ */
 export async function getUnassignedStudents(schoolId: string): Promise<UnassignedStudentsData | null> {
     try {
         const [unassignedProfiles, totalStudents] = await Promise.all([
             prisma.profile.findMany({
                 where: {
                     schoolId,
-                    role: 'STUDENT',
+                    role: Role.STUDENT,
                     classEnrollments: { none: {} },
                 },
                 orderBy: { createdAt: 'desc' },
@@ -893,14 +1165,13 @@ export async function getUnassignedStudents(schoolId: string): Promise<Unassigne
                 },
             }),
             prisma.profile.count({
-                where: { schoolId, role: 'STUDENT' },
+                where: { schoolId, role: Role.STUDENT },
             }),
         ])
 
-        // FIXED: Explicit mapping to ensure string | null compliance
         const students: UnassignedStudent[] = unassignedProfiles.map(p => ({
             id: p.id,
-            name: p.name,
+            name: p.name ?? "Unknown Student",
             email: p.email,
             phone: p.phone,
             createdAt: p.createdAt

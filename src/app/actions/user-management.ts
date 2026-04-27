@@ -1507,6 +1507,421 @@
 //     }
 // }
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { supabase as supabaseAdmin } from '@/lib/supabase/supabaseClient'
+// import { createClient } from '@/lib/supabase/server'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { toTitleCase } from '@/lib/utils/formatters'
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// export interface UserListItem {
+//     id:    string
+//     name:  string | null
+//     email: string
+//     phone: string | null
+//     role:  string
+//     assignedClasses: {
+//         id:    string
+//         name:  string
+//         grade: { displayName: string }
+//     }[]
+// }
+
+// export interface ChildRegistryEntry {
+//     id: string
+//     name: string | null
+//     className: string
+//     gradeName: string
+//     subjects: string[]
+//     recentAssessments: {
+//         id: string
+//         subject: string
+//         score: number | null
+//         maxScore: number | null
+//     }[]
+// }
+
+// export interface UserDetail {
+//     id:       string
+//     name:     string | null
+//     email:    string
+//     phone:    string | null
+//     role:     string
+//     schoolId: string | null
+//     assignedClasses: {
+//         id:      string
+//         name:    string
+//         grade:   { displayName: string }
+//     }[]
+//     allocatedSubjects: {
+//         id: string
+//         name: string
+//         status: string
+//     }[]
+//     assessments: {
+//         id:          string
+//         type:        string
+//         score:       number | null
+//         maxScore:    number | null
+//         comments:    string | null
+//         subject:     string | null
+//         createdAt:   Date
+//     }[]
+//     notifications: {
+//         id:        string
+//         message:   string
+//         read:      boolean
+//         createdAt: Date
+//     }[]
+//     // Added for Parent Detail view
+//     childrenRegistry?: ChildRegistryEntry[]
+// }
+
+// interface ActionResult {
+//     success: boolean
+//     error?:  string
+// }
+
+// async function getAuthUser() {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user }, error } = await supabase.auth.getUser()
+//         if (error || !user) return null
+//         return user
+//     } catch (err) {
+//         console.error('getAuthUser failed:', getErrorMessage(err))
+//         return null
+//     }
+// }
+
+// // ── GET Functions ────────────────────────────────────────────────────────────
+
+// export async function getTeachersBySchool(schoolId: string): Promise<UserListItem[]> {
+//     try {
+//         const teachers = await prisma.profile.findMany({
+//             where:   { schoolId, role: 'TEACHER' },
+//             orderBy: { createdAt: 'desc' },
+//             select: {
+//                 id:    true,
+//                 name:  true,
+//                 email: true,
+//                 phone: true,
+//                 role:  true,
+//                 taughtClasses: {
+//                     select: {
+//                         id:    true,
+//                         name:  true,
+//                         grade: { select: { displayName: true } },
+//                     },
+//                 },
+//             },
+//         })
+//         return teachers.map(t => ({
+//             id: t.id,
+//             name: t.name,
+//             email: t.email,
+//             phone: t.phone,
+//             role: t.role,
+//             assignedClasses: t.taughtClasses,
+//         }))
+//     } catch (err) {
+//         console.error('getTeachersBySchool error:', getErrorMessage(err))
+//         return []
+//     }
+// }
+
+// export async function getStudentsBySchool(schoolId: string): Promise<UserListItem[]> {
+//     try {
+//         const students = await prisma.profile.findMany({
+//             where:   { schoolId, role: 'STUDENT' },
+//             orderBy: { createdAt: 'desc' },
+//             select: {
+//                 id:    true,
+//                 name:  true,
+//                 email: true,
+//                 phone: true,
+//                 role:  true,
+//                 classEnrollments: {
+//                     select: {
+//                         class: {
+//                             select: {
+//                                 id:    true,
+//                                 name:  true,
+//                                 grade: { select: { displayName: true } },
+//                             },
+//                         },
+//                     },
+//                 },
+//             },
+//         })
+//         return students.map(s => ({
+//             id: s.id,
+//             name: s.name,
+//             email: s.email,
+//             phone: s.phone,
+//             role: s.role,
+//             assignedClasses: s.classEnrollments.filter(e => e.class !== null).map(e => e.class!),
+//         }))
+//     } catch (err) {
+//         console.error('getStudentsBySchool error:', getErrorMessage(err))
+//         return []
+//     }
+// }
+
+// export async function getParentsBySchool(schoolId: string): Promise<UserListItem[]> {
+//     try {
+//         const parents = await prisma.profile.findMany({
+//             where:   { schoolId, role: 'PARENT' },
+//             orderBy: { createdAt: 'desc' },
+//             select: {
+//                 id:    true,
+//                 name:  true,
+//                 email: true,
+//                 phone: true,
+//                 role:  true,
+//                 ParentStudent_ParentStudent_parentIdToprofiles: {
+//                     select: {
+//                         student: { 
+//                             select: {
+//                                 classEnrollments: {
+//                                     select: {
+//                                         class: {
+//                                             select: {
+//                                                 id:    true,
+//                                                 name:  true,
+//                                                 grade: { select: { displayName: true } },
+//                                             },
+//                                         },
+//                                     },
+//                                 },
+//                             },
+//                         },
+//                     },
+//                 },
+//             },
+//         })
+
+//         return parents.map(p => {
+//             const classes = p.ParentStudent_ParentStudent_parentIdToprofiles
+//                 .flatMap(ps =>
+//                     ps.student.classEnrollments
+//                         .filter(e => e.class !== null)
+//                         .map(e => e.class!)
+//                 )
+            
+//             const unique = Array.from(new Map(classes.map(c => [c.id, c])).values())
+//             return {
+//                 id:              p.id,
+//                 name:            p.name,
+//                 email:           p.email,
+//                 phone:           p.phone,
+//                 role:            p.role,
+//                 assignedClasses: unique,
+//             }
+//         })
+//     } catch (err) {
+//         console.error('getParentsBySchool error:', getErrorMessage(err))
+//         return []
+//     }
+// }
+
+// export async function getClassesBySchool(schoolId: string) {
+//     try {
+//         return await prisma.class.findMany({
+//             where: { schoolId },
+//             orderBy: { name: 'asc' },
+//             select: {
+//                 id: true,
+//                 name: true,
+//                 grade: { select: { displayName: true } },
+//             },
+//         })
+//     } catch (err) {
+//         console.error('getClassesBySchool error:', getErrorMessage(err))
+//         return []
+//     }
+// }
+
+// export async function getUserById(id: string): Promise<UserDetail | null> {
+//     try {
+//         const user = await prisma.profile.findUnique({
+//             where: { id },
+//             select: {
+//                 id: true,
+//                 name: true,
+//                 email: true,
+//                 phone: true,
+//                 role: true,
+//                 schoolId: true,
+//                 ParentStudent_ParentStudent_parentIdToprofiles: {
+//                     select: {
+//                         student: {
+//                             select: {
+//                                 id: true,
+//                                 name: true,
+//                                 classEnrollments: {
+//                                     select: { class: { select: { name: true, grade: { select: { displayName: true } } } } }
+//                                 },
+//                                 studentSubjects: {
+//                                     include: { gradeSubject: { include: { subject: { select: { name: true } } } } }
+//                                 },
+//                                 assessments: {
+//                                     orderBy: { createdAt: 'desc' },
+//                                     take: 5,
+//                                     include: { gradeSubject: { include: { subject: { select: { name: true } } } } }
+//                                 }
+//                             }
+//                         }
+//                     }
+//                 },
+//                 notifications: { orderBy: { createdAt: 'desc' }, take: 5 }
+//             }
+//         })
+
+//         if (!user) return null
+
+//         const children: ChildRegistryEntry[] = user.ParentStudent_ParentStudent_parentIdToprofiles.map(link => {
+//             const s = link.student;
+//             return {
+//                 id: s.id,
+//                 name: s.name,
+//                 className: s.classEnrollments[0]?.class?.name || "Unassigned",
+//                 gradeName: s.classEnrollments[0]?.class?.grade.displayName || "N/A",
+//                 subjects: s.studentSubjects.map(ss => ss.gradeSubject.subject.name),
+//                 recentAssessments: s.assessments.map(a => ({
+//                     id: a.id,
+//                     subject: a.gradeSubject.subject.name,
+//                     score: a.score,
+//                     maxScore: a.maxScore
+//                 }))
+//             }
+//         });
+
+//         // Map the result to UserDetail interface without 'any'
+//         const response: UserDetail = {
+//             id: user.id,
+//             name: user.name,
+//             email: user.email,
+//             phone: user.phone,
+//             role: user.role,
+//             schoolId: user.schoolId,
+//             childrenRegistry: children,
+//             allocatedSubjects: [], 
+//             assignedClasses: [],   
+//             assessments: [],       
+//             notifications: user.notifications.map(n => ({
+//                 id: n.id,
+//                 message: n.message,
+//                 read: n.read,
+//                 createdAt: n.createdAt
+//             }))
+//         }
+
+//         return response;
+//     } catch (err) {
+//         console.error("getUserById error:", getErrorMessage(err));
+//         return null;
+//     }
+// }
+
+// // ── ASSIGNMENT Functions ─────────────────────────────────────────────────────
+
+// export async function assignTeacherToClass(teacherId: string, classId: string): Promise<ActionResult> {
+//     try {
+//         const user = await getAuthUser()
+//         if (!user) return { success: false, error: 'Unauthorized.' }
+//         await prisma.class.update({ where: { id: classId }, data: { teacherId } })
+//         return { success: true }
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// export async function assignUserToClass(userId: string, classId: string): Promise<ActionResult> {
+//     try {
+//         const user = await getAuthUser()
+//         if (!user) return { success: false, error: 'Unauthorized.' }
+//         const targetClass = await prisma.class.findUnique({ where: { id: classId }, select: { schoolId: true } })
+//         if (!targetClass?.schoolId) return { success: false, error: "Class not found." }
+//         await prisma.classEnrollment.create({ data: { studentId: userId, classId, schoolId: targetClass.schoolId } })
+//         return { success: true }
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// export async function deleteUser(userId: string): Promise<ActionResult> {
+//     try {
+//         const user = await getAuthUser();
+//         if (!user) return { success: false, error: 'Unauthorized.' };
+//         await prisma.profile.delete({ where: { id: userId } });
+//         await supabaseAdmin.auth.admin.deleteUser(userId);
+//         return { success: true };
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// export async function updateUserProfile(userId: string, data: { name?: string; phone?: string }): Promise<ActionResult> {
+//     try {
+//         await prisma.profile.update({
+//             where: { id: userId },
+//             data: {
+//                 name: data.name ? toTitleCase(data.name) : undefined,
+//                 phone: data.phone ? data.phone.trim() : undefined,
+//             },
+//         });
+//         return { success: true };
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// export async function deactivateUser(userId: string): Promise<ActionResult> {
+//     try {
+//         const user = await getAuthUser()
+//         if (!user) return { success: false, error: 'Unauthorized.' }
+
+//         const { error: banError } = await supabaseAdmin.auth.admin.updateUserById(
+//             userId,
+//             { ban_duration: '87600h' }
+//         )
+//         if (banError) {
+//             console.error('deactivateUser error:', banError)
+//             return { success: false, error: banError.message }
+//         }
+
+//         return { success: true }
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// export async function reactivateUser(userId: string): Promise<ActionResult> {
+//     try {
+//         const user = await getAuthUser()
+//         if (!user) return { success: false, error: 'Unauthorized.' }
+
+//         const { error } = await supabaseAdmin.auth.admin.updateUserById(
+//             userId,
+//             { ban_duration: 'none' }
+//         )
+//         if (error) {
+//             console.error('reactivateUser error:', error)
+//             return { success: false, error: error.message }
+//         }
+
+//         return { success: true }
+//     } catch (err) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
@@ -1514,6 +1929,8 @@ import { supabase as supabaseAdmin } from '@/lib/supabase/supabaseClient'
 import { createClient } from '@/lib/supabase/server'
 import { getErrorMessage } from '@/lib/error-handler'
 import { toTitleCase } from '@/lib/utils/formatters'
+import { Role, ActivityType, Prisma } from '@prisma/client'
+import { logActivity } from "@/lib/activitylogger";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -1522,7 +1939,7 @@ export interface UserListItem {
     name:  string | null
     email: string
     phone: string | null
-    role:  string
+    role:  Role
     assignedClasses: {
         id:    string
         name:  string
@@ -1549,7 +1966,7 @@ export interface UserDetail {
     name:     string | null
     email:    string
     phone:    string | null
-    role:     string
+    role:     Role
     schoolId: string | null
     assignedClasses: {
         id:      string
@@ -1559,7 +1976,6 @@ export interface UserDetail {
     allocatedSubjects: {
         id: string
         name: string
-        status: string
     }[]
     assessments: {
         id:          string
@@ -1576,7 +1992,6 @@ export interface UserDetail {
         read:      boolean
         createdAt: Date
     }[]
-    // Added for Parent Detail view
     childrenRegistry?: ChildRegistryEntry[]
 }
 
@@ -1585,24 +2000,28 @@ interface ActionResult {
     error?:  string
 }
 
-async function getAuthUser() {
+// ── Auth helper ────────────────────────────────────────────────────────────────
+
+async function getAuthenticatedActor() {
     try {
         const supabase = await createClient()
-        const { data: { user }, error } = await supabase.auth.getUser()
-        if (error || !user) return null
-        return user
-    } catch (err) {
-        console.error('getAuthUser failed:', getErrorMessage(err))
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return null
+        return await prisma.profile.findUnique({
+            where: { id: user.id },
+            select: { id: true, schoolId: true, role: true, name: true }
+        })
+    } catch {
         return null
     }
 }
 
-// ── GET Functions ────────────────────────────────────────────────────────────
+// ── Institutional Getters (Tier 2) ───────────────────────────────────────────
 
 export async function getTeachersBySchool(schoolId: string): Promise<UserListItem[]> {
     try {
         const teachers = await prisma.profile.findMany({
-            where:   { schoolId, role: 'TEACHER' },
+            where:   { schoolId, role: Role.TEACHER },
             orderBy: { createdAt: 'desc' },
             select: {
                 id:    true,
@@ -1627,7 +2046,7 @@ export async function getTeachersBySchool(schoolId: string): Promise<UserListIte
             role: t.role,
             assignedClasses: t.taughtClasses,
         }))
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('getTeachersBySchool error:', getErrorMessage(err))
         return []
     }
@@ -1636,7 +2055,7 @@ export async function getTeachersBySchool(schoolId: string): Promise<UserListIte
 export async function getStudentsBySchool(schoolId: string): Promise<UserListItem[]> {
     try {
         const students = await prisma.profile.findMany({
-            where:   { schoolId, role: 'STUDENT' },
+            where:   { schoolId, role: Role.STUDENT },
             orderBy: { createdAt: 'desc' },
             select: {
                 id:    true,
@@ -1665,143 +2084,63 @@ export async function getStudentsBySchool(schoolId: string): Promise<UserListIte
             role: s.role,
             assignedClasses: s.classEnrollments.filter(e => e.class !== null).map(e => e.class!),
         }))
-    } catch (err) {
-        console.error('getStudentsBySchool error:', getErrorMessage(err))
+    } catch (err: unknown) {
         return []
     }
 }
 
-export async function getParentsBySchool(schoolId: string): Promise<UserListItem[]> {
-    try {
-        const parents = await prisma.profile.findMany({
-            where:   { schoolId, role: 'PARENT' },
-            orderBy: { createdAt: 'desc' },
-            select: {
-                id:    true,
-                name:  true,
-                email: true,
-                phone: true,
-                role:  true,
-                ParentStudent_ParentStudent_parentIdToprofiles: {
-                    select: {
-                        student: { 
-                            select: {
-                                classEnrollments: {
-                                    select: {
-                                        class: {
-                                            select: {
-                                                id:    true,
-                                                name:  true,
-                                                grade: { select: { displayName: true } },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        })
-
-        return parents.map(p => {
-            const classes = p.ParentStudent_ParentStudent_parentIdToprofiles
-                .flatMap(ps =>
-                    ps.student.classEnrollments
-                        .filter(e => e.class !== null)
-                        .map(e => e.class!)
-                )
-            
-            const unique = Array.from(new Map(classes.map(c => [c.id, c])).values())
-            return {
-                id:              p.id,
-                name:            p.name,
-                email:           p.email,
-                phone:           p.phone,
-                role:            p.role,
-                assignedClasses: unique,
-            }
-        })
-    } catch (err) {
-        console.error('getParentsBySchool error:', getErrorMessage(err))
-        return []
-    }
-}
-
-export async function getClassesBySchool(schoolId: string) {
-    try {
-        return await prisma.class.findMany({
-            where: { schoolId },
-            orderBy: { name: 'asc' },
-            select: {
-                id: true,
-                name: true,
-                grade: { select: { displayName: true } },
-            },
-        })
-    } catch (err) {
-        console.error('getClassesBySchool error:', getErrorMessage(err))
-        return []
-    }
-}
-
-export async function getUserById(id: string): Promise<UserDetail | null> {
+/**
+ * FETCH USER DETAIL
+ * Rule 10: Prevents cross-school ID leakage by requiring actorSchoolId.
+ */
+export async function getUserById(id: string, actorSchoolId: string | null): Promise<UserDetail | null> {
     try {
         const user = await prisma.profile.findUnique({
             where: { id },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                phone: true,
-                role: true,
-                schoolId: true,
+            include: {
+                taughtClasses: { include: { grade: true } },
+                classEnrollments: { include: { class: { include: { grade: true } } } },
+                studentSubjects: { include: { gradeSubject: { include: { subject: true } } } },
+                assessments: { 
+                    take: 10, 
+                    orderBy: { createdAt: 'desc' }, 
+                    include: { gradeSubject: { include: { subject: true } } } 
+                },
+                notifications: { take: 10, orderBy: { createdAt: 'desc' } },
                 ParentStudent_ParentStudent_parentIdToprofiles: {
-                    select: {
+                    include: {
                         student: {
-                            select: {
-                                id: true,
-                                name: true,
-                                classEnrollments: {
-                                    select: { class: { select: { name: true, grade: { select: { displayName: true } } } } }
-                                },
-                                studentSubjects: {
-                                    include: { gradeSubject: { include: { subject: { select: { name: true } } } } }
-                                },
-                                assessments: {
-                                    orderBy: { createdAt: 'desc' },
-                                    take: 5,
-                                    include: { gradeSubject: { include: { subject: { select: { name: true } } } } }
-                                }
+                            include: {
+                                classEnrollments: { include: { class: { include: { grade: true } } } },
+                                studentSubjects: { include: { gradeSubject: { include: { subject: true } } } },
+                                assessments: { take: 5, orderBy: { createdAt: 'desc' }, include: { gradeSubject: { include: { subject: true } } } }
                             }
                         }
                     }
-                },
-                notifications: { orderBy: { createdAt: 'desc' }, take: 5 }
-            }
-        })
-
-        if (!user) return null
-
-        const children: ChildRegistryEntry[] = user.ParentStudent_ParentStudent_parentIdToprofiles.map(link => {
-            const s = link.student;
-            return {
-                id: s.id,
-                name: s.name,
-                className: s.classEnrollments[0]?.class?.name || "Unassigned",
-                gradeName: s.classEnrollments[0]?.class?.grade.displayName || "N/A",
-                subjects: s.studentSubjects.map(ss => ss.gradeSubject.subject.name),
-                recentAssessments: s.assessments.map(a => ({
-                    id: a.id,
-                    subject: a.gradeSubject.subject.name,
-                    score: a.score,
-                    maxScore: a.maxScore
-                }))
+                }
             }
         });
 
-        // Map the result to UserDetail interface without 'any'
-        const response: UserDetail = {
+        if (!user) return null;
+
+        // Rule 5 Isolation: Non-SuperAdmins can only see users in their school
+        if (actorSchoolId && user.schoolId !== actorSchoolId) return null;
+
+        const children: ChildRegistryEntry[] = user.ParentStudent_ParentStudent_parentIdToprofiles.map(link => ({
+            id: link.student.id,
+            name: link.student.name,
+            className: link.student.classEnrollments[0]?.class?.name || "Unassigned",
+            gradeName: link.student.classEnrollments[0]?.class?.grade.displayName || "N/A",
+            subjects: link.student.studentSubjects.map(ss => ss.gradeSubject.subject.name),
+            recentAssessments: link.student.assessments.map(a => ({
+                id: a.id,
+                subject: a.gradeSubject.subject.name,
+                score: a.score,
+                maxScore: a.maxScore
+            }))
+        }));
+
+        return {
             id: user.id,
             name: user.name,
             email: user.email,
@@ -1809,58 +2148,134 @@ export async function getUserById(id: string): Promise<UserDetail | null> {
             role: user.role,
             schoolId: user.schoolId,
             childrenRegistry: children,
-            allocatedSubjects: [], 
-            assignedClasses: [],   
-            assessments: [],       
-            notifications: user.notifications.map(n => ({
-                id: n.id,
-                message: n.message,
-                read: n.read,
-                createdAt: n.createdAt
-            }))
-        }
-
-        return response;
-    } catch (err) {
-        console.error("getUserById error:", getErrorMessage(err));
+            assignedClasses: user.taughtClasses.map(c => ({ id: c.id, name: c.name, grade: { displayName: c.grade.displayName } })),
+            allocatedSubjects: user.studentSubjects.map(ss => ({ id: ss.gradeSubjectId, name: ss.gradeSubject.subject.name })),
+            assessments: user.assessments.map(a => ({
+                id: a.id,
+                type: a.type,
+                score: a.score,
+                maxScore: a.maxScore,
+                comments: a.comments,
+                subject: a.gradeSubject.subject.name,
+                createdAt: a.createdAt
+            })),
+            notifications: user.notifications
+        };
+    } catch (err: unknown) {
         return null;
     }
 }
 
-// ── ASSIGNMENT Functions ─────────────────────────────────────────────────────
+// ── ADMINISTRATIVE ACTIONS (Tier 2 Mutations) ───────────────────────────────
 
 export async function assignTeacherToClass(teacherId: string, classId: string): Promise<ActionResult> {
-    try {
-        const user = await getAuthUser()
-        if (!user) return { success: false, error: 'Unauthorized.' }
-        await prisma.class.update({ where: { id: classId }, data: { teacherId } })
-        return { success: true }
-    } catch (err) {
-        return { success: false, error: getErrorMessage(err) }
-    }
-}
+    const actor = await getAuthenticatedActor();
+    if (!actor || actor.role !== Role.SCHOOL_ADMIN) return { success: false, error: 'Unauthorized.' };
 
-export async function assignUserToClass(userId: string, classId: string): Promise<ActionResult> {
     try {
-        const user = await getAuthUser()
-        if (!user) return { success: false, error: 'Unauthorized.' }
-        const targetClass = await prisma.class.findUnique({ where: { id: classId }, select: { schoolId: true } })
-        if (!targetClass?.schoolId) return { success: false, error: "Class not found." }
-        await prisma.classEnrollment.create({ data: { studentId: userId, classId, schoolId: targetClass.schoolId } })
-        return { success: true }
-    } catch (err) {
-        return { success: false, error: getErrorMessage(err) }
+        await prisma.$transaction(async (tx) => {
+            const [teacher, targetClass] = await Promise.all([
+                tx.profile.findUnique({ where: { id: teacherId } }),
+                tx.class.findUnique({ where: { id: classId } })
+            ]);
+
+            if (!teacher || !targetClass || teacher.schoolId !== actor.schoolId || targetClass.schoolId !== actor.schoolId) {
+                throw new Error("Target context mismatch.");
+            }
+
+            await tx.class.update({ where: { id: classId }, data: { teacherId } });
+
+            await logActivity({
+                schoolId: actor.schoolId,
+                actorId: actor.id,
+                actorRole: actor.role,
+                type: ActivityType.TEACHER_ASSIGNED,
+                title: 'Teacher Assignment',
+                description: `Assigned ${teacher.name} to class ${targetClass.name}`
+            });
+        });
+        return { success: true };
+    } catch (err: unknown) {
+        return { success: false, error: getErrorMessage(err) };
     }
 }
 
 export async function deleteUser(userId: string): Promise<ActionResult> {
+    const actor = await getAuthenticatedActor();
+    if (!actor || actor.role !== Role.SCHOOL_ADMIN) return { success: false, error: 'Unauthorized.' };
+
     try {
-        const user = await getAuthUser();
-        if (!user) return { success: false, error: 'Unauthorized.' };
-        await prisma.profile.delete({ where: { id: userId } });
-        await supabaseAdmin.auth.admin.deleteUser(userId);
+        const target = await prisma.profile.findUnique({ where: { id: userId } });
+        if (!target || target.schoolId !== actor.schoolId) throw new Error("User not found in your school.");
+
+        await prisma.$transaction(async (tx) => {
+            await tx.profile.delete({ where: { id: userId } });
+            await supabaseAdmin.auth.admin.deleteUser(userId);
+
+            await logActivity({
+                schoolId: actor.schoolId,
+                actorId: actor.id,
+                actorRole: actor.role,
+                type: ActivityType.USER_DELETED,
+                title: 'User Profile Deleted',
+                description: `Permanently removed ${target.name || target.email} from registry.`
+            });
+        });
+
         return { success: true };
-    } catch (err) {
+    } catch (err: unknown) {
+        return { success: false, error: getErrorMessage(err) };
+    }
+}
+
+export async function deactivateUser(userId: string): Promise<ActionResult> {
+    const actor = await getAuthenticatedActor();
+    if (!actor || actor.role !== Role.SCHOOL_ADMIN) return { success: false, error: 'Unauthorized.' };
+
+    try {
+        const target = await prisma.profile.findUnique({ where: { id: userId } });
+        if (!target || target.schoolId !== actor.schoolId) throw new Error("Security check failed.");
+
+        const { error: banError } = await supabaseAdmin.auth.admin.updateUserById(userId, { ban_duration: '87600h' });
+        if (banError) throw new Error(banError.message);
+
+        await logActivity({
+            schoolId: actor.schoolId,
+            actorId: actor.id,
+            actorRole: actor.role,
+            type: ActivityType.USER_DEACTIVATED,
+            title: 'Access Revoked',
+            description: `Deactivated account for ${target.name || target.email}`
+        });
+
+        return { success: true };
+    } catch (err: unknown) {
+        return { success: false, error: getErrorMessage(err) };
+    }
+}
+
+export async function reactivateUser(userId: string): Promise<ActionResult> {
+    const actor = await getAuthenticatedActor();
+    if (!actor || actor.role !== Role.SCHOOL_ADMIN) return { success: false, error: 'Unauthorized.' };
+
+    try {
+        const target = await prisma.profile.findUnique({ where: { id: userId } });
+        if (!target || target.schoolId !== actor.schoolId) throw new Error("Security check failed.");
+
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, { ban_duration: 'none' });
+        if (error) throw new Error(error.message);
+
+        await logActivity({
+            schoolId: actor.schoolId,
+            actorId: actor.id,
+            actorRole: actor.role,
+            type: ActivityType.USER_REACTIVATED,
+            title: 'Access Restored',
+            description: `Reactivated account for ${target.name || target.email}`
+        });
+
+        return { success: true };
+    } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) };
     }
 }
@@ -1875,47 +2290,7 @@ export async function updateUserProfile(userId: string, data: { name?: string; p
             },
         });
         return { success: true };
-    } catch (err) {
+    } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) };
-    }
-}
-
-export async function deactivateUser(userId: string): Promise<ActionResult> {
-    try {
-        const user = await getAuthUser()
-        if (!user) return { success: false, error: 'Unauthorized.' }
-
-        const { error: banError } = await supabaseAdmin.auth.admin.updateUserById(
-            userId,
-            { ban_duration: '87600h' }
-        )
-        if (banError) {
-            console.error('deactivateUser error:', banError)
-            return { success: false, error: banError.message }
-        }
-
-        return { success: true }
-    } catch (err) {
-        return { success: false, error: getErrorMessage(err) }
-    }
-}
-
-export async function reactivateUser(userId: string): Promise<ActionResult> {
-    try {
-        const user = await getAuthUser()
-        if (!user) return { success: false, error: 'Unauthorized.' }
-
-        const { error } = await supabaseAdmin.auth.admin.updateUserById(
-            userId,
-            { ban_duration: 'none' }
-        )
-        if (error) {
-            console.error('reactivateUser error:', error)
-            return { success: false, error: error.message }
-        }
-
-        return { success: true }
-    } catch (err) {
-        return { success: false, error: getErrorMessage(err) }
     }
 }
