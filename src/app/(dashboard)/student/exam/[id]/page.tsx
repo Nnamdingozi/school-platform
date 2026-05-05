@@ -728,59 +728,205 @@
 
 
 
-import { getStudentExam } from "@/app/actions/studentExam";
-import ExamClient, { StudentExamPayload } from "@/components/student-dashboard/exams/examClient";
+// import { getStudentExam } from "@/app/actions/studentExam";
+// import ExamClient, { StudentExamPayload } from "@/components/student-dashboard/exams/examClient";
+// import { notFound, redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { Role } from "@prisma/client";
+
+// interface PageProps {
+//   params: Promise<{ id: string }>;
+// }
+
+// /**
+//  * EXAM RUNNER SERVER PAGE 
+//  * Rule 5: Strict school isolation.
+//  * Rule 6: Independent learners are redirected (Institutional feature only).
+//  * Rule 10: Server-side identity and context validation.
+//  */
+// export default async function ExamRunnerPage({ params }: PageProps) {
+//   try {
+//     const { id: examId } = await params;
+
+//     // 1. Establish Identity & Context (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) redirect("/login");
+
+//     // Fetch profile to verify schoolId and role
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     if (!profile) redirect("/login");
+
+//     // 2. Rule 6: Block Independent Learners from high-stakes exams
+//     if (!profile.schoolId || profile.role === Role.INDIVIDUAL_LEARNER) {
+//         redirect("/student?error=exams_restricted_to_schools");
+//     }
+
+//     // 3. Fetch Exam Data with verified school isolation (Rule 5)
+//     const result = await getStudentExam({
+//         examId,
+//         userId: profile.id,
+//         schoolId: profile.schoolId
+//     });
+
+//     // 4. Verification & Sanitization
+//     if (!result.success || !result.data) {
+//         // Return 404 to prevent ID enumeration/leaking exam existence
+//         return notFound();
+//     }
+
+//     // Map the response to the StudentExamPayload interface required by the client
+//     const examPayload: StudentExamPayload = {
+//         id: result.data.id,
+//         title: result.data.title,
+//         duration: result.data.duration,
+//         startTime: result.data.startTime,
+//         status: result.data.status,
+//         classId: result.data.classId,
+//         questions: result.data.questions.map(q => ({
+//             id: q.id,
+//             text: q.text,
+//             options: q.options,
+//             points: 1 // Default point value for UI display
+//         }))
+//     };
+
+//     /**
+//      * 5. Render Client Component
+//      * ✅ FIXED: Now passing the missing userId and schoolId props
+//      */
+//     return (
+//         <main className="min-h-screen bg-slate-950">
+//             <ExamClient 
+//                 exam={examPayload} 
+//                 userId={profile.id} 
+//                 schoolId={profile.schoolId} 
+//             />
+//         </main>
+//     );
+
+//   } catch (error: unknown) {
+//     console.error("[EXAM_PAGE_SECURITY_FAILURE]:", error);
+//     return (
+//       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+//         <div className="h-16 w-16 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center text-red-500 mb-6">
+//             <ShieldAlert className="h-8 w-8" />
+//         </div>
+//         <h2 className="text-xl font-black text-white uppercase italic tracking-tighter mb-2">
+//             Registry Sync Error
+//         </h2>
+//         <p className="text-slate-500 text-xs font-bold uppercase tracking-widest max-w-xs">
+//           Establishing secure institutional context failed. Registry access denied.
+//         </p>
+//       </div>
+//     );
+//   }
+// }
+
+// /**
+//  * Local SVG Helper
+//  */
+// function ShieldAlert({ className }: { className?: string }) {
+//     return (
+//         <svg 
+//             xmlns="http://www.w3.org/2000/svg" 
+//             viewBox="0 0 24 24" 
+//             fill="none" 
+//             stroke="currentColor" 
+//             strokeWidth="2" 
+//             strokeLinecap="round" 
+//             strokeLinejoin="round" 
+//             className={className}
+//         >
+//             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+//             <path d="M12 8v4" />
+//             <path d="M12 16h.01" />
+//         </svg>
+//     );
+// }
+
+
+
+import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
+import { getStudentExam } from "@/app/actions/studentExam";
+import ExamClient, { StudentExamPayload } from "@/components/student-dashboard/exams/examClient";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
 /**
+ * Rule 16: Contextual SEO
+ * Fetches the exam title to display in the browser tab.
+ */
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  
+  const exam = await prisma.exam.findUnique({
+    where: { id },
+    select: { title: true }
+  });
+
+  return {
+    title: `${exam?.title || "CBT Exam"} | Assessment Registry | SchoolPaaS`,
+    description: "Institutional Computer Based Testing environment."
+  };
+}
+
+/**
  * EXAM RUNNER SERVER PAGE 
+ * Rule 12: Server-First Execution.
  * Rule 5: Strict school isolation.
  * Rule 6: Independent learners are redirected (Institutional feature only).
- * Rule 10: Server-side identity and context validation.
  */
 export default async function ExamRunnerPage({ params }: PageProps) {
   try {
     const { id: examId } = await params;
 
-    // 1. Establish Identity & Context (Rule 10)
+    // 1. Resolve Identity & Context (Rule 10 Security)
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) redirect("/login");
 
-    // Fetch profile to verify schoolId and role
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         select: { id: true, schoolId: true, role: true }
     });
 
     if (!profile) redirect("/login");
 
-    // 2. Rule 6: Block Independent Learners from high-stakes exams
+    // 2. Rule 6: Identity Guard
+    // CBT Exams require a physical school context (Tier 2).
     if (!profile.schoolId || profile.role === Role.INDIVIDUAL_LEARNER) {
-        redirect("/student?error=exams_restricted_to_schools");
+        redirect("/student?error=institutional_access_required");
     }
 
-    // 3. Fetch Exam Data with verified school isolation (Rule 5)
+    // 3. Fetch Sanatized Exam Data (Rule 5 & 10)
     const result = await getStudentExam({
         examId,
         userId: profile.id,
         schoolId: profile.schoolId
     });
 
-    // 4. Verification & Sanitization
+    // 4. Verification
     if (!result.success || !result.data) {
-        // Return 404 to prevent ID enumeration/leaking exam existence
+        // Prevent ID enumeration by returning 404
         return notFound();
     }
 
-    // Map the response to the StudentExamPayload interface required by the client
+    /**
+     * 5. Rule 15: Map to Strict Prop Type
+     * We convert the server response into the payload expected by the client component.
+     */
     const examPayload: StudentExamPayload = {
         id: result.data.id,
         title: result.data.title,
@@ -792,16 +938,12 @@ export default async function ExamRunnerPage({ params }: PageProps) {
             id: q.id,
             text: q.text,
             options: q.options,
-            points: 1 // Default point value for UI display
+            points: 1 // Default point weight
         }))
     };
 
-    /**
-     * 5. Render Client Component
-     * ✅ FIXED: Now passing the missing userId and schoolId props
-     */
     return (
-        <main className="min-h-screen bg-slate-950">
+        <main className="min-h-screen bg-slate-950 animate-in fade-in duration-1000">
             <ExamClient 
                 exam={examPayload} 
                 userId={profile.id} 
@@ -811,7 +953,7 @@ export default async function ExamRunnerPage({ params }: PageProps) {
     );
 
   } catch (error: unknown) {
-    console.error("[EXAM_PAGE_SECURITY_FAILURE]:", error);
+    console.error("[EXAM_PAGE_REGISTRY_FAILURE]:", error);
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
         <div className="h-16 w-16 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center text-red-500 mb-6">
@@ -820,8 +962,8 @@ export default async function ExamRunnerPage({ params }: PageProps) {
         <h2 className="text-xl font-black text-white uppercase italic tracking-tighter mb-2">
             Registry Sync Error
         </h2>
-        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest max-w-xs">
-          Establishing secure institutional context failed. Registry access denied.
+        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest max-w-xs leading-relaxed">
+          Critical failure establishing a secure connection to the institutional assessment vault.
         </p>
       </div>
     );

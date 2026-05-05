@@ -1308,470 +1308,544 @@
 // }
 
 
+// 'use client'
+
+// import { useState, useEffect, useRef } from 'react'
+// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+// import { Label } from '@/components/ui/label'
+// import { Input } from '@/components/ui/input'
+// import { Button } from '@/components/ui/button'
+// import {
+//     Eye, RefreshCw, Save, Loader2,
+//     CheckCircle2, AlertCircle, School,
+//     Pencil, Info,
+// } from 'lucide-react'
+// import { updateSchoolProfile, SchoolSettingsData } from '@/app/actions/school-settings.action'
+// import { toast } from 'sonner'
+// import { cn } from '@/lib/utils'
+
+// // ── Hex validation ─────────────────────────────────────────────────────────────
+// function isValidHex(color: string): boolean {
+//     return /^#[0-9A-Fa-f]{6}$/.test(color)
+// }
+
+// // ── Save Button ────────────────────────────────────────────────────────────────
+// function SaveButton({
+//     saving, saved, disabled, onClick,
+// }: {
+//     saving: boolean; saved: boolean; disabled: boolean; onClick: () => void
+// }) {
+//     return (
+//         <Button
+//             onClick={onClick}
+//             disabled={disabled}
+//             size="sm"
+//             className={cn(
+//                 'h-8 px-4 text-xs font-bold transition-all',
+//                 saved
+//                     ? 'bg-green-500 hover:bg-green-600 text-white'
+//                     : 'bg-school-primary hover:bg-school-primary-600 text-school-secondary-950 disabled:opacity-40'
+//             )}
+//         >
+//             {saving ? (
+//                 <><Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />Saving...</>
+//             ) : saved ? (
+//                 <><CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />Saved!</>
+//             ) : (
+//                 <><Save className="h-3.5 w-3.5 mr-1.5" />Save Changes</>
+//             )}
+//         </Button>
+//     )
+// }
+
+// // ── Editable hint ──────────────────────────────────────────────────────────────
+// function EditableHint({ text }: { text: string }) {
+//     return (
+//         <div className="flex items-center gap-1.5 text-[10px] text-school-secondary-500">
+//             <Pencil className="h-2.5 w-2.5 shrink-0" />
+//             <span>{text}</span>
+//         </div>
+//     )
+// }
+
+// // ── Color Field ────────────────────────────────────────────────────────────────
+// function ColorField({
+//     label, hint, value, original, savedValue, onChange,
+// }: {
+//     label:      string
+//     hint:       string
+//     value:      string
+//     original:   string
+//     savedValue: string
+//     onChange:   (v: string) => void
+// }) {
+//     const valid   = isValidHex(value)
+//     const changed = value !== savedValue
+
+//     return (
+//         <div className={cn(
+//             'space-y-2.5 rounded-xl border p-3 transition-all',
+//             changed
+//                 ? 'border-school-primary/40 bg-school-primary/5'
+//                 : 'border-school-secondary-500 bg-school-secondary-800/30'
+//         )}>
+//             <div className="flex items-center justify-between">
+//                 <div className="space-y-0.5">
+//                     <p className="text-[10px] font-bold text-white uppercase tracking-wider">
+//                         {label}
+//                     </p>
+//                     <p className="text-[11px] text-school-secondary-500">{hint}</p>
+//                 </div>
+//                 {changed && (
+//                     <button
+//                         onClick={() => onChange(original)}
+//                         title="Reset to saved value"
+//                         className="flex items-center gap-1 text-[10px] text-school-secondary-400 hover:text-amber-400 transition-colors shrink-0"
+//                     >
+//                         <RefreshCw className="h-2.5 w-2.5" />
+//                         Reset
+//                     </button>
+//                 )}
+//             </div>
+
+//             {/* Picker + hex input */}
+//             <div className="flex items-center gap-2">
+//                 <div className="relative shrink-0">
+//                     <input
+//                         type="color"
+//                         value={valid ? value : original}
+//                         onChange={e => onChange(e.target.value)}
+//                         className="h-10 w-10 cursor-pointer rounded-lg border-2 border-school-secondary-500 bg-transparent p-0.5 hover:border-school-primary transition-colors"
+//                         title="Click to open color picker"
+//                     />
+//                     <div className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full bg-school-secondary-700 border border-school-secondary-600 flex items-center justify-center">
+//                         <Pencil className="h-2 w-2 text-school-secondary-400" />
+//                     </div>
+//                 </div>
+//                 <div className="flex-1 space-y-1">
+//                     <Input
+//                         value={value}
+//                         onChange={e => onChange(e.target.value)}
+//                         maxLength={7}
+//                         placeholder="#000000"
+//                         className={cn(
+//                             'font-mono text-xs text-white h-10 transition-all',
+//                             !valid
+//                                 ? 'bg-red-500/5 border-red-500/60 hover:border-red-400 focus:border-red-400'
+//                                 : changed
+//                                 ? 'bg-school-primary/5 border-school-primary/50 hover:border-school-primary focus:border-school-primary'
+//                                 : 'bg-school-secondary-800 border-school-secondary-500 hover:border-school-secondary-300 focus:border-school-primary'
+//                         )}
+//                     />
+//                     <p className="text-[10px] text-school-secondary-500 ml-1">
+//                         Type a hex value or use the color picker
+//                     </p>
+//                 </div>
+//             </div>
+
+//             {/* Swatch */}
+//             <div className="space-y-1">
+//                 <div
+//                     className={cn(
+//                         'h-5 w-full rounded-lg border-2 transition-colors',
+//                         valid
+//                             ? changed ? 'border-school-primary/40' : 'border-school-secondary-500'
+//                             : 'border-red-500/40'
+//                     )}
+//                     style={{ backgroundColor: valid ? value : 'transparent' }}
+//                 />
+//                 <p className="text-[10px] text-school-secondary-500 text-right">
+//                     Color preview
+//                 </p>
+//             </div>
+
+//             {!valid && (
+//                 <p className="flex items-center gap-1 text-[11px] text-red-400">
+//                     <AlertCircle className="h-3 w-3 shrink-0" />
+//                     Enter a valid hex color (e.g. #f59e0b)
+//                 </p>
+//             )}
+
+//             {changed && valid && (
+//                 <p className="flex items-center gap-1 text-[11px] text-school-primary">
+//                     <CheckCircle2 className="h-3 w-3 shrink-0" />
+//                     Color updated — save to apply
+//                 </p>
+//             )}
+//         </div>
+//     )
+// }
+
+// // ── Props ──────────────────────────────────────────────────────────────────────
+// interface ProfileSectionProps {
+//     data:     SchoolSettingsData
+//     schoolId: string
+//     onUpdate: (updated: Partial<SchoolSettingsData>) => void
+// }
+
+// // ── Main Component ─────────────────────────────────────────────────────────────
+// export function ProfileSection({ data, schoolId, onUpdate }: ProfileSectionProps) {
+//     const [name,      setName]      = useState(data.school.name)
+//     const [primary,   setPrimary]   = useState(data.school.primaryColor)
+//     const [secondary, setSecondary] = useState(data.school.secondaryColor)
+//     const [saving,    setSaving]    = useState(false)
+//     const [saved,     setSaved]     = useState(false)
+
+//     const [savedName,      setSavedName]      = useState(data.school.name)
+//     const [savedPrimary,   setSavedPrimary]   = useState(data.school.primaryColor)
+//     const [savedSecondary, setSavedSecondary] = useState(data.school.secondaryColor)
+
+//     const savedRef = useRef(false)
+
+//     const primaryValid   = isValidHex(primary)
+//     const secondaryValid = isValidHex(secondary)
+//     const hasErrors      = !primaryValid || !secondaryValid
+
+//     const hasChanges =
+//         name !== savedName ||
+//         primary !== savedPrimary ||
+//         secondary !== savedSecondary
+
+//     // ── Live CSS preview ───────────────────────────────────────────────────
+//     useEffect(() => {
+//         if (primaryValid)   document.documentElement.style.setProperty('--school-primary',   primary)
+//         if (secondaryValid) document.documentElement.style.setProperty('--school-secondary', secondary)
+//     }, [primary, secondary, primaryValid, secondaryValid])
+
+//     // ── Reset CSS on unmount if unsaved ────────────────────────────────────
+//     useEffect(() => {
+//         return () => {
+//             if (!savedRef.current) {
+//                 document.documentElement.style.setProperty('--school-primary',   data.school.primaryColor)
+//                 document.documentElement.style.setProperty('--school-secondary', data.school.secondaryColor)
+//             }
+//         }
+//     }, [data.school.primaryColor, data.school.secondaryColor])
+
+//     async function handleSave() {
+//         if (hasErrors) {
+//             toast.error('Fix color values before saving.')
+//             return
+//         }
+//         setSaving(true)
+//         const res = await updateSchoolProfile(schoolId, {
+//             name,
+//             primaryColor:   primary,
+//             secondaryColor: secondary,
+//         })
+//         if (res.success) {
+//             savedRef.current = true
+//             setSaved(true)
+//             setTimeout(() => setSaved(false), 3000)
+
+//             // ✅ Update saved baselines — hasChanges becomes false immediately
+//             setSavedName(name)
+//             setSavedPrimary(primary)
+//             setSavedSecondary(secondary)
+
+//             // ✅ Propagate to parent — keeps parent data in sync so other
+//             // tabs and components reflect the updated name and colors
+//             onUpdate({
+//                 school: {
+//                     ...data.school,
+//                     name,
+//                     primaryColor:   primary,
+//                     secondaryColor: secondary,
+//                 },
+//             })
+
+//             toast.success('School profile updated.')
+//         } else {
+//             toast.error(res.error ?? 'Failed to update.')
+//         }
+//         setSaving(false)
+//     }
+
+//     const nameChanged = name !== savedName
+
+//     return (
+//         <div className="space-y-4">
+
+//             {/* ── School Name ── */}
+//             <Card className="bg-school-secondary-900 border-school-secondary-700">
+//                 <CardHeader className="pb-3 border-b border-school-secondary-700 px-4 sm:px-6">
+//                     <div className="flex items-center gap-3">
+//                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-school-primary/20 border border-school-primary/20">
+//                             <School className="h-4 w-4 text-school-primary" />
+//                         </div>
+//                         <div>
+//                             <CardTitle className="text-sm font-bold text-white">
+//                                 School Name
+//                             </CardTitle>
+//                             <p className="text-[11px] text-school-secondary-400 mt-0.5">
+//                                 Displayed in the header, sidebar and all communications
+//                             </p>
+//                         </div>
+//                     </div>
+//                 </CardHeader>
+//                 <CardContent className="p-4 sm:p-6 space-y-4">
+
+//                     <div className="flex items-start gap-2 rounded-lg border border-school-secondary-700 bg-school-secondary-800/50 px-3 py-2.5">
+//                         <Info className="h-3.5 w-3.5 text-school-primary shrink-0 mt-0.5" />
+//                         <p className="text-[11px] text-school-secondary-400 leading-relaxed">
+//                             Click the field below to edit your school name. Changes only apply after clicking{' '}
+//                             <span className="text-white font-semibold">Save Changes</span>.
+//                         </p>
+//                     </div>
+
+//                     <div className={cn(
+//                         'space-y-1.5 rounded-xl border p-3 transition-all',
+//                         nameChanged
+//                             ? 'border-school-primary/40 bg-school-primary/5'
+//                             : 'border-school-secondary-500 bg-school-secondary-800/30'
+//                     )}>
+//                         <div className="flex items-center justify-between">
+//                             <Label className="text-[10px] font-bold text-white uppercase tracking-wider">
+//                                 Official School Name
+//                             </Label>
+//                             <EditableHint text="Click to edit" />
+//                         </div>
+//                         <Input
+//                             value={name}
+//                             onChange={e => setName(e.target.value)}
+//                             placeholder="e.g. Lagos Academy Secondary School"
+//                             className={cn(
+//                                 'text-white placeholder:text-school-secondary-600 h-10 text-sm transition-all',
+//                                 nameChanged
+//                                     ? 'bg-school-primary/5 border-school-primary/50 hover:border-school-primary focus:border-school-primary'
+//                                     : 'bg-school-secondary-800 border-school-secondary-500 hover:border-school-secondary-300 focus:border-school-primary'
+//                             )}
+//                         />
+//                         <p className="text-[10px] text-school-secondary-500 ml-0.5">
+//                             Appears on reports, notifications and the platform header
+//                         </p>
+//                         {nameChanged && (
+//                             <p className="flex items-center gap-1 text-[11px] text-school-primary">
+//                                 <CheckCircle2 className="h-3 w-3 shrink-0" />
+//                                 Name updated — save to apply
+//                             </p>
+//                         )}
+//                     </div>
+
+//                     <div className="flex items-center justify-between pt-1 border-t border-school-secondary-700">
+//                         {hasChanges && !saved ? (
+//                             <p className="flex items-center gap-1.5 text-[11px] text-amber-400">
+//                                 <AlertCircle className="h-3 w-3 shrink-0" />
+//                                 You have unsaved changes
+//                             </p>
+//                         ) : (
+//                             <span />
+//                         )}
+//                         <SaveButton
+//                             saving={saving}
+//                             saved={saved}
+//                             disabled={hasErrors || saving || !hasChanges}
+//                             onClick={handleSave}
+//                         />
+//                     </div>
+//                 </CardContent>
+//             </Card>
+
+//             {/* ── Brand Colors ── */}
+//             <Card className="bg-school-secondary-900 border-school-secondary-700">
+//                 <CardHeader className="pb-3 border-b border-school-secondary-700 px-4 sm:px-6">
+//                     <div className="flex items-center gap-3">
+//                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-school-primary/20 border border-school-primary/20">
+//                             <Eye className="h-4 w-4 text-school-primary" />
+//                         </div>
+//                         <div>
+//                             <CardTitle className="text-sm font-bold text-white">
+//                                 Brand Colors
+//                             </CardTitle>
+//                             <p className="text-[11px] text-school-secondary-400 mt-0.5">
+//                                 Applied across the entire platform interface
+//                             </p>
+//                         </div>
+//                     </div>
+//                 </CardHeader>
+//                 <CardContent className="p-4 sm:p-6 space-y-5">
+
+//                     <div className="flex items-start gap-2 rounded-lg border border-school-secondary-700 bg-school-secondary-800/50 px-3 py-2.5">
+//                         <Info className="h-3.5 w-3.5 text-school-primary shrink-0 mt-0.5" />
+//                         <p className="text-[11px] text-school-secondary-400 leading-relaxed">
+//                             Click the color swatch to open a picker, or type a hex code directly.
+//                             The preview updates in real time. Click{' '}
+//                             <span className="text-white font-semibold">Save Changes</span> to apply.
+//                         </p>
+//                     </div>
+
+//                     <div className="grid gap-4 sm:grid-cols-2">
+//                         <ColorField
+//                             label="Primary Color"
+//                             hint="Buttons, highlights and accents"
+//                             value={primary}
+//                             original={data.school.primaryColor}
+//                             savedValue={savedPrimary}
+//                             onChange={setPrimary}
+//                         />
+//                         <ColorField
+//                             label="Secondary Color"
+//                             hint="Backgrounds and surface colors"
+//                             value={secondary}
+//                             original={data.school.secondaryColor}
+//                             savedValue={savedSecondary}
+//                             onChange={setSecondary}
+//                         />
+//                     </div>
+
+//                     {/* Live preview */}
+//                     <div className="rounded-xl border border-school-secondary-700 bg-school-secondary-800/50 p-4 space-y-3">
+//                         <div className="flex items-center gap-1.5">
+//                             <Eye className="h-3 w-3 text-school-secondary-500" />
+//                             <p className="text-[10px] font-semibold text-school-secondary-500 uppercase tracking-wider">
+//                                 Live Preview — updates as you type
+//                             </p>
+//                         </div>
+
+//                         <div
+//                             className="rounded-lg px-4 py-3 flex items-center justify-between"
+//                             style={{ backgroundColor: secondary }}
+//                         >
+//                             <span
+//                                 className="text-sm font-bold truncate max-w-[70%]"
+//                                 style={{ color: primary }}
+//                             >
+//                                 {name || 'School Name'}
+//                             </span>
+//                             <div
+//                                 className="h-7 w-7 shrink-0 rounded-lg flex items-center justify-center text-xs font-black"
+//                                 style={{ backgroundColor: primary, color: secondary }}
+//                             >
+//                                 {(name || 'S').charAt(0).toUpperCase()}
+//                             </div>
+//                         </div>
+
+//                         <div className="flex gap-2">
+//                             <div
+//                                 className="flex-1 h-8 rounded-lg text-xs font-bold flex items-center justify-center"
+//                                 style={{ backgroundColor: primary, color: secondary }}
+//                             >
+//                                 Primary Button
+//                             </div>
+//                             <div
+//                                 className="flex-1 h-8 rounded-lg text-xs font-semibold flex items-center justify-center border"
+//                                 style={{ color: primary, borderColor: primary }}
+//                             >
+//                                 Outline Button
+//                             </div>
+//                         </div>
+
+//                         <div className="flex gap-2 flex-wrap">
+//                             {['Active', 'Teacher', 'Admin'].map((label, i) => (
+//                                 <span
+//                                     key={label}
+//                                     className="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold border"
+//                                     style={{
+//                                         backgroundColor: i === 1 ? 'transparent' : `${primary}${i === 0 ? '20' : '15'}`,
+//                                         borderColor:     primary,
+//                                         color:           primary,
+//                                     }}
+//                                 >
+//                                     {label}
+//                                 </span>
+//                             ))}
+//                         </div>
+//                     </div>
+
+//                     <div className="flex items-center justify-between pt-1 border-t border-school-secondary-700">
+//                         {hasChanges && !saved ? (
+//                             <p className="flex items-center gap-1.5 text-[11px] text-amber-400">
+//                                 <AlertCircle className="h-3 w-3 shrink-0" />
+//                                 You have unsaved changes
+//                             </p>
+//                         ) : (
+//                             <span />
+//                         )}
+//                         <SaveButton
+//                             saving={saving}
+//                             saved={saved}
+//                             disabled={hasErrors || saving || !hasChanges}
+//                             onClick={handleSave}
+//                         />
+//                     </div>
+
+//                 </CardContent>
+//             </Card>
+
+//         </div>
+//     )
+// }
+
+
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useTransition } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import {
-    Eye, RefreshCw, Save, Loader2,
-    CheckCircle2, AlertCircle, School,
-    Pencil, Info,
-} from 'lucide-react'
-import { updateSchoolProfile, SchoolSettingsData } from '@/app/actions/school-settings.action'
+import { School, ShieldCheck, Save, Loader2 } from 'lucide-react'
+import { updateSchoolProfile } from '@/app/_actions/school-settings-actions'
+import { updatePersonalProfile } from '@/app/_actions/profile-actions'
+import { useProfileStore } from '@/store/profileStore'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
-// ── Hex validation ─────────────────────────────────────────────────────────────
-function isValidHex(color: string): boolean {
-    return /^#[0-9A-Fa-f]{6}$/.test(color)
-}
+export function ProfileSection({ data, onUpdate }: { data: any, onUpdate: any }) {
+    const { profile } = useProfileStore()
+    const [name, setName] = useState(data?.school?.name || profile?.name || "")
+    const [isPending, startTransition] = useTransition()
+    const primaryColor = profile?.primaryColor || "#f59e0b"
 
-// ── Save Button ────────────────────────────────────────────────────────────────
-function SaveButton({
-    saving, saved, disabled, onClick,
-}: {
-    saving: boolean; saved: boolean; disabled: boolean; onClick: () => void
-}) {
-    return (
-        <Button
-            onClick={onClick}
-            disabled={disabled}
-            size="sm"
-            className={cn(
-                'h-8 px-4 text-xs font-bold transition-all',
-                saved
-                    ? 'bg-green-500 hover:bg-green-600 text-white'
-                    : 'bg-school-primary hover:bg-school-primary-600 text-school-secondary-950 disabled:opacity-40'
-            )}
-        >
-            {saving ? (
-                <><Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />Saving...</>
-            ) : saved ? (
-                <><CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />Saved!</>
-            ) : (
-                <><Save className="h-3.5 w-3.5 mr-1.5" />Save Changes</>
-            )}
-        </Button>
-    )
-}
+    const handleSave = () => {
+        startTransition(async () => {
+            const res = profile?.schoolId 
+                ? await updateSchoolProfile(profile.schoolId, { name, primaryColor: profile.primaryColor, secondaryColor: profile.secondaryColor })
+                : await updatePersonalProfile({ name });
 
-// ── Editable hint ──────────────────────────────────────────────────────────────
-function EditableHint({ text }: { text: string }) {
-    return (
-        <div className="flex items-center gap-1.5 text-[10px] text-school-secondary-500">
-            <Pencil className="h-2.5 w-2.5 shrink-0" />
-            <span>{text}</span>
-        </div>
-    )
-}
-
-// ── Color Field ────────────────────────────────────────────────────────────────
-function ColorField({
-    label, hint, value, original, savedValue, onChange,
-}: {
-    label:      string
-    hint:       string
-    value:      string
-    original:   string
-    savedValue: string
-    onChange:   (v: string) => void
-}) {
-    const valid   = isValidHex(value)
-    const changed = value !== savedValue
-
-    return (
-        <div className={cn(
-            'space-y-2.5 rounded-xl border p-3 transition-all',
-            changed
-                ? 'border-school-primary/40 bg-school-primary/5'
-                : 'border-school-secondary-500 bg-school-secondary-800/30'
-        )}>
-            <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                    <p className="text-[10px] font-bold text-white uppercase tracking-wider">
-                        {label}
-                    </p>
-                    <p className="text-[11px] text-school-secondary-500">{hint}</p>
-                </div>
-                {changed && (
-                    <button
-                        onClick={() => onChange(original)}
-                        title="Reset to saved value"
-                        className="flex items-center gap-1 text-[10px] text-school-secondary-400 hover:text-amber-400 transition-colors shrink-0"
-                    >
-                        <RefreshCw className="h-2.5 w-2.5" />
-                        Reset
-                    </button>
-                )}
-            </div>
-
-            {/* Picker + hex input */}
-            <div className="flex items-center gap-2">
-                <div className="relative shrink-0">
-                    <input
-                        type="color"
-                        value={valid ? value : original}
-                        onChange={e => onChange(e.target.value)}
-                        className="h-10 w-10 cursor-pointer rounded-lg border-2 border-school-secondary-500 bg-transparent p-0.5 hover:border-school-primary transition-colors"
-                        title="Click to open color picker"
-                    />
-                    <div className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full bg-school-secondary-700 border border-school-secondary-600 flex items-center justify-center">
-                        <Pencil className="h-2 w-2 text-school-secondary-400" />
-                    </div>
-                </div>
-                <div className="flex-1 space-y-1">
-                    <Input
-                        value={value}
-                        onChange={e => onChange(e.target.value)}
-                        maxLength={7}
-                        placeholder="#000000"
-                        className={cn(
-                            'font-mono text-xs text-white h-10 transition-all',
-                            !valid
-                                ? 'bg-red-500/5 border-red-500/60 hover:border-red-400 focus:border-red-400'
-                                : changed
-                                ? 'bg-school-primary/5 border-school-primary/50 hover:border-school-primary focus:border-school-primary'
-                                : 'bg-school-secondary-800 border-school-secondary-500 hover:border-school-secondary-300 focus:border-school-primary'
-                        )}
-                    />
-                    <p className="text-[10px] text-school-secondary-500 ml-1">
-                        Type a hex value or use the color picker
-                    </p>
-                </div>
-            </div>
-
-            {/* Swatch */}
-            <div className="space-y-1">
-                <div
-                    className={cn(
-                        'h-5 w-full rounded-lg border-2 transition-colors',
-                        valid
-                            ? changed ? 'border-school-primary/40' : 'border-school-secondary-500'
-                            : 'border-red-500/40'
-                    )}
-                    style={{ backgroundColor: valid ? value : 'transparent' }}
-                />
-                <p className="text-[10px] text-school-secondary-500 text-right">
-                    Color preview
-                </p>
-            </div>
-
-            {!valid && (
-                <p className="flex items-center gap-1 text-[11px] text-red-400">
-                    <AlertCircle className="h-3 w-3 shrink-0" />
-                    Enter a valid hex color (e.g. #f59e0b)
-                </p>
-            )}
-
-            {changed && valid && (
-                <p className="flex items-center gap-1 text-[11px] text-school-primary">
-                    <CheckCircle2 className="h-3 w-3 shrink-0" />
-                    Color updated — save to apply
-                </p>
-            )}
-        </div>
-    )
-}
-
-// ── Props ──────────────────────────────────────────────────────────────────────
-interface ProfileSectionProps {
-    data:     SchoolSettingsData
-    schoolId: string
-    onUpdate: (updated: Partial<SchoolSettingsData>) => void
-}
-
-// ── Main Component ─────────────────────────────────────────────────────────────
-export function ProfileSection({ data, schoolId, onUpdate }: ProfileSectionProps) {
-    const [name,      setName]      = useState(data.school.name)
-    const [primary,   setPrimary]   = useState(data.school.primaryColor)
-    const [secondary, setSecondary] = useState(data.school.secondaryColor)
-    const [saving,    setSaving]    = useState(false)
-    const [saved,     setSaved]     = useState(false)
-
-    const [savedName,      setSavedName]      = useState(data.school.name)
-    const [savedPrimary,   setSavedPrimary]   = useState(data.school.primaryColor)
-    const [savedSecondary, setSavedSecondary] = useState(data.school.secondaryColor)
-
-    const savedRef = useRef(false)
-
-    const primaryValid   = isValidHex(primary)
-    const secondaryValid = isValidHex(secondary)
-    const hasErrors      = !primaryValid || !secondaryValid
-
-    const hasChanges =
-        name !== savedName ||
-        primary !== savedPrimary ||
-        secondary !== savedSecondary
-
-    // ── Live CSS preview ───────────────────────────────────────────────────
-    useEffect(() => {
-        if (primaryValid)   document.documentElement.style.setProperty('--school-primary',   primary)
-        if (secondaryValid) document.documentElement.style.setProperty('--school-secondary', secondary)
-    }, [primary, secondary, primaryValid, secondaryValid])
-
-    // ── Reset CSS on unmount if unsaved ────────────────────────────────────
-    useEffect(() => {
-        return () => {
-            if (!savedRef.current) {
-                document.documentElement.style.setProperty('--school-primary',   data.school.primaryColor)
-                document.documentElement.style.setProperty('--school-secondary', data.school.secondaryColor)
+            if (res.success) {
+                toast.success("Identity Synchronization Complete");
+                if (onUpdate) onUpdate({ school: { ...data?.school, name } });
+            } else {
+                toast.error("Failed to update registry.");
             }
-        }
-    }, [data.school.primaryColor, data.school.secondaryColor])
-
-    async function handleSave() {
-        if (hasErrors) {
-            toast.error('Fix color values before saving.')
-            return
-        }
-        setSaving(true)
-        const res = await updateSchoolProfile(schoolId, {
-            name,
-            primaryColor:   primary,
-            secondaryColor: secondary,
         })
-        if (res.success) {
-            savedRef.current = true
-            setSaved(true)
-            setTimeout(() => setSaved(false), 3000)
-
-            // ✅ Update saved baselines — hasChanges becomes false immediately
-            setSavedName(name)
-            setSavedPrimary(primary)
-            setSavedSecondary(secondary)
-
-            // ✅ Propagate to parent — keeps parent data in sync so other
-            // tabs and components reflect the updated name and colors
-            onUpdate({
-                school: {
-                    ...data.school,
-                    name,
-                    primaryColor:   primary,
-                    secondaryColor: secondary,
-                },
-            })
-
-            toast.success('School profile updated.')
-        } else {
-            toast.error(res.error ?? 'Failed to update.')
-        }
-        setSaving(false)
     }
 
-    const nameChanged = name !== savedName
-
     return (
-        <div className="space-y-4">
+        <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl animate-in fade-in duration-500">
+            <CardHeader className="p-8 bg-slate-950/50 border-b border-white/5">
+                <CardTitle className="text-lg font-black text-white uppercase italic tracking-tighter flex items-center gap-3">
+                    <School className="h-5 w-5" style={{ color: primaryColor }} /> Registry Identity
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 space-y-8">
+                <div className="space-y-4">
+                    <Label className="text-[10px] font-black uppercase text-slate-500 tracking-widest ml-1">
+                        {profile?.schoolId ? "Institutional Name" : "Display Name"}
+                    </Label>
+                    <input 
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full bg-slate-950 border border-white/5 rounded-2xl px-6 py-5 text-white focus:border-school-primary outline-none transition-all font-bold uppercase italic"
+                        style={{ '--tw-ring-color': primaryColor } as any}
+                    />
+                </div>
 
-            {/* ── School Name ── */}
-            <Card className="bg-school-secondary-900 border-school-secondary-700">
-                <CardHeader className="pb-3 border-b border-school-secondary-700 px-4 sm:px-6">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-school-primary/20 border border-school-primary/20">
-                            <School className="h-4 w-4 text-school-primary" />
-                        </div>
-                        <div>
-                            <CardTitle className="text-sm font-bold text-white">
-                                School Name
-                            </CardTitle>
-                            <p className="text-[11px] text-school-secondary-400 mt-0.5">
-                                Displayed in the header, sidebar and all communications
-                            </p>
-                        </div>
+                <div className="pt-4 border-t border-white/5 flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-slate-600">
+                        <ShieldCheck className="h-4 w-4" />
+                        <span className="text-[9px] font-black uppercase tracking-widest">Secure Metadata Update</span>
                     </div>
-                </CardHeader>
-                <CardContent className="p-4 sm:p-6 space-y-4">
-
-                    <div className="flex items-start gap-2 rounded-lg border border-school-secondary-700 bg-school-secondary-800/50 px-3 py-2.5">
-                        <Info className="h-3.5 w-3.5 text-school-primary shrink-0 mt-0.5" />
-                        <p className="text-[11px] text-school-secondary-400 leading-relaxed">
-                            Click the field below to edit your school name. Changes only apply after clicking{' '}
-                            <span className="text-white font-semibold">Save Changes</span>.
-                        </p>
-                    </div>
-
-                    <div className={cn(
-                        'space-y-1.5 rounded-xl border p-3 transition-all',
-                        nameChanged
-                            ? 'border-school-primary/40 bg-school-primary/5'
-                            : 'border-school-secondary-500 bg-school-secondary-800/30'
-                    )}>
-                        <div className="flex items-center justify-between">
-                            <Label className="text-[10px] font-bold text-white uppercase tracking-wider">
-                                Official School Name
-                            </Label>
-                            <EditableHint text="Click to edit" />
-                        </div>
-                        <Input
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                            placeholder="e.g. Lagos Academy Secondary School"
-                            className={cn(
-                                'text-white placeholder:text-school-secondary-600 h-10 text-sm transition-all',
-                                nameChanged
-                                    ? 'bg-school-primary/5 border-school-primary/50 hover:border-school-primary focus:border-school-primary'
-                                    : 'bg-school-secondary-800 border-school-secondary-500 hover:border-school-secondary-300 focus:border-school-primary'
-                            )}
-                        />
-                        <p className="text-[10px] text-school-secondary-500 ml-0.5">
-                            Appears on reports, notifications and the platform header
-                        </p>
-                        {nameChanged && (
-                            <p className="flex items-center gap-1 text-[11px] text-school-primary">
-                                <CheckCircle2 className="h-3 w-3 shrink-0" />
-                                Name updated — save to apply
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="flex items-center justify-between pt-1 border-t border-school-secondary-700">
-                        {hasChanges && !saved ? (
-                            <p className="flex items-center gap-1.5 text-[11px] text-amber-400">
-                                <AlertCircle className="h-3 w-3 shrink-0" />
-                                You have unsaved changes
-                            </p>
-                        ) : (
-                            <span />
-                        )}
-                        <SaveButton
-                            saving={saving}
-                            saved={saved}
-                            disabled={hasErrors || saving || !hasChanges}
-                            onClick={handleSave}
-                        />
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* ── Brand Colors ── */}
-            <Card className="bg-school-secondary-900 border-school-secondary-700">
-                <CardHeader className="pb-3 border-b border-school-secondary-700 px-4 sm:px-6">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-school-primary/20 border border-school-primary/20">
-                            <Eye className="h-4 w-4 text-school-primary" />
-                        </div>
-                        <div>
-                            <CardTitle className="text-sm font-bold text-white">
-                                Brand Colors
-                            </CardTitle>
-                            <p className="text-[11px] text-school-secondary-400 mt-0.5">
-                                Applied across the entire platform interface
-                            </p>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent className="p-4 sm:p-6 space-y-5">
-
-                    <div className="flex items-start gap-2 rounded-lg border border-school-secondary-700 bg-school-secondary-800/50 px-3 py-2.5">
-                        <Info className="h-3.5 w-3.5 text-school-primary shrink-0 mt-0.5" />
-                        <p className="text-[11px] text-school-secondary-400 leading-relaxed">
-                            Click the color swatch to open a picker, or type a hex code directly.
-                            The preview updates in real time. Click{' '}
-                            <span className="text-white font-semibold">Save Changes</span> to apply.
-                        </p>
-                    </div>
-
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        <ColorField
-                            label="Primary Color"
-                            hint="Buttons, highlights and accents"
-                            value={primary}
-                            original={data.school.primaryColor}
-                            savedValue={savedPrimary}
-                            onChange={setPrimary}
-                        />
-                        <ColorField
-                            label="Secondary Color"
-                            hint="Backgrounds and surface colors"
-                            value={secondary}
-                            original={data.school.secondaryColor}
-                            savedValue={savedSecondary}
-                            onChange={setSecondary}
-                        />
-                    </div>
-
-                    {/* Live preview */}
-                    <div className="rounded-xl border border-school-secondary-700 bg-school-secondary-800/50 p-4 space-y-3">
-                        <div className="flex items-center gap-1.5">
-                            <Eye className="h-3 w-3 text-school-secondary-500" />
-                            <p className="text-[10px] font-semibold text-school-secondary-500 uppercase tracking-wider">
-                                Live Preview — updates as you type
-                            </p>
-                        </div>
-
-                        <div
-                            className="rounded-lg px-4 py-3 flex items-center justify-between"
-                            style={{ backgroundColor: secondary }}
-                        >
-                            <span
-                                className="text-sm font-bold truncate max-w-[70%]"
-                                style={{ color: primary }}
-                            >
-                                {name || 'School Name'}
-                            </span>
-                            <div
-                                className="h-7 w-7 shrink-0 rounded-lg flex items-center justify-center text-xs font-black"
-                                style={{ backgroundColor: primary, color: secondary }}
-                            >
-                                {(name || 'S').charAt(0).toUpperCase()}
-                            </div>
-                        </div>
-
-                        <div className="flex gap-2">
-                            <div
-                                className="flex-1 h-8 rounded-lg text-xs font-bold flex items-center justify-center"
-                                style={{ backgroundColor: primary, color: secondary }}
-                            >
-                                Primary Button
-                            </div>
-                            <div
-                                className="flex-1 h-8 rounded-lg text-xs font-semibold flex items-center justify-center border"
-                                style={{ color: primary, borderColor: primary }}
-                            >
-                                Outline Button
-                            </div>
-                        </div>
-
-                        <div className="flex gap-2 flex-wrap">
-                            {['Active', 'Teacher', 'Admin'].map((label, i) => (
-                                <span
-                                    key={label}
-                                    className="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold border"
-                                    style={{
-                                        backgroundColor: i === 1 ? 'transparent' : `${primary}${i === 0 ? '20' : '15'}`,
-                                        borderColor:     primary,
-                                        color:           primary,
-                                    }}
-                                >
-                                    {label}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-1 border-t border-school-secondary-700">
-                        {hasChanges && !saved ? (
-                            <p className="flex items-center gap-1.5 text-[11px] text-amber-400">
-                                <AlertCircle className="h-3 w-3 shrink-0" />
-                                You have unsaved changes
-                            </p>
-                        ) : (
-                            <span />
-                        )}
-                        <SaveButton
-                            saving={saving}
-                            saved={saved}
-                            disabled={hasErrors || saving || !hasChanges}
-                            onClick={handleSave}
-                        />
-                    </div>
-
-                </CardContent>
-            </Card>
-
-        </div>
+                    <button 
+                        onClick={handleSave}
+                        disabled={isPending}
+                        className="px-10 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl flex items-center gap-2"
+                        style={{ backgroundColor: primaryColor, color: '#000' }}
+                    >
+                        {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Persist Changes</>}
+                    </button>
+                </div>
+            </CardContent>
+        </Card>
     )
 }

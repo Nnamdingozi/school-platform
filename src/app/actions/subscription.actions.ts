@@ -828,7 +828,10 @@ import { getErrorMessage } from '@/lib/error-handler'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { logActivity } from "@/lib/activitylogger";
-import { Role, ActivityType, TxStatus, Prisma } from '@prisma/client'
+import { TxStatus, } from '@prisma/client'
+
+
+
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -852,6 +855,145 @@ export interface PaymentHistoryEntry {
     status:    TxStatus
     paidAt:    Date | null
     createdAt: Date
+}
+
+// ── Types ──────────────────────────────────────────────────────────────────────
+
+/**
+ * Detailed entry for the payment history table.
+ */
+export interface PaymentHistoryEntry {
+    id:        string
+    planName:  string
+    amountNGN: number
+    status:    TxStatus
+    paidAt:    Date | null
+    createdAt: Date
+}
+
+/**
+ * Rule 15: Strict Interface for the Billing UI.
+ * Combines current subscription state with the transaction history.
+ */
+export interface SubscriptionWithHistory {
+    id:               string
+    plan:             string
+    status:           string
+    currentPeriodEnd: Date
+    amountNGN:        number | null
+    paidAt:           Date | null
+    subPlan?: {
+        name:         string
+        priceNGN:     number
+        durationDays: number
+        features:     string[]
+    } | null
+    transactions:     PaymentHistoryEntry[]
+}
+
+// ── Logic ──────────────────────────────────────────────────────────────────────
+
+/**
+ * FETCH SUBSCRIPTION & TRANSACTION HISTORY
+ * Rule 5: Isolated by schoolId for institutions.
+ * Rule 6: Isolated by userId for independent learners.
+ * Rule 11: Final System Truth derived from the DB ledger.
+ */
+export async function getSchoolSubscription(
+    schoolId: string | null,
+    userId: string
+): Promise<SubscriptionWithHistory | null> {
+    try {
+        // Scenario A: Institutional User (Tier 2)
+        if (schoolId && schoolId !== "INDIVIDUAL") {
+            const schoolData = await prisma.school.findUnique({
+                where: { id: schoolId },
+                include: {
+                    subscription: {
+                        include: { subPlan: true }
+                    },
+                    subscriptionTransactions: {
+                        orderBy: { createdAt: 'desc' },
+                        take: 50,
+                    }
+                }
+            });
+
+            if (!schoolData || !schoolData.subscription) return null;
+
+            const sub = schoolData.subscription;
+
+            return {
+                id: sub.id,
+                plan: sub.plan,
+                status: sub.status,
+                currentPeriodEnd: sub.currentPeriodEnd,
+                amountNGN: sub.amountNGN,
+                paidAt: sub.paidAt,
+                subPlan: sub.subPlan ? {
+                    name: sub.subPlan.name,
+                    priceNGN: sub.subPlan.priceNGN,
+                    durationDays: sub.subPlan.durationDays,
+                    features: sub.subPlan.features,
+                } : null,
+                transactions: schoolData.subscriptionTransactions.map(t => ({
+                    id: t.id,
+                    planName: t.planName,
+                    amountNGN: t.amountNGN,
+                    status: t.status,
+                    paidAt: t.paidAt,
+                    createdAt: t.createdAt
+                }))
+            };
+        }
+
+        // Scenario B: Independent Learner (Tier 3)
+        // Rule 6: Fetch personal subscription record
+        const personalSub = await prisma.subscription.findUnique({
+            where: { profileId: userId },
+            include: { 
+                subPlan: true,
+                // Rule 11: Transactions for individuals are identified by initiatedBy
+                // since the schema lacks a direct profileId relation on transactions.
+            }
+        });
+
+        if (!personalSub) return null;
+
+        // Fetch transactions where the user initiated the payment
+        const personalTransactions = await prisma.subscriptionTransaction.findMany({
+            where: { initiatedBy: userId },
+            orderBy: { createdAt: 'desc' },
+            take: 50
+        });
+
+        return {
+            id: personalSub.id,
+            plan: personalSub.plan,
+            status: personalSub.status,
+            currentPeriodEnd: personalSub.currentPeriodEnd,
+            amountNGN: personalSub.amountNGN,
+            paidAt: personalSub.paidAt,
+            subPlan: personalSub.subPlan ? {
+                name: personalSub.subPlan.name,
+                priceNGN: personalSub.subPlan.priceNGN,
+                durationDays: personalSub.subPlan.durationDays,
+                features: personalSub.subPlan.features,
+            } : null,
+            transactions: personalTransactions.map(t => ({
+                id: t.id,
+                planName: t.planName,
+                amountNGN: t.amountNGN,
+                status: t.status,
+                paidAt: t.paidAt,
+                createdAt: t.createdAt
+            }))
+        };
+
+    } catch (err: unknown) {
+        console.error("[GET_SUBSCRIPTION_ERROR]:", getErrorMessage(err));
+        return null;
+    }
 }
 
 // ── 1. GLOBAL PLANS (Tier 1) ───────────────────────────────────────────────────

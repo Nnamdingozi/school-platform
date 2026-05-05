@@ -925,6 +925,7 @@ import { ActivityType, Role, Prisma, LessonStatus } from '@prisma/client'
 import { getErrorMessage } from '@/lib/error-handler'
 import { logActivity } from "@/lib/activitylogger";
 import { academicCoreScope } from "@/lib/content-scope";
+import { revalidatePath } from "next/cache";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -988,6 +989,8 @@ export type ManagementHelpers = {
 }
 
 // ── Dashboard Logic ─────────────────────────────────────────────────────────────
+
+
 
 export async function getClassDashboardData(profileId: string) {
   try {
@@ -1273,5 +1276,195 @@ export async function enrollSingleStudent(
     return { success: true };
   } catch (err: unknown) {
     return { success: false, error: getErrorMessage(err) };
+  }
+}
+
+
+export async function importClassesFromCsv(
+  schoolId: string,
+  actorId: string,
+  actorName: string | null,
+  actorRole: Role,
+  rows: ImportClassesRow[]
+): Promise<BulkImportResult> {
+  const errors: { rowIndex: number; message: string }[] = [];
+  let successCount = 0;
+
+  try {
+      await prisma.$transaction(async (tx) => {
+          for (let i = 0; i < rows.length; i++) {
+              const row = rows[i];
+              const gradeLevel = parseInt(String(row.grade_level));
+
+              // 1. Resolve Grade ID within institutional context
+              const grade = await tx.grade.findFirst({
+                  where: { 
+                      level: gradeLevel,
+                      ...academicCoreScope({ schoolId })
+                  }
+              });
+
+              if (!grade) {
+                  errors.push({ rowIndex: i, message: `Grade level ${gradeLevel} not found in registry.` });
+                  continue;
+              }
+
+              // 2. Create Classroom
+              await tx.class.create({
+                  data: {
+                      name: row.name.trim(),
+                      gradeId: grade.id,
+                      schoolId: schoolId,
+                      teacherId: actorId // Defaulting to creator until assigned
+                  }
+              });
+              successCount++;
+          }
+      });
+
+      await logActivity({
+          schoolId,
+          actorId,
+          actorName,
+          actorRole,
+          type: ActivityType.CLASS_CREATED,
+          title: "Bulk Class Import",
+          description: `Successfully provisioned ${successCount} classroom nodes via CSV.`
+      });
+
+      revalidatePath('/admin/classes');
+      return { successCount, errorCount: errors.length, errors };
+  } catch (err: unknown) {
+      return { successCount: 0, errorCount: rows.length, errors: [{ rowIndex: -1, message: getErrorMessage(err) }] };
+  }
+}
+
+
+export async function enrollStudentsFromCsv(
+  schoolId: string,
+  actorId: string,
+  actorName: string | null,
+  actorRole: Role,
+  rows: EnrollStudentRow[]
+): Promise<BulkEnrollSummary> {
+  const errors: { rowIndex: number; message: string }[] = [];
+  const missingStudents: string[] = [];
+  let successCount = 0;
+
+  try {
+      await prisma.$transaction(async (tx) => {
+          for (let i = 0; i < rows.length; i++) {
+              const row = rows[i];
+              const email = row.student_email.trim().toLowerCase();
+
+              // 1. Verify student exists in this school
+              const student = await tx.profile.findFirst({
+                  where: { email, schoolId, role: Role.STUDENT }
+              });
+
+              if (!student) {
+                  missingStudents.push(email);
+                  errors.push({ rowIndex: i, message: `Identity ${email} not found.` });
+                  continue;
+              }
+
+              // 2. Verify class exists in this school
+              const targetClass = await tx.class.findFirst({
+                  where: { name: row.class_name.trim(), schoolId }
+              });
+
+              if (!targetClass) {
+                  errors.push({ rowIndex: i, message: `Room ${row.class_name} not found.` });
+                  continue;
+              }
+
+              // 3. Check for existing enrollment to prevent duplicates (Rule 11)
+              const existing = await tx.classEnrollment.findFirst({
+                  where: { studentId: student.id, schoolId }
+              });
+
+              if (existing) {
+                  // Update current placement
+                  await tx.classEnrollment.update({
+                      where: { id: existing.id },
+                      data: { classId: targetClass.id }
+                  });
+              } else {
+                  // Create new placement
+                  await tx.classEnrollment.create({
+                      data: {
+                          studentId: student.id,
+                          classId: targetClass.id,
+                          schoolId: schoolId
+                      }
+                  });
+              }
+              successCount++;
+          }
+      });
+
+      await logActivity({
+          schoolId, actorId, actorName, actorRole,
+          type: ActivityType.STUDENT_ASSIGNED,
+          title: "Bulk Placement Sync",
+          description: `Synchronized ${successCount} student placements in the registry.`
+      });
+
+      revalidatePath('/admin/classes');
+      return { successCount, errorCount: errors.length, errors, missingStudents };
+  } catch (err: unknown) {
+      return { 
+          successCount: 0, errorCount: rows.length, 
+          errors: [{ rowIndex: -1, message: getErrorMessage(err) }], 
+          missingStudents: [] 
+      };
+  }
+}
+/**
+ * SEARCH STUDENT REGISTRY
+ * Rule 5: Strictly isolated by schoolId.
+ * Rule 10: Server-side validation of role context.
+ */
+export async function searchStudents(schoolId: string, query: string) {
+  // Performance Guard: Don't query for very short strings
+  if (!query || query.length < 2) return [];
+
+  try {
+    const students = await prisma.profile.findMany({
+      where: {
+        schoolId: schoolId, // Rule 5: Ensure no cross-school data leakage
+        role: Role.STUDENT,
+        OR: [
+          {
+            name: {
+              contains: query,
+              mode: 'insensitive', // Rule 11: Case-insensitive truth
+            },
+          },
+          {
+            email: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+      take: 10, // Limit results for UI performance
+      orderBy: {
+        name: 'asc'
+      }
+    });
+
+    // Rule 11: Return the mapped database truth
+    return students;
+
+  } catch (err: unknown) {
+    console.error("[SEARCH_STUDENTS_ERROR]:", getErrorMessage(err));
+    return [];
   }
 }

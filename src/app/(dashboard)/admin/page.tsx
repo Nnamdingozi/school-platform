@@ -91,17 +91,17 @@ import { useProfileStore } from "@/store/profileStore"
 import { Loader2 } from "lucide-react"
 import { StatsCards } from "@/components/admin-dasboard/stats-cards"
 import { StudentsTable } from "@/components/admin-dasboard/students-table"
-import { CurriculumCard } from "@/components/admin-dasboard/curriculum-card"
+import { CurriculumCard } from "@/components/admin-dasboard/curriculum/curriculum-card"
 import { ActivityFeed } from "@/components/admin-dasboard/activity-feed"
 import { StudentsPerClassTable } from "@/components/admin-dasboard/students-per-class-table"
 import {
     GradeDistributionChart,
     AssessmentScoresChart,
     StatusDistributionChart,
-} from "@/components/admin-dasboard/analitcs-charts"
-import { UnassignedStudentsAlert } from "@/components/admin-dasboard/unassigned-students-alert"
+} from "@/components/admin-dasboard/analytics/analytics-charts"
+import { UnassignedStudentsAlert } from "@/components/admin-dasboard/analytics/unassigned-students-alert"
 import { Header } from "@/components/admin-dasboard/header"
-import { ParentChildLinker } from "@/components/admin-dasboard/parent-child-linker"
+import { ParentChildLinker } from "@/components/admin-dasboard/parent/parent-child-linker"
 
 export default function Dashboard() {
     const { profile, isLoading: isProfileLoading } = useProfileStore()

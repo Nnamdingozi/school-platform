@@ -634,12 +634,12 @@ export function AppSidebar() {
                             <NavItem href="/admin/curriculum" icon={BookMarked} label="Master Curriculum" />
                             <NavItem href="/admin/curriculum/allocation" icon={TableProperties} label="Subject Allocation" />
                             <NavItem href="/admin/catalogue" icon={BookOpen} label="Course Catalog" />
-                            <NavItem href="/admin/lessons" icon={FileText} label="Lesson Bank" />
+                            {/* <NavItem href="/admin/lessons" icon={FileText} label="Lesson Bank" /> */}
                         </NavGroup>
 
                         <NavGroup label="Intelligence">
                             <NavItem href="/admin/assessments" icon={ClipboardList} label="Exam Registry" />
-                            <NavItem href="/admin/reports" icon={BarChart2} label="Analytical Insights" />
+                            <NavItem href="/admin/analytics" icon={BarChart2} label="Analytical Insights" />
                             <NavItem href="/admin/billing" icon={CreditCard} label="Finance & Billing" />
                         </NavGroup>
                     </>
@@ -653,6 +653,7 @@ export function AppSidebar() {
                             <NavItem href="/subjects/manage" icon={BookOpen} label="Assigned Subjects" />
                             <NavItem href="/teacher/allocation" icon={TableProperties} label="Subject Allocation" />
                             <NavItem href="/teacher/term-timeline" icon={Calendar} label="Termly Schedule" />
+                            <NavItem href="/teacher/pastQuestions" icon={Calendar} label="Past Questions Review" />
                         </NavGroup>
 
                         <NavGroup label="Content & Assessment">

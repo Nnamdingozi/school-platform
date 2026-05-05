@@ -49,10 +49,67 @@
 // }
 
 
+// 'use client';
+
+// import { FileSpreadsheet } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+
+// interface CSVTemplateButtonProps {
+//   fileName: string;
+//   headers: string[];
+//   sampleRow: string[];
+//   label?: string;
+//   className?: string;
+// }
+
+// export function CSVTemplateButton({ 
+//   fileName, 
+//   headers, 
+//   sampleRow, 
+//   label = "Get Template",
+//   className 
+// }: CSVTemplateButtonProps) {
+  
+//   const handleDownload = () => {
+//     // 1. Combine headers and sample row into CSV format
+//     const csvContent = [
+//       headers.join(','),
+//       sampleRow.join(',')
+//     ].join('\n');
+
+//     // 2. Create and trigger download
+//     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+//     const url = URL.createObjectURL(blob);
+//     const link = document.createElement("a");
+//     link.setAttribute("href", url);
+//     link.setAttribute("download", `${fileName}.csv`);
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+//     URL.revokeObjectURL(url);
+//   };
+
+//   return (
+//     <button 
+//       type="button"
+//       onClick={handleDownload}
+//       className={cn(
+//         "flex items-center gap-2 text-[10px] font-black text-slate-500 hover:text-school-primary uppercase tracking-widest transition-all px-3 py-2 bg-slate-900 rounded-lg border border-white/5",
+//         className
+//       )}
+//     >
+//       <FileSpreadsheet className="h-3.5 w-3.5" />
+//       {label}
+//     </button>
+//   );
+// }
+
+
 'use client';
 
 import { FileSpreadsheet } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useProfileStore } from '@/store/profileStore';
 
 interface CSVTemplateButtonProps {
   fileName: string;
@@ -62,22 +119,12 @@ interface CSVTemplateButtonProps {
   className?: string;
 }
 
-export function CSVTemplateButton({ 
-  fileName, 
-  headers, 
-  sampleRow, 
-  label = "Get Template",
-  className 
-}: CSVTemplateButtonProps) {
-  
-  const handleDownload = () => {
-    // 1. Combine headers and sample row into CSV format
-    const csvContent = [
-      headers.join(','),
-      sampleRow.join(',')
-    ].join('\n');
+export function CSVTemplateButton({ fileName, headers, sampleRow, label = "Download Template", className }: CSVTemplateButtonProps) {
+  const { profile } = useProfileStore();
+  const primaryColor = profile?.primaryColor || "#f59e0b";
 
-    // 2. Create and trigger download
+  const handleDownload = () => {
+    const csvContent = [headers.join(','), sampleRow.join(',')].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -94,12 +141,12 @@ export function CSVTemplateButton({
       type="button"
       onClick={handleDownload}
       className={cn(
-        "flex items-center gap-2 text-[10px] font-black text-slate-500 hover:text-school-primary uppercase tracking-widest transition-all px-3 py-2 bg-slate-900 rounded-lg border border-white/5",
+        "flex items-center gap-3 text-[10px] font-black uppercase tracking-widest transition-all px-6 py-3 bg-slate-900 rounded-xl border border-white/5 group shadow-xl",
         className
       )}
     >
-      <FileSpreadsheet className="h-3.5 w-3.5" />
-      {label}
+      <FileSpreadsheet className="h-4 w-4 text-slate-500 group-hover:text-school-primary transition-colors" style={{ color: primaryColor }} />
+      <span className="text-slate-400 group-hover:text-white transition-colors">{label}</span>
     </button>
   );
 }

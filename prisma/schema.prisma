@@ -2,10 +2,11 @@ generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
-
+  
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")  // 👈 add this line
 }
 
 model School {
@@ -264,11 +265,12 @@ model StudentSubject {
   status         EnrollmentStatus @default(APPROVED)
   isCompulsory   Boolean          @default(true)
 
-  student      Profile      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student      Profile?  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   gradeSubject GradeSubject @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
   school       School       @relation(fields: [schoolId], references: [id])
 
   @@unique([schoolId, studentId, gradeSubjectId])
+  
 }
 
 model Assessment {

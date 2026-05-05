@@ -98,7 +98,7 @@
 
 import OpenAI from "openai";
 import { customAlphabet } from 'nanoid';
-import { supabase } from "@/lib/supabase/supabaseClient";
+import { supabase } from "@/lib/supabase/admin";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
 import { logActivity } from "@/app/actions/activitylog";

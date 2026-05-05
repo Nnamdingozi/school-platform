@@ -2620,3 +2620,88 @@ export async function selectPersonalSubjects(params: {
         return { success: false, error: getErrorMessage(err) };
     }
 }
+
+/**
+ * FETCH INSTITUTIONAL CLASSROOMS
+ * Rule 5: Strictly isolated by schoolId.
+ * Used for building the selection matrix in the Allocation Hub.
+ */
+export async function getSchoolClassesWithGrades(schoolId: string) {
+    if (!schoolId) return [];
+
+    try {
+        const classes = await prisma.class.findMany({
+            where: { 
+                schoolId: schoolId 
+            },
+            include: { 
+                grade: {
+                    select: {
+                        id: true,
+                        displayName: true,
+                        level: true
+                    }
+                },
+                _count: {
+                    select: { enrollments: true }
+                }
+            },
+            orderBy: [
+                { grade: { level: 'asc' } },
+                { name: 'asc' }
+            ]
+        });
+
+        // Rule 11: Return the database truth mapped to a clean UI-ready format
+        return classes.map(cls => ({
+            id: cls.id,
+            name: cls.name,
+            grade: cls.grade,
+            studentCount: cls._count.enrollments
+        }));
+
+    } catch (err: unknown) {
+        console.error("[GET_SCHOOL_CLASSES_ERROR]:", getErrorMessage(err));
+        return [];
+    }
+}
+
+
+/**
+ * Rule 11: Bulk Stream Mapping.
+ * Automatically assigns all subjects belonging to a specific Nigerian academic stream.
+ */
+export async function allocateStreamSubjects(studentId: string, stream: NigerianStream, classId: string, schoolId: string) {
+    try {
+        const actor = await getAuthenticatedActor();
+        if (!actor || actor.schoolId !== schoolId) throw new Error("Unauthorized.");
+
+        const data = await getClassSubjectAllocation(classId, schoolId);
+        if (!data) throw new Error("Registry data not found.");
+
+        const streamIds = data.availableSubjects
+            .filter(s => s.isCompulsory || s.stream === stream)
+            .map(s => s.id);
+
+        await prisma.$transaction([
+            prisma.studentSubject.deleteMany({ where: { studentId, schoolId } }),
+            prisma.studentSubject.createMany({
+                data: streamIds.map(id => ({
+                    studentId,
+                    gradeSubjectId: id,
+                    schoolId,
+                    status: EnrollmentStatus.APPROVED
+                }))
+            })
+        ]);
+
+        await logActivity({
+            schoolId, actorId: actor.id, actorRole: actor.role,
+            type: ActivityType.CURRICULUM_UPDATED,
+            title: "Stream Mapping Applied",
+            description: `Assigned ${stream.toUpperCase()} stream to student ID: ${studentId}`
+        });
+
+        return { success: true };
+    } catch (err) { return { success: false, error: getErrorMessage(err) }; }
+}

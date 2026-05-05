@@ -726,7 +726,7 @@ import { useProfileStore } from "@/store/profileStore";
 import { Header } from "@/components/student-dashboard/header";
 import { Navigation } from "@/components/student-dashboard/navigation";
 import { WhatsDueWidget } from "@/components/student-dashboard/whats-due-widget";
-import { CurrentLessonCard } from "@/components/student-dashboard/current-lesson-card";
+import { CurrentLessonCard } from "@/components/student-dashboard/lesson/current-lesson-card";
 import { RecentFeedback } from "@/components/student-dashboard/recent-feedback";
 import { TeacherContact } from "@/components/student-dashboard/teacher-contact";
 import { QuickStats } from "@/components/student-dashboard/quick-stats";

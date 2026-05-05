@@ -6,7 +6,7 @@ import { useProfileStore } from '@/store/profileStore'
 import { getTeachersBySchool, UserListItem } from '@/app/actions/user-management'
 import { Search, UserPlus, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { UserCard, UserListSkeleton, EmptyState } from '@/components/admin-dasboard/user-card'
+import { UserCard, UserListSkeleton, EmptyState } from '@/components/shared/user-card'
 
 export default function TeachersPage() {
     const router   = useRouter()

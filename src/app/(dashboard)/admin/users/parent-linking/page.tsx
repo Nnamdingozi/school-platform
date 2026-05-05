@@ -55,7 +55,7 @@
 "use client"
 
 import { useState } from 'react';
-import { ParentChildLinker } from "@/components/admin-dasboard/parent-child-linker";
+import { ParentChildLinker } from "@/components/admin-dasboard/parent/parent-child-linker";
 // ✅ CHANGE: Import FamilyDirectoryTable instead of FamilyDirectory
 import { FamilyDirectoryTable } from "@/components/familyDirectory"; 
 import { useProfileStore } from '@/store/profileStore';

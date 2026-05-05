@@ -1925,8 +1925,8 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { supabase as supabaseAdmin } from '@/lib/supabase/supabaseClient'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from "@/lib/supabase/server"; // For auth session
+import { supabaseAdmin } from "@/lib/supabase/admin"; // For deleting/banning users
 import { getErrorMessage } from '@/lib/error-handler'
 import { toTitleCase } from '@/lib/utils/formatters'
 import { Role, ActivityType, Prisma } from '@prisma/client'
@@ -2292,5 +2292,107 @@ export async function updateUserProfile(userId: string, data: { name?: string; p
         return { success: true };
     } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) };
+    }
+}
+
+export async function getClassesBySchool(schoolId: string) {
+    try {
+        return await prisma.class.findMany({
+            where: { schoolId },
+            orderBy: { name: 'asc' },
+            select: {
+                id: true,
+                name: true,
+                grade: { select: { displayName: true } },
+            },
+        })
+    } catch (err: unknown) {
+        console.error('getClassesBySchool error:', getErrorMessage(err))
+        return []
+    }
+}
+
+// ── Assign Student/Parent to Class ────────────────────────────────────────────
+export async function assignUserToClass(userId: string, classId: string): Promise<ActionResult> {
+    const actor = await getAuthenticatedActor();
+    if (!actor || !actor.schoolId) return { success: false, error: 'Unauthorized.' };
+
+    try {
+        const [targetUser, targetClass] = await Promise.all([
+            prisma.profile.findUnique({ where: { id: userId } }),
+            prisma.class.findUnique({ where: { id: classId } })
+        ]);
+
+        if (!targetUser || !targetClass || targetUser.schoolId !== actor.schoolId || targetClass.schoolId !== actor.schoolId) {
+            return { success: false, error: "Security mismatch: Users must belong to the same school." };
+        }
+
+        const existing = await prisma.classEnrollment.findFirst({
+            where: { studentId: userId, classId },
+        });
+        if (existing) return { success: false, error: 'User is already enrolled in this class.' };
+
+        await prisma.classEnrollment.create({
+            data: {
+                studentId: userId,
+                classId,
+                schoolId: actor.schoolId
+            },
+        });
+
+        await logActivity({
+            schoolId: actor.schoolId,
+            actorId: actor.id,
+            actorRole: actor.role,
+            type: ActivityType.STUDENT_ASSIGNED,
+            title: 'Class Placement',
+            description: `Assigned ${targetUser.name || targetUser.email} to room ${targetClass.name}.`
+        });
+
+        return { success: true }
+    } catch (err: unknown) {
+        return { success: false, error: getErrorMessage(err) }
+    }
+}
+
+export async function getParentsBySchool(schoolId: string): Promise<UserListItem[]> {
+    try {
+        const parents = await prisma.profile.findMany({
+            where: { schoolId, role: Role.PARENT },
+            include: {
+                ParentStudent_ParentStudent_parentIdToprofiles: {
+                    include: {
+                        student: {
+                            include: {
+                                classEnrollments: { include: { class: { include: { grade: true } } } }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        return parents.map(p => {
+            const childClasses = p.ParentStudent_ParentStudent_parentIdToprofiles.flatMap(link => 
+                link.student.classEnrollments
+                    .filter(e => e.class !== null)
+                    .map(e => e.class!)
+            );
+
+            // Deduplicate classes if children are in same class
+            const uniqueClasses = Array.from(new Map(childClasses.map(c => [c.id, c])).values());
+
+            return {
+                id: p.id,
+                name: p.name,
+                email: p.email,
+                phone: p.phone,
+                role: p.role,
+                assignedClasses: uniqueClasses
+            };
+        });
+    } catch (err: unknown) {
+        console.error("getParentsBySchool error:", getErrorMessage(err));
+        return [];
     }
 }

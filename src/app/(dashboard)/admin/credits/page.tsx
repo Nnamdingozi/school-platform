@@ -507,150 +507,206 @@
 
 
 
-'use client';
+// 'use client';
 
-import { useState, useEffect } from 'react';
-import { 
-    getCreditPackages, 
-    initiateCreditsPayment, 
-} from '@/app/actions/credits.actions';
-// import { InitiatePaymentResult } from '@/types/credits';
-import { useProfileStore } from '@/store/profileStore';
-import { 
-    Loader2, Zap, ArrowRight, Shield, MessageSquare 
-} from 'lucide-react';
-// import { Card, CardContent } from '@/components/ui/card';
-import { toast } from 'sonner';
-import { PackageCard } from '@/components/credit/packageCard';
-import { getErrorMessage } from '@/lib/error-handler'
+// import { useState, useEffect } from 'react';
+// import { 
+//     getCreditPackages, 
+//     initiateCreditsPayment, 
+// } from '@/app/actions/credits.actions';
+// // import { InitiatePaymentResult } from '@/types/credits';
+// import { useProfileStore } from '@/store/profileStore';
+// import { 
+//     Loader2, Zap, ArrowRight, Shield, MessageSquare 
+// } from 'lucide-react';
+// // import { Card, CardContent } from '@/components/ui/card';
+// import { toast } from 'sonner';
+// import { PackageCard } from '@/components/credit/packageCard';
+// import { getErrorMessage } from '@/lib/error-handler'
 
-// ── Interfaces ──────────────────────────────────────────────────────────────
+// // ── Interfaces ──────────────────────────────────────────────────────────────
 
-interface CreditPackage {
-    id: string;
-    name: string;
-    credits: number;
-    priceNGN: number;
-    priceUSD: number;
-    description: string;
-    popular: boolean;
+// interface CreditPackage {
+//     id: string;
+//     name: string;
+//     credits: number;
+//     priceNGN: number;
+//     priceUSD: number;
+//     description: string;
+//     popular: boolean;
+// }
+
+
+// // ── Main Page Component ──────────────────────────────────────────────────────
+
+// export default function CreditsPage() {
+//     const { profile } = useProfileStore();
+//     const schoolId = profile?.schoolId ?? '';
+    
+//     const [packages, setPackages] = useState<CreditPackage[]>([]);
+//     const [loading, setLoading] = useState(true);
+//     // const [purchaseLoading, setPurchaseLoading] = useState(false);
+//     const [activeId, setActiveId] = useState<string | null>(null);
+
+//     useEffect(() => {
+//         async function loadPackages() {
+//             try {
+//                 const res = await getCreditPackages();
+//                 if (res.success && res.data) {
+//                     setPackages(res.data as CreditPackage[]);
+//                 } else {
+//                     toast.error("Failed to load credit registry");
+//                 }
+//             } catch {
+//                 toast.error("An error occurred while fetching packages");
+//             } finally {
+//                 setLoading(false);
+//             }
+//         }
+//         loadPackages();
+//     }, []);
+
+
+//     const handleSelect = async (id: string) => {
+
+//         if (!schoolId) {
+//             toast.error("Institutional identification is required.");
+//             return;
+//         }
+//         setActiveId(id); // Set the specific package being purchased
+//         try {
+//             const res = await initiateCreditsPayment(schoolId, id);
+//             if (res.success && res.authorizationUrl) {
+//                 window.location.href = res.authorizationUrl;
+//             } else {
+//                 toast.error(res.error || "Payment failed");
+//                 setActiveId(null); // Reset if failed
+//             }
+//         } catch (err) {
+//             toast.error("An error occurred");
+//             setActiveId(null); // Reset if crashed
+//             getErrorMessage(err)
+//         }
+//     };
+
+
+//     if (loading) return (
+//         <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 gap-4">
+//             <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
+//             <p className="text-slate-500 font-mono text-xs uppercase tracking-[0.3em] animate-pulse">Syncing_Credit_Registry...</p>
+//         </div>
+//     );
+
+//     return (
+//         <div className="min-h-screen bg-slate-950 text-slate-50 p-6 md:p-12">
+//             <div className="max-w-7xl mx-auto space-y-12">
+                
+//                 {/* Header */}
+//                 <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-10">
+//                     <div className="flex items-center gap-5">
+//                         <div className="h-14 w-14 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center shadow-2xl shadow-school-primary/10">
+//                             <Zap className="h-7 w-7 text-school-primary" />
+//                         </div>
+//                         <div>
+//                             <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none">Credit Acquisition</h1>
+//                             <p className="text-slate-500 text-sm mt-2 font-medium">Replenish your WhatsApp units for automated reporting.</p>
+//                         </div>
+//                     </div>
+                    
+//                     <div className="flex items-center gap-3 bg-slate-900 border border-white/5 px-6 py-3 rounded-2xl">
+//                         <Shield className="h-4 w-4 text-emerald-500" />
+//                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">PCI-DSS Compliant</span>
+//                     </div>
+//                 </header>
+
+//                 {/* Info Banner */}
+//                 <div className="bg-slate-900 border border-white/5 rounded-[2rem] p-6 flex items-start gap-4">
+//                     <MessageSquare className="h-6 w-6 text-school-primary shrink-0" />
+//                     <div className="space-y-1">
+//                         <p className="text-xs font-black uppercase tracking-widest text-white">Consumption Rate</p>
+//                         <p className="text-xs text-slate-500 leading-relaxed max-w-3xl">
+//                             Each successful transmission (Feedback, Reports, Attendance) consumes <span className="text-white font-bold">1 Credit Unit</span>. 
+//                             Credits never expire and remain valid for the duration of your institutional subscription.
+//                         </p>
+//                     </div>
+//                 </div>
+
+//                 {/* Packages Grid */}
+//                 <div className="grid gap-6 md:grid-cols-4">
+//     {packages.map((pkg) => (
+//         <PackageCard 
+//             key={pkg.id} 
+//             pkg={pkg} 
+//             isProcessing={activeId === pkg.id} // Is this one?
+//             isAnyLoading={!!activeId}         // Is any one?
+//             onSelect={handleSelect}
+//         />
+//     ))}
+// </div>
+
+//                 {/* Footer Section */}
+//                 <footer className="pt-10 flex items-center justify-center border-t border-white/5 opacity-50">
+//                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 flex items-center gap-3">
+//                         <Shield className="h-3 w-3" /> Secure Transaction Hub <ArrowRight className="h-3 w-3" />
+//                     </p>
+//                 </footer>
+//             </div>
+//         </div>
+//     );
+// }
+
+
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { getCreditPackages } from "@/app/actions/credits";
+import { CreditAcquisitionClient } from "@/components/credit/creditAcquisitionClient";
+import { Role } from "@prisma/client";
+
+/**
+ * Rule 16: Dynamic SEO
+ */
+export async function generateMetadata(): Promise<Metadata> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { title: "Acquire Credits | SchoolPaaS" };
+
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        include: { school: { select: { name: true } } }
+    });
+
+    return {
+        title: `Buy Credits | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
+        description: "Replenish WhatsApp units for institutional automated reporting."
+    };
 }
 
+/**
+ * Rule 12: Server-First Fetching
+ */
+export default async function Page() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
 
-// ── Main Page Component ──────────────────────────────────────────────────────
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        select: { id: true, schoolId: true, role: true }
+    });
 
-export default function CreditsPage() {
-    const { profile } = useProfileStore();
-    const schoolId = profile?.schoolId ?? '';
-    
-    const [packages, setPackages] = useState<CreditPackage[]>([]);
-    const [loading, setLoading] = useState(true);
-    // const [purchaseLoading, setPurchaseLoading] = useState(false);
-    const [activeId, setActiveId] = useState<string | null>(null);
+    // Rule 10 & 13: Institutional Gate
+    if (!profile?.schoolId || profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN) {
+        redirect("/teacher?error=unauthorized_billing");
+    }
 
-    useEffect(() => {
-        async function loadPackages() {
-            try {
-                const res = await getCreditPackages();
-                if (res.success && res.data) {
-                    setPackages(res.data as CreditPackage[]);
-                } else {
-                    toast.error("Failed to load credit registry");
-                }
-            } catch {
-                toast.error("An error occurred while fetching packages");
-            } finally {
-                setLoading(false);
-            }
-        }
-        loadPackages();
-    }, []);
-
-
-    const handleSelect = async (id: string) => {
-
-        if (!schoolId) {
-            toast.error("Institutional identification is required.");
-            return;
-        }
-        setActiveId(id); // Set the specific package being purchased
-        try {
-            const res = await initiateCreditsPayment(schoolId, id);
-            if (res.success && res.authorizationUrl) {
-                window.location.href = res.authorizationUrl;
-            } else {
-                toast.error(res.error || "Payment failed");
-                setActiveId(null); // Reset if failed
-            }
-        } catch (err) {
-            toast.error("An error occurred");
-            setActiveId(null); // Reset if crashed
-            getErrorMessage(err)
-        }
-    };
-
-
-    if (loading) return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 gap-4">
-            <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
-            <p className="text-slate-500 font-mono text-xs uppercase tracking-[0.3em] animate-pulse">Syncing_Credit_Registry...</p>
-        </div>
-    );
+    // Fetch Tier-1 Global Packages on Server
+    const res = await getCreditPackages();
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-50 p-6 md:p-12">
-            <div className="max-w-7xl mx-auto space-y-12">
-                
-                {/* Header */}
-                <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-10">
-                    <div className="flex items-center gap-5">
-                        <div className="h-14 w-14 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center shadow-2xl shadow-school-primary/10">
-                            <Zap className="h-7 w-7 text-school-primary" />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none">Credit Acquisition</h1>
-                            <p className="text-slate-500 text-sm mt-2 font-medium">Replenish your WhatsApp units for automated reporting.</p>
-                        </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 bg-slate-900 border border-white/5 px-6 py-3 rounded-2xl">
-                        <Shield className="h-4 w-4 text-emerald-500" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">PCI-DSS Compliant</span>
-                    </div>
-                </header>
-
-                {/* Info Banner */}
-                <div className="bg-slate-900 border border-white/5 rounded-[2rem] p-6 flex items-start gap-4">
-                    <MessageSquare className="h-6 w-6 text-school-primary shrink-0" />
-                    <div className="space-y-1">
-                        <p className="text-xs font-black uppercase tracking-widest text-white">Consumption Rate</p>
-                        <p className="text-xs text-slate-500 leading-relaxed max-w-3xl">
-                            Each successful transmission (Feedback, Reports, Attendance) consumes <span className="text-white font-bold">1 Credit Unit</span>. 
-                            Credits never expire and remain valid for the duration of your institutional subscription.
-                        </p>
-                    </div>
-                </div>
-
-                {/* Packages Grid */}
-                <div className="grid gap-6 md:grid-cols-4">
-    {packages.map((pkg) => (
-        <PackageCard 
-            key={pkg.id} 
-            pkg={pkg} 
-            isProcessing={activeId === pkg.id} // Is this one?
-            isAnyLoading={!!activeId}         // Is any one?
-            onSelect={handleSelect}
+        <CreditAcquisitionClient 
+            initialPackages={res.success ? (res.data as any) : []} 
         />
-    ))}
-</div>
-
-                {/* Footer Section */}
-                <footer className="pt-10 flex items-center justify-center border-t border-white/5 opacity-50">
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 flex items-center gap-3">
-                        <Shield className="h-3 w-3" /> Secure Transaction Hub <ArrowRight className="h-3 w-3" />
-                    </p>
-                </footer>
-            </div>
-        </div>
     );
 }

@@ -1608,193 +1608,266 @@
 // }
 
 
-'use client'
+// 'use client'
 
-import { use, useEffect, useState } from "react"
-import { useProfileStore } from "@/store/profileStore"
-import { Loader2, BookOpen, Layers } from "lucide-react"
+// import { use, useEffect, useState } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { Loader2, BookOpen, Layers } from "lucide-react"
+// import { getStudentLesson } from "@/app/actions/lesson.actions"
+// // Import the helper and the DTO type correctly
+// import { transformLesson, type LessonDTO } from "@/lib/lessons/transformLessons"
+// import { cn } from "@/lib/utils"
+// import { getErrorMessage } from "@/lib/error-handler"
+// import { type LessonAiContent } from "@/app/actions/ai-generator"
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface LessonView {
+//   summary: string;
+//   explanation: string;
+//   visualAids: LessonDTO['visualAids'];
+//   quiz: LessonDTO['quiz'];
+//   objectives: string[];
+// }
+
+// interface StudentLessonData {
+//   id: string;
+//   subject: string;
+//   title: string;
+//   aiContent: LessonAiContent;
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function StudentLessonPage({ params }: { params: Promise<{ topicId: string }> }) {
+//   const { topicId } = use(params);
+//   const { profile } = useProfileStore();
+//   const schoolId = profile?.schoolId ?? "";
+
+//   const [lessonData, setLessonData] = useState<StudentLessonData | null>(null);
+//   const [view, setView] = useState<LessonView | null>(null);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     if (!schoolId || !topicId) return;
+
+//     async function loadLesson() {
+//       setLoading(true);
+//       try {
+//         const res = await getStudentLesson(topicId, schoolId);
+
+//         if (!res.success || !res.data || !res.data.aiContent) {
+//           setLessonData(null);
+//           setView(null); 
+//           return;
+//         }
+
+//         /**
+//          * RESOLUTION:
+//          * 1. Cast JsonValue to LessonAiContent safely.
+//          * 2. Pass arguments in correct order: (topicId, aiContent).
+//          */
+//         const ai = res.data.aiContent as unknown as LessonAiContent;
+//         const dto = transformLesson(topicId, ai);
+
+//         setLessonData({
+//             id: res.data.id,
+//             subject: res.data.subject,
+//             title: res.data.title,
+//             aiContent: ai
+//         });
+
+//         setView({
+//           summary: dto.summary,
+//           explanation: dto.explanation,
+//           visualAids: dto.visualAids,
+//           quiz: dto.quiz,
+//           objectives: dto.learningObjectives
+//         });
+
+//       } catch (err) {
+//         console.error("[LESSON_PAGE_LOAD_ERROR]:", getErrorMessage(err));
+//       } finally {
+//         setLoading(false);
+//       }
+//     }
+//     loadLesson();
+//   }, [topicId, schoolId]);
+
+//   if (loading) return (
+//     <div className="min-h-screen flex items-center justify-center bg-slate-950">
+//       <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
+//     </div>
+//   );
+
+//   if (!view || !lessonData) return (
+//     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-slate-500">
+//       <BookOpen className="h-12 w-12 mb-4" />
+//       <p className="text-lg font-black uppercase">Lesson Not Found</p>
+//     </div>
+//   );
+
+//   return (
+//     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-10 pb-20">
+      
+//       {/* HEADER */}
+//       <div className="border-b border-white/5 pb-8">
+//         <div className="flex items-center gap-3 text-school-primary mb-2">
+//             <Layers className="h-4 w-4" />
+//             <span className="text-[10px] font-black uppercase tracking-[0.3em]">{lessonData.subject}</span>
+//         </div>
+//         <h1 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none">
+//             {lessonData.title}
+//         </h1>
+//       </div>
+      
+//       {/* OBJECTIVES */}
+//       <div className="flex flex-wrap gap-2">
+//           {view.objectives.map((obj, i) => (
+//               <span key={i} className="px-3 py-1 bg-school-primary/10 border border-school-primary/20 text-school-primary text-[10px] font-bold uppercase rounded-full">
+//                   {obj}
+//               </span>
+//           ))}
+//       </div>
+
+//       {/* SUMMARY */}
+//       <section className="space-y-4">
+//         <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//            <div className="h-1 w-4 bg-school-primary" /> Executive Summary
+//         </h2>
+//         <div className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
+//           <p className="text-slate-300 text-lg leading-loose italic">{view.summary}</p>
+//         </div>
+//       </section>
+
+//       {/* EXPLANATION */}
+//       <section className="space-y-4">
+//         <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//            <div className="h-1 w-4 bg-school-primary" /> Lesson Content
+//         </h2>
+//         <div className="bg-slate-900 p-8 rounded-[2.5rem] border border-white/5 shadow-2xl text-slate-200 whitespace-pre-line leading-relaxed font-medium">
+//           {view.explanation}
+//         </div>
+//       </section>
+
+//       {/* VISUAL AIDS */}
+//       {view.visualAids.length > 0 && (
+//         <section className="space-y-4">
+//           <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//              <div className="h-1 w-4 bg-school-primary" /> Visual Aids
+//           </h2>
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//             {view.visualAids.map((v, i) => (
+//               <div key={i} className="p-6 bg-slate-950 rounded-3xl border border-white/5">
+//                 <h4 className="text-sm font-black text-white mb-2 uppercase italic">{v.title}</h4>
+//                 <p className="text-xs text-slate-500 leading-relaxed">{v.description}</p>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+
+//       {/* QUIZ SECTION */}
+//       {view.quiz.length > 0 && (
+//         <section className="space-y-6">
+//           <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//              <div className="h-1 w-4 bg-school-primary" /> Knowledge Check
+//           </h2>
+//           <div className="space-y-4">
+//             {view.quiz.map((q, i) => (
+//               <div key={i} className="p-8 bg-slate-900/40 rounded-[2.5rem] border border-white/5 space-y-6">
+//                 <div className="flex gap-4">
+//                     <span className="text-school-primary font-black text-lg italic">0{i+1}</span>
+//                     <p className="text-lg font-bold text-white tracking-tight">{q.question}</p>
+//                 </div>
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-10">
+//                   {q.options.map((opt) => (
+//                     <div key={opt} className={cn(
+//                         "text-[10px] font-black uppercase px-5 py-4 rounded-xl border",
+//                         opt === q.answer ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/5" : "border-white/5 text-slate-500 bg-slate-950/50"
+//                     )}>
+//                       {opt}
+//                     </div>
+//                   ))}
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+//     </div>
+//   );
+// }
+
+
+import { Metadata } from "next";
+import { notFound, redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
 import { getStudentLesson } from "@/app/actions/lesson.actions"
-// Import the helper and the DTO type correctly
-import { transformLesson, type LessonDTO } from "@/lib/lessons/transformLessons"
-import { cn } from "@/lib/utils"
-import { getErrorMessage } from "@/lib/error-handler"
-import { type LessonAiContent } from "@/app/actions/ai-generator"
+import { getScannedQuestions } from "@/app/actions/scanned-question-bank";
+import { LessonContentClient } from "@/components/student-dashboard/lesson/lessonContentClient";
 
-// ── Types ───────────────────────────────────────────────────────────────────
 
-interface LessonView {
-  summary: string;
-  explanation: string;
-  visualAids: LessonDTO['visualAids'];
-  quiz: LessonDTO['quiz'];
-  objectives: string[];
+interface PageProps {
+  params: Promise<{ topicId: string }>;
 }
 
-interface StudentLessonData {
-  id: string;
-  subject: string;
-  title: string;
-  aiContent: LessonAiContent;
+/**
+ * Rule 16: Contextual SEO
+ */
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { topicId } = await params;
+  const topic = await prisma.topic.findUnique({
+    where: { id: topicId },
+    select: { title: true }
+  });
+
+  return {
+    title: `${topic?.title || "Lesson"} | Study Registry | SchoolPaaS`,
+    description: "Personalized academic module and interactive practice."
+  };
 }
 
-// ── Main Component ──────────────────────────────────────────────────────────
+/**
+ * Rule 12: Server-First Execution
+ */
+export default async function Page({ params }: PageProps) {
+  const { topicId } = await params;
 
-export default function StudentLessonPage({ params }: { params: Promise<{ topicId: string }> }) {
-  const { topicId } = use(params);
-  const { profile } = useProfileStore();
-  const schoolId = profile?.schoolId ?? "";
+  // 1. Resolve Identity & Context (Rule 10)
+  const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) redirect("/login");
 
-  const [lessonData, setLessonData] = useState<StudentLessonData | null>(null);
-  const [view, setView] = useState<LessonView | null>(null);
-  const [loading, setLoading] = useState(true);
+  const profile = await prisma.profile.findUnique({
+    where: { id: authUser.id },
+    select: { id: true, schoolId: true, role: true }
+  });
 
-  useEffect(() => {
-    if (!schoolId || !topicId) return;
+  if (!profile) redirect("/login");
 
-    async function loadLesson() {
-      setLoading(true);
-      try {
-        const res = await getStudentLesson(topicId, schoolId);
+  // 2. Fetch Lesson & Scanned Registry in Parallel (Rule 11)
+  const [lessonRes, scannedQuestions] = await Promise.all([
+    getStudentLesson(topicId, profile.schoolId),
+    getScannedQuestions({
+        topicId,
+        schoolId: profile.schoolId,
+        userId: profile.id
+    })
+  ]);
 
-        if (!res.success || !res.data || !res.data.aiContent) {
-          setLessonData(null);
-          setView(null); 
-          return;
-        }
-
-        /**
-         * RESOLUTION:
-         * 1. Cast JsonValue to LessonAiContent safely.
-         * 2. Pass arguments in correct order: (topicId, aiContent).
-         */
-        const ai = res.data.aiContent as unknown as LessonAiContent;
-        const dto = transformLesson(topicId, ai);
-
-        setLessonData({
-            id: res.data.id,
-            subject: res.data.subject,
-            title: res.data.title,
-            aiContent: ai
-        });
-
-        setView({
-          summary: dto.summary,
-          explanation: dto.explanation,
-          visualAids: dto.visualAids,
-          quiz: dto.quiz,
-          objectives: dto.learningObjectives
-        });
-
-      } catch (err) {
-        console.error("[LESSON_PAGE_LOAD_ERROR]:", getErrorMessage(err));
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadLesson();
-  }, [topicId, schoolId]);
-
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950">
-      <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
-    </div>
-  );
-
-  if (!view || !lessonData) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-slate-500">
-      <BookOpen className="h-12 w-12 mb-4" />
-      <p className="text-lg font-black uppercase">Lesson Not Found</p>
-    </div>
-  );
+  if (!lessonRes.success || !lessonRes.data) {
+    return notFound();
+  }
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-10 pb-20">
-      
-      {/* HEADER */}
-      <div className="border-b border-white/5 pb-8">
-        <div className="flex items-center gap-3 text-school-primary mb-2">
-            <Layers className="h-4 w-4" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">{lessonData.subject}</span>
-        </div>
-        <h1 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none">
-            {lessonData.title}
-        </h1>
-      </div>
-      
-      {/* OBJECTIVES */}
-      <div className="flex flex-wrap gap-2">
-          {view.objectives.map((obj, i) => (
-              <span key={i} className="px-3 py-1 bg-school-primary/10 border border-school-primary/20 text-school-primary text-[10px] font-bold uppercase rounded-full">
-                  {obj}
-              </span>
-          ))}
-      </div>
-
-      {/* SUMMARY */}
-      <section className="space-y-4">
-        <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-           <div className="h-1 w-4 bg-school-primary" /> Executive Summary
-        </h2>
-        <div className="bg-slate-900/50 p-8 rounded-[2rem] border border-white/5 shadow-xl">
-          <p className="text-slate-300 text-lg leading-loose italic">{view.summary}</p>
-        </div>
-      </section>
-
-      {/* EXPLANATION */}
-      <section className="space-y-4">
-        <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-           <div className="h-1 w-4 bg-school-primary" /> Lesson Content
-        </h2>
-        <div className="bg-slate-900 p-8 rounded-[2.5rem] border border-white/5 shadow-2xl text-slate-200 whitespace-pre-line leading-relaxed font-medium">
-          {view.explanation}
-        </div>
-      </section>
-
-      {/* VISUAL AIDS */}
-      {view.visualAids.length > 0 && (
-        <section className="space-y-4">
-          <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-             <div className="h-1 w-4 bg-school-primary" /> Visual Aids
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {view.visualAids.map((v, i) => (
-              <div key={i} className="p-6 bg-slate-950 rounded-3xl border border-white/5">
-                <h4 className="text-sm font-black text-white mb-2 uppercase italic">{v.title}</h4>
-                <p className="text-xs text-slate-500 leading-relaxed">{v.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* QUIZ SECTION */}
-      {view.quiz.length > 0 && (
-        <section className="space-y-6">
-          <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-             <div className="h-1 w-4 bg-school-primary" /> Knowledge Check
-          </h2>
-          <div className="space-y-4">
-            {view.quiz.map((q, i) => (
-              <div key={i} className="p-8 bg-slate-900/40 rounded-[2.5rem] border border-white/5 space-y-6">
-                <div className="flex gap-4">
-                    <span className="text-school-primary font-black text-lg italic">0{i+1}</span>
-                    <p className="text-lg font-bold text-white tracking-tight">{q.question}</p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-10">
-                  {q.options.map((opt) => (
-                    <div key={opt} className={cn(
-                        "text-[10px] font-black uppercase px-5 py-4 rounded-xl border",
-                        opt === q.answer ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/5" : "border-white/5 text-slate-500 bg-slate-950/50"
-                    )}>
-                      {opt}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-    </div>
+    <LessonContentClient 
+      initialLesson={lessonRes.data}
+      initialScannedQuestions={scannedQuestions}
+      userId={profile.id}
+      schoolId={profile.schoolId}
+      userRole={profile.role}
+    />
   );
 }

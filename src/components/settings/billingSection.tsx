@@ -1397,441 +1397,714 @@
 // }
 
 
+// 'use client'
+
+// import { useState, useEffect } from 'react'
+// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+// import {
+//     CreditCard, CheckCircle2, Clock, AlertTriangle,
+//     Loader2, Star, Shield, Zap, Info,
+//     History, ChevronDown, ChevronUp, XCircle,
+//     RefreshCw, ArrowRight
+// } from 'lucide-react'
+// import {
+//     initiateSubscriptionPayment,
+//     getSubscriptionPlans,
+//     getSchoolSubscription,
+//     type SubscriptionPlan,
+//     type SubscriptionWithHistory,
+//     type PaymentHistoryEntry,
+// } from '@/app/actions/subscription.actions'
+// import { type SchoolSettingsData } from '@/app/actions/school-settings.action'
+// import { useProfileStore } from '@/store/profileStore'
+// import { toast } from 'sonner'
+// import { cn } from '@/lib/utils'
+// import { format } from 'date-fns'
+// import { getErrorMessage } from '@/lib/error-handler'
+
+// // ── Helpers ────────────────────────────────────────────────────────────────────
+
+// function daysUntilExpiry(date: Date): number {
+//     return Math.ceil(
+//         (new Date(date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+//     )
+// }
+
+// function getStatusConfig(status: string) {
+//     switch (status.toLowerCase()) {
+//         case 'active':
+//             return { color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20', icon: CheckCircle2, label: 'Active' }
+//         case 'trialing':
+//             return { color: 'text-school-primary', bg: 'bg-school-primary/10', border: 'border-school-primary/20', icon: Clock, label: 'Trial' }
+//         case 'past_due':
+//             return { color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20', icon: AlertTriangle, label: 'Past Due' }
+//         case 'pending':
+//             return { color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: Clock, label: 'Pending' }
+//         default:
+//             return { color: 'text-school-secondary-400', bg: 'bg-school-secondary-800', border: 'border-school-secondary-700', icon: CreditCard, label: status }
+//     }
+// }
+
+// // ── Plan Card ──────────────────────────────────────────────────────────────────
+
+// function PlanCard({
+//     plan, onSelect, loading, selected,
+// }: {
+//     plan: SubscriptionPlan
+//     onSelect: (id: string) => void
+//     loading: boolean
+//     selected: string | null
+// }) {
+//     const isThisLoading = selected === plan.id && loading
+//     const isOtherLoading = loading && selected !== plan.id
+
+//     return (
+//         <div className={cn(
+//             'relative rounded-xl border p-4 space-y-3 transition-all',
+//             plan.popular
+//                 ? 'border-school-primary/40 bg-school-primary/5'
+//                 : 'border-school-secondary-600 bg-school-secondary-800/30',
+//             isOtherLoading && 'opacity-40 pointer-events-none'
+//         )}>
+//             {plan.popular && (
+//                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+//                     <span className="inline-flex items-center gap-1 rounded-full bg-school-primary px-3 py-0.5 text-[10px] font-black text-school-secondary-950">
+//                         <Star className="h-2.5 w-2.5" />
+//                         BEST VALUE
+//                     </span>
+//                 </div>
+//             )}
+
+//             <div>
+//                 <p className="text-[10px] font-semibold text-school-secondary-500 uppercase tracking-wider">
+//                     {plan.name}
+//                 </p>
+//                 <div className="flex items-baseline gap-1 mt-0.5">
+//                     <span className="text-xl font-black text-white">
+//                         ₦{plan.priceNGN.toLocaleString()}
+//                     </span>
+//                     <span className="text-[11px] text-school-secondary-500">
+//                         /{plan.durationDays === 30 ? 'mo' : plan.durationDays === 90 ? 'term' : 'yr'}
+//                     </span>
+//                 </div>
+//                 <p className="text-[10px] text-school-secondary-500 mt-0.5">
+//                     ≈ ${plan.priceUSD} USD
+//                 </p>
+//                 <p className="text-[11px] text-school-secondary-400 mt-1">
+//                     {plan.description}
+//                 </p>
+//             </div>
+
+//             <div className="space-y-1">
+//                 {plan.features.map(f => (
+//                     <div key={f} className="flex items-center gap-1.5">
+//                         <CheckCircle2 className="h-3 w-3 text-school-primary shrink-0" />
+//                         <span className="text-[11px] text-school-secondary-300">{f}</span>
+//                     </div>
+//                 ))}
+//             </div>
+
+//             <button
+//                 onClick={() => onSelect(plan.id)}
+//                 disabled={loading}
+//                 className={cn(
+//                     'w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-50',
+//                     plan.popular
+//                         ? 'bg-school-primary hover:bg-school-primary-600 text-school-secondary-950'
+//                         : 'bg-school-secondary-700 hover:bg-school-secondary-600 text-white border border-school-secondary-600'
+//                 )}
+//             >
+//                 {isThisLoading ? (
+//                     <><Loader2 className="h-3.5 w-3.5 animate-spin" />Processing...</>
+//                 ) : (
+//                     <>Select this plan <ArrowRight className="h-3 w-3" /></>
+//                 )}
+//             </button>
+//         </div>
+//     )
+// }
+
+// // ── Payment History Row ────────────────────────────────────────────────────────
+
+// function PaymentRow({ entry }: { entry: PaymentHistoryEntry }) {
+//     const isSuccess = entry.status === 'SUCCESS'
+//     const isPending = entry.status === 'PENDING'
+
+//     return (
+//         <div className="flex items-center gap-3 px-4 py-3 hover:bg-school-secondary-800/40 transition-colors">
+//             <div className={cn(
+//                 'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border',
+//                 isSuccess ? 'bg-green-500/10 border-green-500/20'
+//                     : isPending ? 'bg-amber-500/10 border-amber-500/20'
+//                         : 'bg-red-500/10 border-red-500/20'
+//             )}>
+//                 {isSuccess
+//                     ? <CheckCircle2 className="h-3.5 w-3.5 text-green-400" />
+//                     : isPending
+//                         ? <Clock className="h-3.5 w-3.5 text-amber-400" />
+//                         : <XCircle className="h-3.5 w-3.5 text-red-400" />
+//                 }
+//             </div>
+
+//             <div className="flex-1 min-w-0">
+//                 <p className="text-xs font-semibold text-white truncate">
+//                     {entry.planName}
+//                 </p>
+//                 <p className="text-[10px] text-school-secondary-500">
+//                     {entry.paidAt
+//                         ? format(new Date(entry.paidAt), 'dd MMM yyyy · HH:mm')
+//                         : format(new Date(entry.createdAt), 'dd MMM yyyy · HH:mm')
+//                     }
+//                 </p>
+//             </div>
+
+//             <div className="text-right shrink-0">
+//                 <p className="text-xs font-bold text-white">
+//                     {entry.amountNGN === 0 ? 'Free' : `₦${entry.amountNGN.toLocaleString()}`}
+//                 </p>
+//                 <span className={cn(
+//                     'text-[10px] font-semibold',
+//                     isSuccess ? 'text-green-400' :
+//                         isPending ? 'text-amber-400' : 'text-red-400'
+//                 )}>
+//                     {entry.status.charAt(0) + entry.status.slice(1).toLowerCase()}
+//                 </span>
+//             </div>
+//         </div>
+//     )
+// }
+
+// // ── Main Component ─────────────────────────────────────────────────────────────
+
+// export function BillingSection({ data }: { data: SchoolSettingsData }) {
+//     const { profile } = useProfileStore()
+//     const schoolId = profile?.schoolId ?? ''
+
+//     const [sub, setSub] = useState<SubscriptionWithHistory | null>(() => {
+//         // Initialize state with data passed from props to ensure usage of 'data' variable
+//         if (data.school.subscription) {
+//             return data.school.subscription as unknown as SubscriptionWithHistory
+//         }
+//         return null
+//     })
+
+//     const [plans, setPlans] = useState<SubscriptionPlan[]>([])
+//     const [subLoading, setSubLoading] = useState(!data.school.subscription)
+//     const [plansLoading, setPlansLoading] = useState(false)
+//     const [showPlans, setShowPlans] = useState(false)
+//     const [showHistory, setShowHistory] = useState(false)
+//     const [paying, setPaying] = useState(false)
+//     const [selected, setSelected] = useState<string | null>(null)
+
+//     useEffect(() => {
+//         if (!schoolId) return
+        
+//         const fetchFullSub = async () => {
+//             try {
+//                 // Fetch full data including transactions not present in initial 'data' prop
+//                 const s = await getSchoolSubscription(schoolId)
+//                 if (s) {
+//                     setSub(s)
+//                     if (s.status !== 'active') setShowPlans(true)
+//                 }
+//             } finally {
+//                 setSubLoading(false)
+//             }
+//         }
+//         fetchFullSub()
+//     }, [schoolId])
+
+//     useEffect(() => {
+//         if (!showPlans || plans.length > 0) return
+//         setPlansLoading(true)
+//         getSubscriptionPlans()
+//             .then(setPlans)
+//             .finally(() => setPlansLoading(false))
+//     }, [showPlans, plans.length])
+
+//     async function handleSelectPlan(planId: string) {
+//         if (!schoolId) { toast.error('School not found.'); return }
+//         setSelected(planId)
+//         setPaying(true)
+
+//         try {
+//             const result = await initiateSubscriptionPayment(schoolId, planId)
+//             if (result.success && result.authorizationUrl) {
+//                 window.location.href = result.authorizationUrl
+//             } else if (result.success && !result.authorizationUrl) {
+//                 toast.success('Subscription activated!')
+//                 const updated = await getSchoolSubscription(schoolId)
+//                 setSub(updated)
+//                 setShowPlans(false)
+//             } else {
+//                 toast.error(result.error ?? 'Failed to initiate payment.')
+//             }
+//         } catch (err) {
+//             toast.error('A network error occurred.')
+//             getErrorMessage(err)
+//         } finally {
+//             setPaying(false)
+//             setSelected(null)
+//         }
+//     }
+
+//     const daysLeft = sub?.currentPeriodEnd ? daysUntilExpiry(sub.currentPeriodEnd) : null
+//     const isActive = sub?.status === 'active'
+//     const isExpiringSoon = isActive && daysLeft !== null && daysLeft <= 7
+//     const hasHistory = (sub?.transactions?.length ?? 0) > 0
+//     const successTxCount = sub?.transactions?.filter(t => t.status === 'SUCCESS').length ?? 0
+
+//     if (subLoading && !sub) return (
+//         <Card className="bg-school-secondary-900 border-school-secondary-700">
+//             <CardContent className="flex items-center justify-center py-16 gap-2">
+//                 <Loader2 className="h-5 w-5 animate-spin text-school-primary" />
+//                 <span className="text-sm text-school-secondary-400">Loading billing data...</span>
+//             </CardContent>
+//         </Card>
+//     )
+
+//     return (
+//         <div className="space-y-4 animate-in fade-in duration-500">
+//             {/* Header utilizing 'data' to ensure usage and show school context */}
+//             <div className="flex items-center gap-2 px-2">
+//                 <Shield className="h-3.5 w-3.5 text-emerald-500" />
+//                 <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">
+//                     Institutional Billing Ledger: {data.school.name}
+//                 </span>
+//             </div>
+
+//             <Card className="bg-school-secondary-900 border-school-secondary-700">
+//                 <CardHeader className="pb-3 border-b border-school-secondary-700 px-4 sm:px-6">
+//                     <div className="flex items-center gap-3">
+//                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-school-primary/20 border border-school-primary/20">
+//                             <CreditCard className="h-4 w-4 text-school-primary" />
+//                         </div>
+//                         <div>
+//                             <CardTitle className="text-sm font-bold text-white uppercase tracking-tight">
+//                                 Current Subscription
+//                             </CardTitle>
+//                             <p className="text-[11px] text-school-secondary-400 mt-0.5 font-medium">
+//                                 Secured via Paystack Gateway
+//                             </p>
+//                         </div>
+//                     </div>
+//                 </CardHeader>
+//                 <CardContent className="p-4 sm:p-6 space-y-4">
+//                     {!sub || sub.status === 'pending' ? (
+//                         <div className="flex flex-col items-center justify-center py-8 gap-3 text-center">
+//                             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-school-secondary-800 border border-school-secondary-700 shadow-inner">
+//                                 <CreditCard className="h-7 w-7 text-school-secondary-500" />
+//                             </div>
+//                             <p className="text-sm font-bold text-white uppercase italic">No active subscription found</p>
+//                             <p className="text-xs text-school-secondary-400 max-w-xs leading-relaxed">
+//                                 Unlock full institutional features including AI lesson generation and parent WhatsApp reporting.
+//                             </p>
+//                             <button
+//                                 onClick={() => setShowPlans(true)}
+//                                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-school-primary hover:bg-school-primary-600 text-school-secondary-950 text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-school-primary/10"
+//                             >
+//                                 <Zap className="h-3.5 w-3.5 fill-current" />
+//                                 View Plans
+//                             </button>
+//                         </div>
+//                     ) : (
+//                         <>
+//                             {isExpiringSoon && (
+//                                 <div className={cn(
+//                                     'flex items-start gap-3 rounded-xl border px-4 py-3 animate-pulse',
+//                                     daysLeft! <= 1 ? 'bg-red-500/10 border-red-500/20' : 'bg-amber-500/10 border-amber-500/20'
+//                                 )}>
+//                                     <AlertTriangle className={cn('h-4 w-4 shrink-0 mt-0.5', daysLeft! <= 1 ? 'text-red-400' : 'text-amber-400')} />
+//                                     <div className="flex-1 min-w-0">
+//                                         <p className={cn('text-xs font-black uppercase', daysLeft! <= 1 ? 'text-red-400' : 'text-amber-400')}>
+//                                             {daysLeft! <= 0 ? 'Subscription Expired' : daysLeft === 1 ? 'Expires Today' : `Expires in ${daysLeft} days`}
+//                                         </p>
+//                                         <p className="text-[11px] text-school-secondary-400 mt-0.5 font-medium italic">
+//                                             Renew to maintain service continuity.
+//                                         </p>
+//                                     </div>
+//                                     <button
+//                                         onClick={() => setShowPlans(true)}
+//                                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-school-primary text-school-secondary-950 text-[10px] font-black uppercase transition-all"
+//                                     >
+//                                         <RefreshCw className="h-3 w-3" /> Renew
+//                                     </button>
+//                                 </div>
+//                             )}
+
+//                             {(() => {
+//                                 const config = getStatusConfig(sub.status)
+//                                 const Icon = config.icon
+//                                 return (
+//                                     <div className={cn('flex items-center gap-4 rounded-xl border px-4 py-4', config.bg, config.border)}>
+//                                         <div className={cn('p-2 rounded-lg bg-slate-950/40 border border-white/5', config.color)}>
+//                                             <Icon className="h-5 w-5" />
+//                                         </div>
+//                                         <div className="flex-1 min-w-0">
+//                                             <p className={cn('text-xs font-black uppercase tracking-widest', config.color)}>{config.label}</p>
+//                                             <p className="text-sm font-bold text-white mt-0.5">{sub.plan} Tier</p>
+//                                         </div>
+//                                         {daysLeft !== null && daysLeft > 0 && (
+//                                             <div className="text-right">
+//                                                 <p className={cn('text-lg font-black leading-none', config.color)}>{daysLeft}</p>
+//                                                 <p className="text-[9px] text-slate-500 font-bold uppercase mt-1 tracking-widest">Days Left</p>
+//                                             </div>
+//                                         )}
+//                                     </div>
+//                                 )
+//                             })()}
+
+//                             <div className="grid gap-3 sm:grid-cols-3">
+//                                 {[
+//                                     { label: 'Current Plan', value: sub.plan },
+//                                     { label: 'Cycle Status', value: getStatusConfig(sub.status).label },
+//                                     { label: 'Next Renewal', value: format(new Date(sub.currentPeriodEnd), 'dd MMM yyyy') },
+//                                 ].map(item => (
+//                                     <div key={item.label} className="rounded-xl border border-school-secondary-700 bg-school-secondary-800/50 p-3 shadow-inner">
+//                                         <p className="text-[9px] font-black text-school-secondary-500 uppercase tracking-widest mb-1">{item.label}</p>
+//                                         <p className="text-sm font-bold text-white uppercase italic">{item.value}</p>
+//                                     </div>
+//                                 ))}
+//                             </div>
+
+//                             <div className="flex items-center justify-between rounded-xl border border-school-secondary-700 bg-school-secondary-800/30 p-4 flex-wrap gap-4 group hover:border-school-primary/20 transition-all">
+//                                 <div>
+//                                     <p className="text-xs font-bold text-white uppercase tracking-tight">Upgrade or Change Plan</p>
+//                                     <p className="text-[11px] text-school-secondary-400 mt-1 font-medium italic">Adjust your access level for the next billing cycle.</p>
+//                                 </div>
+//                                 <button
+//                                     onClick={() => setShowPlans(p => !p)}
+//                                     className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-school-secondary-700 hover:bg-school-secondary-600 text-white text-[10px] font-black uppercase tracking-widest transition-all"
+//                                 >
+//                                     <Zap className="h-3.5 w-3.5 text-school-primary fill-current" />
+//                                     {showPlans ? 'Hide Options' : 'Modify Tier'}
+//                                 </button>
+//                             </div>
+//                         </>
+//                     )}
+//                 </CardContent>
+//             </Card>
+
+//             {showPlans && (
+//                 <div className="space-y-4 animate-in slide-in-from-top-4 duration-500">
+//                     <div className="flex items-start gap-3 rounded-2xl border border-school-primary/15 bg-slate-900 p-5 shadow-2xl">
+//                         <Info className="h-5 w-5 text-school-primary shrink-0 mt-0.5" />
+//                         <p className="text-[11px] text-slate-400 leading-relaxed font-medium italic">
+//                             All plan extensions are calculated from your current expiry date. Transitioning to a new tier will apply immediately.
+//                         </p>
+//                     </div>
+
+//                     <div className="grid gap-6 sm:grid-cols-3">
+//                         {plansLoading ? (
+//                             [1, 2, 3].map(i => <div key={i} className="h-48 rounded-2xl bg-school-secondary-900 animate-pulse border border-white/5" />)
+//                         ) : (
+//                             plans.map(plan => (
+//                                 <PlanCard key={plan.id} plan={plan} onSelect={handleSelectPlan} loading={paying} selected={selected} />
+//                             ))
+//                         )}
+//                     </div>
+//                 </div>
+//             )}
+
+//             {hasHistory && (
+//                 <Card className="bg-school-secondary-900 border-school-secondary-700 rounded-[1.5rem] overflow-hidden">
+//                     <button onClick={() => setShowHistory(p => !p)} className="flex items-center justify-between w-full p-6 hover:bg-white/[0.02] transition-all">
+//                         <div className="flex items-center gap-3">
+//                             <div className="p-2 bg-slate-950 rounded-lg border border-white/5 shadow-inner">
+//                                 <History className="h-4 w-4 text-slate-400" />
+//                             </div>
+//                             <div className="text-left">
+//                                 <p className="text-sm font-bold text-white uppercase tracking-tighter italic">Accounting History</p>
+//                                 <p className="text-[10px] text-school-secondary-500 font-bold uppercase mt-0.5">
+//                                     {successTxCount} Settled · {sub?.transactions?.length ?? 0} Total Records
+//                                 </p>
+//                             </div>
+//                         </div>
+//                         {showHistory ? <ChevronUp className="h-4 w-4 text-slate-500" /> : <ChevronDown className="h-4 w-4 text-slate-500" />}
+//                     </button>
+
+//                     {showHistory && (
+//                         <div className="border-t border-school-secondary-700 divide-y divide-school-secondary-800 bg-slate-950/20">
+//                             {(sub?.transactions ?? []).map((entry, i) => (
+//                                 <PaymentRow key={`${entry.id}-${i}`} entry={entry} />
+//                             ))}
+//                         </div>
+//                     )}
+//                 </Card>
+//             )}
+//         </div>
+//     )
+// }
+
+
+// 'use client'
+
+// import { useState, useEffect } from 'react'
+// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+// import { CreditCard, CheckCircle2, Clock, AlertTriangle, Loader2, Star, Shield, Zap, History, ChevronDown, ChevronUp, XCircle, RefreshCw, ArrowRight } from 'lucide-react'
+// import { initiateSubscriptionPayment, initiateIndividualPayment, getSubscriptionPlans, getSchoolSubscription } from '@/app/_actions/subscription-actions'
+// import { type SubscriptionPlanItem, type PaymentHistoryEntry } from '@/app/_actions/subscription-actions'
+// import { useProfileStore } from '@/store/profileStore'
+// import { toast } from 'sonner'
+// import { cn } from '@/lib/utils'
+// import { format } from 'date-fns'
+
+// export function BillingSection({ initialData, isIndependent }: { initialData: any, isIndependent: boolean }) {
+//     const { profile } = useProfileStore()
+//     const primaryColor = profile?.primaryColor || "#f59e0b"
+
+//     const [plans, setPlans] = useState<SubscriptionPlanItem[]>([])
+//     const [loading, setLoading] = useState(false)
+//     const [showPlans, setShowPlans] = useState(false)
+//     const [showHistory, setShowHistory] = useState(false)
+
+//     useEffect(() => {
+//         getSubscriptionPlans().then(setPlans)
+//     }, [])
+
+//     const handleSelectPlan = async (planId: string) => {
+//         setLoading(true)
+//         try {
+//             const res = isIndependent 
+//                 ? await initiateIndividualPayment(planId)
+//                 : await initiateSubscriptionPayment(profile?.schoolId!, planId);
+            
+//             if (res.success && res.authorizationUrl) {
+//                 window.location.href = res.authorizationUrl
+//             }
+//         } catch (err) {
+//             toast.error("Billing Gateway Unavailable")
+//         } finally {
+//             setLoading(false)
+//         }
+//     }
+
+//     return (
+//         <div className="space-y-6 animate-in fade-in duration-500">
+//             <header className="flex items-center gap-3 px-2">
+//                 <Shield className="h-4 w-4 text-emerald-500" />
+//                 <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">
+//                     Registry License Management: {isIndependent ? "Personal" : profile?.school?.name}
+//                 </span>
+//             </header>
+
+//             <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
+//                 <CardHeader className="p-8 bg-slate-950/50 border-b border-white/5">
+//                     <CardTitle className="text-lg font-black text-white uppercase italic tracking-tighter flex items-center gap-3">
+//                         <CreditCard className="h-5 w-5" style={{ color: primaryColor }} /> Current Coverage
+//                     </CardTitle>
+//                 </CardHeader>
+//                 <CardContent className="p-8 space-y-8">
+//                     {/* Status Display */}
+//                     <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-white/5 rounded-[2rem] text-center space-y-4">
+//                         <Zap className="h-10 w-10 text-slate-800" />
+//                         <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">No active plan identified in this tier.</p>
+//                         <button 
+//                             onClick={() => setShowPlans(!showPlans)}
+//                             className="px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
+//                             style={{ backgroundColor: primaryColor, color: '#000' }}
+//                         >
+//                             Explore Registry Tiers
+//                         </button>
+//                     </div>
+
+//                     {showPlans && (
+//                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-top-4">
+//                             {plans.map(plan => (
+//                                 <Card key={plan.id} className="bg-slate-950 border-white/5 p-6 rounded-3xl flex flex-col justify-between hover:border-white/20 transition-all">
+//                                     <div className="space-y-4">
+//                                         <p className="text-[10px] font-black text-slate-500 uppercase">{plan.name}</p>
+//                                         <h3 className="text-3xl font-black text-white italic">₦{plan.priceNGN.toLocaleString()}</h3>
+//                                         <ul className="space-y-2">
+//                                             {plan.features.slice(0, 3).map((f, i) => (
+//                                                 <li key={i} className="text-[9px] text-slate-400 uppercase font-bold flex items-center gap-2">
+//                                                     <CheckCircle2 className="h-3 w-3" style={{ color: primaryColor }} /> {f}
+//                                                 </li>
+//                                             ))}
+//                                         </ul>
+//                                     </div>
+//                                     <button 
+//                                         disabled={loading}
+//                                         onClick={() => handleSelectPlan(plan.id)}
+//                                         className="w-full mt-6 py-3 rounded-xl bg-white text-slate-950 font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all"
+//                                     >
+//                                         {loading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "Select Tier"}
+//                                     </button>
+//                                 </Card>
+//                             ))}
+//                         </div>
+//                     )}
+//                 </CardContent>
+//             </Card>
+//         </div>
+//     )
+// }
+
+
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useTransition } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-    CreditCard, CheckCircle2, Clock, AlertTriangle,
-    Loader2, Star, Shield, Zap, Info,
-    History, ChevronDown, ChevronUp, XCircle,
-    RefreshCw, ArrowRight
+import { 
+    CreditCard, CheckCircle2, 
+    Loader2, Shield, Zap, 
+   
 } from 'lucide-react'
-import {
-    initiateSubscriptionPayment,
-    getSubscriptionPlans,
-    getSchoolSubscription,
-    type SubscriptionPlan,
-    type SubscriptionWithHistory,
-    type PaymentHistoryEntry,
+import { 
+    initiateSubscriptionPayment, 
+    initiateIndividualPayment, 
+    getSubscriptionPlans, 
+    getSchoolSubscription 
+} from '@/app/actions/subscription.actions'
+import { 
+    type SubscriptionPlanItem, 
+    type SubscriptionWithHistory 
 } from '@/app/actions/subscription.actions'
 import { type SchoolSettingsData } from '@/app/actions/school-settings.action'
 import { useProfileStore } from '@/store/profileStore'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
-import { getErrorMessage } from '@/lib/error-handler'
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
-
-function daysUntilExpiry(date: Date): number {
-    return Math.ceil(
-        (new Date(date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-    )
+interface BillingSectionProps {
+    initialData: SchoolSettingsData | null;
+    isIndependent: boolean;
 }
 
-function getStatusConfig(status: string) {
-    switch (status.toLowerCase()) {
-        case 'active':
-            return { color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20', icon: CheckCircle2, label: 'Active' }
-        case 'trialing':
-            return { color: 'text-school-primary', bg: 'bg-school-primary/10', border: 'border-school-primary/20', icon: Clock, label: 'Trial' }
-        case 'past_due':
-            return { color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20', icon: AlertTriangle, label: 'Past Due' }
-        case 'pending':
-            return { color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: Clock, label: 'Pending' }
-        default:
-            return { color: 'text-school-secondary-400', bg: 'bg-school-secondary-800', border: 'border-school-secondary-700', icon: CreditCard, label: status }
-    }
-}
-
-// ── Plan Card ──────────────────────────────────────────────────────────────────
-
-function PlanCard({
-    plan, onSelect, loading, selected,
-}: {
-    plan: SubscriptionPlan
-    onSelect: (id: string) => void
-    loading: boolean
-    selected: string | null
-}) {
-    const isThisLoading = selected === plan.id && loading
-    const isOtherLoading = loading && selected !== plan.id
-
-    return (
-        <div className={cn(
-            'relative rounded-xl border p-4 space-y-3 transition-all',
-            plan.popular
-                ? 'border-school-primary/40 bg-school-primary/5'
-                : 'border-school-secondary-600 bg-school-secondary-800/30',
-            isOtherLoading && 'opacity-40 pointer-events-none'
-        )}>
-            {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-school-primary px-3 py-0.5 text-[10px] font-black text-school-secondary-950">
-                        <Star className="h-2.5 w-2.5" />
-                        BEST VALUE
-                    </span>
-                </div>
-            )}
-
-            <div>
-                <p className="text-[10px] font-semibold text-school-secondary-500 uppercase tracking-wider">
-                    {plan.name}
-                </p>
-                <div className="flex items-baseline gap-1 mt-0.5">
-                    <span className="text-xl font-black text-white">
-                        ₦{plan.priceNGN.toLocaleString()}
-                    </span>
-                    <span className="text-[11px] text-school-secondary-500">
-                        /{plan.durationDays === 30 ? 'mo' : plan.durationDays === 90 ? 'term' : 'yr'}
-                    </span>
-                </div>
-                <p className="text-[10px] text-school-secondary-500 mt-0.5">
-                    ≈ ${plan.priceUSD} USD
-                </p>
-                <p className="text-[11px] text-school-secondary-400 mt-1">
-                    {plan.description}
-                </p>
-            </div>
-
-            <div className="space-y-1">
-                {plan.features.map(f => (
-                    <div key={f} className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3 w-3 text-school-primary shrink-0" />
-                        <span className="text-[11px] text-school-secondary-300">{f}</span>
-                    </div>
-                ))}
-            </div>
-
-            <button
-                onClick={() => onSelect(plan.id)}
-                disabled={loading}
-                className={cn(
-                    'w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-50',
-                    plan.popular
-                        ? 'bg-school-primary hover:bg-school-primary-600 text-school-secondary-950'
-                        : 'bg-school-secondary-700 hover:bg-school-secondary-600 text-white border border-school-secondary-600'
-                )}
-            >
-                {isThisLoading ? (
-                    <><Loader2 className="h-3.5 w-3.5 animate-spin" />Processing...</>
-                ) : (
-                    <>Select this plan <ArrowRight className="h-3 w-3" /></>
-                )}
-            </button>
-        </div>
-    )
-}
-
-// ── Payment History Row ────────────────────────────────────────────────────────
-
-function PaymentRow({ entry }: { entry: PaymentHistoryEntry }) {
-    const isSuccess = entry.status === 'SUCCESS'
-    const isPending = entry.status === 'PENDING'
-
-    return (
-        <div className="flex items-center gap-3 px-4 py-3 hover:bg-school-secondary-800/40 transition-colors">
-            <div className={cn(
-                'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border',
-                isSuccess ? 'bg-green-500/10 border-green-500/20'
-                    : isPending ? 'bg-amber-500/10 border-amber-500/20'
-                        : 'bg-red-500/10 border-red-500/20'
-            )}>
-                {isSuccess
-                    ? <CheckCircle2 className="h-3.5 w-3.5 text-green-400" />
-                    : isPending
-                        ? <Clock className="h-3.5 w-3.5 text-amber-400" />
-                        : <XCircle className="h-3.5 w-3.5 text-red-400" />
-                }
-            </div>
-
-            <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-white truncate">
-                    {entry.planName}
-                </p>
-                <p className="text-[10px] text-school-secondary-500">
-                    {entry.paidAt
-                        ? format(new Date(entry.paidAt), 'dd MMM yyyy · HH:mm')
-                        : format(new Date(entry.createdAt), 'dd MMM yyyy · HH:mm')
-                    }
-                </p>
-            </div>
-
-            <div className="text-right shrink-0">
-                <p className="text-xs font-bold text-white">
-                    {entry.amountNGN === 0 ? 'Free' : `₦${entry.amountNGN.toLocaleString()}`}
-                </p>
-                <span className={cn(
-                    'text-[10px] font-semibold',
-                    isSuccess ? 'text-green-400' :
-                        isPending ? 'text-amber-400' : 'text-red-400'
-                )}>
-                    {entry.status.charAt(0) + entry.status.slice(1).toLowerCase()}
-                </span>
-            </div>
-        </div>
-    )
-}
-
-// ── Main Component ─────────────────────────────────────────────────────────────
-
-export function BillingSection({ data }: { data: SchoolSettingsData }) {
-    const { profile } = useProfileStore()
-    const schoolId = profile?.schoolId ?? ''
-
-    const [sub, setSub] = useState<SubscriptionWithHistory | null>(() => {
-        // Initialize state with data passed from props to ensure usage of 'data' variable
-        if (data.school.subscription) {
-            return data.school.subscription as unknown as SubscriptionWithHistory
-        }
-        return null
-    })
-
-    const [plans, setPlans] = useState<SubscriptionPlan[]>([])
-    const [subLoading, setSubLoading] = useState(!data.school.subscription)
-    const [plansLoading, setPlansLoading] = useState(false)
-    const [showPlans, setShowPlans] = useState(false)
-    const [showHistory, setShowHistory] = useState(false)
-    const [paying, setPaying] = useState(false)
-    const [selected, setSelected] = useState<string | null>(null)
+/**
+ * INSTITUTIONAL & INDIVIDUAL BILLING (Tier 2/3)
+ * Rule 15: Strictly typed props to resolve Error 2322.
+ * Rule 17: Themes based on primary color from Zustand.
+ */
+export function BillingSection({ initialData, isIndependent }: BillingSectionProps) {
+    const { profile } = useProfileStore();
+    const primaryColor = profile?.primaryColor || "#f59e0b";
+    
+    const [sub, setSub] = useState<SubscriptionWithHistory | null>(null);
+    const [plans, setPlans] = useState<SubscriptionPlanItem[]>([]);
+    const [plansLoading, setPlansLoading] = useState(false);
+    const [showPlans, setShowPlans] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
-        if (!schoolId) return
-        
-        const fetchFullSub = async () => {
+        // Fetch plans from Tier 1 Global Store
+        setPlansLoading(true);
+        getSubscriptionPlans().then(data => {
+            setPlans(data);
+            setPlansLoading(false);
+        });
+
+        // Rule 11: Fetch the full subscription history including transactions
+        if (profile?.id) {
+            getSchoolSubscription(profile.schoolId || "INDIVIDUAL", profile.id)
+                .then(setSub);
+        }
+    }, [profile?.id, profile?.schoolId]);
+
+    const handleSelectPlan = async (planId: string) => {
+        startTransition(async () => {
             try {
-                // Fetch full data including transactions not present in initial 'data' prop
-                const s = await getSchoolSubscription(schoolId)
-                if (s) {
-                    setSub(s)
-                    if (s.status !== 'active') setShowPlans(true)
+                const res = isIndependent 
+                    ? await initiateIndividualPayment(planId)
+                    : await initiateSubscriptionPayment(profile?.schoolId!, planId);
+                
+                if (res.success && res.authorizationUrl) {
+                    window.location.href = res.authorizationUrl;
+                } else {
+                    toast.error(res.error || "Gateway initialization failed.");
                 }
-            } finally {
-                setSubLoading(false)
+            } catch (err) {
+                toast.error("Billing registry connection error.");
             }
-        }
-        fetchFullSub()
-    }, [schoolId])
-
-    useEffect(() => {
-        if (!showPlans || plans.length > 0) return
-        setPlansLoading(true)
-        getSubscriptionPlans()
-            .then(setPlans)
-            .finally(() => setPlansLoading(false))
-    }, [showPlans, plans.length])
-
-    async function handleSelectPlan(planId: string) {
-        if (!schoolId) { toast.error('School not found.'); return }
-        setSelected(planId)
-        setPaying(true)
-
-        try {
-            const result = await initiateSubscriptionPayment(schoolId, planId)
-            if (result.success && result.authorizationUrl) {
-                window.location.href = result.authorizationUrl
-            } else if (result.success && !result.authorizationUrl) {
-                toast.success('Subscription activated!')
-                const updated = await getSchoolSubscription(schoolId)
-                setSub(updated)
-                setShowPlans(false)
-            } else {
-                toast.error(result.error ?? 'Failed to initiate payment.')
-            }
-        } catch (err) {
-            toast.error('A network error occurred.')
-            getErrorMessage(err)
-        } finally {
-            setPaying(false)
-            setSelected(null)
-        }
-    }
-
-    const daysLeft = sub?.currentPeriodEnd ? daysUntilExpiry(sub.currentPeriodEnd) : null
-    const isActive = sub?.status === 'active'
-    const isExpiringSoon = isActive && daysLeft !== null && daysLeft <= 7
-    const hasHistory = (sub?.transactions?.length ?? 0) > 0
-    const successTxCount = sub?.transactions?.filter(t => t.status === 'SUCCESS').length ?? 0
-
-    if (subLoading && !sub) return (
-        <Card className="bg-school-secondary-900 border-school-secondary-700">
-            <CardContent className="flex items-center justify-center py-16 gap-2">
-                <Loader2 className="h-5 w-5 animate-spin text-school-primary" />
-                <span className="text-sm text-school-secondary-400">Loading billing data...</span>
-            </CardContent>
-        </Card>
-    )
+        });
+    };
 
     return (
-        <div className="space-y-4 animate-in fade-in duration-500">
-            {/* Header utilizing 'data' to ensure usage and show school context */}
-            <div className="flex items-center gap-2 px-2">
-                <Shield className="h-3.5 w-3.5 text-emerald-500" />
-                <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">
-                    Institutional Billing Ledger: {data.school.name}
+        <div className="space-y-6 animate-in fade-in duration-500">
+            {/* Header */}
+            <div className="flex items-center gap-3 px-2">
+                <Shield className="h-4 w-4 text-emerald-500" />
+                <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">
+                    Registry License Ledger: {isIndependent ? "Personal Account" : (initialData?.school.name || "Institutional")}
                 </span>
             </div>
 
-            <Card className="bg-school-secondary-900 border-school-secondary-700">
-                <CardHeader className="pb-3 border-b border-school-secondary-700 px-4 sm:px-6">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-school-primary/20 border border-school-primary/20">
-                            <CreditCard className="h-4 w-4 text-school-primary" />
-                        </div>
-                        <div>
-                            <CardTitle className="text-sm font-bold text-white uppercase tracking-tight">
-                                Current Subscription
-                            </CardTitle>
-                            <p className="text-[11px] text-school-secondary-400 mt-0.5 font-medium">
-                                Secured via Paystack Gateway
-                            </p>
-                        </div>
-                    </div>
+            <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <CardHeader className="p-8 bg-slate-950/50 border-b border-white/5">
+                    <CardTitle className="text-lg font-black text-white uppercase italic tracking-tighter flex items-center gap-3">
+                        <CreditCard className="h-5 w-5" style={{ color: primaryColor }} /> Current Coverage
+                    </CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 sm:p-6 space-y-4">
-                    {!sub || sub.status === 'pending' ? (
-                        <div className="flex flex-col items-center justify-center py-8 gap-3 text-center">
-                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-school-secondary-800 border border-school-secondary-700 shadow-inner">
-                                <CreditCard className="h-7 w-7 text-school-secondary-500" />
-                            </div>
-                            <p className="text-sm font-bold text-white uppercase italic">No active subscription found</p>
-                            <p className="text-xs text-school-secondary-400 max-w-xs leading-relaxed">
-                                Unlock full institutional features including AI lesson generation and parent WhatsApp reporting.
-                            </p>
-                            <button
-                                onClick={() => setShowPlans(true)}
-                                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-school-primary hover:bg-school-primary-600 text-school-secondary-950 text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-school-primary/10"
+                
+                <CardContent className="p-8 space-y-8">
+                    {!sub ? (
+                        <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-white/5 rounded-[2rem] text-center space-y-4">
+                            <Zap className="h-10 w-10 text-slate-800" />
+                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">No active plan identified.</p>
+                            <button 
+                                onClick={() => setShowPlans(!showPlans)}
+                                className="px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
+                                style={{ backgroundColor: primaryColor, color: '#000' }}
                             >
-                                <Zap className="h-3.5 w-3.5 fill-current" />
-                                View Plans
+                                Explore Tiers
                             </button>
                         </div>
                     ) : (
-                        <>
-                            {isExpiringSoon && (
-                                <div className={cn(
-                                    'flex items-start gap-3 rounded-xl border px-4 py-3 animate-pulse',
-                                    daysLeft! <= 1 ? 'bg-red-500/10 border-red-500/20' : 'bg-amber-500/10 border-amber-500/20'
-                                )}>
-                                    <AlertTriangle className={cn('h-4 w-4 shrink-0 mt-0.5', daysLeft! <= 1 ? 'text-red-400' : 'text-amber-400')} />
-                                    <div className="flex-1 min-w-0">
-                                        <p className={cn('text-xs font-black uppercase', daysLeft! <= 1 ? 'text-red-400' : 'text-amber-400')}>
-                                            {daysLeft! <= 0 ? 'Subscription Expired' : daysLeft === 1 ? 'Expires Today' : `Expires in ${daysLeft} days`}
-                                        </p>
-                                        <p className="text-[11px] text-school-secondary-400 mt-0.5 font-medium italic">
-                                            Renew to maintain service continuity.
-                                        </p>
-                                    </div>
-                                    <button
-                                        onClick={() => setShowPlans(true)}
-                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-school-primary text-school-secondary-950 text-[10px] font-black uppercase transition-all"
-                                    >
-                                        <RefreshCw className="h-3 w-3" /> Renew
-                                    </button>
-                                </div>
-                            )}
-
-                            {(() => {
-                                const config = getStatusConfig(sub.status)
-                                const Icon = config.icon
-                                return (
-                                    <div className={cn('flex items-center gap-4 rounded-xl border px-4 py-4', config.bg, config.border)}>
-                                        <div className={cn('p-2 rounded-lg bg-slate-950/40 border border-white/5', config.color)}>
-                                            <Icon className="h-5 w-5" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className={cn('text-xs font-black uppercase tracking-widest', config.color)}>{config.label}</p>
-                                            <p className="text-sm font-bold text-white mt-0.5">{sub.plan} Tier</p>
-                                        </div>
-                                        {daysLeft !== null && daysLeft > 0 && (
-                                            <div className="text-right">
-                                                <p className={cn('text-lg font-black leading-none', config.color)}>{daysLeft}</p>
-                                                <p className="text-[9px] text-slate-500 font-bold uppercase mt-1 tracking-widest">Days Left</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                )
-                            })()}
-
-                            <div className="grid gap-3 sm:grid-cols-3">
-                                {[
-                                    { label: 'Current Plan', value: sub.plan },
-                                    { label: 'Cycle Status', value: getStatusConfig(sub.status).label },
-                                    { label: 'Next Renewal', value: format(new Date(sub.currentPeriodEnd), 'dd MMM yyyy') },
-                                ].map(item => (
-                                    <div key={item.label} className="rounded-xl border border-school-secondary-700 bg-school-secondary-800/50 p-3 shadow-inner">
-                                        <p className="text-[9px] font-black text-school-secondary-500 uppercase tracking-widest mb-1">{item.label}</p>
-                                        <p className="text-sm font-bold text-white uppercase italic">{item.value}</p>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="flex items-center justify-between rounded-xl border border-school-secondary-700 bg-school-secondary-800/30 p-4 flex-wrap gap-4 group hover:border-school-primary/20 transition-all">
+                        <div className="space-y-6">
+                             <div 
+                                className="p-6 rounded-2xl border flex items-center justify-between"
+                                style={{ backgroundColor: `${primaryColor}05`, borderColor: `${primaryColor}20` }}
+                             >
                                 <div>
-                                    <p className="text-xs font-bold text-white uppercase tracking-tight">Upgrade or Change Plan</p>
-                                    <p className="text-[11px] text-school-secondary-400 mt-1 font-medium italic">Adjust your access level for the next billing cycle.</p>
+                                    <p className="text-[10px] font-black uppercase" style={{ color: primaryColor }}>{sub.status}</p>
+                                    <h4 className="text-xl font-black text-white uppercase italic">{sub.plan} Plan</h4>
                                 </div>
-                                <button
-                                    onClick={() => setShowPlans(p => !p)}
-                                    className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-school-secondary-700 hover:bg-school-secondary-600 text-white text-[10px] font-black uppercase tracking-widest transition-all"
-                                >
-                                    <Zap className="h-3.5 w-3.5 text-school-primary fill-current" />
-                                    {showPlans ? 'Hide Options' : 'Modify Tier'}
-                                </button>
-                            </div>
-                        </>
+                                <div className="text-right">
+                                    <p className="text-[9px] text-slate-500 font-bold uppercase">Valid Until</p>
+                                    <p className="text-sm font-black text-white">{format(new Date(sub.currentPeriodEnd), 'dd MMM yyyy')}</p>
+                                </div>
+                             </div>
+
+                             <button 
+                                onClick={() => setShowPlans(!showPlans)}
+                                className="w-full py-4 rounded-xl border border-white/5 text-[10px] font-black uppercase text-slate-500 hover:text-white transition-all"
+                             >
+                                {showPlans ? "Hide Upgrade Options" : "View Upgrade Tiers"}
+                             </button>
+                        </div>
+                    )}
+
+                    {showPlans && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-top-4">
+                            {plansLoading ? (
+                                [1, 2, 3].map(i => <div key={i} className="h-64 bg-slate-950 rounded-3xl animate-pulse" />)
+                            ) : (
+                                plans.map(plan => (
+                                    <Card key={plan.id} className="bg-slate-950 border-white/5 p-6 rounded-3xl flex flex-col justify-between hover:border-white/20 transition-all group">
+                                        <div className="space-y-4">
+                                            <p className="text-[9px] font-black text-slate-500 uppercase">{plan.name}</p>
+                                            <h3 className="text-2xl font-black text-white italic leading-none">₦{plan.priceNGN.toLocaleString()}</h3>
+                                            <ul className="space-y-2 pt-4 border-t border-white/5">
+                                                {plan.features.slice(0, 3).map((f, i) => (
+                                                    <li key={i} className="text-[9px] text-slate-400 uppercase font-bold flex items-center gap-2">
+                                                        <CheckCircle2 className="h-3 w-3" style={{ color: primaryColor }} /> {f}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <button 
+                                            disabled={isPending}
+                                            onClick={() => handleSelectPlan(plan.id)}
+                                            className="w-full mt-8 py-4 rounded-xl bg-white text-slate-950 font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                                        >
+                                            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Purchase Tier"}
+                                        </button>
+                                    </Card>
+                                ))
+                            )}
+                        </div>
                     )}
                 </CardContent>
             </Card>
-
-            {showPlans && (
-                <div className="space-y-4 animate-in slide-in-from-top-4 duration-500">
-                    <div className="flex items-start gap-3 rounded-2xl border border-school-primary/15 bg-slate-900 p-5 shadow-2xl">
-                        <Info className="h-5 w-5 text-school-primary shrink-0 mt-0.5" />
-                        <p className="text-[11px] text-slate-400 leading-relaxed font-medium italic">
-                            All plan extensions are calculated from your current expiry date. Transitioning to a new tier will apply immediately.
-                        </p>
-                    </div>
-
-                    <div className="grid gap-6 sm:grid-cols-3">
-                        {plansLoading ? (
-                            [1, 2, 3].map(i => <div key={i} className="h-48 rounded-2xl bg-school-secondary-900 animate-pulse border border-white/5" />)
-                        ) : (
-                            plans.map(plan => (
-                                <PlanCard key={plan.id} plan={plan} onSelect={handleSelectPlan} loading={paying} selected={selected} />
-                            ))
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {hasHistory && (
-                <Card className="bg-school-secondary-900 border-school-secondary-700 rounded-[1.5rem] overflow-hidden">
-                    <button onClick={() => setShowHistory(p => !p)} className="flex items-center justify-between w-full p-6 hover:bg-white/[0.02] transition-all">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-slate-950 rounded-lg border border-white/5 shadow-inner">
-                                <History className="h-4 w-4 text-slate-400" />
-                            </div>
-                            <div className="text-left">
-                                <p className="text-sm font-bold text-white uppercase tracking-tighter italic">Accounting History</p>
-                                <p className="text-[10px] text-school-secondary-500 font-bold uppercase mt-0.5">
-                                    {successTxCount} Settled · {sub?.transactions?.length ?? 0} Total Records
-                                </p>
-                            </div>
-                        </div>
-                        {showHistory ? <ChevronUp className="h-4 w-4 text-slate-500" /> : <ChevronDown className="h-4 w-4 text-slate-500" />}
-                    </button>
-
-                    {showHistory && (
-                        <div className="border-t border-school-secondary-700 divide-y divide-school-secondary-800 bg-slate-950/20">
-                            {(sub?.transactions ?? []).map((entry, i) => (
-                                <PaymentRow key={`${entry.id}-${i}`} entry={entry} />
-                            ))}
-                        </div>
-                    )}
-                </Card>
-            )}
         </div>
     )
 }

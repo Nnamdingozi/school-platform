@@ -50,7 +50,7 @@
 import { prisma } from "@/lib/prisma";
 import { getErrorMessage } from "@/lib/error-handler";
 import { EnrollmentStatus } from "@prisma/client";
-import { StudentClassRegistryData } from "@/components/student-dashboard/studentClassView";
+import { StudentClassRegistryData } from "@/components/student-dashboard/class/studentClassView";
 
 /**
  * FETCH CLASS PEER REGISTRY

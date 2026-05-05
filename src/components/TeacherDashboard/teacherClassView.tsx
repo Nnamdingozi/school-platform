@@ -185,139 +185,246 @@
 
 
 
+// "use client";
+
+// import { 
+//   Table, 
+//   TableBody, 
+//   TableCell, 
+//   TableHead, 
+//   TableHeader, 
+//   TableRow 
+// } from "@/components/ui/table";
+// import { Users } from "lucide-react";
+// import { Card } from "@/components/ui/card";
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface SubjectStat {
+//   subjectName: string;
+//   average: number;
+// }
+
+// interface GradeSubjectDetail {
+//   id: string;
+//   subject: {
+//     name: string;
+//   };
+// }
+
+// interface StudentWithAssessments {
+//   id: string;
+//   name: string | null;
+//   assessments: {
+//     gradeSubjectId: string;
+//     score: number | null;
+//   }[];
+// }
+
+// interface ClassData {
+//   id: string;
+//   name: string;
+//   grade: {
+//     displayName: string;
+//     gradeSubjects: GradeSubjectDetail[];
+//   };
+//   subjectStats?: SubjectStat[];
+//   students: StudentWithAssessments[];
+// }
+
+// interface TeacherClassViewProps {
+//   data: ClassData[];
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export function TeacherClassView({ data }: TeacherClassViewProps) {
+//   // 1. Better Empty State
+//   if (!data || data.length === 0) {
+//     return (
+//       <div className="flex flex-col items-center justify-center py-20 bg-slate-900/50 rounded-[3rem] border border-white/5">
+//         <div className="p-4 bg-school-primary/10 rounded-full mb-4">
+//           <Users className="h-10 w-10 text-school-primary" />
+//         </div>
+//         <h3 className="text-xl font-black text-white uppercase italic">No Registry Assigned</h3>
+//         <p className="text-slate-500 text-sm mt-2">You are not currently assigned as a Lead Teacher to any classroom.</p>
+//         <p className="text-[10px] text-slate-600 uppercase mt-8 tracking-widest">Contact Admin for Registry Access</p>
+//       </div>
+//     );
+//   }
+
+//   // 2. Default to the first class
+//   const selectedClass = data[0];
+
+//   return (
+//     <div className="max-w-7xl mx-auto space-y-10">
+//       <header className="flex justify-between items-end">
+//         <div>
+//            <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
+//              {selectedClass.name}
+//            </h1>
+//            <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
+//              {selectedClass.grade.displayName} — Master Report Sheet
+//            </p>
+//         </div>
+        
+//         {data.length > 1 && (
+//            <span className="text-[10px] font-black bg-school-primary text-slate-950 px-3 py-1 rounded-full">
+//              + {data.length - 1} OTHER CLASSES
+//            </span>
+//         )}
+//       </header>
+
+//       {/* Stats Cards */}
+//       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+//         {selectedClass.subjectStats?.map((stat) => (
+//           <Card key={stat.subjectName} className="bg-slate-900 border-white/5 p-6 rounded-[1.5rem]">
+//             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{stat.subjectName}</p>
+//             <div className="mt-4 flex items-end justify-between">
+//               <div>
+//                 <span className="text-2xl font-black text-school-primary">{stat.average}%</span>
+//                 <p className="text-[9px] text-slate-600 font-bold uppercase">Class Avg</p>
+//               </div>
+//             </div>
+//           </Card>
+//         ))}
+//       </div>
+
+//       {/* Table Section using UI Components */}
+//       <div className="bg-slate-900 rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
+//          <Table>
+//            <TableHeader className="bg-slate-950">
+//              <TableRow className="border-white/5 hover:bg-transparent">
+//                <TableHead className="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+//                 Student
+//                </TableHead>
+//                {selectedClass.grade.gradeSubjects.map((gs) => (
+//                  <TableHead key={gs.id} className="px-4 py-6 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+//                   {gs.subject.name}
+//                  </TableHead>
+//                ))}
+//              </TableRow>
+//            </TableHeader>
+//            <TableBody>
+//               {selectedClass.students.map((student) => (
+//                 <TableRow key={student.id} className="border-white/5 hover:bg-white/5 transition-colors">
+//                   <TableCell className="px-8 py-5 font-bold uppercase text-xs text-slate-200">
+//                     {student.name || "Unknown Student"}
+//                   </TableCell>
+//                   {selectedClass.grade.gradeSubjects.map((gs) => {
+//                      const assessment = student.assessments.find((a) => a.gradeSubjectId === gs.id);
+//                      return (
+//                        <TableCell key={gs.id} className="text-center text-slate-400 font-mono">
+//                          {assessment?.score !== undefined && assessment?.score !== null 
+//                            ? assessment.score 
+//                            : "-"}
+//                        </TableCell>
+//                      );
+//                   })}
+//                 </TableRow>
+//               ))}
+//            </TableBody>
+//          </Table>
+//       </div>
+//     </div>
+//   );
+// }
+
+
 "use client";
 
 import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+  Table, TableBody, TableCell, TableHead, 
+  TableHeader, TableRow 
 } from "@/components/ui/table";
-import { Users } from "lucide-react";
+import { Users, GraduationCap, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
-
-// ── Types ───────────────────────────────────────────────────────────────────
-
-interface SubjectStat {
-  subjectName: string;
-  average: number;
-}
-
-interface GradeSubjectDetail {
-  id: string;
-  subject: {
-    name: string;
-  };
-}
-
-interface StudentWithAssessments {
-  id: string;
-  name: string | null;
-  assessments: {
-    gradeSubjectId: string;
-    score: number | null;
-  }[];
-}
-
-interface ClassData {
-  id: string;
-  name: string;
-  grade: {
-    displayName: string;
-    gradeSubjects: GradeSubjectDetail[];
-  };
-  subjectStats?: SubjectStat[];
-  students: StudentWithAssessments[];
-}
+import { useProfileStore } from "@/store/profileStore";
 
 interface TeacherClassViewProps {
-  data: ClassData[];
+  data: any[]; // Array of classes the teacher is lead of
 }
 
-// ── Main Component ──────────────────────────────────────────────────────────
-
+/**
+ * TEACHER REGISTRY VIEW (Tier 2)
+ * Rule 17: Branding from Zustand.
+ */
 export function TeacherClassView({ data }: TeacherClassViewProps) {
-  // 1. Better Empty State
+  const { profile } = useProfileStore();
+  const primaryColor = profile?.primaryColor || "#f59e0b";
+
   if (!data || data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 bg-slate-900/50 rounded-[3rem] border border-white/5">
-        <div className="p-4 bg-school-primary/10 rounded-full mb-4">
-          <Users className="h-10 w-10 text-school-primary" />
+      <div className="flex flex-col items-center justify-center py-32 bg-slate-900/50 rounded-[3rem] border border-white/5 space-y-6">
+        <Users className="h-12 w-12 text-slate-800" />
+        <div className="text-center">
+            <h3 className="text-xl font-black text-white uppercase italic">Registry Unassigned</h3>
+            <p className="text-slate-500 text-xs mt-2 uppercase tracking-widest">You are not registered as a Lead Teacher.</p>
         </div>
-        <h3 className="text-xl font-black text-white uppercase italic">No Registry Assigned</h3>
-        <p className="text-slate-500 text-sm mt-2">You are not currently assigned as a Lead Teacher to any classroom.</p>
-        <p className="text-[10px] text-slate-600 uppercase mt-8 tracking-widest">Contact Admin for Registry Access</p>
       </div>
     );
   }
 
-  // 2. Default to the first class
-  const selectedClass = data[0];
+  const activeClass = data[0];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10">
-      <header className="flex justify-between items-end">
+    <div className="max-w-7xl mx-auto space-y-10 p-6">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-           <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
-             {selectedClass.name}
+           <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+             {activeClass.name}
            </h1>
-           <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
-             {selectedClass.grade.displayName} — Master Report Sheet
+           <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-2">
+             {activeClass.grade.displayName} • Institutional Master Broadsheet
            </p>
         </div>
         
         {data.length > 1 && (
-           <span className="text-[10px] font-black bg-school-primary text-slate-950 px-3 py-1 rounded-full">
-             + {data.length - 1} OTHER CLASSES
-           </span>
+           <div className="px-4 py-2 rounded-xl bg-slate-900 border border-white/5 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+             + {data.length - 1} OTHER REGISTRIES AVAILABLE
+           </div>
         )}
       </header>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {selectedClass.subjectStats?.map((stat) => (
-          <Card key={stat.subjectName} className="bg-slate-900 border-white/5 p-6 rounded-[1.5rem]">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{stat.subjectName}</p>
-            <div className="mt-4 flex items-end justify-between">
-              <div>
-                <span className="text-2xl font-black text-school-primary">{stat.average}%</span>
-                <p className="text-[9px] text-slate-600 font-bold uppercase">Class Avg</p>
+      {/* Subject Averages */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {activeClass.subjectStats?.map((stat: any) => (
+          <Card key={stat.subjectName} className="bg-slate-900 border-white/5 p-8 rounded-[2rem] shadow-xl hover:border-white/10 transition-all">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{stat.subjectName}</p>
+            <div className="flex items-end justify-between">
+              <span className="text-4xl font-black text-white italic" style={{ color: primaryColor }}>{stat.average}%</span>
+              <div className="text-right">
+                  <p className="text-[8px] font-black text-slate-600 uppercase">Top: {stat.bestStudent}</p>
               </div>
             </div>
           </Card>
         ))}
       </div>
 
-      {/* Table Section using UI Components */}
+      {/* Main Registry Table */}
       <div className="bg-slate-900 rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
          <Table>
-           <TableHeader className="bg-slate-950">
+           <TableHeader className="bg-slate-950/50">
              <TableRow className="border-white/5 hover:bg-transparent">
-               <TableHead className="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-                Student
-               </TableHead>
-               {selectedClass.grade.gradeSubjects.map((gs) => (
-                 <TableHead key={gs.id} className="px-4 py-6 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+               <TableHead className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Identity</TableHead>
+               {activeClass.grade.gradeSubjects.map((gs: any) => (
+                 <TableHead key={gs.id} className="px-6 py-8 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
                   {gs.subject.name}
                  </TableHead>
                ))}
              </TableRow>
            </TableHeader>
            <TableBody>
-              {selectedClass.students.map((student) => (
-                <TableRow key={student.id} className="border-white/5 hover:bg-white/5 transition-colors">
-                  <TableCell className="px-8 py-5 font-bold uppercase text-xs text-slate-200">
-                    {student.name || "Unknown Student"}
+              {activeClass.students.map((student: any) => (
+                <TableRow key={student.id} className="border-white/5 hover:bg-white/[0.02] transition-colors">
+                  <TableCell className="px-10 py-6 font-black uppercase text-sm text-white italic">
+                    {student.name || "Anonymous Student"}
                   </TableCell>
-                  {selectedClass.grade.gradeSubjects.map((gs) => {
-                     const assessment = student.assessments.find((a) => a.gradeSubjectId === gs.id);
+                  {activeClass.grade.gradeSubjects.map((gs: any) => {
+                     const assessment = student.assessments.find((a: any) => a.gradeSubjectId === gs.id);
                      return (
-                       <TableCell key={gs.id} className="text-center text-slate-400 font-mono">
-                         {assessment?.score !== undefined && assessment?.score !== null 
-                           ? assessment.score 
-                           : "-"}
+                       <TableCell key={gs.id} className="text-center text-slate-400 font-mono text-xs">
+                         {assessment?.score ?? "-"}
                        </TableCell>
                      );
                   })}

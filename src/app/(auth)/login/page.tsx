@@ -866,216 +866,254 @@
 //   );
 // }
 
-'use client';
+// 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { getTeacherData } from '@/app/actions/teacherData';
-import { useProfileStore } from '@/store/profileStore';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import { Loader2, Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
-import { AnyProfile } from '@/types/profile';
+// import { useState, useEffect } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { getTeacherData } from '@/app/actions/teacherData';
+// import { useProfileStore } from '@/store/profileStore';
+// import { Button } from '@/components/ui/button';
+// import { Input } from '@/components/ui/input';
+// import { Label } from '@/components/ui/label';
+// import { toast } from 'sonner';
+// import { Loader2, Eye, EyeOff, Lock, Mail } from 'lucide-react';
+// import Link from 'next/link';
+// import { createClient } from '@/lib/supabase/client';
+// import { AnyProfile } from '@/types/profile';
 
-// ── Utility ──────────────────────────────────────────────────────────────────
+// // ── Utility ──────────────────────────────────────────────────────────────────
 
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (error && typeof error === 'object' && 'message' in error) {
-    return String((error as { message?: string }).message);
-  }
-  return typeof error === 'string' ? error : "An unknown error occurred";
-}
+// function getErrorMessage(error: unknown): string {
+//   if (error instanceof Error) return error.message;
+//   if (error && typeof error === 'object' && 'message' in error) {
+//     return String((error as { message?: string }).message);
+//   }
+//   return typeof error === 'string' ? error : "An unknown error occurred";
+// }
 
-// ── Main Component ──────────────────────────────────────────────────────────
+// // ── Main Component ──────────────────────────────────────────────────────────
 
-export default function LoginPage() {
-  const router = useRouter();
+// export default function LoginPage() {
+//   const router = useRouter();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loadingMsg, setLoadingMsg] = useState('Authenticating...');
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [email, setEmail] = useState('');
+//   const [password, setPassword] = useState('');
+//   const [loadingMsg, setLoadingMsg] = useState('Authenticating...');
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+//   useEffect(() => {
+//     const params = new URLSearchParams(window.location.search);
 
-    if (params.get('confirmed') === 'true') {
-      toast.success('Email confirmed! Please log in.');
-    }
+//     if (params.get('confirmed') === 'true') {
+//       toast.success('Email confirmed! Please log in.');
+//     }
 
-    if (params.get('error') === 'confirmation_failed') {
-      toast.error('Confirmation link expired. Try logging in.');
-    }
-  }, []);
+//     if (params.get('error') === 'confirmation_failed') {
+//       toast.error('Confirmation link expired. Try logging in.');
+//     }
+//   }, []);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+//   const handleLogin = async (e: React.FormEvent) => {
+//     e.preventDefault();
 
-    setIsLoading(true);
-    setLoadingMsg('Authenticating...');
+//     setIsLoading(true);
+//     setLoadingMsg('Authenticating...');
 
-    try {
-      const supabase = createClient();
+//     try {
+//       const supabase = createClient();
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+//       const { data, error } = await supabase.auth.signInWithPassword({
+//         email,
+//         password,
+//       });
 
-      if (error) {
-        toast.error(getErrorMessage(error));
-        setIsLoading(false);
-        return;
-      }
+//       if (error) {
+//         toast.error(getErrorMessage(error));
+//         setIsLoading(false);
+//         return;
+//       }
 
-      if (!data.user?.email) {
-        toast.error('Login failed: No email associated with user.');
-        setIsLoading(false);
-        return;
-      }
+//       if (!data.user?.email) {
+//         toast.error('Login failed: No email associated with user.');
+//         setIsLoading(false);
+//         return;
+//       }
 
-      setLoadingMsg('Loading your profile...');
+//       setLoadingMsg('Loading your profile...');
 
-      const profile = await getTeacherData(data.user.email);
+//       const profile = await getTeacherData(data.user.email);
 
-      if (!profile) {
-        toast.error('Profile not found in database.');
-        await supabase.auth.signOut();
-        setIsLoading(false);
-        return;
-      }
+//       if (!profile) {
+//         toast.error('Profile not found in database.');
+//         await supabase.auth.signOut();
+//         setIsLoading(false);
+//         return;
+//       }
 
-      /**
-       * RESOLUTION: The store expects a 'Hydrated' profile (with relations), 
-       * but getTeacherData returns the base model. We cast to unknown first 
-       * to allow the transition to AnyProfile without using 'any'.
-       */
-      useProfileStore.getState().setProfile(profile as unknown as AnyProfile);
+//       /**
+//        * RESOLUTION: The store expects a 'Hydrated' profile (with relations), 
+//        * but getTeacherData returns the base model. We cast to unknown first 
+//        * to allow the transition to AnyProfile without using 'any'.
+//        */
+//       useProfileStore.getState().setProfile(profile as unknown as AnyProfile);
 
-      toast.success(`Welcome back, ${profile.name?.split(' ')[0] || 'User'}!`);
+//       toast.success(`Welcome back, ${profile.name?.split(' ')[0] || 'User'}!`);
 
-      setLoadingMsg('Redirecting...');
+//       setLoadingMsg('Redirecting...');
 
-      setTimeout(() => {
-        switch (profile.role) {
-          case 'SUPER_ADMIN':
-          case 'SCHOOL_ADMIN':
-            router.replace('/admin');
-            break;
-          case 'TEACHER':
-            router.replace('/teacher');
-            break;
-          case 'STUDENT':
-            router.replace('/student');
-            break;
-          case 'PARENT':
-            router.replace('/parent');
-            break;
-          case 'INDIVIDUAL_LEARNER':
-            router.replace('/individual-student');
-            break;
-          default:
-            router.replace('/login');
-        }
-      }, 300);
-    } catch (err) {
-      const msg = getErrorMessage(err);
-      console.error(msg);
-      toast.error(msg);
-      setIsLoading(false);
-    }
-  };
+//       setTimeout(() => {
+//         switch (profile.role) {
+//           case 'SUPER_ADMIN':
+//           case 'SCHOOL_ADMIN':
+//             router.replace('/admin');
+//             break;
+//           case 'TEACHER':
+//             router.replace('/teacher');
+//             break;
+//           case 'STUDENT':
+//             router.replace('/student');
+//             break;
+//           case 'PARENT':
+//             router.replace('/parent');
+//             break;
+//           case 'INDIVIDUAL_LEARNER':
+//             router.replace('/individual-student');
+//             break;
+//           default:
+//             router.replace('/login');
+//         }
+//       }, 300);
+//     } catch (err) {
+//       const msg = getErrorMessage(err);
+//       console.error(msg);
+//       toast.error(msg);
+//       setIsLoading(false);
+//     }
+//   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-school-secondary-950 p-4 relative overflow-hidden">
+//   return (
+//     <div className="min-h-screen flex items-center justify-center bg-school-secondary-950 p-4 relative overflow-hidden">
       
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-school-primary/5 rounded-full blur-3xl" />
-        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-school-primary/5 rounded-full blur-3xl" />
-      </div>
+//       <div className="absolute inset-0 pointer-events-none">
+//         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-school-primary/5 rounded-full blur-3xl" />
+//         <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-school-primary/5 rounded-full blur-3xl" />
+//       </div>
 
-      {isLoading && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-school-secondary-950/90 backdrop-blur-sm">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
-            <p className="text-white text-sm font-semibold">{loadingMsg}</p>
-          </div>
-        </div>
-      )}
+//       {isLoading && (
+//         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-school-secondary-950/90 backdrop-blur-sm">
+//           <div className="flex flex-col items-center gap-4">
+//             <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
+//             <p className="text-white text-sm font-semibold">{loadingMsg}</p>
+//           </div>
+//         </div>
+//       )}
 
-      <div className="w-full max-w-md bg-school-secondary-900 border border-school-secondary-800 rounded-2xl shadow-xl p-8 relative z-10">
+//       <div className="w-full max-w-md bg-school-secondary-900 border border-school-secondary-800 rounded-2xl shadow-xl p-8 relative z-10">
         
-        <div className="text-center mb-6">
-          <Lock className="mx-auto mb-3 text-school-primary" />
-          <h1 className="text-xl font-bold text-white">Welcome back</h1>
-          <p className="text-sm text-school-secondary-100/60">
-            Sign in to continue
-          </p>
-        </div>
+//         <div className="text-center mb-6">
+//           <Lock className="mx-auto mb-3 text-school-primary" />
+//           <h1 className="text-xl font-bold text-white">Welcome back</h1>
+//           <p className="text-sm text-school-secondary-100/60">
+//             Sign in to continue
+//           </p>
+//         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <Label>Email</Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 opacity-40" />
-              <Input
-                type="email"
-                className="pl-10 text-gray-200"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={isLoading}
-              />
-            </div>
-          </div>
+//         <form onSubmit={handleLogin} className="space-y-4">
+//           <div>
+//             <Label>Email</Label>
+//             <div className="relative">
+//               <Mail className="absolute left-3 top-3 h-4 w-4 opacity-40" />
+//               <Input
+//                 type="email"
+//                 className="pl-10 text-gray-200"
+//                 value={email}
+//                 onChange={(e) => setEmail(e.target.value)}
+//                 required
+//                 disabled={isLoading}
+//               />
+//             </div>
+//           </div>
 
-          <div>
-            <Label>Password</Label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 opacity-40" />
-              <Input
-                type={showPassword ? 'text' : 'password'}
-                className="pl-10 pr-10 text-gray-200"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={isLoading}
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-3 text-gray-200"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
+//           <div>
+//             <Label>Password</Label>
+//             <div className="relative">
+//               <Lock className="absolute left-3 top-3 h-4 w-4 opacity-40" />
+//               <Input
+//                 type={showPassword ? 'text' : 'password'}
+//                 className="pl-10 pr-10 text-gray-200"
+//                 value={password}
+//                 onChange={(e) => setPassword(e.target.value)}
+//                 required
+//                 disabled={isLoading}
+//               />
+//               <button
+//                 type="button"
+//                 className="absolute right-3 top-3 text-gray-200"
+//                 onClick={() => setShowPassword(!showPassword)}
+//               >
+//                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+//               </button>
+//             </div>
+//           </div>
 
-          <Button className="w-full" disabled={isLoading}>
-            {isLoading ? 'Please wait...' : 'Sign In'}
-          </Button>
-        </form>
+//           <Button className="w-full" disabled={isLoading}>
+//             {isLoading ? 'Please wait...' : 'Sign In'}
+//           </Button>
+//         </form>
 
-        <div className="text-center mt-4 text-sm">
-          <Link href="/forgot-password" className="text-school-primary">
-            Forgot password?
-          </Link>
-        </div>
+//         <div className="text-center mt-4 text-sm">
+//           <Link href="/forgot-password" className="text-school-primary">
+//             Forgot password?
+//           </Link>
+//         </div>
 
-        <div className="text-center mt-2 text-sm">
-          Don’t have an account?{' '}
-          <Link href="/onboarding" className="text-school-primary font-semibold">
-            Get started
-          </Link>
-        </div>
+//         <div className="text-center mt-2 text-sm">
+//           Don’t have an account?{' '}
+//           <Link href="/onboarding" className="text-school-primary font-semibold">
+//             Get started
+//           </Link>
+//         </div>
 
-      </div>
-    </div>
-  );
+//       </div>
+//     </div>
+//   );
+// }
+
+
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { LoginForm } from "@/components/auth/loginClient";
+
+/**
+ * Rule 16: Dynamic SEO
+ */
+export const metadata: Metadata = {
+    title: "Login | Registry Access | SchoolPaaS",
+    description: "Secure gateway to the SchoolPaaS multicurricular registry.",
+};
+
+/**
+ * Rule 12: Server-First Session Check
+ */
+export default async function Page() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    /**
+     * Rule 10: If a user is already authenticated, 
+     * move them directly to the dashboard to save time.
+     */
+    if (user) {
+        // Redirection logic is better handled in middleware for speed,
+        // but this server-side check adds a second layer of protection.
+        redirect("/teacher"); 
+    }
+
+    return (
+        <main className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+            <LoginForm />
+        </main>
+    );
 }

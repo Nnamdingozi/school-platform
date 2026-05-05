@@ -3709,7 +3709,7 @@ import { generateDiagramImage } from "@/app/actions/generate-diagram"
 import { saveGeneratedImageUrlToLesson } from "@/app/actions/lesson-image-action" 
 import { publishLesson } from "@/app/actions/lesson.actions"
 import { Role } from "@prisma/client"
-import { ScannedQuestionRegistry } from "../scannedQuestionRegistry"
+import { ScannedQuestionRegistry } from "../scan/scannedQuestionRegistry"
 import { PracticeHub } from "../individual-student/exam/practicehub"
 // ── Types ──────────────────────────────────────────────────────────────────────
 

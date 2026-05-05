@@ -658,151 +658,274 @@
 
 
 
-'use client'
+// 'use client'
 
-import { 
-    BarChart3, 
-    TrendingUp, 
-    Users, 
-    Zap, 
-    MessageSquare, 
-    Loader2,
-    type LucideIcon // ✅ Added LucideIcon type
-} from "lucide-react"
-import { useProfileStore } from "@/store/profileStore"
-import { 
-    GradeDistributionChart, 
-    AssessmentScoresChart, 
-    StatusDistributionChart,
-    CommunicationTrendChart,
-    AcademicContentHealth 
-} from "@/components/admin-dasboard/analitcs-charts"
-import { UnassignedStudentsAlert } from "@/components/admin-dasboard/unassigned-students-alert"
-import { Card, CardContent } from "@/components/ui/card"
+// import { 
+//     BarChart3, 
+//     TrendingUp, 
+//     Users, 
+//     Zap, 
+//     MessageSquare, 
+//     Loader2,
+//     type LucideIcon // ✅ Added LucideIcon type
+// } from "lucide-react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { 
+//     GradeDistributionChart, 
+//     AssessmentScoresChart, 
+//     StatusDistributionChart,
+//     CommunicationTrendChart,
+//     AcademicContentHealth 
+// } from "@/components/admin-dasboard/analitcs-charts"
+// import { UnassignedStudentsAlert } from "@/components/admin-dasboard/unassigned-students-alert"
+// import { Card, CardContent } from "@/components/ui/card"
 
-export default function AnalyticsReportsPage() {
-    const { profile, isLoading } = useProfileStore()
+// export default function AnalyticsReportsPage() {
+//     const { profile, isLoading } = useProfileStore()
 
-    if (isLoading || !profile) {
-        return (
-            <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
-                <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
-                <p className="text-slate-500 font-mono text-xs uppercase tracking-[0.3em] animate-pulse">
-                    Generating_Analytical_Models...
-                </p>
-            </div>
-        )
+//     if (isLoading || !profile) {
+//         return (
+//             <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
+//                 <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
+//                 <p className="text-slate-500 font-mono text-xs uppercase tracking-[0.3em] animate-pulse">
+//                     Generating_Analytical_Models...
+//                 </p>
+//             </div>
+//         )
+//     }
+
+//     return (
+//         <div className="max-w-7xl mx-auto p-4 md:p-8 lg:p-12 space-y-10 bg-slate-950 min-h-screen text-slate-50">
+            
+//             {/* ── Page Header ── */}
+//             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-10">
+//                 <div className="flex items-center gap-5">
+//                     <div className="h-14 w-14 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center shadow-2xl shadow-school-primary/10">
+//                         <BarChart3 className="h-7 w-7 text-school-primary" />
+//                     </div>
+//                     <div>
+//                         <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none text-white">
+//                             Institutional Insights
+//                         </h1>
+//                         <p className="text-slate-500 text-sm mt-2 font-medium">
+//                             Real-time data visualization of academic and operational performance.
+//                         </p>
+//                     </div>
+//                 </div>
+
+//                 <div className="hidden xl:flex items-center gap-3 bg-slate-900 px-5 py-2.5 rounded-2xl border border-white/5 shadow-xl">
+//                     <TrendingUp className="h-4 w-4 text-emerald-500" />
+//                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 italic">
+//                         Data synchronized successfully
+//                     </span>
+//                 </div>
+//             </header>
+
+//             {/* ── Main Analytics Grid ── */}
+//             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                
+//                 {/* Left Column: Primary Charts */}
+//                 <div className="xl:col-span-2 space-y-8">
+                    
+//                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                         <GradeDistributionChart />
+//                         <AssessmentScoresChart />
+//                     </div>
+
+//                     <CommunicationTrendChart />
+
+//                     <UnassignedStudentsAlert />
+//                 </div>
+
+//                 {/* Right Column: Sidebars */}
+//                 <div className="space-y-8">
+                    
+//                     <StatusDistributionChart />
+
+//                     <AcademicContentHealth />
+
+//                     {/* Quick Stats Sidebar */}
+//                     <Card className="bg-slate-900 border-white/5 rounded-[2rem] overflow-hidden">
+//                         <div className="p-6 border-b border-white/5 bg-slate-950/50">
+//                             <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Quick Metrics</h4>
+//                         </div>
+//                         <CardContent className="p-6 space-y-6">
+//                             <MetricItem 
+//                                 icon={Users} 
+//                                 label="Total Registry" 
+//                                 // ✅ FIX: Cast to 'any' temporarily if interface isn't updated, 
+//                                 // but safe-access the length property.
+//                                 value={profile.school?.users?.length ?? 0} 
+//                                 sub="Total active accounts" 
+//                             />
+//                             <MetricItem 
+//                                 icon={MessageSquare} 
+//                                 label="Comms Balance" 
+//                                 value={profile.school?.whatsappCredits ?? 0} 
+//                                 sub="Available WhatsApp units" 
+//                             />
+//                             <MetricItem 
+//                                 icon={Zap} 
+//                                 label="AI Generation" 
+//                                 value="Automated" 
+//                                 sub="Planner status: Active" 
+//                             />
+//                         </CardContent>
+//                     </Card>
+
+//                     <div className="p-6 rounded-[2rem] bg-school-primary/5 border border-school-primary/10">
+//                         <p className="text-[10px] text-slate-500 leading-relaxed italic">
+//                             Report parameters are calculated based on the current academic term data stored in the database. Charts are refreshed automatically on page entry.
+//                         </p>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// // ✅ FIX: Defined specific interface for props to remove 'any' error
+// interface MetricItemProps {
+//     icon: LucideIcon;
+//     label: string;
+//     value: string | number;
+//     sub: string;
+// }
+
+// function MetricItem({ icon: Icon, label, value, sub }: MetricItemProps) {
+//     return (
+//         <div className="flex items-center gap-4 group cursor-default">
+//             <div className="h-10 w-10 rounded-xl bg-slate-950 flex items-center justify-center border border-white/5 group-hover:border-school-primary/30 transition-all shadow-inner">
+//                 <Icon className="h-5 w-5 text-slate-600 group-hover:text-school-primary transition-colors" />
+//             </div>
+//             <div>
+//                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{label}</p>
+//                 <p className="text-lg font-bold text-white leading-none mt-0.5">{value}</p>
+//                 <p className="text-[9px] text-slate-600 mt-1">{sub}</p>
+//             </div>
+//         </div>
+//     )
+// }
+
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getAnalyticsData, getUnassignedStudents } from "@/app/actions/analytics.action";
+// import { AnalyticsDashboardClient } from "@/components/admin-dasboard/analytics/analyticDashboardClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Insights | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         include: { school: { select: { name: true } } }
+//     });
+
+//     return {
+//         title: `Institutional Insights | ${profile?.school?.name || "Registry"} | SchoolPaaS`,
+//         description: "Real-time academic performance and operational analytics."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Parallel Fetching
+//  */
+// export default async function Page() {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         include: { school: { include: { _count: { select: { users: true } } } } }
+//     });
+
+//     // Rule 6 & 13: Institutional Gate
+//     if (!profile?.schoolId || (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)) {
+//         redirect("/student?error=access_denied");
+//     }
+
+//     // Parallel Fetch (Rule 11 System Truth)
+//     const [analyticsData, unassignedData] = await Promise.all([
+//         getAnalyticsData(profile.schoolId),
+//         getUnassignedStudents(profile.schoolId)
+//     ]);
+
+//     return (
+//         <AnalyticsDashboardClient 
+//             initialData={analyticsData} 
+//             unassignedData={unassignedData}
+//             userCount={profile.school?._count.users ?? 0}
+//             whatsappCredits={profile.school?.whatsappCredits ?? 0}
+//         />
+//     );
+// }
+
+
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { getAnalyticsData, getUnassignedStudents } from "@/app/_actions/analytics-actions";
+import { AnalyticsHubClient } from "@/components/admin/AnalyticsHubClient";
+import { Role } from "@prisma/client";
+
+/**
+ * Rule 16: Dynamic Contextual SEO
+ */
+export async function generateMetadata(): Promise<Metadata> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { title: "Insights | SchoolPaaS" };
+
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        include: { school: { select: { name: true } } }
+    });
+
+    return {
+        title: `Intelligence Hub | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
+        description: "Real-time institutional analytics and academic reporting."
+    };
+}
+
+/**
+ * Rule 12: Server-First Parallel Fetching
+ */
+export default async function AnalyticsPage() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
+
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        include: { school: { include: { _count: { select: { users: true } } } } }
+    });
+
+    // Rule 10 & 13: Institutional Gate
+    if (!profile?.schoolId || (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)) {
+        redirect("/teacher?error=unauthorized");
     }
 
+    // Parallel Fetch (Rule 11 System Truth)
+    const [analyticsData, unassignedData] = await Promise.all([
+        getAnalyticsData(profile.schoolId),
+        getUnassignedStudents(profile.schoolId)
+    ]);
+
     return (
-        <div className="max-w-7xl mx-auto p-4 md:p-8 lg:p-12 space-y-10 bg-slate-950 min-h-screen text-slate-50">
-            
-            {/* ── Page Header ── */}
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-10">
-                <div className="flex items-center gap-5">
-                    <div className="h-14 w-14 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center shadow-2xl shadow-school-primary/10">
-                        <BarChart3 className="h-7 w-7 text-school-primary" />
-                    </div>
-                    <div>
-                        <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none text-white">
-                            Institutional Insights
-                        </h1>
-                        <p className="text-slate-500 text-sm mt-2 font-medium">
-                            Real-time data visualization of academic and operational performance.
-                        </p>
-                    </div>
-                </div>
-
-                <div className="hidden xl:flex items-center gap-3 bg-slate-900 px-5 py-2.5 rounded-2xl border border-white/5 shadow-xl">
-                    <TrendingUp className="h-4 w-4 text-emerald-500" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 italic">
-                        Data synchronized successfully
-                    </span>
-                </div>
-            </header>
-
-            {/* ── Main Analytics Grid ── */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                
-                {/* Left Column: Primary Charts */}
-                <div className="xl:col-span-2 space-y-8">
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <GradeDistributionChart />
-                        <AssessmentScoresChart />
-                    </div>
-
-                    <CommunicationTrendChart />
-
-                    <UnassignedStudentsAlert />
-                </div>
-
-                {/* Right Column: Sidebars */}
-                <div className="space-y-8">
-                    
-                    <StatusDistributionChart />
-
-                    <AcademicContentHealth />
-
-                    {/* Quick Stats Sidebar */}
-                    <Card className="bg-slate-900 border-white/5 rounded-[2rem] overflow-hidden">
-                        <div className="p-6 border-b border-white/5 bg-slate-950/50">
-                            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Quick Metrics</h4>
-                        </div>
-                        <CardContent className="p-6 space-y-6">
-                            <MetricItem 
-                                icon={Users} 
-                                label="Total Registry" 
-                                // ✅ FIX: Cast to 'any' temporarily if interface isn't updated, 
-                                // but safe-access the length property.
-                                value={profile.school?.users?.length ?? 0} 
-                                sub="Total active accounts" 
-                            />
-                            <MetricItem 
-                                icon={MessageSquare} 
-                                label="Comms Balance" 
-                                value={profile.school?.whatsappCredits ?? 0} 
-                                sub="Available WhatsApp units" 
-                            />
-                            <MetricItem 
-                                icon={Zap} 
-                                label="AI Generation" 
-                                value="Automated" 
-                                sub="Planner status: Active" 
-                            />
-                        </CardContent>
-                    </Card>
-
-                    <div className="p-6 rounded-[2rem] bg-school-primary/5 border border-school-primary/10">
-                        <p className="text-[10px] text-slate-500 leading-relaxed italic">
-                            Report parameters are calculated based on the current academic term data stored in the database. Charts are refreshed automatically on page entry.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
-
-// ✅ FIX: Defined specific interface for props to remove 'any' error
-interface MetricItemProps {
-    icon: LucideIcon;
-    label: string;
-    value: string | number;
-    sub: string;
-}
-
-function MetricItem({ icon: Icon, label, value, sub }: MetricItemProps) {
-    return (
-        <div className="flex items-center gap-4 group cursor-default">
-            <div className="h-10 w-10 rounded-xl bg-slate-950 flex items-center justify-center border border-white/5 group-hover:border-school-primary/30 transition-all shadow-inner">
-                <Icon className="h-5 w-5 text-slate-600 group-hover:text-school-primary transition-colors" />
-            </div>
-            <div>
-                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{label}</p>
-                <p className="text-lg font-bold text-white leading-none mt-0.5">{value}</p>
-                <p className="text-[9px] text-slate-600 mt-1">{sub}</p>
-            </div>
-        </div>
-    )
+        <AnalyticsHubClient 
+            initialData={analyticsData} 
+            unassignedData={unassignedData}
+            userCount={profile.school?._count.users ?? 0}
+            whatsappCredits={profile.school?.whatsappCredits ?? 0}
+        />
+    );
 }

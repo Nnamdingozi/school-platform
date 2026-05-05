@@ -514,311 +514,366 @@
 // }
 
 
-'use client'
+// 'use client'
 
-import { useState } from 'react'
-import { Role } from '@prisma/client'
-import { sendInviteAction, resendInviteAction } from '@/app/actions/invitation.actions'
-import {
-     Trash2, Send, CheckCircle2,
-    Loader2, AlertCircle, Plus, X, Info
-} from 'lucide-react'
-import { getErrorMessage } from '@/lib/error-handler'
-import { useProfileStore } from '@/store/profileStore'
-import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+// import { useState } from 'react'
+// import { Role } from '@prisma/client'
+// import { sendInviteAction, resendInviteAction } from '@/app/actions/invitation.actions'
+// import {
+//      Trash2, Send, CheckCircle2,
+//     Loader2, AlertCircle, Plus, X, Info
+// } from 'lucide-react'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { useProfileStore } from '@/store/profileStore'
+// import { toast } from 'sonner'
+// import { cn } from '@/lib/utils'
 
-// Shared Components
-import { CSVImporter } from '@/components/shared/CSVImporter'
-import { CSVTemplateButton } from '@/components/shared/CSVTemplateButton'
+// // Shared Components
+// import { CSVImporter } from '@/components/shared/CSVImporter'
+// import { CSVTemplateButton } from '@/components/shared/CSVTemplateButton'
 
-// ── Types ──────────────────────────────────────────────────────────────────────
-type InviteRole = 'TEACHER' | 'STUDENT' | 'PARENT'
+// // ── Types ──────────────────────────────────────────────────────────────────────
+// type InviteRole = 'TEACHER' | 'STUDENT' | 'PARENT'
 
-interface InviteRow {
-    id: string
-    email: string
-    role: InviteRole
-    name: string
-    status: 'idle' | 'sending' | 'sent' | 'error'
-    error?: string
-}
+// interface InviteRow {
+//     id: string
+//     email: string
+//     role: InviteRole
+//     name: string
+//     status: 'idle' | 'sending' | 'sent' | 'error'
+//     error?: string
+// }
 
-interface InviteRowItemProps {
-    row: InviteRow
-    onUpdate: (patch: Partial<InviteRow>) => void
-    onRemove: () => void
-    onResend: () => void
-}
+// interface InviteRowItemProps {
+//     row: InviteRow
+//     onUpdate: (patch: Partial<InviteRow>) => void
+//     onRemove: () => void
+//     onResend: () => void
+// }
 
-const ROLES: { value: InviteRole; label: string }[] = [
-    { value: 'TEACHER', label: 'Teacher' },
-    { value: 'STUDENT', label: 'Student' },
-    { value: 'PARENT', label: 'Parent' },
-]
+// const ROLES: { value: InviteRole; label: string }[] = [
+//     { value: 'TEACHER', label: 'Teacher' },
+//     { value: 'STUDENT', label: 'Student' },
+//     { value: 'PARENT', label: 'Parent' },
+// ]
 
-const makeRow = (email = '', role: InviteRole = 'TEACHER', name = ''): InviteRow => ({
-    id: crypto.randomUUID(),
-    email,
-    role,
-    name,
-    status: 'idle',
-})
+// const makeRow = (email = '', role: InviteRole = 'TEACHER', name = ''): InviteRow => ({
+//     id: crypto.randomUUID(),
+//     email,
+//     role,
+//     name,
+//     status: 'idle',
+// })
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+// const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export default function InviteUsersPage() {
-    const { profile } = useProfileStore()
-    const schoolId = profile?.schoolId ?? ''
+// export default function InviteUsersPage() {
+//     const { profile } = useProfileStore()
+//     const schoolId = profile?.schoolId ?? ''
     
-    const [rows, setRows] = useState<InviteRow[]>([makeRow()])
-    const [isSending, setIsSending] = useState(false)
+//     const [rows, setRows] = useState<InviteRow[]>([makeRow()])
+//     const [isSending, setIsSending] = useState(false)
 
-    // ── Row helpers ────────────────────────────────────────────────────────────
-    const updateRow = (id: string, patch: Partial<InviteRow>) =>
-        setRows(prev => prev.map(r => r.id === id ? { ...r, ...patch } : r))
+//     // ── Row helpers ────────────────────────────────────────────────────────────
+//     const updateRow = (id: string, patch: Partial<InviteRow>) =>
+//         setRows(prev => prev.map(r => r.id === id ? { ...r, ...patch } : r))
 
-    const removeRow = (id: string) =>
-        setRows(prev => prev.length === 1 ? prev : prev.filter(r => r.id !== id))
+//     const removeRow = (id: string) =>
+//         setRows(prev => prev.length === 1 ? prev : prev.filter(r => r.id !== id))
 
-    const addRow = () => setRows(prev => [...prev, makeRow()])
+//     const addRow = () => setRows(prev => [...prev, makeRow()])
 
-    // ── CSV Handler ────────────────────────────────────────────────────────────
-    const handleCsvData = (csvData: Record<string, string>[]) => {
-        const newRows = csvData.map(row => {
-            const rawRole = String(row.role || row.Role || 'TEACHER').toUpperCase()
-            const role: InviteRole = ['TEACHER', 'STUDENT', 'PARENT'].includes(rawRole) 
-                ? (rawRole as InviteRole) 
-                : 'TEACHER'
+//     // ── CSV Handler ────────────────────────────────────────────────────────────
+//     const handleCsvData = (csvData: Record<string, string>[]) => {
+//         const newRows = csvData.map(row => {
+//             const rawRole = String(row.role || row.Role || 'TEACHER').toUpperCase()
+//             const role: InviteRole = ['TEACHER', 'STUDENT', 'PARENT'].includes(rawRole) 
+//                 ? (rawRole as InviteRole) 
+//                 : 'TEACHER'
             
-            return makeRow(
-                String(row.email || row.Email || '').trim(),
-                role,
-                String(row.name || row.Name || '').trim()
-            )
-        }).filter(r => r.email.length > 0)
+//             return makeRow(
+//                 String(row.email || row.Email || '').trim(),
+//                 role,
+//                 String(row.name || row.Name || '').trim()
+//             )
+//         }).filter(r => r.email.length > 0)
 
-        if (newRows.length > 0) {
-            setRows(newRows)
-            toast.success(`${newRows.length} users staged from dataset.`)
-        }
-    }
+//         if (newRows.length > 0) {
+//             setRows(newRows)
+//             toast.success(`${newRows.length} users staged from dataset.`)
+//         }
+//     }
 
-    // ── Dispatch Logic ─────────────────────────────────────────────────────────
-    const handleSendAll = async () => {
-        const hasInvalid = rows.some(r => !r.email.trim() || !EMAIL_REGEX.test(r.email))
+//     // ── Dispatch Logic ─────────────────────────────────────────────────────────
+//     const handleSendAll = async () => {
+//         const hasInvalid = rows.some(r => !r.email.trim() || !EMAIL_REGEX.test(r.email))
 
-        if (hasInvalid) {
-            setRows(prev => prev.map(r => {
-                if (!r.email.trim() || !EMAIL_REGEX.test(r.email)) {
-                    return { ...r, status: 'error', error: 'Valid email required' }
-                }
-                return r
-            }))
-            return toast.error("Correct highlighted validation errors.")
-        }
+//         if (hasInvalid) {
+//             setRows(prev => prev.map(r => {
+//                 if (!r.email.trim() || !EMAIL_REGEX.test(r.email)) {
+//                     return { ...r, status: 'error', error: 'Valid email required' }
+//                 }
+//                 return r
+//             }))
+//             return toast.error("Correct highlighted validation errors.")
+//         }
 
-        setIsSending(true)
+//         setIsSending(true)
 
-        for (const row of rows) {
-            if (row.status === 'sent') continue
-            updateRow(row.id, { status: 'sending', error: undefined })
+//         for (const row of rows) {
+//             if (row.status === 'sent') continue
+//             updateRow(row.id, { status: 'sending', error: undefined })
 
-            try {
-                const result = await sendInviteAction({
-                    email: row.email.trim(),
-                    role: row.role as Role,
-                    schoolId,
-                })
-                updateRow(row.id, { 
-                    status: result.success ? 'sent' : 'error', 
-                    error: result.error 
-                })
-            } catch (err) {
-                updateRow(row.id, { 
-                    status: 'error', 
-                    error: getErrorMessage(err) 
-                })
-            }
-            await new Promise(r => setTimeout(r, 200)) // Rate limit protection
-        }
+//             try {
+//                 const result = await sendInviteAction({
+//                     email: row.email.trim(),
+//                     role: row.role as Role,
+//                     schoolId,
+//                 })
+//                 updateRow(row.id, { 
+//                     status: result.success ? 'sent' : 'error', 
+//                     error: result.error 
+//                 })
+//             } catch (err) {
+//                 updateRow(row.id, { 
+//                     status: 'error', 
+//                     error: getErrorMessage(err) 
+//                 })
+//             }
+//             await new Promise(r => setTimeout(r, 200)) // Rate limit protection
+//         }
 
-        setIsSending(false)
-    }
+//         setIsSending(false)
+//     }
 
-    const handleSingleResend = async (row: InviteRow) => {
-        updateRow(row.id, { status: 'sending', error: undefined });
-        const result = await resendInviteAction(row.email);
-        updateRow(row.id, { 
-            status: result.success ? 'sent' : 'error', 
-            error: result.success ? undefined : (result.error || "Resend failed") 
-        });
-    }
+//     const handleSingleResend = async (row: InviteRow) => {
+//         updateRow(row.id, { status: 'sending', error: undefined });
+//         const result = await resendInviteAction(row.email);
+//         updateRow(row.id, { 
+//             status: result.success ? 'sent' : 'error', 
+//             error: result.success ? undefined : (result.error || "Resend failed") 
+//         });
+//     }
 
-    const sentCount = rows.filter(r => r.status === 'sent').length
-    const allSent = rows.length > 0 && sentCount === rows.length
+//     const sentCount = rows.filter(r => r.status === 'sent').length
+//     const allSent = rows.length > 0 && sentCount === rows.length
 
-    return (
-        <div className="min-h-screen bg-slate-950 p-4 md:p-8 lg:p-12 text-slate-50">
-            <div className="max-w-5xl mx-auto space-y-10">
+//     return (
+//         <div className="min-h-screen bg-slate-950 p-4 md:p-8 lg:p-12 text-slate-50">
+//             <div className="max-w-5xl mx-auto space-y-10">
 
-                {/* ── Header ── */}
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/5 pb-10">
-                    <div>
-                        <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none">Invite Users</h1>
-                        <p className="text-slate-500 text-sm mt-2">Initialize institutional onboarding for staff and families.</p>
-                    </div>
-                    {rows.length > 1 && !allSent && (
-                        <button onClick={() => setRows([makeRow()])} className="text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-red-400 transition-colors">
-                            <X className="w-3 h-3 inline mr-1" /> Reset Registry
-                        </button>
-                    )}
-                </header>
+//                 {/* ── Header ── */}
+//                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/5 pb-10">
+//                     <div>
+//                         <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none">Invite Users</h1>
+//                         <p className="text-slate-500 text-sm mt-2">Initialize institutional onboarding for staff and families.</p>
+//                     </div>
+//                     {rows.length > 1 && !allSent && (
+//                         <button onClick={() => setRows([makeRow()])} className="text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-red-400 transition-colors">
+//                             <X className="w-3 h-3 inline mr-1" /> Reset Registry
+//                         </button>
+//                     )}
+//                 </header>
 
-                {/* ── Bulk Tools ── */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2">
-                        <CSVImporter 
-                            title="Import Access List"
-                            description="Columns: email, name, role (TEACHER, STUDENT, PARENT)"
-                            expectedHeaders={["email"]}
-                            onDataUpload={(data) => handleCsvData(data as Record<string, string>[])}
-                        />
-                    </div>
-                    <div className="bg-slate-900 border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between shadow-2xl">
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-2 text-school-primary">
-                                <Info className="h-4 w-4" />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Protocol</span>
-                            </div>
-                            <p className="text-[11px] text-slate-500 leading-relaxed italic">
-                                Use the sample format to ensure identity synchronization.
-                            </p>
-                        </div>
-                        <CSVTemplateButton 
-                            fileName="school_invite_template"
-                            headers={["email", "name", "role"]}
-                            sampleRow={["staff@school.com", "John Doe", "TEACHER"]}
-                            className="w-full justify-center py-4 bg-slate-950 mt-6"
-                        />
-                    </div>
-                </div>
+//                 {/* ── Bulk Tools ── */}
+//                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+//                     <div className="lg:col-span-2">
+//                         <CSVImporter 
+//                             title="Import Access List"
+//                             description="Columns: email, name, role (TEACHER, STUDENT, PARENT)"
+//                             expectedHeaders={["email"]}
+//                             onDataUpload={(data) => handleCsvData(data as Record<string, string>[])}
+//                         />
+//                     </div>
+//                     <div className="bg-slate-900 border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between shadow-2xl">
+//                         <div className="space-y-3">
+//                             <div className="flex items-center gap-2 text-school-primary">
+//                                 <Info className="h-4 w-4" />
+//                                 <span className="text-[10px] font-black uppercase tracking-widest">Protocol</span>
+//                             </div>
+//                             <p className="text-[11px] text-slate-500 leading-relaxed italic">
+//                                 Use the sample format to ensure identity synchronization.
+//                             </p>
+//                         </div>
+//                         <CSVTemplateButton 
+//                             fileName="school_invite_template"
+//                             headers={["email", "name", "role"]}
+//                             sampleRow={["staff@school.com", "John Doe", "TEACHER"]}
+//                             className="w-full justify-center py-4 bg-slate-950 mt-6"
+//                         />
+//                     </div>
+//                 </div>
 
-                {/* ── Invitation Grid ── */}
-                {!allSent && (
-                    <div className="space-y-4">
-                        <div className="hidden sm:grid sm:grid-cols-[1fr_1fr_160px_48px] gap-4 px-6 opacity-30">
-                            <p className="text-[10px] font-black uppercase tracking-widest">Email Identity</p>
-                            <p className="text-[10px] font-black uppercase tracking-widest">Display Name</p>
-                            <p className="text-[10px] font-black uppercase tracking-widest">Role Key</p>
-                            <p></p>
-                        </div>
+//                 {/* ── Invitation Grid ── */}
+//                 {!allSent && (
+//                     <div className="space-y-4">
+//                         <div className="hidden sm:grid sm:grid-cols-[1fr_1fr_160px_48px] gap-4 px-6 opacity-30">
+//                             <p className="text-[10px] font-black uppercase tracking-widest">Email Identity</p>
+//                             <p className="text-[10px] font-black uppercase tracking-widest">Display Name</p>
+//                             <p className="text-[10px] font-black uppercase tracking-widest">Role Key</p>
+//                             <p></p>
+//                         </div>
 
-                        <div className="space-y-3">
-                            {rows.map((row) => (
-                                <InviteRowItem
-                                    key={row.id}
-                                    row={row}
-                                    onUpdate={(patch: Partial<InviteRow>) => updateRow(row.id, patch)}
-                                    onRemove={() => removeRow(row.id)}
-                                    onResend={() => handleSingleResend(row)}
-                                />
-                            ))}
-                        </div>
+//                         <div className="space-y-3">
+//                             {rows.map((row) => (
+//                                 <InviteRowItem
+//                                     key={row.id}
+//                                     row={row}
+//                                     onUpdate={(patch: Partial<InviteRow>) => updateRow(row.id, patch)}
+//                                     onRemove={() => removeRow(row.id)}
+//                                     onResend={() => handleSingleResend(row)}
+//                                 />
+//                             ))}
+//                         </div>
 
-                        <button onClick={addRow} className="w-full py-5 rounded-2xl border border-dashed border-white/5 bg-slate-900/30 hover:bg-white/5 text-slate-600 hover:text-school-primary text-[10px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-2">
-                            <Plus className="w-4 h-4" /> Add Academic Identity
-                        </button>
+//                         <button onClick={addRow} className="w-full py-5 rounded-2xl border border-dashed border-white/5 bg-slate-900/30 hover:bg-white/5 text-slate-600 hover:text-school-primary text-[10px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-2">
+//                             <Plus className="w-4 h-4" /> Add Academic Identity
+//                         </button>
 
-                        <div className="flex justify-end pt-6">
-                            <button
-                                onClick={handleSendAll}
-                                disabled={isSending}
-                                className="bg-school-primary text-school-secondary-950 font-black px-12 py-5 rounded-2xl hover:scale-105 active:scale-95 transition-all disabled:opacity-30 shadow-2xl shadow-school-primary/10 text-xs tracking-widest uppercase flex items-center gap-3"
-                            >
-                                {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                               SEND INVITATIONS
-                            </button>
-                        </div>
-                    </div>
-                )}
+//                         <div className="flex justify-end pt-6">
+//                             <button
+//                                 onClick={handleSendAll}
+//                                 disabled={isSending}
+//                                 className="bg-school-primary text-school-secondary-950 font-black px-12 py-5 rounded-2xl hover:scale-105 active:scale-95 transition-all disabled:opacity-30 shadow-2xl shadow-school-primary/10 text-xs tracking-widest uppercase flex items-center gap-3"
+//                             >
+//                                 {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+//                                SEND INVITATIONS
+//                             </button>
+//                         </div>
+//                     </div>
+//                 )}
 
-                {/* ── Success State ── */}
-                {allSent && (
-                    <div className="bg-slate-900 border border-white/5 rounded-[3rem] p-20 flex flex-col items-center text-center space-y-6 shadow-2xl animate-in zoom-in-95 duration-500">
-                        <div className="h-20 w-20 rounded-[2rem] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                            <CheckCircle2 className="h-10 w-10 text-emerald-500" />
-                        </div>
-                        <div className="space-y-2">
-                            <h2 className="text-3xl font-black uppercase italic text-white leading-none tracking-tighter">Invitation Dispatched</h2>
-                            <p className="text-slate-500 max-w-sm mx-auto text-sm">All invitations have been transmitted to the school communication network.</p>
-                        </div>
-                        <button onClick={() => setRows([makeRow()])} className="bg-slate-800 text-white font-bold px-10 py-4 rounded-xl hover:bg-slate-700 transition-all text-[10px] uppercase tracking-widest">
-                            New Invitation Batch
-                        </button>
-                    </div>
-                )}
-            </div>
-        </div>
-    )
+//                 {/* ── Success State ── */}
+//                 {allSent && (
+//                     <div className="bg-slate-900 border border-white/5 rounded-[3rem] p-20 flex flex-col items-center text-center space-y-6 shadow-2xl animate-in zoom-in-95 duration-500">
+//                         <div className="h-20 w-20 rounded-[2rem] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+//                             <CheckCircle2 className="h-10 w-10 text-emerald-500" />
+//                         </div>
+//                         <div className="space-y-2">
+//                             <h2 className="text-3xl font-black uppercase italic text-white leading-none tracking-tighter">Invitation Dispatched</h2>
+//                             <p className="text-slate-500 max-w-sm mx-auto text-sm">All invitations have been transmitted to the school communication network.</p>
+//                         </div>
+//                         <button onClick={() => setRows([makeRow()])} className="bg-slate-800 text-white font-bold px-10 py-4 rounded-xl hover:bg-slate-700 transition-all text-[10px] uppercase tracking-widest">
+//                             New Invitation Batch
+//                         </button>
+//                     </div>
+//                 )}
+//             </div>
+//         </div>
+//     )
+// }
+
+// function InviteRowItem({ row, onUpdate, onRemove, onResend }: InviteRowItemProps) {
+//     const isSent = row.status === 'sent'
+//     const isError = row.status === 'error'
+//     const isSending = row.status === 'sending'
+
+//     return (
+//         <div className={cn(
+//             "p-2 rounded-2xl border transition-all duration-300",
+//             isSent ? "bg-emerald-500/5 border-emerald-500/20" : 
+//             isError ? "bg-red-500/5 border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "bg-slate-900 border-white/5"
+//         )}>
+//             <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_160px_48px] gap-3 items-center px-2">
+//                 <input
+//                     type="email"
+//                     value={row.email}
+//                     onChange={e => onUpdate({ email: e.target.value, status: 'idle', error: undefined })}
+//                     disabled={isSent || isSending}
+//                     placeholder="user@school.com"
+//                     className="bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:border-school-primary outline-none disabled:opacity-40 transition-all"
+//                 />
+//                 <input
+//                     type="text"
+//                     value={row.name}
+//                     onChange={e => onUpdate({ name: e.target.value })}
+//                     disabled={isSent || isSending}
+//                     placeholder="Full Name"
+//                     className="bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:border-school-primary outline-none disabled:opacity-40 transition-all"
+//                 />
+//                 <div className="relative">
+//                     <select
+//                         value={row.role}
+//                         onChange={e => onUpdate({ role: e.target.value as InviteRole })}
+//                         disabled={isSent || isSending}
+//                         className="w-full bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-[10px] font-black text-slate-300 uppercase tracking-widest outline-none disabled:opacity-40 appearance-none cursor-pointer"
+//                     >
+//                         {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+//                     </select>
+//                 </div>
+//                 <div className="flex justify-center">
+//                     {isSending ? <Loader2 className="h-4 w-4 animate-spin text-school-primary" /> :
+//                      isSent ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> :
+//                      <button onClick={onRemove} className="p-2 text-slate-700 hover:text-red-500 transition-colors">
+//                         <Trash2 className="h-4 w-4" />
+//                      </button>}
+//                 </div>
+//             </div>
+//             {isError && (
+//                 <div className="flex items-center justify-between mt-2 px-6 pb-2">
+//                     <p className="text-[9px] font-black text-red-500 uppercase tracking-[0.1em] flex items-center gap-1.5">
+//                         <AlertCircle className="h-3 w-3" /> {row.error}
+//                     </p>
+//                     <button onClick={onResend} className="text-[9px] font-black text-school-primary uppercase tracking-widest hover:underline transition-all">
+//                         Immediate Retry
+//                     </button>
+//                 </div>
+//             )}
+//         </div>
+//     )
+// }
+
+
+
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { InviteUsersClient } from "@/components/admin-dasboard/inviteUsersClient";
+import { Role } from "@prisma/client";
+
+/**
+ * Rule 16: Contextual SEO
+ */
+export async function generateMetadata(): Promise<Metadata> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { title: "Invite Users | SchoolPaaS" };
+
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        include: { school: { select: { name: true } } }
+    });
+
+    return {
+        title: `Invite Users | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
+        description: "Scale your institutional network by inviting staff and families."
+    };
 }
 
-function InviteRowItem({ row, onUpdate, onRemove, onResend }: InviteRowItemProps) {
-    const isSent = row.status === 'sent'
-    const isError = row.status === 'error'
-    const isSending = row.status === 'sending'
+/**
+ * Rule 12: Server-First Authorization
+ */
+export default async function Page() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
+
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        select: { id: true, schoolId: true, role: true }
+    });
+
+    // Rule 6 & 13: Access Control
+    // Only Institutional Admins can access invitation features.
+    if (!profile?.schoolId || (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)) {
+        redirect("/teacher?error=access_restricted_institutional");
+    }
 
     return (
-        <div className={cn(
-            "p-2 rounded-2xl border transition-all duration-300",
-            isSent ? "bg-emerald-500/5 border-emerald-500/20" : 
-            isError ? "bg-red-500/5 border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "bg-slate-900 border-white/5"
-        )}>
-            <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_160px_48px] gap-3 items-center px-2">
-                <input
-                    type="email"
-                    value={row.email}
-                    onChange={e => onUpdate({ email: e.target.value, status: 'idle', error: undefined })}
-                    disabled={isSent || isSending}
-                    placeholder="user@school.com"
-                    className="bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:border-school-primary outline-none disabled:opacity-40 transition-all"
-                />
-                <input
-                    type="text"
-                    value={row.name}
-                    onChange={e => onUpdate({ name: e.target.value })}
-                    disabled={isSent || isSending}
-                    placeholder="Full Name"
-                    className="bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:border-school-primary outline-none disabled:opacity-40 transition-all"
-                />
-                <div className="relative">
-                    <select
-                        value={row.role}
-                        onChange={e => onUpdate({ role: e.target.value as InviteRole })}
-                        disabled={isSent || isSending}
-                        className="w-full bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-[10px] font-black text-slate-300 uppercase tracking-widest outline-none disabled:opacity-40 appearance-none cursor-pointer"
-                    >
-                        {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-                    </select>
-                </div>
-                <div className="flex justify-center">
-                    {isSending ? <Loader2 className="h-4 w-4 animate-spin text-school-primary" /> :
-                     isSent ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> :
-                     <button onClick={onRemove} className="p-2 text-slate-700 hover:text-red-500 transition-colors">
-                        <Trash2 className="h-4 w-4" />
-                     </button>}
-                </div>
-            </div>
-            {isError && (
-                <div className="flex items-center justify-between mt-2 px-6 pb-2">
-                    <p className="text-[9px] font-black text-red-500 uppercase tracking-[0.1em] flex items-center gap-1.5">
-                        <AlertCircle className="h-3 w-3" /> {row.error}
-                    </p>
-                    <button onClick={onResend} className="text-[9px] font-black text-school-primary uppercase tracking-widest hover:underline transition-all">
-                        Immediate Retry
-                    </button>
-                </div>
-            )}
-        </div>
-    )
+        <InviteUsersClient 
+            initialSchoolId={profile.schoolId} 
+            userRole={profile.role} 
+        />
+    );
 }

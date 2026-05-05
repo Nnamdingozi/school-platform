@@ -128,12 +128,128 @@
 
 
 
+// "use client"
+
+// import { useState, useRef } from "react"
+// import Papa from "papaparse"
+// import { Upload, Loader2, FileCheck, AlertCircle } from "lucide-react"
+// import { cn } from "@/lib/utils"
+
+// type ParsedRow = Record<string, string>
+
+// interface CSVImporterProps {
+//   title: string
+//   description?: string
+//   expectedHeaders: string[]
+//   onDataUpload: (rows: ParsedRow[]) => void | Promise<void>
+// }
+
+// export function CSVImporter({
+//   title,
+//   description,
+//   expectedHeaders,
+//   onDataUpload,
+// }: CSVImporterProps) {
+//   const [fileName, setFileName] = useState<string | null>(null)
+//   const [error, setError] = useState<string | null>(null)
+//   const [isParsing, setIsParsing] = useState(false)
+//   const [dragOver, setDragOver] = useState(false)
+//   const fileInputRef = useRef<HTMLInputElement>(null)
+
+//   function handleFile(file: File) {
+//     setFileName(file.name)
+//     setError(null)
+//     setIsParsing(true)
+
+//     Papa.parse<ParsedRow>(file, {
+//       header: true,
+//       skipEmptyLines: true,
+//       complete: async (results) => {
+//         setIsParsing(false)
+//         const headers = (results.meta.fields ?? []).map((h) => h.trim())
+//         const missing = expectedHeaders.filter((h) => !headers.includes(h))
+
+//         if (missing.length > 0) {
+//           setError(`Invalid Format. Missing: ${missing.join(", ")}`)
+//           return
+//         }
+
+//         const rows = (results.data ?? []).filter((row) =>
+//             Object.values(row).some((v) => typeof v === "string" && v.trim() !== "")
+//         )
+
+//         try {
+//           await onDataUpload(rows)
+//         } catch (err) {
+//           setError(err instanceof Error ? err.message : "Upload failed.")
+//         }
+//       },
+//       error: (err) => {
+//         setIsParsing(false)
+//         setError(err.message || "Parse failed.")
+//       },
+//     })
+//   }
+
+//   return (
+//     <div 
+//       onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+//       onDragLeave={() => setDragOver(false)}
+//       onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) handleFile(f); }}
+//       className={cn(
+//         "rounded-2xl border-2 border-dashed p-6 transition-all text-center group",
+//         dragOver ? "border-school-primary bg-school-primary/5" : "border-white/10 bg-slate-900/50 hover:border-white/20"
+//       )}
+//     >
+//       <div className="space-y-4">
+//         <div className="flex flex-col items-center gap-2">
+//             <div className="h-10 w-10 rounded-full bg-slate-950 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
+//                 {isParsing ? <Loader2 className="h-5 w-5 animate-spin text-school-primary" /> : <Upload className="h-5 w-5 text-slate-500" />}
+//             </div>
+//             <h3 className="text-xs font-black uppercase tracking-widest text-white">{title}</h3>
+//             {description && <p className="text-[10px] text-slate-500 uppercase font-bold">{description}</p>}
+//         </div>
+
+//         <button
+//           type="button"
+//           onClick={() => fileInputRef.current?.click()}
+//           className="bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-black py-2 px-6 rounded-lg border border-white/5 transition-all"
+//         >
+//           {fileName ? "CHANGE FILE" : "BROWSE CSV"}
+//         </button>
+        
+//         <input
+//           ref={fileInputRef}
+//           type="file"
+//           accept=".csv"
+//           className="hidden"
+//           onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+//         />
+
+//         {fileName && !error && !isParsing && (
+//             <div className="flex items-center justify-center gap-2 text-emerald-500 text-[10px] font-bold uppercase tracking-widest">
+//                 <FileCheck className="h-3.5 w-3.5" /> {fileName} Attached
+//             </div>
+//         )}
+
+//         {error && (
+//             <div className="flex items-center justify-center gap-2 text-red-500 text-[10px] font-bold uppercase tracking-widest">
+//                 <AlertCircle className="h-3.5 w-3.5" /> {error}
+//             </div>
+//         )}
+//       </div>
+//     </div>
+//   )
+// }
+
+
 "use client"
 
 import { useState, useRef } from "react"
 import Papa from "papaparse"
 import { Upload, Loader2, FileCheck, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useProfileStore } from "@/store/profileStore"
 
 type ParsedRow = Record<string, string>
 
@@ -144,17 +260,14 @@ interface CSVImporterProps {
   onDataUpload: (rows: ParsedRow[]) => void | Promise<void>
 }
 
-export function CSVImporter({
-  title,
-  description,
-  expectedHeaders,
-  onDataUpload,
-}: CSVImporterProps) {
+export function CSVImporter({ title, description, expectedHeaders, onDataUpload }: CSVImporterProps) {
+  const { profile } = useProfileStore();
   const [fileName, setFileName] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isParsing, setIsParsing] = useState(false)
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const primaryColor = profile?.primaryColor || "#f59e0b";
 
   function handleFile(file: File) {
     setFileName(file.name)
@@ -170,23 +283,19 @@ export function CSVImporter({
         const missing = expectedHeaders.filter((h) => !headers.includes(h))
 
         if (missing.length > 0) {
-          setError(`Invalid Format. Missing: ${missing.join(", ")}`)
+          setError(`Format Failure. Missing Columns: ${missing.join(", ")}`)
           return
         }
 
-        const rows = (results.data ?? []).filter((row) =>
-            Object.values(row).some((v) => typeof v === "string" && v.trim() !== "")
-        )
-
         try {
-          await onDataUpload(rows)
-        } catch (err) {
-          setError(err instanceof Error ? err.message : "Upload failed.")
+          await onDataUpload(results.data);
+        } catch (err: unknown) {
+          setError("Data integration failed.");
         }
       },
-      error: (err) => {
+      error: () => {
         setIsParsing(false)
-        setError(err.message || "Parse failed.")
+        setError("CSV Parse interrupted.")
       },
     })
   }
@@ -197,43 +306,40 @@ export function CSVImporter({
       onDragLeave={() => setDragOver(false)}
       onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) handleFile(f); }}
       className={cn(
-        "rounded-2xl border-2 border-dashed p-6 transition-all text-center group",
-        dragOver ? "border-school-primary bg-school-primary/5" : "border-white/10 bg-slate-900/50 hover:border-white/20"
+        "rounded-3xl border-2 border-dashed p-10 transition-all text-center group",
+        dragOver ? "bg-white/5 shadow-2xl" : "border-white/5 bg-slate-900/50 hover:border-white/10"
       )}
+      style={dragOver ? { borderColor: primaryColor } : {}}
     >
       <div className="space-y-4">
-        <div className="flex flex-col items-center gap-2">
-            <div className="h-10 w-10 rounded-full bg-slate-950 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
-                {isParsing ? <Loader2 className="h-5 w-5 animate-spin text-school-primary" /> : <Upload className="h-5 w-5 text-slate-500" />}
+        <div className="flex flex-col items-center gap-3">
+            <div 
+                className="h-14 w-14 rounded-2xl bg-slate-950 flex items-center justify-center border border-white/5 shadow-inner transition-transform group-hover:scale-105"
+            >
+                {isParsing ? <Loader2 className="h-6 w-6 animate-spin" style={{ color: primaryColor }} /> : <Upload className="h-6 w-6 text-slate-600" />}
             </div>
-            <h3 className="text-xs font-black uppercase tracking-widest text-white">{title}</h3>
-            {description && <p className="text-[10px] text-slate-500 uppercase font-bold">{description}</p>}
+            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white italic">{title}</h3>
+            {description && <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{description}</p>}
         </div>
 
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-black py-2 px-6 rounded-lg border border-white/5 transition-all"
+          className="bg-slate-800 hover:bg-slate-700 text-white text-[9px] font-black py-3 px-8 rounded-xl border border-white/5 uppercase tracking-widest"
         >
-          {fileName ? "CHANGE FILE" : "BROWSE CSV"}
+          {fileName ? "Change Dataset" : "Browse Filesystem"}
         </button>
         
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".csv"
-          className="hidden"
-          onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-        />
+        <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
 
         {fileName && !error && !isParsing && (
-            <div className="flex items-center justify-center gap-2 text-emerald-500 text-[10px] font-bold uppercase tracking-widest">
-                <FileCheck className="h-3.5 w-3.5" /> {fileName} Attached
+            <div className="flex items-center justify-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
+                <FileCheck className="h-3.5 w-3.5" /> Registry Attached: {fileName}
             </div>
         )}
 
         {error && (
-            <div className="flex items-center justify-center gap-2 text-red-500 text-[10px] font-bold uppercase tracking-widest">
+            <div className="flex items-center justify-center gap-2 text-red-500 text-[10px] font-black uppercase tracking-widest">
                 <AlertCircle className="h-3.5 w-3.5" /> {error}
             </div>
         )}

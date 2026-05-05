@@ -2841,6 +2841,47 @@ import { getErrorMessage } from "@/lib/error-handler";
 import { contentScope } from "@/lib/content-scope";
 import { logActivity } from "@/lib/activitylogger";
 
+
+
+export interface VisualAid {
+  title: string;
+  description: string;
+  imagePrompt: string;
+  url?: string; 
+}
+
+export interface EnhancedLessonContent {
+  metadata: {
+    topicContext: string;
+    difficultyLevel: string;
+  };
+  teacherLogic: {
+    teachingMethod: string;
+    timeAllocation: string;
+    pedagogicalTips: string;
+    introductionHook: string;
+  };
+  studentContent: {
+    title: string;
+    learningObjectives: string[];
+    explanation: string;
+    summary: string;
+    vocabulary: string[];
+    visualAids: VisualAid[];
+    examples: {
+      task: string;
+      solution: string;
+    }[];
+    quiz: {
+      question: string;
+      options: string[];
+      answer: string;
+      explanation: string;
+    }[];
+  };
+}
+
+
 /* ───────── AI SCHEMA ───────── */
 
 const LessonAiSchema = z.object({

@@ -243,156 +243,156 @@
 // }
 
 
-'use client'
+// 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { getUserById, UserDetail } from '@/app/actions/user-management'
-import {
-    ArrowLeft, Users, Mail, Phone, BookOpen,
-    ClipboardCheck, Plus, Trash2, UserX,
-    AlertCircle, CheckCircle2
-} from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { toast } from 'sonner'
-import {
-    Section, EmptySection, DetailSkeleton, AssignClassModal,
-} from '@/components/admin-dasboard/user-detail-shared'
-import { UserActionsModal } from '@/components/admin-dasboard/user-modal'
-import { useUserAction } from '@/hooks/useUserAction'
+// import { useState, useEffect } from 'react'
+// import { useParams, useRouter } from 'next/navigation'
+// import { getUserById, UserDetail } from '@/app/actions/user-management'
+// import {
+//     ArrowLeft, Users, Mail, Phone, BookOpen,
+//     ClipboardCheck, Plus, Trash2, UserX,
+//     AlertCircle, CheckCircle2
+// } from 'lucide-react'
+// import { Card, CardContent } from '@/components/ui/card'
+// import { toast } from 'sonner'
+// import {
+//     Section, EmptySection, DetailSkeleton, AssignClassModal,
+// } from '@/components/admin-dasboard/user-detail-shared'
+// import { UserActionsModal } from '@/components/admin-dasboard/user-modal'
+// import { useUserAction } from '@/hooks/useUserAction'
 
-export default function StudentDetailPage() {
-    const { id } = useParams<{ id: string }>()
-    const router = useRouter()
-    const [user, setUser] = useState<UserDetail | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [showAssign, setShowAssign] = useState(false)
-    const { actionState, triggerAction, closeAction } = useUserAction()
+// export default function StudentDetailPage() {
+//     const { id } = useParams<{ id: string }>()
+//     const router = useRouter()
+//     const [user, setUser] = useState<UserDetail | null>(null)
+//     const [loading, setLoading] = useState(true)
+//     const [showAssign, setShowAssign] = useState(false)
+//     const { actionState, triggerAction, closeAction } = useUserAction()
 
-    useEffect(() => {
-        if (!id) return
-        getUserById(id)
-            .then(data => { setUser(data); setLoading(false) })
-            .catch(() => setLoading(false))
-    }, [id])
+//     useEffect(() => {
+//         if (!id) return
+//         getUserById(id)
+//             .then(data => { setUser(data); setLoading(false) })
+//             .catch(() => setLoading(false))
+//     }, [id])
 
-    function handleActionSuccess() {
-        closeAction()
-        if (actionState?.action === 'delete') {
-            router.replace('/admin/studentView')
-        } else {
-            getUserById(id).then(setUser)
-        }
-    }
+//     function handleActionSuccess() {
+//         closeAction()
+//         if (actionState?.action === 'delete') {
+//             router.replace('/admin/studentView')
+//         } else {
+//             getUserById(id).then(setUser)
+//         }
+//     }
 
-    if (loading) return <DetailSkeleton />
-    if (!user) return (
-        <div className="min-h-screen bg-school-secondary-950 flex items-center justify-center">
-            <div className="text-center space-y-3">
-                <AlertCircle className="h-10 w-10 text-red-400 mx-auto" />
-                <p className="text-white font-bold">Student not found</p>
-                <button onClick={() => router.back()} className="text-sm text-school-primary hover:underline">Go back</button>
-            </div>
-        </div>
-    )
+//     if (loading) return <DetailSkeleton />
+//     if (!user) return (
+//         <div className="min-h-screen bg-school-secondary-950 flex items-center justify-center">
+//             <div className="text-center space-y-3">
+//                 <AlertCircle className="h-10 w-10 text-red-400 mx-auto" />
+//                 <p className="text-white font-bold">Student not found</p>
+//                 <button onClick={() => router.back()} className="text-sm text-school-primary hover:underline">Go back</button>
+//             </div>
+//         </div>
+//     )
 
-    const initials = (user.name ?? user.email).split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+//     const initials = (user.name ?? user.email).split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
 
-    return (
-        <div className="min-h-screen bg-school-secondary-950 p-4 sm:p-6 lg:p-8">
-            <div className="max-w-4xl mx-auto space-y-6">
-                <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-sm text-school-secondary-300 hover:text-white transition-colors">
-                    <ArrowLeft className="h-4 w-4" /> Back to Students
-                </button>
+//     return (
+//         <div className="min-h-screen bg-school-secondary-950 p-4 sm:p-6 lg:p-8">
+//             <div className="max-w-4xl mx-auto space-y-6">
+//                 <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-sm text-school-secondary-300 hover:text-white transition-colors">
+//                     <ArrowLeft className="h-4 w-4" /> Back to Students
+//                 </button>
 
-                {/* Profile Header */}
-                <Card className="bg-school-secondary-900 border-school-secondary-700">
-                    <CardContent className="p-6">
-                        <div className="flex items-start justify-between gap-4 flex-wrap">
-                            <div className="flex items-center gap-4">
-                                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-green-500/20 border border-green-500/20">
-                                    <span className="text-xl font-black text-green-400">{initials}</span>
-                                </div>
-                                <div className="space-y-1">
-                                    <h1 className="text-xl font-black text-white">{user.name ?? '—'}</h1>
-                                    <div className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-green-400" /><span className="text-xs font-semibold text-green-400 uppercase">Student</span></div>
-                                    <div className="flex items-center gap-3 flex-wrap">
-                                        <span className="flex items-center gap-1 text-xs text-school-secondary-300"><Mail className="h-3 w-3" />{user.email}</span>
-                                        {user.phone && <span className="flex items-center gap-1 text-xs text-school-secondary-300"><Phone className="h-3 w-3" />{user.phone}</span>}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 flex-wrap">
-                                <button onClick={() => setShowAssign(true)} className="bg-school-primary/10 hover:bg-school-primary/20 text-school-primary px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5"><Plus className="h-3.5 w-3.5" />Assign Class</button>
-                                <button onClick={() => triggerAction('deactivate', user.id, user.name, user.email)} className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5"><UserX className="h-3.5 w-3.5" />Deactivate</button>
-                                <button onClick={() => triggerAction('delete', user.id, user.name, user.email)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5"><Trash2 className="h-3.5 w-3.5" />Delete</button>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+//                 {/* Profile Header */}
+//                 <Card className="bg-school-secondary-900 border-school-secondary-700">
+//                     <CardContent className="p-6">
+//                         <div className="flex items-start justify-between gap-4 flex-wrap">
+//                             <div className="flex items-center gap-4">
+//                                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-green-500/20 border border-green-500/20">
+//                                     <span className="text-xl font-black text-green-400">{initials}</span>
+//                                 </div>
+//                                 <div className="space-y-1">
+//                                     <h1 className="text-xl font-black text-white">{user.name ?? '—'}</h1>
+//                                     <div className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-green-400" /><span className="text-xs font-semibold text-green-400 uppercase">Student</span></div>
+//                                     <div className="flex items-center gap-3 flex-wrap">
+//                                         <span className="flex items-center gap-1 text-xs text-school-secondary-300"><Mail className="h-3 w-3" />{user.email}</span>
+//                                         {user.phone && <span className="flex items-center gap-1 text-xs text-school-secondary-300"><Phone className="h-3 w-3" />{user.phone}</span>}
+//                                     </div>
+//                                 </div>
+//                             </div>
+//                             <div className="flex items-center gap-2 flex-wrap">
+//                                 <button onClick={() => setShowAssign(true)} className="bg-school-primary/10 hover:bg-school-primary/20 text-school-primary px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5"><Plus className="h-3.5 w-3.5" />Assign Class</button>
+//                                 <button onClick={() => triggerAction('deactivate', user.id, user.name, user.email)} className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5"><UserX className="h-3.5 w-3.5" />Deactivate</button>
+//                                 <button onClick={() => triggerAction('delete', user.id, user.name, user.email)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5"><Trash2 className="h-3.5 w-3.5" />Delete</button>
+//                             </div>
+//                         </div>
+//                     </CardContent>
+//                 </Card>
 
-                {/* Assigned Classes (Placement) */}
-                <Section title="Room Placement" icon={<BookOpen className="h-4 w-4 text-school-primary" />}>
-                    {user.assignedClasses.length === 0 ? <EmptySection message="Not placed in any classroom yet." /> : (
-                        <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
-                            {user.assignedClasses.map(c => (
-                                <div key={c.id} className="flex items-center gap-3 p-3 rounded-lg bg-school-secondary-800 border border-school-secondary-700">
-                                    <div className="flex h-8 w-8 rounded-lg bg-green-500/10 items-center justify-center"><BookOpen className="h-4 w-4 text-green-400" /></div>
-                                    <div className="min-w-0">
-                                        <p className="text-sm font-semibold text-white truncate">{c.name}</p>
-                                        <p className="text-xs text-school-secondary-300 truncate">{c.grade.displayName}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </Section>
+//                 {/* Assigned Classes (Placement) */}
+//                 <Section title="Room Placement" icon={<BookOpen className="h-4 w-4 text-school-primary" />}>
+//                     {user.assignedClasses.length === 0 ? <EmptySection message="Not placed in any classroom yet." /> : (
+//                         <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
+//                             {user.assignedClasses.map(c => (
+//                                 <div key={c.id} className="flex items-center gap-3 p-3 rounded-lg bg-school-secondary-800 border border-school-secondary-700">
+//                                     <div className="flex h-8 w-8 rounded-lg bg-green-500/10 items-center justify-center"><BookOpen className="h-4 w-4 text-green-400" /></div>
+//                                     <div className="min-w-0">
+//                                         <p className="text-sm font-semibold text-white truncate">{c.name}</p>
+//                                         <p className="text-xs text-school-secondary-300 truncate">{c.grade.displayName}</p>
+//                                     </div>
+//                                 </div>
+//                             ))}
+//                         </div>
+//                     )}
+//                 </Section>
 
-                {/* Allocated Subjects (The new Matrix data) */}
-                <Section title="Academic Subjects" icon={<CheckCircle2 className="h-4 w-4 text-school-primary" />}>
-                    {user.allocatedSubjects.length === 0 ? <EmptySection message="No subjects allocated to this student yet." /> : (
-                        <div className="flex flex-wrap gap-2">
-                            {user.allocatedSubjects.map(sub => (
-                                <div key={sub.id} className="px-3 py-1.5 rounded-full bg-school-secondary-800 border border-school-secondary-700 text-[10px] font-bold text-slate-300 uppercase tracking-wider">
-                                    {sub.name} <span className="ml-1 text-green-500 opacity-60">●</span>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </Section>
+//                 {/* Allocated Subjects (The new Matrix data) */}
+//                 <Section title="Academic Subjects" icon={<CheckCircle2 className="h-4 w-4 text-school-primary" />}>
+//                     {user.allocatedSubjects.length === 0 ? <EmptySection message="No subjects allocated to this student yet." /> : (
+//                         <div className="flex flex-wrap gap-2">
+//                             {user.allocatedSubjects.map(sub => (
+//                                 <div key={sub.id} className="px-3 py-1.5 rounded-full bg-school-secondary-800 border border-school-secondary-700 text-[10px] font-bold text-slate-300 uppercase tracking-wider">
+//                                     {sub.name} <span className="ml-1 text-green-500 opacity-60">●</span>
+//                                 </div>
+//                             ))}
+//                         </div>
+//                     )}
+//                 </Section>
 
-                {/* Assessment Scores */}
-                <Section title="Assessment Scores" icon={<ClipboardCheck className="h-4 w-4 text-school-primary" />}>
-                    {user.assessments.length === 0 ? <EmptySection message="No assessments recorded yet." /> : (
-                        <div className="space-y-2">
-                            {user.assessments.map(a => {
-                                const pct = a.maxScore && a.score !== null ? Math.round((a.score / a.maxScore) * 100) : null
-                                const color = pct === null ? 'text-school-secondary-300' : pct >= 70 ? 'text-green-400' : pct >= 50 ? 'text-amber-400' : 'text-red-400'
-                                return (
-                                    <div key={a.id} className="flex items-center justify-between gap-3 p-3 rounded-lg bg-school-secondary-800 border border-school-secondary-700">
-                                        <div className="min-w-0">
-                                            <p className="text-sm font-semibold text-white truncate">{a.subject ?? 'Unknown Subject'}</p>
-                                            <p className="text-xs text-school-secondary-300">{a.type.replace(/_/g, ' ')} · {new Date(a.createdAt).toLocaleDateString('en-GB')}</p>
-                                        </div>
-                                        <div className="text-right shrink-0">
-                                            <p className={`text-sm font-black ${color}`}>{a.score !== null ? a.score : '—'}{a.maxScore ? `/${a.maxScore}` : ''}</p>
-                                            {pct !== null && <p className={`text-xs font-semibold ${color}`}>{pct}%</p>}
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    )}
-                </Section>
-            </div>
+//                 {/* Assessment Scores */}
+//                 <Section title="Assessment Scores" icon={<ClipboardCheck className="h-4 w-4 text-school-primary" />}>
+//                     {user.assessments.length === 0 ? <EmptySection message="No assessments recorded yet." /> : (
+//                         <div className="space-y-2">
+//                             {user.assessments.map(a => {
+//                                 const pct = a.maxScore && a.score !== null ? Math.round((a.score / a.maxScore) * 100) : null
+//                                 const color = pct === null ? 'text-school-secondary-300' : pct >= 70 ? 'text-green-400' : pct >= 50 ? 'text-amber-400' : 'text-red-400'
+//                                 return (
+//                                     <div key={a.id} className="flex items-center justify-between gap-3 p-3 rounded-lg bg-school-secondary-800 border border-school-secondary-700">
+//                                         <div className="min-w-0">
+//                                             <p className="text-sm font-semibold text-white truncate">{a.subject ?? 'Unknown Subject'}</p>
+//                                             <p className="text-xs text-school-secondary-300">{a.type.replace(/_/g, ' ')} · {new Date(a.createdAt).toLocaleDateString('en-GB')}</p>
+//                                         </div>
+//                                         <div className="text-right shrink-0">
+//                                             <p className={`text-sm font-black ${color}`}>{a.score !== null ? a.score : '—'}{a.maxScore ? `/${a.maxScore}` : ''}</p>
+//                                             {pct !== null && <p className={`text-xs font-semibold ${color}`}>{pct}%</p>}
+//                                         </div>
+//                                     </div>
+//                                 )
+//                             })}
+//                         </div>
+//                     )}
+//                 </Section>
+//             </div>
 
-            {/* Modals */}
-            {showAssign && user.schoolId && (
-                <AssignClassModal userId={user.id} schoolId={user.schoolId} role="student" onClose={() => setShowAssign(false)}
-                    onSuccess={() => { setShowAssign(false); getUserById(id).then(setUser); toast.success('Placement updated.') }}
-                />
-            )}
-            {actionState && <UserActionsModal userId={actionState.userId} userName={actionState.userName} userEmail={actionState.userEmail} action={actionState.action} onClose={closeAction} onSuccess={handleActionSuccess} />}
-        </div>
-    )
-}
+//             {/* Modals */}
+//             {showAssign && user.schoolId && (
+//                 <AssignClassModal userId={user.id} schoolId={user.schoolId} role="student" onClose={() => setShowAssign(false)}
+//                     onSuccess={() => { setShowAssign(false); getUserById(id).then(setUser); toast.success('Placement updated.') }}
+//                 />
+//             )}
+//             {actionState && <UserActionsModal userId={actionState.userId} userName={actionState.userName} userEmail={actionState.userEmail} action={actionState.action} onClose={closeAction} onSuccess={handleActionSuccess} />}
+//         </div>
+//     )
+// }

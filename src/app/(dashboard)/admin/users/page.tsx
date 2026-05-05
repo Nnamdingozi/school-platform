@@ -25,7 +25,7 @@ import {
   type UserListItem 
 } from "@/app/actions/user-management";
 import { useProfileStore } from "@/store/profileStore";
-import { ParentChildLinker } from "@/components/admin-dasboard/parent-child-linker";
+import { ParentChildLinker } from "@/components/admin-dasboard/parent/parent-child-linker";
 import { getErrorMessage } from "@/lib/error-handler";
 
 const ROLE_CONFIG = {

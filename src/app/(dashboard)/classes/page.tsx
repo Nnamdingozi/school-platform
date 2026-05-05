@@ -623,188 +623,257 @@
 // }
 
 
-"use client"
+// "use client"
 
-import { useState, useEffect, useCallback } from "react"
-import { useProfileStore } from "@/store/profileStore"
-import { getClassDashboardData, getManagementHelpers } from "@/app/actions/class-management"
-import { Loader2 } from "lucide-react"
+// import { useState, useEffect, useCallback } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { getClassDashboardData, getManagementHelpers } from "@/app/actions/class-management"
+// import { Loader2 } from "lucide-react"
 
-import { AdminClassView } from "@/components/admin-dasboard/adminClassView"
-import { TeacherClassView } from "@/components/TeacherDashboard/teacherClassView"
-import { StudentClassView } from "@/components/student-dashboard/studentClassView"
+// import { AdminClassView } from "@/components/admin-dasboard/adminClassView"
+// import { TeacherClassView } from "@/components/TeacherDashboard/teacherClassView"
+// import { StudentClassView } from "@/components/student-dashboard/studentClassView"
 
-// Import Prisma types
-import { Assessment, Subject } from "@prisma/client"
+// // Import Prisma types
+// import { Assessment, Subject } from "@prisma/client"
 
-// ── Utility ──────────────────────────────────────────────────────────────────
+// // ── Utility ──────────────────────────────────────────────────────────────────
 
-function getErrorMessage(error: unknown): string {
-    if (error instanceof Error) return error.message;
-    if (error && typeof error === 'object' && 'message' in error) {
-        return String((error as { message?: string }).message);
-    }
-    return typeof error === 'string' ? error : "An unknown error occurred";
-}
+// function getErrorMessage(error: unknown): string {
+//     if (error instanceof Error) return error.message;
+//     if (error && typeof error === 'object' && 'message' in error) {
+//         return String((error as { message?: string }).message);
+//     }
+//     return typeof error === 'string' ? error : "An unknown error occurred";
+// }
 
-// ── Types ───────────────────────────────────────────────────────────────────
+// // ── Types ───────────────────────────────────────────────────────────────────
 
-interface AdminClassRow {
-    id: string;
-    name: string;
-    gradeDisplayName: string;
-    teacherName: string | null;
-    studentCount: number;
-}
+// interface AdminClassRow {
+//     id: string;
+//     name: string;
+//     gradeDisplayName: string;
+//     teacherName: string | null;
+//     studentCount: number;
+// }
 
-interface ManagementHelpers {
-    grades: Array<{ id: string; displayName: string; }>;
-    teachers: Array<{ id: string; name: string | null; }>;
-}
+// interface ManagementHelpers {
+//     grades: Array<{ id: string; displayName: string; }>;
+//     teachers: Array<{ id: string; name: string | null; }>;
+// }
 
-interface TeacherClassData {
-    id: string;
-    name: string;
-    grade: { 
-        displayName: string;
-        gradeSubjects: Array<{
-            id: string;
-            subject: Pick<Subject, "name">;
-        }>;
+// interface TeacherClassData {
+//     id: string;
+//     name: string;
+//     grade: { 
+//         displayName: string;
+//         gradeSubjects: Array<{
+//             id: string;
+//             subject: Pick<Subject, "name">;
+//         }>;
+//     };
+//     students: Array<{ 
+//         id: string; 
+//         name: string | null;
+//         assessments: Assessment[]; 
+//     }>;
+// }
+
+// /**
+//  * FIXED: Added 'phone' property to match the expected UI type 
+//  * in the StudentClassView component.
+//  */
+// interface Classmate {
+//     id: string;
+//     name: string;
+//     phone: string | null;
+// }
+
+// interface StudentClassData {
+//     name: string;
+//     teacher: { name: string | null } | null;
+//     classmates: Classmate[];
+//     mySubjects: string[];
+// }
+
+// type DashboardData = AdminClassRow[] | TeacherClassData[] | StudentClassData | null;
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function ClassesPage() {
+//     const { profile, isLoading: isProfileLoading } = useProfileStore()
+
+//     const [data, setData] = useState<DashboardData>(null)
+//     const [helpers, setHelpers] = useState<ManagementHelpers | null>(null)
+//     const [isLoading, setIsLoading] = useState<boolean>(true)
+
+//     const loadRegistry = useCallback(async () => {
+//         if (!profile?.id || !profile?.schoolId) return
+
+//         try {
+//             setIsLoading(true)
+
+//             const dashboardData = await getClassDashboardData(profile.id);
+//             const helperData = (profile.role === "SCHOOL_ADMIN" || profile.role === "SUPER_ADMIN")
+//                 ? await getManagementHelpers(profile.schoolId)
+//                 : null;
+
+//             let processedData: DashboardData = null;
+
+//             /**
+//              * FIXED: Transformation logic now maps 'phone' and enforces strict 
+//              * typing to satisfy the DashboardData union.
+//              */
+//             if (profile.role === "STUDENT" && dashboardData && !Array.isArray(dashboardData)) {
+//                 const raw = dashboardData as {
+//                     name: string;
+//                     teacher: { name: string | null } | null;
+//                     classmates: Array<{ id: string; name: string | null; phone?: string | null }>;
+//                     mySubjects: string[];
+//                 };
+
+//                 const cleanedClassmates: Classmate[] = (raw.classmates || []).map(c => ({
+//                     id: c.id,
+//                     name: c.name ?? "Unknown Student",
+//                     phone: c.phone ?? null // Ensure phone is present as null if missing
+//                 }));
+
+//                 const studentData: StudentClassData = {
+//                     name: raw.name,
+//                     teacher: raw.teacher,
+//                     classmates: cleanedClassmates,
+//                     mySubjects: raw.mySubjects
+//                 };
+//                 processedData = studentData;
+//             } else {
+//                 // For Teacher or Admin, we use the raw array return
+//                 processedData = dashboardData as DashboardData;
+//             }
+
+//             setData(processedData)
+//             setHelpers(helperData as unknown as ManagementHelpers | null)
+//         } catch (err) {
+//             console.error("Registry load error:", getErrorMessage(err))
+//         } finally {
+//             setIsLoading(false)
+//         }
+//     }, [profile])
+
+//     useEffect(() => {
+//         loadRegistry()
+//     }, [loadRegistry])
+
+//     if (isProfileLoading || isLoading) {
+//         return (
+//             <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+//                 <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
+//                 <p className="text-slate-400 animate-pulse uppercase text-[10px] tracking-widest font-black">
+//                     Syncing Registry Environment...
+//                 </p>
+//             </div>
+//         )
+//     }
+
+//     return (
+//         <div className="min-h-screen bg-slate-950 p-4 md:p-8">
+            
+//             {/* ── Admin View ── */}
+//             {(profile?.role === "SCHOOL_ADMIN" || profile?.role === "SUPER_ADMIN") && data && Array.isArray(data) && helpers && (
+//                 <AdminClassView
+//                     initialData={data as AdminClassRow[]}
+//                     helpers={helpers}
+//                     profile={profile}
+//                 />
+//             )}
+
+//             {/* ── Teacher View ── */}
+//             {profile?.role === "TEACHER" && data && Array.isArray(data) && (
+//                 <TeacherClassView
+//                     data={data as TeacherClassData[]}
+//                 />
+//             )}
+
+//             {/* ── Student View ── */}
+//             {profile?.role === "STUDENT" && data && !Array.isArray(data) && (
+//                 <StudentClassView
+//                     data={data as StudentClassData}
+//                 />
+//             )}
+
+//             {!isLoading && !data && (
+//                 <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+//                     <p className="text-xs font-black uppercase tracking-widest">Registry Entry Not Found</p>
+//                 </div>
+//             )}
+//         </div>
+//     )
+// }
+
+
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { getClassDashboardData, getManagementHelpers } from "@/app/actions/class-management";
+import { ClassesHubClient } from "@/components/classHubClient";
+import { Role } from "@prisma/client";
+
+/**
+ * Rule 16: Dynamic SEO
+ */
+export async function generateMetadata(): Promise<Metadata> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { title: "Classrooms | SchoolPaaS" };
+
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        include: { school: { select: { name: true } } }
+    });
+
+    return {
+        title: `Class Registry | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
+        description: "Institutional classroom management and peer registry."
     };
-    students: Array<{ 
-        id: string; 
-        name: string | null;
-        assessments: Assessment[]; 
-    }>;
 }
 
 /**
- * FIXED: Added 'phone' property to match the expected UI type 
- * in the StudentClassView component.
+ * Rule 12: Server-First Fetching
  */
-interface Classmate {
-    id: string;
-    name: string;
-    phone: string | null;
-}
+export default async function ClassesPage() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
 
-interface StudentClassData {
-    name: string;
-    teacher: { name: string | null } | null;
-    classmates: Classmate[];
-    mySubjects: string[];
-}
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        select: { id: true, schoolId: true, role: true }
+    });
 
-type DashboardData = AdminClassRow[] | TeacherClassData[] | StudentClassData | null;
+    if (!profile) redirect("/login");
 
-// ── Main Component ──────────────────────────────────────────────────────────
-
-export default function ClassesPage() {
-    const { profile, isLoading: isProfileLoading } = useProfileStore()
-
-    const [data, setData] = useState<DashboardData>(null)
-    const [helpers, setHelpers] = useState<ManagementHelpers | null>(null)
-    const [isLoading, setIsLoading] = useState<boolean>(true)
-
-    const loadRegistry = useCallback(async () => {
-        if (!profile?.id || !profile?.schoolId) return
-
-        try {
-            setIsLoading(true)
-
-            const dashboardData = await getClassDashboardData(profile.id);
-            const helperData = (profile.role === "SCHOOL_ADMIN" || profile.role === "SUPER_ADMIN")
-                ? await getManagementHelpers(profile.schoolId)
-                : null;
-
-            let processedData: DashboardData = null;
-
-            /**
-             * FIXED: Transformation logic now maps 'phone' and enforces strict 
-             * typing to satisfy the DashboardData union.
-             */
-            if (profile.role === "STUDENT" && dashboardData && !Array.isArray(dashboardData)) {
-                const raw = dashboardData as {
-                    name: string;
-                    teacher: { name: string | null } | null;
-                    classmates: Array<{ id: string; name: string | null; phone?: string | null }>;
-                    mySubjects: string[];
-                };
-
-                const cleanedClassmates: Classmate[] = (raw.classmates || []).map(c => ({
-                    id: c.id,
-                    name: c.name ?? "Unknown Student",
-                    phone: c.phone ?? null // Ensure phone is present as null if missing
-                }));
-
-                const studentData: StudentClassData = {
-                    name: raw.name,
-                    teacher: raw.teacher,
-                    classmates: cleanedClassmates,
-                    mySubjects: raw.mySubjects
-                };
-                processedData = studentData;
-            } else {
-                // For Teacher or Admin, we use the raw array return
-                processedData = dashboardData as DashboardData;
-            }
-
-            setData(processedData)
-            setHelpers(helperData as unknown as ManagementHelpers | null)
-        } catch (err) {
-            console.error("Registry load error:", getErrorMessage(err))
-        } finally {
-            setIsLoading(false)
-        }
-    }, [profile])
-
-    useEffect(() => {
-        loadRegistry()
-    }, [loadRegistry])
-
-    if (isProfileLoading || isLoading) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
-                <Loader2 className="h-10 w-10 animate-spin text-school-primary mb-4" />
-                <p className="text-slate-400 animate-pulse uppercase text-[10px] tracking-widest font-black">
-                    Syncing Registry Environment...
-                </p>
-            </div>
-        )
+    /**
+     * Rule 6: Independent Learner Guard
+     * Classes are a Tier-2 Institutional feature. 
+     * If no schoolId, redirect to student dashboard.
+     */
+    if (!profile.schoolId) {
+        redirect("/student?error=classes_restricted_to_schools");
     }
 
+    // Parallel Fetch based on Role (Rule 11)
+    const [dashboardData, helpers] = await Promise.all([
+        getClassDashboardData(profile.id),
+        (profile.role === Role.SCHOOL_ADMIN || profile.role === Role.SUPER_ADMIN) 
+            ? getManagementHelpers(profile.schoolId) 
+            : null
+    ]);
+
     return (
-        <div className="min-h-screen bg-slate-950 p-4 md:p-8">
-            
-            {/* ── Admin View ── */}
-            {(profile?.role === "SCHOOL_ADMIN" || profile?.role === "SUPER_ADMIN") && data && Array.isArray(data) && helpers && (
-                <AdminClassView
-                    initialData={data as AdminClassRow[]}
-                    helpers={helpers}
-                    profile={profile}
-                />
-            )}
-
-            {/* ── Teacher View ── */}
-            {profile?.role === "TEACHER" && data && Array.isArray(data) && (
-                <TeacherClassView
-                    data={data as TeacherClassData[]}
-                />
-            )}
-
-            {/* ── Student View ── */}
-            {profile?.role === "STUDENT" && data && !Array.isArray(data) && (
-                <StudentClassView
-                    data={data as StudentClassData}
-                />
-            )}
-
-            {!isLoading && !data && (
-                <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-                    <p className="text-xs font-black uppercase tracking-widest">Registry Entry Not Found</p>
-                </div>
-            )}
-        </div>
-    )
+        <ClassesHubClient 
+            initialData={dashboardData as any} 
+            helpers={helpers as any} 
+            userRole={profile.role}
+        />
+    );
 }

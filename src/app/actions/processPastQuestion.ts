@@ -859,169 +859,169 @@
 // }
 
 
-"use server";
+// "use server";
 
-import { prisma } from "@/lib/prisma";
-import { Role, QuestionType, QuestionCategory, Prisma } from "@prisma/client";
-import { logActivity } from "@/lib/activitylogger";
-import { getErrorMessage } from "@/lib/error-handler";
-import { uploadToGCS, generatePaperPath } from "@/lib/academics/pastQuestionConverter";
+// import { prisma } from "@/lib/prisma";
+// import { Role, QuestionType, QuestionCategory, Prisma } from "@prisma/client";
+// import { logActivity } from "@/lib/activitylogger";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { uploadToGCS, generatePaperPath } from "@/lib/academics/pastQuestionConverter";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// // ─── Types ───────────────────────────────────────────────────────────────────
 
-interface QuestionPart {
-  number: string;
-  text: string;
-  marks?: string | null;
-  type?: string;
-}
+// interface QuestionPart {
+//   number: string;
+//   text: string;
+//   marks?: string | null;
+//   type?: string;
+// }
 
-interface ExtractedData {
-  subject?: string | null;
-  year?: string | null;
-  grade?: string | null;
-  questions: QuestionPart[];
-}
+// interface ExtractedData {
+//   subject?: string | null;
+//   year?: string | null;
+//   grade?: string | null;
+//   questions: QuestionPart[];
+// }
 
-interface AnswerPart {
-  number: string;
-  answer: string;
-  explanation?: string;
-  difficulty?: "easy" | "medium" | "hard";
-}
+// interface AnswerPart {
+//   number: string;
+//   answer: string;
+//   explanation?: string;
+//   difficulty?: "easy" | "medium" | "hard";
+// }
 
-interface ProcessResult {
-  success: boolean;
-  imageUrl?: string | null;
-  count?: number;
-  error?: string;
-}
+// interface ProcessResult {
+//   success: boolean;
+//   imageUrl?: string | null;
+//   count?: number;
+//   error?: string;
+// }
 
-interface GeminiResponse {
-  candidates?: {
-    content?: {
-      parts?: { text?: string }[];
-    };
-  }[];
-}
+// interface GeminiResponse {
+//   candidates?: {
+//     content?: {
+//       parts?: { text?: string }[];
+//     };
+//   }[];
+// }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// // ─── Constants ───────────────────────────────────────────────────────────────
 
-const GEMINI_API_KEY: string = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
-const GEMINI_BASE: string = "https://generativelanguage.googleapis.com/v1beta/models";
+// const GEMINI_API_KEY: string = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
+// const GEMINI_BASE: string = "https://generativelanguage.googleapis.com/v1beta/models";
 
-// ─── AI Processing Helpers ───────────────────────────────────────────────────
+// // ─── AI Processing Helpers ───────────────────────────────────────────────────
 
-function cleanJsonText(raw: string): string {
-  return raw.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
-}
+// function cleanJsonText(raw: string): string {
+//   return raw.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
+// }
 
-async function callGemini(prompt: string, inlineData?: { mimeType: string, data: string }) {
-  const model = inlineData ? "gemini-1.5-flash" : "gemini-1.5-pro";
-  const body = {
-    contents: [{
-      parts: [
-        ...(inlineData ? [{ inlineData }] : []),
-        { text: prompt }
-      ]
-    }],
-    generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
-  };
+// async function callGemini(prompt: string, inlineData?: { mimeType: string, data: string }) {
+//   const model = inlineData ? "gemini-1.5-flash" : "gemini-1.5-pro";
+//   const body = {
+//     contents: [{
+//       parts: [
+//         ...(inlineData ? [{ inlineData }] : []),
+//         { text: prompt }
+//       ]
+//     }],
+//     generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
+//   };
 
-  const res = await fetch(`${GEMINI_BASE}/${model}:generateContent?key=${GEMINI_API_KEY}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+//   const res = await fetch(`${GEMINI_BASE}/${model}:generateContent?key=${GEMINI_API_KEY}`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(body),
+//   });
 
-  if (!res.ok) throw new Error(`Gemini API Error: ${res.statusText}`);
-  const json: GeminiResponse = await res.json();
-  return JSON.parse(cleanJsonText(json.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}"));
-}
+//   if (!res.ok) throw new Error(`Gemini API Error: ${res.statusText}`);
+//   const json: GeminiResponse = await res.json();
+//   return JSON.parse(cleanJsonText(json.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}"));
+// }
 
-// ─── Main Server Action ──────────────────────────────────────────────────────
+// // ─── Main Server Action ──────────────────────────────────────────────────────
 
-/**
- * Rule 5: Processes a scanned exam paper and persists it to the school's private bank.
- * Rule 10: Enforces role-based access.
- */
-export async function processPastQuestion(params: {
-  formData: FormData;
-  userId: string;
-  schoolId: string | null; // Nullable for Independent Learners
-  userRole: Role;
-  topicId: string;
-}) {
-  const { formData, userId, schoolId, userRole, topicId } = params;
+// /**
+//  * Rule 5: Processes a scanned exam paper and persists it to the school's private bank.
+//  * Rule 10: Enforces role-based access.
+//  */
+// export async function processPastQuestion(params: {
+//   formData: FormData;
+//   userId: string;
+//   schoolId: string | null; // Nullable for Independent Learners
+//   userRole: Role;
+//   topicId: string;
+// }) {
+//   const { formData, userId, schoolId, userRole, topicId } = params;
 
-  try {
-    const imageFile = formData.get("image");
-    if (!(imageFile instanceof File)) return { success: false, error: "No image provided." };
+//   try {
+//     const imageFile = formData.get("image");
+//     if (!(imageFile instanceof File)) return { success: false, error: "No image provided." };
 
-    const arrayBuffer = await imageFile.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64Image = buffer.toString("base64");
+//     const arrayBuffer = await imageFile.arrayBuffer();
+//     const buffer = Buffer.from(arrayBuffer);
+//     const base64Image = buffer.toString("base64");
 
-    // 1. Storage Pathing Logic (Rule 11)
-    // If schoolId exists, store in school folder. Otherwise, store in user folder.
-    const storagePath = schoolId 
-        ? `schools/${schoolId}/past-papers` 
-        : `users/${userId}/personal-scans`;
+//     // 1. Storage Pathing Logic (Rule 11)
+//     // If schoolId exists, store in school folder. Otherwise, store in user folder.
+//     const storagePath = schoolId 
+//         ? `schools/${schoolId}/past-papers` 
+//         : `users/${userId}/personal-scans`;
     
-    const fileName = `${storagePath}/${Date.now()}-${imageFile.name}`;
-    let imageUrl: string | null = null;
+//     const fileName = `${storagePath}/${Date.now()}-${imageFile.name}`;
+//     let imageUrl: string | null = null;
 
-    try {
-      imageUrl = await uploadToGCS(buffer, fileName, imageFile.type);
-    } catch (gcsErr) {
-      console.warn("Storage failed, continuing to AI...");
-    }
+//     try {
+//       imageUrl = await uploadToGCS(buffer, fileName, imageFile.type);
+//     } catch (gcsErr) {
+//       console.warn("Storage failed, continuing to AI...");
+//     }
 
-    // 4. AI Step 1: Extract Questions
-    const extracted = await callGemini("Extract questions...", { mimeType: imageFile.type, data: base64Image });
-    const answered = await callGemini(`Solve questions for ${extracted.subject}...`);
+//     // 4. AI Step 1: Extract Questions
+//     const extracted = await callGemini("Extract questions...", { mimeType: imageFile.type, data: base64Image });
+//     const answered = await callGemini(`Solve questions for ${extracted.subject}...`);
 
-    // 3. Database Persistence (Tier 2 vs Tier 3)
-    const createdCount = await prisma.$transaction(async (tx) => {
-      const questionsToCreate = extracted.questions.map((q: any) => {
-        const sol = answered.find((a: any) => a.number === q.number);
-        return {
-          topicId,
-          schoolId: schoolId ?? null, // Null for Independent Learners
-          isGlobal: false,           // Personal scans are NEVER global by default
-          text: q.text,
-          options: [] as any,
-          correctAnswer: sol?.answer ?? "Theory response",
-          explanation: sol?.explanation ?? "Generated by AI",
-          type: QuestionType.ESSAY,
-          category: QuestionCategory.PRACTICE, // Rule 6: For personal practice
-          points: parseInt(q.marks || "1") || 1,
-        };
-      });
+//     // 3. Database Persistence (Tier 2 vs Tier 3)
+//     const createdCount = await prisma.$transaction(async (tx) => {
+//       const questionsToCreate = extracted.questions.map((q: any) => {
+//         const sol = answered.find((a: any) => a.number === q.number);
+//         return {
+//           topicId,
+//           schoolId: schoolId ?? null, // Null for Independent Learners
+//           isGlobal: false,           // Personal scans are NEVER global by default
+//           text: q.text,
+//           options: [] as any,
+//           correctAnswer: sol?.answer ?? "Theory response",
+//           explanation: sol?.explanation ?? "Generated by AI",
+//           type: QuestionType.ESSAY,
+//           category: QuestionCategory.PRACTICE, // Rule 6: For personal practice
+//           points: parseInt(q.marks || "1") || 1,
+//         };
+//       });
 
-      const batch = await tx.question.createMany({ data: questionsToCreate });
+//       const batch = await tx.question.createMany({ data: questionsToCreate });
 
-      // Log the digital transformation activity
-      await logActivity({
-        schoolId: schoolId ?? null,
-        actorId: userId,
-        actorRole: userRole,
-        type: "SETTINGS_UPDATED",
-        title: "Personal Paper Digitized",
-        description: `Processed ${batch.count} questions for personal practice.`
-      });
+//       // Log the digital transformation activity
+//       await logActivity({
+//         schoolId: schoolId ?? null,
+//         actorId: userId,
+//         actorRole: userRole,
+//         type: "SETTINGS_UPDATED",
+//         title: "Personal Paper Digitized",
+//         description: `Processed ${batch.count} questions for personal practice.`
+//       });
 
-      return batch.count;
-    });
+//       return batch.count;
+//     });
 
-    return {
-      success: true,
-      imageUrl,
-      count: createdCount
-    };
+//     return {
+//       success: true,
+//       imageUrl,
+//       count: createdCount
+//     };
 
-  } catch (error: unknown) {
-    console.error("OCR Digitization Error:", error);
-    return { success: false, error: getErrorMessage(error) };
-  }
-}
+//   } catch (error: unknown) {
+//     console.error("OCR Digitization Error:", error);
+//     return { success: false, error: getErrorMessage(error) };
+//   }
+// }
