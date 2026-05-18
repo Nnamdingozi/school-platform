@@ -98,7 +98,7 @@
 
 import OpenAI from "openai";
 import { customAlphabet } from 'nanoid';
-import { supabase } from "@/lib/supabase/admin";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
 import { logActivity } from "@/app/actions/activitylog";
@@ -211,7 +211,7 @@ export async function generateDiagramImage({
     const filename = `${scopePrefix}/${nanoid()}-${Date.now()}.png`;
 
     console.log("Uploading to Supabase Storage:", bucketName, filename);
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from(bucketName)
       .upload(filename, imageBuffer, {
         contentType: 'image/png',

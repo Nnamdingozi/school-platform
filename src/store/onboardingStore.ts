@@ -437,12 +437,244 @@
 //     )
 // );
 
-// store/onboardingStore.ts
+// // store/onboardingStore.ts
+// import { create } from 'zustand';
+// import { persist } from 'zustand/middleware';
+
+// export type PlanType = 'starter' | 'pro' | 'enterprise' | null;
+// export type PaymentProvider = 'paystack' | 'stripe' | null;
+
+// export interface OnboardingAdminData {
+//     name: string;
+//     email: string;
+//     password?: string;
+//     phone?: string;
+// }
+
+// export interface OnboardingPaymentData {
+//     provider: PaymentProvider;
+//     plan: PlanType;
+//     reference: string;
+//     verified: boolean;
+// }
+
+// export interface SchoolData {
+//     schoolName: string;
+//     curriculumId: string;
+//     primaryColor: string;
+//     secondaryColor: string;
+//     country: string;
+//     timezone: string;
+// }
+
+// interface OnboardingState {
+//     step: number;
+//     adminData: OnboardingAdminData | null;
+//     paymentData: OnboardingPaymentData | null;
+//     schoolData: SchoolData | null;
+//     isProvisioned: boolean;
+//     confirmedEmail: string | null;
+//     isLoading: boolean;
+//     error: string | null;
+
+//     setStep: (step: number) => void;
+//     nextStep: () => void;
+//     prevStep: () => void;
+//     setAdminData: (data: OnboardingAdminData) => void;
+//     setPaymentData: (data: OnboardingPaymentData) => void;
+//     setSchoolData: (data: SchoolData) => void;
+//     setProvisioned: (value: boolean) => void;
+//     setConfirmedEmail: (email: string) => void;
+//     setLoading: (loading: boolean) => void;
+//     setError: (error: string | null) => void;
+//     reset: () => void;
+// }
+
+// export const useOnboardingStore = create<OnboardingState>()(
+//     persist(
+//         (set) => ({
+//             step: 1,
+//             adminData: null,
+//             paymentData: null,
+//             schoolData: null,
+//             isProvisioned: false,
+//             confirmedEmail: null,
+//             isLoading: false,
+//             error: null,
+
+//             setStep: (step) => set({ step, error: null }),
+//             nextStep: () => set((s) => ({ step: Math.min(s.step + 1, 3), error: null })),
+//             prevStep: () => set((s) => ({ step: Math.max(s.step - 1, 1), error: null })),
+//             setAdminData: (adminData) => set({ adminData }),
+//             setPaymentData: (paymentData) => set({ paymentData }),
+//             setSchoolData: (schoolData) => set({ schoolData }),
+//             setProvisioned: (isProvisioned) => set({ isProvisioned }),
+//             setConfirmedEmail: (confirmedEmail) => set({ confirmedEmail }),
+//             setLoading: (isLoading) => set({ isLoading }),
+//             setError: (error) => set({ error }),
+
+//             reset: () => set({
+//                 step: 1,
+//                 adminData: null,
+//                 paymentData: null,
+//                 schoolData: null,
+//                 isProvisioned: false,
+//                 error: null,
+//                 // ✅ confirmedEmail intentionally NOT reset here
+//                 // so resend button still works after reset clears adminData
+//             }),
+//         }),
+//         {
+//             name: 'onboarding-store',
+//             partialize: (state) => ({
+//                 step: state.step,
+//                 adminData: state.adminData,
+//                 paymentData: state.paymentData,
+//                 schoolData: state.schoolData,
+//                 isProvisioned: state.isProvisioned,
+//                 confirmedEmail: state.confirmedEmail, // ✅ persisted for resend after refresh
+//             }) as unknown as OnboardingState,
+//         }
+//     )
+// );
+
+
+
+// import { create } from 'zustand';
+// import { persist } from 'zustand/middleware';
+// import { SubscriptionPlanItem } from '@/app/actions/subscription.actions';
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// export type PlanType = 'starter' | 'pro' | 'enterprise' | 'individual' | null;
+// export type PaymentProvider = 'paystack' | 'stripe' | null;
+
+// export interface CurriculumTemplate {
+//     id: string;
+//     name: string;
+//     yearLabel: string;
+//     termLabel: string;
+// }
+
+// export interface OnboardingAdminData {
+//     name: string;
+//     email: string;
+//     password?: string;
+//     phone?: string;
+// }
+
+// export interface OnboardingPaymentData {
+//     provider: PaymentProvider;
+//     plan: PlanType;
+//     reference: string;
+//     verified: boolean;
+// }
+
+// export interface SchoolData {
+//     schoolName: string;
+//     curriculumId: string;
+//     primaryColor: string;
+//     secondaryColor: string;
+//     country: string;
+//     timezone: string;
+// }
+
+// export interface OnboardingState {
+//     step: number;
+//     adminData: OnboardingAdminData | null;
+//     paymentData: OnboardingPaymentData | null;
+//     schoolData: SchoolData | null;
+//     curricula: CurriculumTemplate[]; 
+//     plans: SubscriptionPlanItem[];
+//     isProvisioned: boolean;
+//     confirmedEmail: string | null;
+//     isLoading: boolean;
+//     error: string | null;
+
+//     setStep: (step: number) => void;
+//     nextStep: () => void;
+//     prevStep: () => void;
+//     setAdminData: (data: OnboardingAdminData) => void;
+//     setPaymentData: (data: OnboardingPaymentData) => void;
+//     setSchoolData: (data: SchoolData) => void;
+//     setCurricula: (curricula: CurriculumTemplate[]) => void;
+//     setPlans: (plans: SubscriptionPlanItem[]) => void;
+//     setProvisioned: (value: boolean) => void;
+//     setConfirmedEmail: (email: string) => void;
+//     setLoading: (loading: boolean) => void;
+//     setError: (error: string | null) => void;
+//     reset: () => void;
+// }
+
+// // ── Implementation ──────────────────────────────────────────────────────────
+
+// export const useOnboardingStore = create<OnboardingState>()(
+//     persist(
+//         (set) => ({
+//             step: 1,
+//             adminData: null,
+//             paymentData: null,
+//             schoolData: null,
+//             curricula: [],
+//             plans: [],
+//             isProvisioned: false,
+//             confirmedEmail: null,
+//             isLoading: false,
+//             error: null,
+
+//             setStep: (step) => set({ step, error: null }),
+//             nextStep: () => set((s) => ({ step: Math.min(s.step + 1, 3), error: null })),
+//             prevStep: () => set((s) => ({ step: Math.max(s.step - 1, 1), error: null })),
+//             setAdminData: (adminData) => set({ adminData }),
+//             setPaymentData: (paymentData) => set({ paymentData }),
+//             setSchoolData: (schoolData) => set({ schoolData }),
+//             setCurricula: (curricula) => set({ curricula }),
+//             setPlans: (plans) => set({ plans }),
+//             setProvisioned: (isProvisioned) => set({ isProvisioned }),
+//             setConfirmedEmail: (confirmedEmail) => set({ confirmedEmail }),
+//             setLoading: (isLoading) => set({ isLoading }),
+//             setError: (error) => set({ error }),
+
+//             reset: () => set({
+//                 step: 1,
+//                 adminData: null,
+//                 paymentData: null,
+//                 schoolData: null,
+//                 isProvisioned: false,
+//                 error: null,
+//             }),
+//         }),
+//         {
+//             name: 'onboarding-registry-v1',
+//             partialize: (state) => ({
+//                 step: state.step,
+//                 adminData: state.adminData,
+//                 paymentData: state.paymentData,
+//                 schoolData: state.schoolData,
+//                 isProvisioned: state.isProvisioned,
+//                 confirmedEmail: state.confirmedEmail,
+//             }) as OnboardingState,
+//         }
+//     )
+// );
+
+
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { SubscriptionPlanItem } from '@/app/actions/subscription.actions';
 
-export type PlanType = 'starter' | 'pro' | 'enterprise' | null;
+// ── Types ───────────────────────────────────────────────────────────────────
+
+export type PlanType = 'starter' | 'pro' | 'enterprise' | 'individual' | null;
 export type PaymentProvider = 'paystack' | 'stripe' | null;
+
+export interface CurriculumTemplate {
+    id: string;
+    name: string;
+    yearLabel: string;
+    termLabel: string;
+}
 
 export interface OnboardingAdminData {
     name: string;
@@ -467,11 +699,13 @@ export interface SchoolData {
     timezone: string;
 }
 
-interface OnboardingState {
+export interface OnboardingState {
     step: number;
     adminData: OnboardingAdminData | null;
     paymentData: OnboardingPaymentData | null;
     schoolData: SchoolData | null;
+    curricula: CurriculumTemplate[]; 
+    plans: SubscriptionPlanItem[];
     isProvisioned: boolean;
     confirmedEmail: string | null;
     isLoading: boolean;
@@ -483,12 +717,16 @@ interface OnboardingState {
     setAdminData: (data: OnboardingAdminData) => void;
     setPaymentData: (data: OnboardingPaymentData) => void;
     setSchoolData: (data: SchoolData) => void;
+    setCurricula: (curricula: CurriculumTemplate[]) => void;
+    setPlans: (plans: SubscriptionPlanItem[]) => void;
     setProvisioned: (value: boolean) => void;
     setConfirmedEmail: (email: string) => void;
     setLoading: (loading: boolean) => void;
     setError: (error: string | null) => void;
     reset: () => void;
 }
+
+// ── Implementation ──────────────────────────────────────────────────────────
 
 export const useOnboardingStore = create<OnboardingState>()(
     persist(
@@ -497,6 +735,8 @@ export const useOnboardingStore = create<OnboardingState>()(
             adminData: null,
             paymentData: null,
             schoolData: null,
+            curricula: [],
+            plans: [],
             isProvisioned: false,
             confirmedEmail: null,
             isLoading: false,
@@ -508,6 +748,8 @@ export const useOnboardingStore = create<OnboardingState>()(
             setAdminData: (adminData) => set({ adminData }),
             setPaymentData: (paymentData) => set({ paymentData }),
             setSchoolData: (schoolData) => set({ schoolData }),
+            setCurricula: (curricula) => set({ curricula }),
+            setPlans: (plans) => set({ plans }),
             setProvisioned: (isProvisioned) => set({ isProvisioned }),
             setConfirmedEmail: (confirmedEmail) => set({ confirmedEmail }),
             setLoading: (isLoading) => set({ isLoading }),
@@ -520,20 +762,18 @@ export const useOnboardingStore = create<OnboardingState>()(
                 schoolData: null,
                 isProvisioned: false,
                 error: null,
-                // ✅ confirmedEmail intentionally NOT reset here
-                // so resend button still works after reset clears adminData
             }),
         }),
         {
-            name: 'onboarding-store',
+            name: 'onboarding-registry-v1',
             partialize: (state) => ({
                 step: state.step,
                 adminData: state.adminData,
                 paymentData: state.paymentData,
                 schoolData: state.schoolData,
                 isProvisioned: state.isProvisioned,
-                confirmedEmail: state.confirmedEmail, // ✅ persisted for resend after refresh
-            }) as unknown as OnboardingState,
+                confirmedEmail: state.confirmedEmail,
+            }) as OnboardingState,
         }
     )
 );

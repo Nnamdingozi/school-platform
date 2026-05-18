@@ -129,6 +129,9 @@ export const useProfileStore = create<ProfileStore>((set) => ({
         error:       null,
     }),
 
+
+    
+
     setLoading:     (loading) => set({ isLoading: loading }),
     setError:       (error)   => set({ error, isLoading: false }),
     setSidebarData: (sidebarData) => set({ sidebarData }),

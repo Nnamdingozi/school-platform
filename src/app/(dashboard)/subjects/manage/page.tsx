@@ -675,245 +675,303 @@
 // }
 
 
-"use client";
+// "use client";
 
-import { useEffect, useState, useTransition, useMemo, useCallback } from "react";
-import { useProfileStore } from "@/store/profileStore";
-import { 
-  getAllSubjectsWithOwnership, 
-  claimSubjectAction, 
-  releaseSubjectAction,
-} from "@/app/actions/subject-claim";
-import { selectPersonalSubjects } from "@/app/actions/subject-allocation";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { 
-  Loader2, 
-  Lock, 
-  BookOpen, 
-  Trash2, 
-  ShieldCheck, 
-  Search, 
-  X, 
-  FilterX, 
-  Globe 
-} from "lucide-react";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { Role } from "@prisma/client";
-import { Badge } from "@/components/ui/badge";
+// import { useEffect, useState, useTransition, useMemo, useCallback } from "react";
+// import { useProfileStore } from "@/store/profileStore";
+// import { 
+//   getAllSubjectsWithOwnership, 
+//   claimSubjectAction, 
+//   releaseSubjectAction,
+// } from "@/app/actions/subject-claim";
+// import { selectPersonalSubjects } from "@/app/actions/subject-allocation";
+// import { Card } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { 
+//   Loader2, 
+//   Lock, 
+//   BookOpen, 
+//   Trash2, 
+//   ShieldCheck, 
+//   Search, 
+//   X, 
+//   FilterX, 
+//   Globe 
+// } from "lucide-react";
+// import { toast } from "sonner";
+// import { cn } from "@/lib/utils";
+// import { Role } from "@prisma/client";
+// import { Badge } from "@/components/ui/badge";
 
-// ── Types ───────────────────────────────────────────────────────────────────
+// // ── Types ───────────────────────────────────────────────────────────────────
 
-interface SubjectWithOwnership {
-  id: string;
-  profileId: string | null;
-  subject: { name: string };
-  grade: { displayName: string };
-  profile: { id: string; name: string | null } | null;
+// interface SubjectWithOwnership {
+//   id: string;
+//   profileId: string | null;
+//   subject: { name: string };
+//   grade: { displayName: string };
+//   profile: { id: string; name: string | null } | null;
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function SubjectSelectionPage() {
+//   const { profile } = useProfileStore();
+//   const [subjects, setSubjects] = useState<SubjectWithOwnership[]>([]);
+//   const [searchQuery, setSearchQuery] = useState<string>("");
+//   const [isLoading, setIsLoading] = useState<boolean>(true);
+//   const [isPending, startTransition] = useTransition();
+
+//   // Rule 6: UI Identity Check (Tier 3 vs Tier 2)
+//   const isIndependent = profile?.role === Role.INDIVIDUAL_LEARNER && !profile?.schoolId;
+
+//   const loadRegistry = useCallback(async () => {
+//     try {
+//       // Rule 7: Mandatory Query Resolution based on context
+//       const data = await getAllSubjectsWithOwnership(profile?.schoolId ?? null);
+//       setSubjects(data as SubjectWithOwnership[]);
+//     } catch (err: unknown) {
+//       toast.error("Failed to synchronize subject registry.");
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   }, [profile?.schoolId]);
+
+//   useEffect(() => { 
+//     loadRegistry(); 
+//   }, [loadRegistry]);
+
+//   // ── Handlers ───────────────────────────────────────────────────────────
+
+//   const handleAction = (id: string, action: 'claim' | 'release') => {
+//     if (!profile?.id) return;
+
+//     startTransition(async () => {
+//       let res;
+      
+//       if (isIndependent) {
+//           // Tier 3: Rule 6 - Build Personal Library
+//           const currentSelection = subjects
+//             .filter(s => s.profileId === profile.id)
+//             .map(s => s.id);
+            
+//           const newSelection = action === 'claim' 
+//             ? [...currentSelection, id] 
+//             : currentSelection.filter(sid => sid !== id);
+            
+//           res = await selectPersonalSubjects({ 
+//             userId: profile.id, 
+//             gradeSubjectIds: newSelection 
+//           });
+//       } else {
+//           // Tier 2: Rule 5 - Institutional Claiming
+//           // ✅ FIX: Using '?? null' to resolve string | null | undefined mismatch
+//           if (action === 'claim') {
+//             res = await claimSubjectAction({ 
+//                 gradeSubjectId: id, 
+//                 userId: profile.id, 
+//                 userName: profile.name ?? null, 
+//                 userRole: profile.role, 
+//                 schoolId: profile.schoolId ?? null 
+//             });
+//           } else {
+//             res = await releaseSubjectAction({ 
+//                 gradeSubjectId: id, 
+//                 userId: profile.id, 
+//                 userRole: profile.role, 
+//                 schoolId: profile.schoolId ?? null 
+//             });
+//           }
+//       }
+      
+//       if (res && res.success) {
+//         toast.success(action === 'claim' ? "Registry updated successfully" : "Module released to pool");
+//         loadRegistry();
+//       } else {
+//         toast.error(res?.error || "Action failed. Access restricted.");
+//       }
+//     });
+//   };
+
+//   // ── Search Logic ──
+//   const filteredSubjects = useMemo(() => {
+//     return subjects.filter((item) => {
+//       const searchStr = `${item.subject.name} ${item.grade.displayName}`.toLowerCase();
+//       return searchStr.includes(searchQuery.toLowerCase());
+//     });
+//   }, [subjects, searchQuery]);
+
+//   if (isLoading) return (
+//     <div className="h-screen flex items-center justify-center bg-slate-950">
+//       <Loader2 className="animate-spin text-school-primary" />
+//     </div>
+//   );
+
+//   return (
+//     <div className="p-8 bg-slate-950 min-h-screen text-slate-50 space-y-10">
+      
+//       {/* ── HEADER ── */}
+//       <header className="flex flex-col gap-8 border-b border-white/5 pb-10">
+//         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+//             <div>
+//                 <h1 className="text-4xl font-black uppercase italic tracking-tighter text-white leading-none">
+//                     {isIndependent ? "Knowledge Discovery" : "Syllabus Registry"}
+//                 </h1>
+//                 <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-3">
+//                     {isIndependent ? "Select global curriculum modules for your library" : "Institutional Module Management"}
+//                 </p>
+//             </div>
+//             <div className="bg-slate-900 px-6 py-3 rounded-2xl border border-white/5 flex items-center gap-4 shadow-xl">
+//                 {isIndependent ? <Globe className="text-school-primary h-5 w-5" /> : <ShieldCheck className="text-school-primary h-5 w-5" />}
+//                 <div>
+//                     <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest leading-none">Current Load</p>
+//                     <p className="text-sm font-bold text-white uppercase">
+//                         {subjects.filter(s => s.profileId === profile?.id).length} Modules
+//                     </p>
+//                 </div>
+//             </div>
+//         </div>
+
+//         {/* ── SEARCH BAR ── */}
+//         <div className="relative max-w-2xl group">
+//             <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 group-focus-within:text-school-primary transition-colors" />
+//             <input 
+//                 type="text"
+//                 placeholder="SEARCH BY SUBJECT OR GRADE..."
+//                 value={searchQuery}
+//                 onChange={(e) => setSearchQuery(e.target.value)}
+//                 className="w-full bg-slate-900 border border-white/5 rounded-2xl py-5 pl-14 pr-14 text-sm font-bold uppercase tracking-widest text-white outline-none focus:border-school-primary/50 transition-all shadow-2xl"
+//             />
+//             {searchQuery && (
+//                 <button onClick={() => setSearchQuery("")} className="absolute right-5 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded-full">
+//                     <X className="h-4 w-4 text-slate-400" />
+//                 </button>
+//             )}
+//         </div>
+//       </header>
+
+//       {/* ── RESULTS GRID ── */}
+//       {filteredSubjects.length === 0 ? (
+//           <div className="py-32 text-center bg-slate-900/30 rounded-[3rem] border border-dashed border-white/5">
+//               <FilterX className="h-12 w-12 text-slate-800 mx-auto mb-4" />
+//               <p className="text-slate-600 uppercase text-[10px] font-black tracking-widest">No modules found in this context.</p>
+//           </div>
+//       ) : (
+//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+//             {filteredSubjects.map((item) => {
+//                 const isMine = item.profileId === profile?.id;
+//                 // Rule 6: Private subjects are 'taken' by others. Global subjects are never 'taken'.
+//                 const isTaken = !isIndependent && item.profileId && !isMine;
+
+//                 return (
+//                     <Card key={item.id} className={cn(
+//                         "bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl transition-all relative overflow-hidden border",
+//                         isMine ? "border-school-primary/40 bg-school-primary/[0.02]" : "border-white/5",
+//                         isTaken && "grayscale opacity-50"
+//                     )}>
+//                         {isTaken && (
+//                             <div className="absolute inset-0 z-20 backdrop-blur-[2px] bg-slate-950/40 flex flex-col items-center justify-center p-6 text-center">
+//                                 <Lock className="h-8 w-8 text-slate-600 mb-2" />
+//                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">In Use By</p>
+//                                 <p className="text-sm font-bold text-white uppercase italic truncate w-full">{item.profile?.name || "Staff"}</p>
+//                             </div>
+//                         )}
+
+//                         <div className="relative z-10 space-y-6">
+//                             <div className="flex justify-between items-center">
+//                                 <Badge variant="outline" className="text-[9px] border-white/10 uppercase py-1 px-3">
+//                                     {item.grade.displayName}
+//                                 </Badge>
+//                                 {isMine && (
+//                                     <span className="text-[8px] font-black bg-school-primary text-slate-950 px-2 py-1 rounded uppercase tracking-tighter">
+//                                         In Registry
+//                                     </span>
+//                                 )}
+//                             </div>
+
+//                             <h3 className="text-2xl font-black text-white uppercase italic leading-tight">
+//                                 {item.subject.name}
+//                             </h3>
+
+//                             <div className="pt-4">
+//                                 <Button 
+//                                     onClick={() => handleAction(item.id, isMine ? 'release' : 'claim')}
+//                                     // ✅ FIX: Using !!isTaken to force boolean conversion
+//                                     disabled={isPending || !!isTaken}
+//                                     className={cn(
+//                                         "w-full rounded-2xl py-6 font-black text-xs uppercase transition-all",
+//                                         isMine 
+//                                             ? "bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white" 
+//                                             : "bg-slate-950 text-school-primary border border-white/10 hover:bg-school-primary hover:text-slate-950"
+//                                     )}
+//                                 >
+//                                     {isPending ? <Loader2 className="animate-spin" /> : (isMine ? "Release Module" : "Add to Library")}
+//                                 </Button>
+//                             </div>
+//                         </div>
+//                     </Card>
+//                 );
+//             })}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+
+
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { getAllSubjectsWithOwnership } from "@/app/actions/subject-claim";
+import { SubjectSelectionClient } from "@/components/subjects/subject-selection-client";
+
+
+/**
+ * Rule 16: Dynamic Contextual SEO
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { title: "Manage Subjects | SchoolPaaS" };
+
+  const profile = await prisma.profile.findUnique({
+    where: { id: user.id },
+    include: { school: { select: { name: true } } }
+  });
+
+  const context = profile?.school?.name || "Personal Registry";
+
+  return {
+    title: `Manage Subjects | ${context} | SchoolPaaS`,
+    description: "Manage your academic library and claim institutional modules."
+  };
 }
 
-// ── Main Component ──────────────────────────────────────────────────────────
+/**
+ * Rule 12: Server-First Execution
+ * Handles parallel fetching of the registry truth.
+ */
+export default async function Page() {
+  // 1. Establish Identity & Context (Rule 10)
+  const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) redirect("/login");
 
-export default function SubjectSelectionPage() {
-  const { profile } = useProfileStore();
-  const [subjects, setSubjects] = useState<SubjectWithOwnership[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isPending, startTransition] = useTransition();
+  const profile = await prisma.profile.findUnique({
+    where: { id: authUser.id },
+    select: { id: true, schoolId: true, role: true }
+  });
 
-  // Rule 6: UI Identity Check (Tier 3 vs Tier 2)
-  const isIndependent = profile?.role === Role.INDIVIDUAL_LEARNER && !profile?.schoolId;
+  if (!profile) redirect("/login");
 
-  const loadRegistry = useCallback(async () => {
-    try {
-      // Rule 7: Mandatory Query Resolution based on context
-      const data = await getAllSubjectsWithOwnership(profile?.schoolId ?? null);
-      setSubjects(data as SubjectWithOwnership[]);
-    } catch (err: unknown) {
-      toast.error("Failed to synchronize subject registry.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [profile?.schoolId]);
-
-  useEffect(() => { 
-    loadRegistry(); 
-  }, [loadRegistry]);
-
-  // ── Handlers ───────────────────────────────────────────────────────────
-
-  const handleAction = (id: string, action: 'claim' | 'release') => {
-    if (!profile?.id) return;
-
-    startTransition(async () => {
-      let res;
-      
-      if (isIndependent) {
-          // Tier 3: Rule 6 - Build Personal Library
-          const currentSelection = subjects
-            .filter(s => s.profileId === profile.id)
-            .map(s => s.id);
-            
-          const newSelection = action === 'claim' 
-            ? [...currentSelection, id] 
-            : currentSelection.filter(sid => sid !== id);
-            
-          res = await selectPersonalSubjects({ 
-            userId: profile.id, 
-            gradeSubjectIds: newSelection 
-          });
-      } else {
-          // Tier 2: Rule 5 - Institutional Claiming
-          // ✅ FIX: Using '?? null' to resolve string | null | undefined mismatch
-          if (action === 'claim') {
-            res = await claimSubjectAction({ 
-                gradeSubjectId: id, 
-                userId: profile.id, 
-                userName: profile.name ?? null, 
-                userRole: profile.role, 
-                schoolId: profile.schoolId ?? null 
-            });
-          } else {
-            res = await releaseSubjectAction({ 
-                gradeSubjectId: id, 
-                userId: profile.id, 
-                userRole: profile.role, 
-                schoolId: profile.schoolId ?? null 
-            });
-          }
-      }
-      
-      if (res && res.success) {
-        toast.success(action === 'claim' ? "Registry updated successfully" : "Module released to pool");
-        loadRegistry();
-      } else {
-        toast.error(res?.error || "Action failed. Access restricted.");
-      }
-    });
-  };
-
-  // ── Search Logic ──
-  const filteredSubjects = useMemo(() => {
-    return subjects.filter((item) => {
-      const searchStr = `${item.subject.name} ${item.grade.displayName}`.toLowerCase();
-      return searchStr.includes(searchQuery.toLowerCase());
-    });
-  }, [subjects, searchQuery]);
-
-  if (isLoading) return (
-    <div className="h-screen flex items-center justify-center bg-slate-950">
-      <Loader2 className="animate-spin text-school-primary" />
-    </div>
-  );
+  // 2. Fetch Initial Registry State (Rule 7 Query Resolution)
+  const initialSubjects = await getAllSubjectsWithOwnership(profile.schoolId);
 
   return (
-    <div className="p-8 bg-slate-950 min-h-screen text-slate-50 space-y-10">
-      
-      {/* ── HEADER ── */}
-      <header className="flex flex-col gap-8 border-b border-white/5 pb-10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <h1 className="text-4xl font-black uppercase italic tracking-tighter text-white leading-none">
-                    {isIndependent ? "Knowledge Discovery" : "Syllabus Registry"}
-                </h1>
-                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-3">
-                    {isIndependent ? "Select global curriculum modules for your library" : "Institutional Module Management"}
-                </p>
-            </div>
-            <div className="bg-slate-900 px-6 py-3 rounded-2xl border border-white/5 flex items-center gap-4 shadow-xl">
-                {isIndependent ? <Globe className="text-school-primary h-5 w-5" /> : <ShieldCheck className="text-school-primary h-5 w-5" />}
-                <div>
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest leading-none">Current Load</p>
-                    <p className="text-sm font-bold text-white uppercase">
-                        {subjects.filter(s => s.profileId === profile?.id).length} Modules
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        {/* ── SEARCH BAR ── */}
-        <div className="relative max-w-2xl group">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 group-focus-within:text-school-primary transition-colors" />
-            <input 
-                type="text"
-                placeholder="SEARCH BY SUBJECT OR GRADE..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-900 border border-white/5 rounded-2xl py-5 pl-14 pr-14 text-sm font-bold uppercase tracking-widest text-white outline-none focus:border-school-primary/50 transition-all shadow-2xl"
-            />
-            {searchQuery && (
-                <button onClick={() => setSearchQuery("")} className="absolute right-5 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded-full">
-                    <X className="h-4 w-4 text-slate-400" />
-                </button>
-            )}
-        </div>
-      </header>
-
-      {/* ── RESULTS GRID ── */}
-      {filteredSubjects.length === 0 ? (
-          <div className="py-32 text-center bg-slate-900/30 rounded-[3rem] border border-dashed border-white/5">
-              <FilterX className="h-12 w-12 text-slate-800 mx-auto mb-4" />
-              <p className="text-slate-600 uppercase text-[10px] font-black tracking-widest">No modules found in this context.</p>
-          </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredSubjects.map((item) => {
-                const isMine = item.profileId === profile?.id;
-                // Rule 6: Private subjects are 'taken' by others. Global subjects are never 'taken'.
-                const isTaken = !isIndependent && item.profileId && !isMine;
-
-                return (
-                    <Card key={item.id} className={cn(
-                        "bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl transition-all relative overflow-hidden border",
-                        isMine ? "border-school-primary/40 bg-school-primary/[0.02]" : "border-white/5",
-                        isTaken && "grayscale opacity-50"
-                    )}>
-                        {isTaken && (
-                            <div className="absolute inset-0 z-20 backdrop-blur-[2px] bg-slate-950/40 flex flex-col items-center justify-center p-6 text-center">
-                                <Lock className="h-8 w-8 text-slate-600 mb-2" />
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">In Use By</p>
-                                <p className="text-sm font-bold text-white uppercase italic truncate w-full">{item.profile?.name || "Staff"}</p>
-                            </div>
-                        )}
-
-                        <div className="relative z-10 space-y-6">
-                            <div className="flex justify-between items-center">
-                                <Badge variant="outline" className="text-[9px] border-white/10 uppercase py-1 px-3">
-                                    {item.grade.displayName}
-                                </Badge>
-                                {isMine && (
-                                    <span className="text-[8px] font-black bg-school-primary text-slate-950 px-2 py-1 rounded uppercase tracking-tighter">
-                                        In Registry
-                                    </span>
-                                )}
-                            </div>
-
-                            <h3 className="text-2xl font-black text-white uppercase italic leading-tight">
-                                {item.subject.name}
-                            </h3>
-
-                            <div className="pt-4">
-                                <Button 
-                                    onClick={() => handleAction(item.id, isMine ? 'release' : 'claim')}
-                                    // ✅ FIX: Using !!isTaken to force boolean conversion
-                                    disabled={isPending || !!isTaken}
-                                    className={cn(
-                                        "w-full rounded-2xl py-6 font-black text-xs uppercase transition-all",
-                                        isMine 
-                                            ? "bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white" 
-                                            : "bg-slate-950 text-school-primary border border-white/10 hover:bg-school-primary hover:text-slate-950"
-                                    )}
-                                >
-                                    {isPending ? <Loader2 className="animate-spin" /> : (isMine ? "Release Module" : "Add to Library")}
-                                </Button>
-                            </div>
-                        </div>
-                    </Card>
-                );
-            })}
-        </div>
-      )}
-    </div>
+    <SubjectSelectionClient 
+        initialSubjects={initialSubjects as any} 
+    />
   );
 }

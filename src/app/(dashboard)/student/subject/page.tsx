@@ -329,158 +329,220 @@
 //   );
 // }
 
-'use client';
+// 'use client';
 
-import { useEffect, useState, useCallback } from "react";
-import { SubjectsGrid } from "@/components/student-dashboard/subjects-grid";
-import { useProfileStore } from "@/store/profileStore";
+// import { useEffect, useState, useCallback } from "react";
+// import { SubjectsGrid } from "@/components/student-dashboard/subjects-grid";
+// import { useProfileStore } from "@/store/profileStore";
+// import { getStudentDashboardData } from "@/app/actions/student-dashboard";
+// import { Loader2, BookOpen } from "lucide-react";
+// // Import Prisma types - REMOVED 'Class' as it was unused
+// import { Assessment, Topic, Subject, Profile, Grade } from "@prisma/client";
+
+// // ── Utility ──────────────────────────────────────────────────────────────────
+
+// function getErrorMessage(error: unknown): string {
+//   if (error instanceof Error) return error.message;
+//   if (error && typeof error === 'object' && 'message' in error) {
+//     return String((error as { message?: string }).message);
+//   }
+//   return typeof error === 'string' ? error : "An unknown error occurred";
+// }
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// /**
+//  * FIXED: Changed from 'interface' to 'type' to resolve 
+//  * @typescript-eslint/no-empty-object-type error.
+//  */
+// type SubjectTopic = Pick<Topic, "id" | "title" | "weekNumber">;
+
+// interface GradeSubjectDetail {
+//   id: string;
+//   subject: Pick<Subject, "name">;
+//   topics: SubjectTopic[];
+//   assessments: Assessment[]; 
+// }
+
+// interface StudentSubjectWrapper {
+//   id: string;
+//   gradeSubject: GradeSubjectDetail;
+// }
+
+// interface ClassroomData {
+//   id: string;
+//   name: string;
+//   teacher: Pick<Profile, "name"> | null;
+//   grade: Pick<Grade, "level">;
+// }
+
+// interface StudentDashboardResult {
+//   subjects: StudentSubjectWrapper[];
+//   classroom: ClassroomData;
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function SubjectsPage() {
+//   const { profile, isLoading } = useProfileStore();
+
+//   const [data, setData] = useState<StudentDashboardResult | null>(null);
+//   const [loadingSubjects, setLoadingSubjects] = useState<boolean>(true);
+//   const [error, setError] = useState<string | null>(null);
+
+//   const loadSyllabus = useCallback(async () => {
+//     if (!profile?.id) return;
+    
+//     try {
+//       setLoadingSubjects(true);
+//       setError(null);
+//       const res = await getStudentDashboardData(profile.id);
+//       if (res) {
+//         // Casting the action response to our strict interface
+//         setData(res as unknown as StudentDashboardResult);
+//       }
+//     } catch (err) {
+//       const message = getErrorMessage(err);
+//       setError(message);
+//       console.error("Failed to load subject registry:", message);
+//     } finally {
+//       setLoadingSubjects(false);
+//     }
+//   }, [profile?.id]);
+
+//   useEffect(() => {
+//     loadSyllabus();
+//   }, [loadSyllabus]);
+
+//   // 1. Initial State Loader
+//   if (isLoading || !profile) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center bg-slate-950">
+//         <Loader2 className="h-8 w-8 animate-spin text-school-primary" />
+//       </div>
+//     );
+//   }
+
+//   // 2. Error State
+//   if (error) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 p-4">
+//         <p className="text-red-500 font-bold uppercase tracking-widest text-xs mb-2">Connection Error</p>
+//         <p className="text-slate-400 text-center text-sm max-w-xs mb-6">{error}</p>
+//         <button 
+//           onClick={() => loadSyllabus()}
+//           className="px-6 py-2 bg-school-primary text-slate-950 font-black uppercase text-[10px] rounded-lg"
+//         >
+//           Retry
+//         </button>
+//       </div>
+//     );
+//   }
+
+//   // 3. Content Transition Loader
+//   if (loadingSubjects || !data) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+//         <Loader2 className="h-8 w-8 animate-spin text-school-primary mb-4" />
+//         <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest animate-pulse">
+//             Accessing Subject Registry...
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="p-4 md:p-8 bg-slate-950 min-h-screen text-white">
+//       <div className="max-w-7xl mx-auto space-y-10">
+        
+//         {/* Page Header */}
+//         <header className="flex items-center gap-4 border-b border-white/5 pb-8">
+//             <div className="h-12 w-12 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center">
+//                 <BookOpen className="text-school-primary h-6 w-6" />
+//             </div>
+//             <div>
+//                 <h1 className="text-3xl font-black uppercase italic tracking-tighter">My Syllabus</h1>
+//                 <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">
+//                     Authorized academic modules for {data.classroom.name}
+//                 </p>
+//             </div>
+//         </header>
+
+//         {/* Dynamic Data Grid */}
+//         <SubjectsGrid
+//           /**
+//            * FIXED: Mapping StudentSubjectWrapper[] to GradeSubjectDetail[]
+//            * to match the SubjectsGridProps expectations.
+//            */
+//           subjects={data.subjects.map(s => s.gradeSubject)}
+//           classTeacherName={data.classroom.teacher?.name || "Registry Lead"}
+//           gradeLevel={data.classroom.grade.level}
+//         />
+        
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+import { Metadata } from "next";
+import { redirect, notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
 import { getStudentDashboardData } from "@/app/actions/student-dashboard";
-import { Loader2, BookOpen } from "lucide-react";
-// Import Prisma types - REMOVED 'Class' as it was unused
-import { Assessment, Topic, Subject, Profile, Grade } from "@prisma/client";
-
-// ── Utility ──────────────────────────────────────────────────────────────────
-
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (error && typeof error === 'object' && 'message' in error) {
-    return String((error as { message?: string }).message);
-  }
-  return typeof error === 'string' ? error : "An unknown error occurred";
-}
-
-// ── Types ───────────────────────────────────────────────────────────────────
+import { checkSubscription } from "@/app/actions/subscription-guard";
+import { MySyllabusClient } from "@/components/subjects/subject-syllabus-client";
 
 /**
- * FIXED: Changed from 'interface' to 'type' to resolve 
- * @typescript-eslint/no-empty-object-type error.
+ * Rule 16: Dynamic Contextual SEO
  */
-type SubjectTopic = Pick<Topic, "id" | "title" | "weekNumber">;
+export async function generateMetadata(): Promise<Metadata> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { title: "My Syllabus | SchoolPaaS" };
 
-interface GradeSubjectDetail {
-  id: string;
-  subject: Pick<Subject, "name">;
-  topics: SubjectTopic[];
-  assessments: Assessment[]; 
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        include: { school: { select: { name: true } } }
+    });
+
+    const context = profile?.school?.name || "Personal Registry";
+
+    return {
+        title: `My Syllabus | ${context} | SchoolPaaS`,
+        description: "Access your registered academic modules and syllabus roadmap."
+    };
 }
 
-interface StudentSubjectWrapper {
-  id: string;
-  gradeSubject: GradeSubjectDetail;
-}
+/**
+ * Rule 12: Server-First Execution
+ */
+export default async function SubjectsPage() {
+    // 1. Resolve Identity (Rule 10)
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) redirect("/login");
 
-interface ClassroomData {
-  id: string;
-  name: string;
-  teacher: Pick<Profile, "name"> | null;
-  grade: Pick<Grade, "level">;
-}
+    // 2. Subscription Gate (Rule 11)
+    const profile = await prisma.profile.findUnique({
+        where: { id: authUser.id },
+        select: { id: true, schoolId: true }
+    });
 
-interface StudentDashboardResult {
-  subjects: StudentSubjectWrapper[];
-  classroom: ClassroomData;
-}
+    if (!profile) redirect("/login");
 
-// ── Main Component ──────────────────────────────────────────────────────────
+    const subStatus = await checkSubscription(profile.id, profile.schoolId);
+    if (!subStatus.isActive) redirect("/billing");
 
-export default function SubjectsPage() {
-  const { profile, isLoading } = useProfileStore();
+    // 3. Fetch Tiered Registry Truth (Rule 11)
+    const data = await getStudentDashboardData(profile.id);
 
-  const [data, setData] = useState<StudentDashboardResult | null>(null);
-  const [loadingSubjects, setLoadingSubjects] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+    if (!data) return notFound();
 
-  const loadSyllabus = useCallback(async () => {
-    if (!profile?.id) return;
-    
-    try {
-      setLoadingSubjects(true);
-      setError(null);
-      const res = await getStudentDashboardData(profile.id);
-      if (res) {
-        // Casting the action response to our strict interface
-        setData(res as unknown as StudentDashboardResult);
-      }
-    } catch (err) {
-      const message = getErrorMessage(err);
-      setError(message);
-      console.error("Failed to load subject registry:", message);
-    } finally {
-      setLoadingSubjects(false);
-    }
-  }, [profile?.id]);
-
-  useEffect(() => {
-    loadSyllabus();
-  }, [loadSyllabus]);
-
-  // 1. Initial State Loader
-  if (isLoading || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <Loader2 className="h-8 w-8 animate-spin text-school-primary" />
-      </div>
-    );
-  }
-
-  // 2. Error State
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 p-4">
-        <p className="text-red-500 font-bold uppercase tracking-widest text-xs mb-2">Connection Error</p>
-        <p className="text-slate-400 text-center text-sm max-w-xs mb-6">{error}</p>
-        <button 
-          onClick={() => loadSyllabus()}
-          className="px-6 py-2 bg-school-primary text-slate-950 font-black uppercase text-[10px] rounded-lg"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
-  // 3. Content Transition Loader
-  if (loadingSubjects || !data) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
-        <Loader2 className="h-8 w-8 animate-spin text-school-primary mb-4" />
-        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest animate-pulse">
-            Accessing Subject Registry...
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="p-4 md:p-8 bg-slate-950 min-h-screen text-white">
-      <div className="max-w-7xl mx-auto space-y-10">
-        
-        {/* Page Header */}
-        <header className="flex items-center gap-4 border-b border-white/5 pb-8">
-            <div className="h-12 w-12 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center">
-                <BookOpen className="text-school-primary h-6 w-6" />
-            </div>
-            <div>
-                <h1 className="text-3xl font-black uppercase italic tracking-tighter">My Syllabus</h1>
-                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">
-                    Authorized academic modules for {data.classroom.name}
-                </p>
-            </div>
-        </header>
-
-        {/* Dynamic Data Grid */}
-        <SubjectsGrid
-          /**
-           * FIXED: Mapping StudentSubjectWrapper[] to GradeSubjectDetail[]
-           * to match the SubjectsGridProps expectations.
-           */
-          subjects={data.subjects.map(s => s.gradeSubject)}
-          classTeacherName={data.classroom.teacher?.name || "Registry Lead"}
-          gradeLevel={data.classroom.grade.level}
+        <MySyllabusClient 
+            initialData={data} 
         />
-        
-      </div>
-    </div>
-  );
+    );
 }
-

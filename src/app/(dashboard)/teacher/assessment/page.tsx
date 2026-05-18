@@ -2646,347 +2646,413 @@
 
 
 
-'use client'
+// 'use client'
 
-import { useState, useEffect, useTransition, useCallback, useMemo } from "react"
-import { Card } from "@/components/ui/card"
-import { toast } from "sonner"
-import { 
-  ArrowRight, 
-  Loader2, 
-  ArrowLeft, 
-  BookOpen, 
-  Layers, 
-  Settings, 
-  Calendar,
- GraduationCap,
-  FileText,
-  ShieldCheck,
-  School
-} from "lucide-react"
+// import { useState, useEffect, useTransition, useCallback, useMemo } from "react"
+// import { Card } from "@/components/ui/card"
+// import { toast } from "sonner"
+// import { 
+//   ArrowRight, 
+//   Loader2, 
+//   ArrowLeft, 
+//   BookOpen, 
+//   Layers, 
+//   Settings, 
+//   Calendar,
+//  GraduationCap,
+//   FileText,
+//   ShieldCheck,
+//   School
+// } from "lucide-react"
 
-import {
-  getTeacherAuthorizedAssignments,
-  getClassesByGradeLevel,
-  getGroupedTopics,
-  buildExamPool,
-  finalizeAndDeployExam,
-} from "@/app/actions/exam-engine.actions"
+// import {
+//   getTeacherAuthorizedAssignments,
+//   getClassesByGradeLevel,
+//   getGroupedTopics,
+//   buildExamPool,
+//   finalizeAndDeployExam,
+// } from "@/app/actions/exam-engine.actions"
 
-import { 
-  useExamStore, 
-  getErrorMessage, 
-  type AssignmentWithDetails, 
-  type TermGroup 
-} from "@/store/useExamStore"
-import { useProfileStore } from "@/store/profileStore"
+// import { 
+//   useExamStore, 
+//   getErrorMessage, 
+//   type AssignmentWithDetails, 
+//   type TermGroup 
+// } from "@/store/useExamStore"
+// import { useProfileStore } from "@/store/profileStore"
 
-import { SubjectSelector } from "@/components/TeacherDashboard/exams/subjectSelector"
-import { SyllabusSelector } from "@/components/TeacherDashboard/exams/syllabusSelector"
-import { SettingsSidebar } from "@/components/TeacherDashboard/exams/settingsSidebar"
-import { ExamDocumentPreview } from "@/components/TeacherDashboard/exams/ExamDocumentPreview"
-import { AssessmentType, ExamStatus, Class } from "@prisma/client"
-import { cn } from "@/lib/utils"
+// import { SubjectSelector } from "@/components/TeacherDashboard/exams/subjectSelector"
+// import { SyllabusSelector } from "@/components/TeacherDashboard/exams/syllabusSelector"
+// import { SettingsSidebar } from "@/components/TeacherDashboard/exams/settingsSidebar"
+// import { ExamDocumentPreview } from "@/components/TeacherDashboard/exams/ExamDocumentPreview"
+// import { AssessmentType, ExamStatus, Class } from "@prisma/client"
+// import { cn } from "@/lib/utils"
 
-// ── Types ───────────────────────────────────────────────────────────────────
+// // ── Types ───────────────────────────────────────────────────────────────────
 
-interface UIQuestion {
-  id?: string;
-  text: string;
-  options: string[];
-}
+// interface UIQuestion {
+//   id?: string;
+//   text: string;
+//   options: string[];
+// }
 
-interface GeneratedQuestion extends UIQuestion {
-  correctAnswer: string;
-  explanation: string;
-}
+// interface GeneratedQuestion extends UIQuestion {
+//   correctAnswer: string;
+//   explanation: string;
+// }
 
-// ── Main Component ──────────────────────────────────────────────────────────
+// // ── Main Component ──────────────────────────────────────────────────────────
 
-export default function TeacherExamArchitect() {
-  const { profile } = useProfileStore()
-  const [isPending, startTransition] = useTransition()
+// export default function TeacherExamArchitect() {
+//   const { profile } = useProfileStore()
+//   const [isPending, startTransition] = useTransition()
   
-  const { 
-    assignments, setInitialData,
-    termGroups, 
-    availableClasses, // FIXED: Now utilized in the UI below
-    selectedAssignment, setSelectedAssignment,
-    selectedTopicIds, setSelectedTopicIds,
-    selectedClassIds,
-    config, 
-  } = useExamStore()
+//   const { 
+//     assignments, setInitialData,
+//     termGroups, 
+//     availableClasses, // FIXED: Now utilized in the UI below
+//     selectedAssignment, setSelectedAssignment,
+//     selectedTopicIds, setSelectedTopicIds,
+//     selectedClassIds,
+//     config, 
+//   } = useExamStore()
 
-  const [step, setStep] = useState<number>(1)
-  const [generatedPool, setGeneratedPool] = useState<GeneratedQuestion[]>([])
+//   const [step, setStep] = useState<number>(1)
+//   const [generatedPool, setGeneratedPool] = useState<GeneratedQuestion[]>([])
 
-  const endTime = useMemo(() => {
-    if (!config.startTime || !config.duration) return null
-    const start = new Date(config.startTime)
-    if (isNaN(start.getTime())) return null
-    return new Date(start.getTime() + config.duration * 60000).toISOString()
-  }, [config.startTime, config.duration])
+//   const endTime = useMemo(() => {
+//     if (!config.startTime || !config.duration) return null
+//     const start = new Date(config.startTime)
+//     if (isNaN(start.getTime())) return null
+//     return new Date(start.getTime() + config.duration * 60000).toISOString()
+//   }, [config.startTime, config.duration])
 
-  // ───────────────── LOAD DATA ─────────────────
-  const loadInitialState = useCallback(async () => {
-    if (!profile?.id || !profile?.schoolId) return
-    try {
-        const assigns = await getTeacherAuthorizedAssignments(profile.id, profile.schoolId)
-        setInitialData({
-            assignments: assigns as AssignmentWithDetails[],
-            termGroups: [],
-            availableClasses: []
-        })
-    } catch (err) {
-        toast.error(getErrorMessage(err))
-    }
-  }, [profile?.id, profile?.schoolId, setInitialData])
+//   // ───────────────── LOAD DATA ─────────────────
+//   const loadInitialState = useCallback(async () => {
+//     if (!profile?.id || !profile?.schoolId) return
+//     try {
+//         const assigns = await getTeacherAuthorizedAssignments(profile.id, profile.schoolId)
+//         setInitialData({
+//             assignments: assigns as AssignmentWithDetails[],
+//             termGroups: [],
+//             availableClasses: []
+//         })
+//     } catch (err) {
+//         toast.error(getErrorMessage(err))
+//     }
+//   }, [profile?.id, profile?.schoolId, setInitialData])
 
-  useEffect(() => {
-    loadInitialState()
-  }, [loadInitialState])
+//   useEffect(() => {
+//     loadInitialState()
+//   }, [loadInitialState])
 
-  useEffect(() => {
-    if (!selectedAssignment || !profile?.schoolId) return
+//   useEffect(() => {
+//     if (!selectedAssignment || !profile?.schoolId) return
 
-    getGroupedTopics(selectedAssignment.id).then((data) => {
-        useExamStore.setState({ termGroups: data as unknown as TermGroup[] })
-    })
+//     getGroupedTopics(selectedAssignment.id).then((data) => {
+//         useExamStore.setState({ termGroups: data as unknown as TermGroup[] })
+//     })
 
-    getClassesByGradeLevel(selectedAssignment.gradeId, profile.schoolId).then((data) => {
-        // FIXED: Casting to Prisma Class type instead of any
-        useExamStore.setState({ availableClasses: data as Class[] })
-    })
-  }, [selectedAssignment, profile?.schoolId])
+//     getClassesByGradeLevel(selectedAssignment.gradeId, profile.schoolId).then((data) => {
+//         // FIXED: Casting to Prisma Class type instead of any
+//         useExamStore.setState({ availableClasses: data as Class[] })
+//     })
+//   }, [selectedAssignment, profile?.schoolId])
 
-  // ───────────────── HANDLERS ─────────────────
-  const next = () => setStep((s) => Math.min(s + 1, 4))
-  const back = () => setStep((s) => Math.max(s - 1, 1))
+//   // ───────────────── HANDLERS ─────────────────
+//   const next = () => setStep((s) => Math.min(s + 1, 4))
+//   const back = () => setStep((s) => Math.max(s - 1, 1))
 
-  const handleGenerate = async (): Promise<void> => {
-    if (selectedTopicIds.length === 0) {
-        toast.error("Select at least one topic")
-        return
-    }
-    if (!profile?.schoolId) return
+//   const handleGenerate = async (): Promise<void> => {
+//     if (selectedTopicIds.length === 0) {
+//         toast.error("Select at least one topic")
+//         return
+//     }
+//     if (!profile?.schoolId) return
 
-    startTransition(async () => {
-      try {
-        const res = await buildExamPool({
-            topicIds: selectedTopicIds,
-            totalQuestions: config.totalQuestions,
-            reusePercentage: config.reusePercentage,
-            schoolId: profile.schoolId!
-          })
+//     startTransition(async () => {
+//       try {
+//         const res = await buildExamPool({
+//             topicIds: selectedTopicIds,
+//             totalQuestions: config.totalQuestions,
+//             reusePercentage: config.reusePercentage,
+//             schoolId: profile.schoolId!
+//           })
     
-          if (!res.success) {
-            toast.error(res.error || "Generation failed")
-            return
-          }
+//           if (!res.success) {
+//             toast.error(res.error || "Generation failed")
+//             return
+//           }
     
-          setGeneratedPool(res.questions as GeneratedQuestion[] || [])
-          next()
-      } catch (err) {
-        toast.error(getErrorMessage(err))
-      }
-    })
-  }
+//           setGeneratedPool(res.questions as GeneratedQuestion[] || [])
+//           next()
+//       } catch (err) {
+//         toast.error(getErrorMessage(err))
+//       }
+//     })
+//   }
 
-  const handleDeploy = async (): Promise<void> => {
-    if (!config.startTime || !endTime || !profile?.id || !profile?.schoolId) {
-      toast.error("Deployment parameters incomplete")
-      return
-    }
+//   const handleDeploy = async (): Promise<void> => {
+//     if (!config.startTime || !endTime || !profile?.id || !profile?.schoolId) {
+//       toast.error("Deployment parameters incomplete")
+//       return
+//     }
   
-    startTransition(async () => {
-      try {
-        const res = await finalizeAndDeployExam(
-            {
-              title: config.title,
-              duration: config.duration,
-              startTime: new Date(config.startTime),
-              endTime: new Date(endTime),
-              totalQuestions: config.totalQuestions,
-              reusePercentage: config.reusePercentage,
-              status: ExamStatus.SCHEDULED,
-              teacherId: profile.id,
-              classIds: selectedClassIds,
-              schoolId: profile.schoolId!,
-              topicIds: selectedTopicIds,
-              termId: termGroups[0]?.id || "",
-              type: AssessmentType.TERMLY,
-            },
-            generatedPool
-          )
+//     startTransition(async () => {
+//       try {
+//         const res = await finalizeAndDeployExam(
+//             {
+//               title: config.title,
+//               duration: config.duration,
+//               startTime: new Date(config.startTime),
+//               endTime: new Date(endTime),
+//               totalQuestions: config.totalQuestions,
+//               reusePercentage: config.reusePercentage,
+//               status: ExamStatus.SCHEDULED,
+//               teacherId: profile.id,
+//               classIds: selectedClassIds,
+//               schoolId: profile.schoolId!,
+//               topicIds: selectedTopicIds,
+//               termId: termGroups[0]?.id || "",
+//               type: AssessmentType.TERMLY,
+//             },
+//             generatedPool
+//           )
       
-          if (!res.success) {
-            toast.error(res.error || "Deployment failed")
-            return
-          }
+//           if (!res.success) {
+//             toast.error(res.error || "Deployment failed")
+//             return
+//           }
       
-          toast.success("Exam successfully scheduled")
-          setStep(1)
-      } catch (err) {
-        toast.error(getErrorMessage(err))
-      }
-    })
-  }
+//           toast.success("Exam successfully scheduled")
+//           setStep(1)
+//       } catch (err) {
+//         toast.error(getErrorMessage(err))
+//       }
+//     })
+//   }
 
-  const handleSetTopics: React.Dispatch<React.SetStateAction<string[]>> = useCallback((val) => {
-    const nextIds = typeof val === 'function' ? val(selectedTopicIds) : val
-    setSelectedTopicIds(nextIds)
-  }, [selectedTopicIds, setSelectedTopicIds])
+//   const handleSetTopics: React.Dispatch<React.SetStateAction<string[]>> = useCallback((val) => {
+//     const nextIds = typeof val === 'function' ? val(selectedTopicIds) : val
+//     setSelectedTopicIds(nextIds)
+//   }, [selectedTopicIds, setSelectedTopicIds])
 
-  return (
-    <div className="p-8 bg-slate-950 min-h-screen text-slate-50 space-y-6">
-      <header className="flex items-center justify-between">
-        <div>
-            <h1 className="text-3xl font-black uppercase italic tracking-tighter leading-none">Exam Architect</h1>
-            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-2 flex items-center gap-2">
-                <ShieldCheck className="h-3.5 w-3.5 text-school-primary" /> Phase {step} of 4
-            </p>
-        </div>
-        <Badge className="bg-school-primary/10 text-school-primary border-school-primary/20">
-            ENGINE_ACTIVE_v2.4
-        </Badge>
-      </header>
+//   return (
+//     <div className="p-8 bg-slate-950 min-h-screen text-slate-50 space-y-6">
+//       <header className="flex items-center justify-between">
+//         <div>
+//             <h1 className="text-3xl font-black uppercase italic tracking-tighter leading-none">Exam Architect</h1>
+//             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-2 flex items-center gap-2">
+//                 <ShieldCheck className="h-3.5 w-3.5 text-school-primary" /> Phase {step} of 4
+//             </p>
+//         </div>
+//         <Badge className="bg-school-primary/10 text-school-primary border-school-primary/20">
+//             ENGINE_ACTIVE_v2.4
+//         </Badge>
+//       </header>
 
-      <div className="h-1 bg-slate-900 rounded-full overflow-hidden">
-        <div className="h-full bg-school-primary transition-all duration-500" style={{ width: `${(step / 4) * 100}%` }} />
-      </div>
+//       <div className="h-1 bg-slate-900 rounded-full overflow-hidden">
+//         <div className="h-full bg-school-primary transition-all duration-500" style={{ width: `${(step / 4) * 100}%` }} />
+//       </div>
 
-      {step === 1 && (
-        <Card className="p-10 bg-slate-900 border-white/5 rounded-[2.5rem] shadow-2xl space-y-8 animate-in fade-in slide-in-from-bottom-4">
-          <div className="flex items-center gap-3">
-             <BookOpen className="h-6 w-6 text-school-primary" />
-             <h2 className="text-xl font-black text-white uppercase italic tracking-tight leading-none">Assignment Identity</h2>
-          </div>
-          <SubjectSelector
-            assignments={assignments}
-            selectedAssignment={selectedAssignment}
-            setSelectedAssignment={(val) => setSelectedAssignment(val as AssignmentWithDetails)}
-          />
-          <div className="pt-4 flex items-center gap-4">
-            <button
-                disabled={!selectedAssignment}
-                onClick={next}
-                className="bg-school-primary text-slate-950 font-black px-10 py-4 rounded-2xl flex items-center gap-2 disabled:opacity-30 hover:scale-[1.02] transition-all"
-            >
-                Enter Syllabus Pool <ArrowRight className="h-4 w-4" />
-            </button>
-            {isPending && <Loader2 className="h-5 w-5 animate-spin text-school-primary" />}
-          </div>
-        </Card>
-      )}
+//       {step === 1 && (
+//         <Card className="p-10 bg-slate-900 border-white/5 rounded-[2.5rem] shadow-2xl space-y-8 animate-in fade-in slide-in-from-bottom-4">
+//           <div className="flex items-center gap-3">
+//              <BookOpen className="h-6 w-6 text-school-primary" />
+//              <h2 className="text-xl font-black text-white uppercase italic tracking-tight leading-none">Assignment Identity</h2>
+//           </div>
+//           <SubjectSelector
+//             assignments={assignments}
+//             selectedAssignment={selectedAssignment}
+//             setSelectedAssignment={(val) => setSelectedAssignment(val as AssignmentWithDetails)}
+//           />
+//           <div className="pt-4 flex items-center gap-4">
+//             <button
+//                 disabled={!selectedAssignment}
+//                 onClick={next}
+//                 className="bg-school-primary text-slate-950 font-black px-10 py-4 rounded-2xl flex items-center gap-2 disabled:opacity-30 hover:scale-[1.02] transition-all"
+//             >
+//                 Enter Syllabus Pool <ArrowRight className="h-4 w-4" />
+//             </button>
+//             {isPending && <Loader2 className="h-5 w-5 animate-spin text-school-primary" />}
+//           </div>
+//         </Card>
+//       )}
 
-      {step === 2 && (
-        <Card className="p-10 bg-slate-900 border-white/5 rounded-[2.5rem] shadow-2xl space-y-8 animate-in fade-in">
-          <div className="flex items-center gap-3">
-             <Layers className="h-6 w-6 text-school-primary" />
-             <h2 className="text-xl font-black text-white uppercase italic tracking-tight leading-none">Topic Mapping</h2>
-          </div>
-          <SyllabusSelector
-            termGroups={termGroups}
-            selectedTopicIds={selectedTopicIds}
-            setSelectedTopicIds={handleSetTopics}
-          />
-          <div className="flex justify-between pt-6 border-t border-white/5">
-            <button onClick={back} className="flex items-center gap-2 text-xs font-black uppercase text-slate-500 hover:text-white transition-colors">
-                <ArrowLeft className="h-4 w-4" /> Subject Link
-            </button>
-            <button onClick={next} disabled={selectedTopicIds.length === 0} className="bg-school-primary text-slate-950 font-black px-10 py-4 rounded-2xl flex items-center gap-2">
-              Configure Schedule <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        </Card>
-      )}
+//       {step === 2 && (
+//         <Card className="p-10 bg-slate-900 border-white/5 rounded-[2.5rem] shadow-2xl space-y-8 animate-in fade-in">
+//           <div className="flex items-center gap-3">
+//              <Layers className="h-6 w-6 text-school-primary" />
+//              <h2 className="text-xl font-black text-white uppercase italic tracking-tight leading-none">Topic Mapping</h2>
+//           </div>
+//           <SyllabusSelector
+//             termGroups={termGroups}
+//             selectedTopicIds={selectedTopicIds}
+//             setSelectedTopicIds={handleSetTopics}
+//           />
+//           <div className="flex justify-between pt-6 border-t border-white/5">
+//             <button onClick={back} className="flex items-center gap-2 text-xs font-black uppercase text-slate-500 hover:text-white transition-colors">
+//                 <ArrowLeft className="h-4 w-4" /> Subject Link
+//             </button>
+//             <button onClick={next} disabled={selectedTopicIds.length === 0} className="bg-school-primary text-slate-950 font-black px-10 py-4 rounded-2xl flex items-center gap-2">
+//               Configure Schedule <ArrowRight className="h-4 w-4" />
+//             </button>
+//           </div>
+//         </Card>
+//       )}
 
-      {step === 3 && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center gap-2 text-slate-400 ml-2">
-                <Settings className="h-4 w-4" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Architect Engine Settings</span>
-            </div>
-            <SettingsSidebar onBuildPool={handleGenerate} />
-          </div>
+//       {step === 3 && (
+//         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in">
+//           <div className="lg:col-span-2 space-y-6">
+//             <div className="flex items-center gap-2 text-slate-400 ml-2">
+//                 <Settings className="h-4 w-4" />
+//                 <span className="text-[10px] font-black uppercase tracking-widest">Architect Engine Settings</span>
+//             </div>
+//             <SettingsSidebar onBuildPool={handleGenerate} />
+//           </div>
           
-          <div className="space-y-6">
-            <Card className="p-8 bg-slate-900/50 border-school-primary/20 border rounded-[2.5rem] h-fit space-y-6 shadow-2xl">
-                <h3 className="text-xs font-black text-school-primary uppercase tracking-widest flex items-center gap-2">
-                    <Calendar className="h-4 w-4" /> Schedule Context
-                </h3>
-                <div className="space-y-4">
-                    <div className="p-4 bg-slate-950 rounded-2xl border border-white/5">
-                        <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Window Start</p>
-                        <p className="text-sm font-bold text-white italic">{config.startTime || "Awaiting Input..."}</p>
-                    </div>
-                    {endTime && (
-                    <div className="p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
-                            <p className="text-[10px] font-black text-emerald-500 uppercase mb-1">Projected End</p>
-                            <p className="text-sm font-black text-emerald-400 italic">{new Date(endTime).toLocaleString()}</p>
-                    </div>
-                    )}
-                    <div className="p-4 bg-slate-950 rounded-2xl border border-white/5">
-                        <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Room Allocation</p>
-                        <p className="text-sm font-bold text-white">{selectedClassIds.length} Targeted</p>
-                    </div>
-                </div>
-            </Card>
+//           <div className="space-y-6">
+//             <Card className="p-8 bg-slate-900/50 border-school-primary/20 border rounded-[2.5rem] h-fit space-y-6 shadow-2xl">
+//                 <h3 className="text-xs font-black text-school-primary uppercase tracking-widest flex items-center gap-2">
+//                     <Calendar className="h-4 w-4" /> Schedule Context
+//                 </h3>
+//                 <div className="space-y-4">
+//                     <div className="p-4 bg-slate-950 rounded-2xl border border-white/5">
+//                         <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Window Start</p>
+//                         <p className="text-sm font-bold text-white italic">{config.startTime || "Awaiting Input..."}</p>
+//                     </div>
+//                     {endTime && (
+//                     <div className="p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+//                             <p className="text-[10px] font-black text-emerald-500 uppercase mb-1">Projected End</p>
+//                             <p className="text-sm font-black text-emerald-400 italic">{new Date(endTime).toLocaleString()}</p>
+//                     </div>
+//                     )}
+//                     <div className="p-4 bg-slate-950 rounded-2xl border border-white/5">
+//                         <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Room Allocation</p>
+//                         <p className="text-sm font-bold text-white">{selectedClassIds.length} Targeted</p>
+//                     </div>
+//                 </div>
+//             </Card>
 
-            {/* FIXED: Utilizing availableClasses to resolve unused variable warning */}
-            <Card className="p-6 bg-slate-900 border-white/5 rounded-[2rem] space-y-4">
-                <div className="flex items-center gap-2 text-slate-500">
-                    <School className="h-3.5 w-3.5" />
-                    <span className="text-[9px] font-black uppercase tracking-widest">Valid Registry Rooms</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                    {availableClasses.map(cls => (
-                        <div key={cls.id} className="px-2 py-1 bg-slate-950 rounded border border-white/5 text-[8px] font-bold text-slate-400">
-                            {cls.name}
-                        </div>
-                    ))}
-                    {availableClasses.length === 0 && <p className="text-[9px] text-slate-600 italic">No rooms discovery yet...</p>}
-                </div>
-            </Card>
-          </div>
-        </div>
-      )}
+//             {/* FIXED: Utilizing availableClasses to resolve unused variable warning */}
+//             <Card className="p-6 bg-slate-900 border-white/5 rounded-[2rem] space-y-4">
+//                 <div className="flex items-center gap-2 text-slate-500">
+//                     <School className="h-3.5 w-3.5" />
+//                     <span className="text-[9px] font-black uppercase tracking-widest">Valid Registry Rooms</span>
+//                 </div>
+//                 <div className="flex flex-wrap gap-2">
+//                     {availableClasses.map(cls => (
+//                         <div key={cls.id} className="px-2 py-1 bg-slate-950 rounded border border-white/5 text-[8px] font-bold text-slate-400">
+//                             {cls.name}
+//                         </div>
+//                     ))}
+//                     {availableClasses.length === 0 && <p className="text-[9px] text-slate-600 italic">No rooms discovery yet...</p>}
+//                 </div>
+//             </Card>
+//           </div>
+//         </div>
+//       )}
 
-      {step === 4 && (
-        <div className="space-y-8 animate-in zoom-in-95">
-            <div className="flex justify-between items-center bg-slate-900 p-6 rounded-[2rem] border border-white/5 shadow-xl">
-                 <button onClick={back} className="flex items-center gap-2 text-xs font-black uppercase text-slate-500 hover:text-white transition-colors">
-                    <ArrowLeft className="h-4 w-4"/> Revision
-                 </button>
-                 <div className="flex items-center gap-3">
-                    <FileText className="h-4 w-4 text-school-primary" />
-                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest italic">Document Draft Blueprint</span>
-                 </div>
-            </div>
-            <ExamDocumentPreview
-                generatedPool={generatedPool}
-                /**
-                 * FIXED: We pass only 'title' to satisfy ExamConfig. 
-                 * Child component does not expect endTime in its interface.
-                 */
-                config={{ title: config.title }}
-                handleFinalDeploy={() => handleDeploy()}
-                setStep={setStep}
-                isViewOnly={false}
-                isPending={isPending}
-            />
-        </div>
-      )}
-    </div>
-  )
+//       {step === 4 && (
+//         <div className="space-y-8 animate-in zoom-in-95">
+//             <div className="flex justify-between items-center bg-slate-900 p-6 rounded-[2rem] border border-white/5 shadow-xl">
+//                  <button onClick={back} className="flex items-center gap-2 text-xs font-black uppercase text-slate-500 hover:text-white transition-colors">
+//                     <ArrowLeft className="h-4 w-4"/> Revision
+//                  </button>
+//                  <div className="flex items-center gap-3">
+//                     <FileText className="h-4 w-4 text-school-primary" />
+//                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest italic">Document Draft Blueprint</span>
+//                  </div>
+//             </div>
+//             <ExamDocumentPreview
+//                 generatedPool={generatedPool}
+//                 /**
+//                  * FIXED: We pass only 'title' to satisfy ExamConfig. 
+//                  * Child component does not expect endTime in its interface.
+//                  */
+//                 config={{ title: config.title }}
+//                 handleFinalDeploy={() => handleDeploy()}
+//                 setStep={setStep}
+//                 isViewOnly={false}
+//                 isPending={isPending}
+//             />
+//         </div>
+//       )}
+//     </div>
+//   )
+// }
+
+// function Badge({ children, className }: { children: React.ReactNode, className?: string }) {
+//     return (
+//         <span className={cn("px-3 py-1 rounded-full text-[9px] font-black tracking-widest border border-white/10", className)}>
+//             <GraduationCap className="h-3 w-3 inline-block mr-1 mb-0.5" />
+//             {children}
+//         </span>
+//     )
+// }
+
+
+
+
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { 
+    getTeacherAuthorizedAssignments 
+} from "@/app/actions/exam-engine.actions";
+import { getSchoolClassesWithGrades } from "@/app/actions/subject-allocation";
+import { TeacherExamArchitectClient } from "@/components/TeacherDashboard/exams/teacherExamClient";
+import { Role } from "@prisma/client";
+
+/**
+ * Rule 16: Dynamic Contextual SEO
+ */
+export async function generateMetadata(): Promise<Metadata> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { title: "Exam Architect | SchoolPaaS" };
+
+    return {
+        title: "Exam Architect | Registry Deployment | SchoolPaaS",
+        description: "AI-assisted institutional assessment construction and deployment."
+    };
 }
 
-function Badge({ children, className }: { children: React.ReactNode, className?: string }) {
+/**
+ * Rule 12: Server-First Execution
+ */
+export default async function Page() {
+    // 1. Resolve Identity & Context (Rule 10)
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) redirect("/login");
+
+    const profile = await prisma.profile.findUnique({
+        where: { id: authUser.id },
+        select: { id: true, schoolId: true, role: true }
+    });
+
+    // Rule 10: Security - Ensure user is a Teacher/Admin
+    if (!profile || profile.role === Role.STUDENT || profile.role === Role.PARENT) {
+        redirect("/student?error=unauthorized_access");
+    }
+
+    // Rule 6: Independent Learner Guard
+    if (!profile.schoolId) {
+        redirect("/student?error=institutional_feature_only");
+    }
+
+    // 2. Fetch Institutional Data in Parallel (Rule 11)
+    const [assignments, classes] = await Promise.all([
+        getTeacherAuthorizedAssignments(profile.id, profile.schoolId),
+        getSchoolClassesWithGrades(profile.schoolId)
+    ]);
+
     return (
-        <span className={cn("px-3 py-1 rounded-full text-[9px] font-black tracking-widest border border-white/10", className)}>
-            <GraduationCap className="h-3 w-3 inline-block mr-1 mb-0.5" />
-            {children}
-        </span>
-    )
+        <TeacherExamArchitectClient 
+            initialAssignments={assignments as any}
+            initialClasses={classes as any}
+        />
+    );
 }

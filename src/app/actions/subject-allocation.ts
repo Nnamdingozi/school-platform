@@ -2705,3 +2705,80 @@ export async function allocateStreamSubjects(studentId: string, stream: Nigerian
         return { success: true };
     } catch (err) { return { success: false, error: getErrorMessage(err) }; }
 }
+
+
+
+/**
+ * SUBMIT SENIOR/ELECTIVE SUBJECTS
+ * Rule 5: Strict school isolation for institutional users.
+ * Rule 6: Support for Independent Learners (null schoolId).
+ * Rule 10: Backend-only security verification of the actor.
+ */
+export async function submitSeniorSubjects(
+    schoolId: string | null, 
+    studentId: string, 
+    gradeSubjectIds: string[]
+) {
+    try {
+        const actor = await getAuthenticatedActor();
+        if (!actor) throw new Error("Authentication required.");
+
+        // Rule 10: Security Guard
+        const isSelf = actor.id === studentId;
+        const isAdmin = (actor.role === Role.SCHOOL_ADMIN || actor.role === Role.SUPER_ADMIN) && actor.schoolId === schoolId;
+        if (!isSelf && !isAdmin) throw new Error("Unauthorized access to registry.");
+
+        const isIndependent = !schoolId || actor.role === Role.INDIVIDUAL_LEARNER;
+        
+        // 1. Resolve Policy Truth (Rule 11)
+        if (!isIndependent) {
+            const enrollment = await prisma.classEnrollment.findFirst({
+                where: { studentId, schoolId },
+                include: { class: { include: { grade: true } } }
+            });
+            const { isNigeria } = await getCurriculumContext(schoolId);
+            const isSenior = (enrollment?.class?.grade.level ?? 0) >= 10;
+
+            if (isNigeria && isSenior && gradeSubjectIds.length < 9) {
+                throw new Error("Academic Policy: A minimum of 9 subjects is required.");
+            }
+        }
+
+        // 2. Perform Transactional Update (Rule 11)
+        await prisma.$transaction(async (tx) => {
+            // ✅ FIXED: Using Type Assertion to resolve nullability error 2322
+            await tx.studentSubject.deleteMany({ 
+                where: { 
+                    studentId, 
+                    schoolId: schoolId as string 
+                } 
+            });
+
+            await tx.studentSubject.createMany({
+                data: gradeSubjectIds.map(id => ({
+                    studentId,
+                    gradeSubjectId: id,
+                    // ✅ FIXED: Using Type Assertion to resolve nullability error 2322
+                    schoolId: schoolId as string,
+                    status: isIndependent ? EnrollmentStatus.APPROVED : EnrollmentStatus.PENDING
+                }))
+            });
+        });
+
+        // 3. Log Activity (Rule 11)
+        await logActivity({
+            schoolId: schoolId,
+            actorId: actor.id,
+            actorRole: actor.role,
+            type: ActivityType.CURRICULUM_UPDATED,
+            title: "Syllabus Registry Synchronized",
+            description: `Updated academic node mappings for student: ${studentId}.`
+        });
+
+        revalidatePath('/student/dashboard');
+        return { success: true };
+
+    } catch (err: unknown) {
+        return { success: false, error: getErrorMessage(err) };
+    }
+}

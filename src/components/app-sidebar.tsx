@@ -652,8 +652,9 @@ export function AppSidebar() {
                             <NavItem href="/classes" icon={Layers} label="My Classrooms" />
                             <NavItem href="/subjects/manage" icon={BookOpen} label="Assigned Subjects" />
                             <NavItem href="/teacher/allocation" icon={TableProperties} label="Subject Allocation" />
-                            <NavItem href="/teacher/term-timeline" icon={Calendar} label="Termly Schedule" />
-                            <NavItem href="/teacher/pastQuestions" icon={Calendar} label="Past Questions Review" />
+                            <NavItem href="/term-timeline" icon={Calendar} label="Termly Schedule" />
+                            <NavItem href="/teacher/pastQuestions" icon={Calendar} label="Past Questions" />
+                            
                         </NavGroup>
 
                         <NavGroup label="Content & Assessment">
@@ -672,7 +673,7 @@ export function AppSidebar() {
                         <NavItem href="/student/class" icon={Layers} label="My Class" />
                             <NavItem href="/student/subject" icon={BookOpen} label="My Subjects" />
                             <NavItem href="/student/subject/elective" icon={TableProperties} label="Pick Electives" />
-                            
+                            <NavItem href="/term-timeline" icon={Calendar} label="Road Map" />
                         </NavGroup>
                         <NavGroup label="Evaluations">
                             <NavItem href="/student/quizzes" icon={Trophy} label="AI Challenges" />

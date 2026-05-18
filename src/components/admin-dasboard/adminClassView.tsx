@@ -679,7 +679,7 @@ import {
   type ClassRow,
   type ImportClassesRow,
   type EnrollStudentRow
-} from "@/app/_actions/class-actions"
+} from "@/app/actions/class-management"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 

@@ -85,10 +85,397 @@
 
 
 
+// import { redirect } from 'next/navigation'
+// import { createClient } from '@/lib/supabase/server'
+// import { prisma } from '@/lib/prisma'
+// import { getTeacherData } from '@/app/actions/teacherData'
+// import { getParentProfile } from '@/app/actions/parentProfile'
+// import { SchoolProvider } from '@/context/schoolProvider'
+// import { checkSubscription } from '@/app/actions/subscription-guard'
+// import { AppSidebar } from '@/components/app-sidebar'
+// import { ProfileInitializer } from '@/components/profileInitializer'
+// import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
+// import { Role } from '@prisma/client'
+// import {
+//     AnyProfile,
+//     ProfileInStore,
+//     ParentProfileInStore,
+// } from '@/types/profile'
+
+// // ── Role constants ─────────────────────────────────────────────────────────────
+// // Added INDIVIDUAL_LEARNER to support Rule 6
+// const ALLOWED_ROLES: Role[] = [
+//     Role.SCHOOL_ADMIN, 
+//     Role.SUPER_ADMIN, 
+//     Role.TEACHER, 
+//     Role.STUDENT, 
+//     Role.PARENT, 
+//     Role.INDIVIDUAL_LEARNER
+// ]
+
+// const SIDEBAR_ROLES: Role[] = [
+//     Role.SCHOOL_ADMIN, 
+//     Role.SUPER_ADMIN, 
+//     Role.TEACHER, 
+//     Role.STUDENT, 
+//     Role.INDIVIDUAL_LEARNER
+// ]
+
+// // ── Layout ─────────────────────────────────────────────────────────────────────
+// export default async function DashboardLayout({
+//     children,
+// }: {
+//     children: React.ReactNode
+// }) {
+//     // 1. Authenticate Session
+//     const supabase = await createClient()
+//     const { data: { user } } = await supabase.auth.getUser()
+
+//     if (!user?.email) redirect('/login')
+
+//     // 2. Fetch Base Profile (Security Rule 10)
+//     // FIX: Changed findUnique to findFirst to resolve the composite key TS error
+//     const profileBase = await prisma.profile.findFirst({
+//         where:  { email: user.email },
+//         select: { id: true, role: true, schoolId: true },
+//     })
+
+//     if (!profileBase || !ALLOWED_ROLES.includes(profileBase.role)) {
+//         redirect('/login?error=unauthorized')
+//     }
+
+//     // 3. Subscription Guard (Rule 11 System Truth)
+//     // Protects all dashboard routes at once.
+//     const subStatus = await checkSubscription(profileBase.id, profileBase.schoolId)
+
+//     if (!subStatus.isActive) {
+//         // This line forces the user out of the dashboard
+//         redirect('/billing?status=expired') 
+//     }
+
+//     // 4. Hydrate Comprehensive Profile Data
+//     let profile: AnyProfile | null = null
+
+//     if (profileBase.role === Role.PARENT) {
+//         profile = await getParentProfile(user.email) as ParentProfileInStore | null
+//     } else {
+//         profile = await getTeacherData(user.email) as ProfileInStore | null
+//     }
+
+//     if (!profile) redirect('/login?error=profile_sync_failed')
+
+//     // 5. Parent UI Branch (Rule 2 - No Sidebar Layer)
+//     if (profileBase.role === Role.PARENT) {
+//         return (
+//             <SchoolProvider initialProfile={profile}>
+//                 <ProfileInitializer profile={profile} />
+//                 <div className="min-h-screen bg-slate-950">
+//                     {children}
+//                 </div>
+//             </SchoolProvider>
+//         )
+//     }
+
+//     // 6. Sidebar UI Branch (School & Individual Users)
+//     return (
+//         <SchoolProvider initialProfile={profile}>
+//             <ProfileInitializer profile={profile} />
+//             <SidebarProvider>
+//                 <div className="flex min-h-screen w-full bg-slate-950">
+//                     <AppSidebar />
+//                     <SidebarInset className="overflow-y-auto overflow-x-hidden bg-slate-950 border-l border-white/5">
+//                         <header className="flex h-12 items-center gap-2 px-4 border-b border-white/5 sm:hidden">
+//                             <SidebarTrigger className="text-white" />
+//                         </header>
+//                         <main className="flex-1">
+//                             {children}
+//                         </main>
+//                     </SidebarInset>
+//                 </div>
+//             </SidebarProvider>
+//         </SchoolProvider>
+//     )
+// }
+
+
+
+// import { redirect } from 'next/navigation'
+// import { cookies } from 'next/headers'
+// import { createClient } from '@/lib/supabase/server'
+// import { prisma } from '@/lib/prisma'
+// import { getTeacherData } from '@/app/actions/teacherData'
+// import { getParentProfile } from '@/app/actions/parentProfile'
+// import { SchoolProvider } from '@/context/schoolProvider'
+// import { checkSubscription } from '@/app/actions/subscription-guard'
+// import { AppSidebar } from '@/components/app-sidebar'
+// import { ProfileInitializer } from '@/components/profileInitializer'
+// import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
+// import { Role } from '@prisma/client'
+// import { getSchoolThemeStyle } from '@/lib/school-theme'
+// import type {
+//     AnyProfile,
+//     ProfileInStore,
+//     ParentProfileInStore,
+// } from '@/types/profile'
+
+// // ── Role constants ─────────────────────────────────────────────────────────────
+// const ALLOWED_ROLES: Role[] = [
+//     Role.SCHOOL_ADMIN,
+//     Role.SUPER_ADMIN,
+//     Role.TEACHER,
+//     Role.STUDENT,
+//     Role.PARENT,
+//     Role.INDIVIDUAL_LEARNER,
+// ]
+
+// const SIDEBAR_ROLES: Role[] = [
+//     Role.SCHOOL_ADMIN,
+//     Role.SUPER_ADMIN,
+//     Role.TEACHER,
+//     Role.STUDENT,
+//     Role.INDIVIDUAL_LEARNER,
+// ]
+
+// // ── Theme resolution ───────────────────────────────────────────────────────────
+// // DB value wins over cookie. Cookie is used on first load before DB resolves.
+// // Both are read server-side so the correct class is set before paint — no flash.
+// function resolveTheme(
+//     dbTheme: string | null | undefined,
+//     cookieTheme: string | null | undefined
+// ): 'dark' | 'light' {
+//     if (dbTheme === 'dark' || dbTheme === 'light') return dbTheme
+//     if (cookieTheme === 'dark' || cookieTheme === 'light') return cookieTheme
+//     return 'light'
+// }
+
+// // ── Layout ─────────────────────────────────────────────────────────────────────
+// export default async function DashboardLayout({
+//     children,
+// }: {
+//     children: React.ReactNode
+// }) {
+//     // 1. Authenticate session
+//     const supabase = await createClient()
+//     const { data: { user } } = await supabase.auth.getUser()
+
+//     if (!user?.email) redirect('/login')
+
+//     // 2. Fetch base profile
+//     const profileBase = await prisma.profile.findFirst({
+//         where:  { email: user.email },
+//         select: { id: true, role: true, schoolId: true },
+//     })
+
+//     if (!profileBase || !ALLOWED_ROLES.includes(profileBase.role)) {
+//         redirect('/login?error=unauthorized')
+//     }
+
+//     // 3. Subscription guard
+//     const subStatus = await checkSubscription(profileBase.id, profileBase.schoolId)
+//     if (!subStatus.isActive) redirect('/billing?status=expired')
+
+//     // 4. Hydrate full profile
+//     //
+//     // getParentProfile  → include: { school: true, ... }
+//     // getTeacherData    → include: { school: { include: { ... } }, ... }
+//     //
+//     // Both return the full School row, which includes primaryColor and
+//     // secondaryColor once those columns exist in the schema.
+//     // Both return all Profile scalars including `theme`.
+//     let profile: AnyProfile | null = null
+
+//     if (profileBase.role === Role.PARENT) {
+//         profile = await getParentProfile(user.email) as ParentProfileInStore | null
+//     } else {
+//         profile = await getTeacherData(user.email) as ProfileInStore | null
+//     }
+
+//     if (!profile) redirect('/login?error=profile_sync_failed')
+
+//     // 5. Resolve theme
+//     //
+//     // `profile.theme` is a scalar on Profile — available after adding to schema:
+//     //   model Profile { theme String @default("light") }
+//     //
+//     // Add `theme` to your AnyProfile / ProfileInStore / ParentProfileInStore
+//     // types so TypeScript resolves it without errors.
+//     const cookieStore = await cookies()
+//     const cookieTheme = cookieStore.get('theme')?.value
+//     const isDark = resolveTheme(profile.theme, cookieTheme) === 'dark'
+
+//     // 6. Resolve school colors
+//     //
+//     // `profile.school.primaryColor` and `profile.school.secondaryColor` are
+//     // scalars on School — available after adding to schema:
+//     //   model School {
+//     //     primaryColor   String @default("#f59e0b")
+//     //     secondaryColor String @default("#1e293b")
+//     //   }
+//     //
+//     // getSchoolThemeStyle() writes the four CSS variables onto the wrapper div.
+//     // globals.css derives all scale shades from those automatically.
+//     const schoolColors = profile.school?.primaryColor && profile.school?.secondaryColor
+//         ? getSchoolThemeStyle({
+//               primary:   profile.school.primaryColor,
+//               secondary: profile.school.secondaryColor,
+//           })
+//         : {}
+
+//     // 7. Shared wrapper class — drives globals.css .dark variant
+//     const wrapperClass = isDark ? 'dark' : ''
+
+//     // 8. Parent branch — no sidebar
+//     if (profileBase.role === Role.PARENT) {
+//         return (
+//             <SchoolProvider initialProfile={profile}>
+//                 <ProfileInitializer profile={profile} />
+//                 <div
+//                     className={`min-h-screen bg-background ${wrapperClass}`.trim()}
+//                     style={schoolColors}
+//                 >
+//                     {children}
+//                 </div>
+//             </SchoolProvider>
+//         )
+//     }
+
+//     // 9. Sidebar branch — school admin, teacher, student, individual learner
+//     return (
+//         <SchoolProvider initialProfile={profile}>
+//             <ProfileInitializer profile={profile} />
+//             <SidebarProvider>
+//                 <div
+//                     className={`flex min-h-screen w-full bg-background ${wrapperClass}`.trim()}
+//                     style={schoolColors}
+//                 >
+//                     <AppSidebar />
+//                     <SidebarInset className="overflow-y-auto overflow-x-hidden bg-background border-l border-border">
+//                         <header className="flex h-12 items-center gap-2 px-4 border-b border-border sm:hidden">
+//                             <SidebarTrigger className="text-foreground" />
+//                         </header>
+//                         <main className="flex-1">
+//                             {children}
+//                         </main>
+//                     </SidebarInset>
+//                 </div>
+//             </SidebarProvider>
+//         </SchoolProvider>
+//     )
+// }
+
+
+// src/app/(dashboard)/layout.tsx
+//
+// Theme and school colors are handled by the root layout (app/layout.tsx).
+// This layout handles auth, subscription guard, sidebar structure, and
+// role-based UI branching only.
+
+// import { redirect } from 'next/navigation'
+// import { createClient } from '@/lib/supabase/server'
+// import { prisma } from '@/lib/prisma'
+// import { getTeacherData } from '@/app/actions/teacherData'
+// import { getParentProfile } from '@/app/actions/parentProfile'
+// import { SchoolProvider } from '@/context/schoolProvider'
+// import { checkSubscription } from '@/app/actions/subscription-guard'
+// import { AppSidebar } from '@/components/app-sidebar'
+// import { ProfileInitializer } from '@/components/profileInitializer'
+// import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
+// import { Role } from '@prisma/client'
+// import type {
+//     AnyProfile,
+//     ProfileInStore,
+//     ParentProfileInStore,
+// } from '@/types/profile'
+
+// // ── Role constants ─────────────────────────────────────────────────────────────
+// const ALLOWED_ROLES: Role[] = [
+//     Role.SCHOOL_ADMIN,
+//     Role.SUPER_ADMIN,
+//     Role.TEACHER,
+//     Role.STUDENT,
+//     Role.PARENT,
+//     Role.INDIVIDUAL_LEARNER,
+// ]
+
+// // ── Layout ─────────────────────────────────────────────────────────────────────
+// export default async function DashboardLayout({
+//     children,
+// }: {
+//     children: React.ReactNode
+// }) {
+//     // 1. Authenticate session
+//     const supabase = await createClient()
+//     const { data: { user } } = await supabase.auth.getUser()
+
+//     if (!user?.email) redirect('/login')
+
+//     // 2. Fetch base profile
+//     const profileBase = await prisma.profile.findFirst({
+//         where:  { email: user.email },
+//         select: { id: true, role: true, schoolId: true },
+//     })
+
+//     if (!profileBase || !ALLOWED_ROLES.includes(profileBase.role)) {
+//         redirect('/login?error=unauthorized')
+//     }
+
+//     // 3. Subscription guard
+//     const subStatus = await checkSubscription(profileBase.id, profileBase.schoolId)
+//     if (!subStatus.isActive) redirect('/billing?status=expired')
+
+//     // 4. Hydrate full profile
+//     let profile: AnyProfile | null = null
+
+//     if (profileBase.role === Role.PARENT) {
+//         profile = await getParentProfile(user.email) as ParentProfileInStore | null
+//     } else {
+//         profile = await getTeacherData(user.email) as ProfileInStore | null
+//     }
+
+//     if (!profile) redirect('/login?error=profile_sync_failed')
+
+//     // 5. Parent branch — no sidebar
+//     if (profileBase.role === Role.PARENT) {
+//         return (
+//             <SchoolProvider initialProfile={profile}>
+//                 <ProfileInitializer profile={profile} />
+//                 <div className="min-h-screen bg-background">
+//                     {children}
+//                 </div>
+//             </SchoolProvider>
+//         )
+//     }
+
+//     // 6. Sidebar branch — school admin, teacher, student, individual learner
+//     return (
+//         <SchoolProvider initialProfile={profile}>
+//             <ProfileInitializer profile={profile} />
+//             <SidebarProvider>
+//                 <div className="flex min-h-screen w-full bg-background">
+//                     <AppSidebar />
+//                     <SidebarInset className="overflow-y-auto overflow-x-hidden bg-background border-l border-border">
+//                         <header className="flex h-12 items-center gap-2 px-4 border-b border-border sm:hidden">
+//                             <SidebarTrigger className="text-foreground" />
+//                         </header>
+//                         <main className="flex-1">
+//                             {children}
+//                         </main>
+//                     </SidebarInset>
+//                 </div>
+//             </SidebarProvider>
+//         </SchoolProvider>
+//     )
+// }
+
+
+
+
+
+
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
-import { getTeacherData } from '@/app/actions/teacherData'
+import { getRegistryProfile } from '@/app/actions/profileRegistry'
 import { getParentProfile } from '@/app/actions/parentProfile'
 import { SchoolProvider } from '@/context/schoolProvider'
 import { checkSubscription } from '@/app/actions/subscription-guard'
@@ -96,98 +483,56 @@ import { AppSidebar } from '@/components/app-sidebar'
 import { ProfileInitializer } from '@/components/profileInitializer'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { Role } from '@prisma/client'
-import {
+import type {
     AnyProfile,
     ProfileInStore,
     ParentProfileInStore,
 } from '@/types/profile'
 
-// ── Role constants ─────────────────────────────────────────────────────────────
-// Added INDIVIDUAL_LEARNER to support Rule 6
-const ALLOWED_ROLES: Role[] = [
-    Role.SCHOOL_ADMIN, 
-    Role.SUPER_ADMIN, 
-    Role.TEACHER, 
-    Role.STUDENT, 
-    Role.PARENT, 
-    Role.INDIVIDUAL_LEARNER
-]
 
-const SIDEBAR_ROLES: Role[] = [
-    Role.SCHOOL_ADMIN, 
-    Role.SUPER_ADMIN, 
-    Role.TEACHER, 
-    Role.STUDENT, 
-    Role.INDIVIDUAL_LEARNER
-]
 
-// ── Layout ─────────────────────────────────────────────────────────────────────
-export default async function DashboardLayout({
-    children,
-}: {
-    children: React.ReactNode
-}) {
-    // 1. Authenticate Session
+
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+    // 1. Verify Identity (Rule 10)
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (!authUser) redirect('/login')
 
-    if (!user?.email) redirect('/login')
+    // 2. Subscription Guard (Rule 11 System Truth)
+    const profileBase = await prisma.profile.findUnique({
+        where: { id: authUser.id },
+        select: { id: true, schoolId: true, role: true }
+    });
 
-    // 2. Fetch Base Profile (Security Rule 10)
-    // FIX: Changed findUnique to findFirst to resolve the composite key TS error
-    const profileBase = await prisma.profile.findFirst({
-        where:  { email: user.email },
-        select: { id: true, role: true, schoolId: true },
-    })
+    if (!profileBase) redirect('/login');
 
-    if (!profileBase || !ALLOWED_ROLES.includes(profileBase.role)) {
-        redirect('/login?error=unauthorized')
-    }
-
-    // 3. Subscription Guard (Rule 11 System Truth)
-    // Protects all dashboard routes at once.
     const subStatus = await checkSubscription(profileBase.id, profileBase.schoolId)
+    if (!subStatus.isActive) redirect('/billing?status=expired')
 
-    if (!subStatus.isActive) {
-        // This line forces the user out of the dashboard
-        redirect('/billing?status=expired') 
-    }
+    // 3. Hydrate Full Registry Context
+    const profile = profileBase.role === Role.PARENT 
+        ? await getParentProfile(authUser.email!) 
+        : await getRegistryProfile(authUser.email!);
 
-    // 4. Hydrate Comprehensive Profile Data
-    let profile: AnyProfile | null = null
+    if (!profile) redirect('/login?error=sync_failed');
 
-    if (profileBase.role === Role.PARENT) {
-        profile = await getParentProfile(user.email) as ParentProfileInStore | null
-    } else {
-        profile = await getTeacherData(user.email) as ProfileInStore | null
-    }
-
-    if (!profile) redirect('/login?error=profile_sync_failed')
-
-    // 5. Parent UI Branch (Rule 2 - No Sidebar Layer)
-    if (profileBase.role === Role.PARENT) {
-        return (
-            <SchoolProvider initialProfile={profile}>
-                <ProfileInitializer profile={profile} />
-                <div className="min-h-screen bg-slate-950">
-                    {children}
-                </div>
-            </SchoolProvider>
-        )
-    }
-
-    // 6. Sidebar UI Branch (School & Individual Users)
     return (
-        <SchoolProvider initialProfile={profile}>
-            <ProfileInitializer profile={profile} />
+        <SchoolProvider initialProfile={profile as any}>
+            <ProfileInitializer profile={profile as any} />
             <SidebarProvider>
-                <div className="flex min-h-screen w-full bg-slate-950">
-                    <AppSidebar />
-                    <SidebarInset className="overflow-y-auto overflow-x-hidden bg-slate-950 border-l border-white/5">
-                        <header className="flex h-12 items-center gap-2 px-4 border-b border-white/5 sm:hidden">
-                            <SidebarTrigger className="text-white" />
+                <div className="flex min-h-screen w-full bg-surface">
+                    {profileBase.role !== Role.PARENT && <AppSidebar />}
+                    <SidebarInset className="bg-background">
+                        {/* Mobile Header (Hidden on Desktop) */}
+                        <header className="flex h-14 items-center gap-4 px-6 border-b border-border sm:hidden bg-card/50 backdrop-blur">
+                            <SidebarTrigger />
+                            <div className="h-4 w-px bg-border" />
+                            <p className="text-[10px] font-black uppercase tracking-widest italic truncate">
+                                {profile.school?.name || "Registry"}
+                            </p>
                         </header>
-                        <main className="flex-1">
+                        
+                        <main className="flex-1 overflow-y-auto overflow-x-hidden">
                             {children}
                         </main>
                     </SidebarInset>

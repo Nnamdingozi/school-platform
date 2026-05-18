@@ -3381,3 +3381,28 @@ export async function submitExam(
     }
 }
 
+
+
+export async function deleteExam(examId: string, teacherId: string) {
+  try {
+    const exam = await prisma.exam.findUnique({
+      where: { id: examId },
+      include: { _count: { select: { assessments: true } } }
+    })
+
+    if (!exam) throw new Error("Exam not found")
+    if (exam.creatorId !== teacherId) throw new Error("Unauthorized")
+    if (exam._count.assessments > 0) throw new Error("Cannot delete exam. Students have already taken it.")
+
+    await prisma.$transaction(async (tx) => {
+      await tx.examQuestion.deleteMany({ where: { examId } })
+      await tx.examSubmission.deleteMany({ where: { examId } })
+      await tx.exam.delete({ where: { id: examId } })
+    })
+
+    revalidatePath("/teacher/assessment")
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: getErrorMessage(err) }
+  }
+}

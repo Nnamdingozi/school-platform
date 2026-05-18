@@ -1,47 +1,146 @@
-import { GraduationCap } from "lucide-react";
+// import { GraduationCap } from "lucide-react";
+
+// const footerLinks = {
+//   Product: ["Features", "Pricing", "Curriculums", "Integrations"],
+//   Company: ["About", "Blog", "Careers", "Contact"],
+//   Resources: ["Documentation", "Help Center", "Community", "Status"],
+//   Legal: ["Privacy Policy", "Terms of Service", "Cookie Policy"],
+// };
+
+// export function Footer() {
+//   return (
+//     <footer className="border-t border-border bg-card">
+//       <div className="mx-auto max-w-7xl px-6 py-16">
+//         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
+//           {/* Brand */}
+//           <div className="lg:col-span-1">
+//             <a href="#" className="flex items-center gap-2">
+//               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
+//                 <GraduationCap className="h-5 w-5 text-primary-foreground" />
+//               </div>
+//               <span className="text-lg font-bold text-foreground">
+//                 SchoolPlatform
+//               </span>
+//             </a>
+//             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+//               AI-powered education for every school, teacher, and learner.
+//             </p>
+//           </div>
+
+//           {/* Links */}
+//           {Object.entries(footerLinks).map(([category, links]) => (
+//             <div key={category}>
+//               <h4 className="mb-4 text-sm font-semibold text-foreground">
+//                 {category}
+//               </h4>
+//               <ul className="flex flex-col gap-3">
+//                 {links.map((link) => (
+//                   <li key={link}>
+//                     <a
+//                       href="#"
+//                       className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+//                     >
+//                       {link}
+//                     </a>
+//                   </li>
+//                 ))}
+//               </ul>
+//             </div>
+//           ))}
+//         </div>
+
+//         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 md:flex-row">
+//           <p className="text-sm text-muted-foreground">
+//             {"2026 SchoolPlatform. All rights reserved."}
+//           </p>
+//           <div className="flex gap-6">
+//             <a
+//               href="#"
+//               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+//             >
+//               Twitter
+//             </a>
+//             <a
+//               href="#"
+//               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+//             >
+//               LinkedIn
+//             </a>
+//             <a
+//               href="#"
+//               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+//             >
+//               GitHub
+//             </a>
+//           </div>
+//         </div>
+//       </div>
+//     </footer>
+//   );
+// }
+
+
+import { GraduationCap, ShieldCheck, Globe } from "lucide-react";
+import Link from "next/link";
+
+// ── Configuration: Navigation Matrix ──────────────────────────────────────────
 
 const footerLinks = {
-  Product: ["Features", "Pricing", "Curriculums", "Integrations"],
-  Company: ["About", "Blog", "Careers", "Contact"],
-  Resources: ["Documentation", "Help Center", "Community", "Status"],
-  Legal: ["Privacy Policy", "Terms of Service", "Cookie Policy"],
+  Registry: ["Features", "Pricing", "Curriculums", "Synthesis Engine"],
+  Institution: ["Onboarding", "CBT Registry", "WhatsApp Bridge", "Staff Management"],
+  Individual: ["Personal Library", "Study Hub", "Practice Tests", "Individual Tiers"],
+  Legal: ["Privacy Protocol", "Terms of Service", "Cookie Registry"],
 };
 
+/**
+ * PUBLIC FOOTER (Tier 0)
+ * Rule 11: Standardizes the "Registry" aesthetic with black/italic/uppercase headers.
+ * Rule 12: Pure Server Component for maximum performance.
+ */
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="border-t border-border bg-card">
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
-          {/* Brand */}
-          <div className="lg:col-span-1">
-            <a href="#" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-                <GraduationCap className="h-5 w-5 text-primary-foreground" />
+    <footer className="border-t border-white/5 bg-slate-950">
+      <div className="mx-auto max-w-7xl px-6 py-20">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-6">
+          
+          {/* ── BRAND IDENTITY ── */}
+          <div className="lg:col-span-2 space-y-6">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-school-primary shadow-lg shadow-school-primary/20">
+                <GraduationCap className="h-6 w-6 text-slate-950" strokeWidth={2.5} />
               </div>
-              <span className="text-lg font-bold text-foreground">
-                SchoolPlatform
+              <span className="text-2xl font-black text-white uppercase italic tracking-tighter">
+                SchoolPaaS
               </span>
-            </a>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              AI-powered education for every school, teacher, and learner.
+            </Link>
+            <p className="text-sm font-bold leading-relaxed text-slate-500 uppercase tracking-widest italic max-w-xs">
+              The Multicurricular AI Academic Registry for modern institutions and self-paced learners.
             </p>
+            
+            {/* System Status Node */}
+            <div className="inline-flex items-center gap-2 rounded-xl border border-white/5 bg-slate-900 px-4 py-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">System Status: Optimal</span>
+            </div>
           </div>
 
-          {/* Links */}
+          {/* ── NAVIGATION LINKS ── */}
           {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="mb-4 text-sm font-semibold text-foreground">
+            <div key={category} className="space-y-6">
+              <h4 className="text-[11px] font-black text-white uppercase tracking-[0.2em] italic">
                 {category}
               </h4>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-4">
                 {links.map((link) => (
                   <li key={link}>
-                    <a
+                    <Link
                       href="#"
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em] transition-all hover:text-school-primary hover:translate-x-1 inline-block"
                     >
                       {link}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -49,30 +148,37 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 md:flex-row">
-          <p className="text-sm text-muted-foreground">
-            {"2026 SchoolPlatform. All rights reserved."}
-          </p>
-          <div className="flex gap-6">
-            <a
-              href="#"
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Twitter
-            </a>
-            <a
-              href="#"
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              LinkedIn
-            </a>
-            <a
-              href="#"
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              GitHub
-            </a>
+        {/* ── BOTTOM BAR ── */}
+        <div className="mt-20 flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-10 md:flex-row">
+          <div className="flex items-center gap-4">
+              <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.3em]">
+                &copy; {currentYear} SchoolPaaS Registry
+              </p>
+              <div className="h-1 w-1 rounded-full bg-slate-800" />
+              <div className="flex items-center gap-2">
+                 <ShieldCheck className="h-3 w-3 text-slate-800" />
+                 <span className="text-[9px] font-bold text-slate-800 uppercase tracking-widest">Tier-3 Encrypted</span>
+              </div>
           </div>
+
+          <div className="flex gap-8">
+            {["Twitter", "LinkedIn", "GitHub"].map((social) => (
+                <Link
+                  key={social}
+                  href="#"
+                  className="text-[10px] font-black text-slate-600 uppercase tracking-widest transition-colors hover:text-white"
+                >
+                  {social}
+                </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Support Regions */}
+        <div className="mt-10 flex justify-center items-center gap-6 opacity-20">
+            <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.5em] flex items-center gap-2">
+                <Globe className="h-3 w-3" /> Deploying Logic Across: UK • US • NG • GH
+            </span>
         </div>
       </div>
     </footer>

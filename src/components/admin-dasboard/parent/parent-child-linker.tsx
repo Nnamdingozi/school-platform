@@ -931,297 +931,297 @@
 
 
 
-'use client';
+// 'use client';
 
-import { useState } from 'react';
-import {
-  Loader2,
-  X,
-  Plus,
-  User,
-  GraduationCap,
-  Trash2,
-  Info,
-  CheckCircle2,
-  XCircle,
-} from 'lucide-react';
-import { useProfileStore } from '@/store/profileStore';
-import {
-  bulkLinkParentsAndChildren,
-  type ParentChildLinkInput,
-  type ParentChildLinkResult,
-} from '@/app/actions/parent-linking';
-import { UserSearchInput } from '@/components/admin-dasboard/user-searchInput';
-import { CSVImporter } from '@/components/shared/CSVImporter';
-import { CSVTemplateButton } from '@/components/shared/CSVTemplateButton';
-import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
-import { Role } from '@prisma/client';
+// import { useState } from 'react';
+// import {
+//   Loader2,
+//   X,
+//   Plus,
+//   User,
+//   GraduationCap,
+//   Trash2,
+//   Info,
+//   CheckCircle2,
+//   XCircle,
+// } from 'lucide-react';
+// import { useProfileStore } from '@/store/profileStore';
+// import {
+//   bulkLinkParentsAndChildren,
+//   type ParentChildLinkInput,
+//   type ParentChildLinkResult,
+// } from '@/app/actions/parent-linking';
+// import { UserSearchInput } from '@/components/admin-dasboard/user-searchInput';
+// import { CSVImporter } from '@/components/shared/CSVImporter';
+// import { CSVTemplateButton } from '@/components/shared/CSVTemplateButton';
+// import { toast } from 'sonner';
+// import { cn } from '@/lib/utils';
+// import { Role } from '@prisma/client';
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// // ── Types ──────────────────────────────────────────────────────────────────────
 
-type RowStatus = 'idle' | 'linking' | 'linked' | 'error';
+// type RowStatus = 'idle' | 'linking' | 'linked' | 'error';
 
-interface ChildEntry { 
-    id: string; 
-    email: string; 
-    status: RowStatus; 
-    message?: string; 
-}
+// interface ChildEntry { 
+//     id: string; 
+//     email: string; 
+//     status: RowStatus; 
+//     message?: string; 
+// }
 
-interface ParentGroup { 
-    id: string; 
-    parentEmail: string; 
-    children: ChildEntry[]; 
-}
+// interface ParentGroup { 
+//     id: string; 
+//     parentEmail: string; 
+//     children: ChildEntry[]; 
+// }
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// // ── Helpers ────────────────────────────────────────────────────────────────────
 
-const makeChild = (email = ''): ChildEntry => ({ id: crypto.randomUUID(), email, status: 'idle' });
-const makeGroup = (parentEmail = '', childEmails: string[] = ['']): ParentGroup => ({
-  id: crypto.randomUUID(),
-  parentEmail,
-  children: childEmails.map(email => makeChild(email)),
-});
+// const makeChild = (email = ''): ChildEntry => ({ id: crypto.randomUUID(), email, status: 'idle' });
+// const makeGroup = (parentEmail = '', childEmails: string[] = ['']): ParentGroup => ({
+//   id: crypto.randomUUID(),
+//   parentEmail,
+//   children: childEmails.map(email => makeChild(email)),
+// });
 
-// ── Main Component ─────────────────────────────────────────────────────────────
+// // ── Main Component ─────────────────────────────────────────────────────────────
 
-/**
- * INSTITUTIONAL FAMILY MAPPING (Tier 2)
- * Rule 17: Uses Zustand to avoid prop drilling schoolId and branding.
- * Rule 6: This component should be gated to Admins only.
- */
-export function ParentChildLinker() {
-  const { profile } = useProfileStore();
-  const schoolId = profile?.schoolId ?? '';
-  const primaryColor = profile?.primaryColor || "#f59e0b";
-  const userRole = (profile?.role as Role) || Role.TEACHER;
+// /**
+//  * INSTITUTIONAL FAMILY MAPPING (Tier 2)
+//  * Rule 17: Uses Zustand to avoid prop drilling schoolId and branding.
+//  * Rule 6: This component should be gated to Admins only.
+//  */
+// export function ParentChildLinker() {
+//   const { profile } = useProfileStore();
+//   const schoolId = profile?.schoolId ?? '';
+//   const primaryColor = profile?.primaryColor || "#f59e0b";
+//   const userRole = (profile?.role as Role) || Role.TEACHER;
 
-  const [groups, setGroups] = useState<ParentGroup[]>([makeGroup()]);
-  const [submitting, setSubmitting] = useState(false);
+//   const [groups, setGroups] = useState<ParentGroup[]>([makeGroup()]);
+//   const [submitting, setSubmitting] = useState(false);
 
-  // ── Handlers ──
+//   // ── Handlers ──
 
-  const removeParentGroup = (groupId: string) => {
-    if (groups.length > 1) setGroups(groups.filter(g => g.id !== groupId));
-  };
+//   const removeParentGroup = (groupId: string) => {
+//     if (groups.length > 1) setGroups(groups.filter(g => g.id !== groupId));
+//   };
 
-  const updateParentEmail = (groupId: string, email: string) => {
-    setGroups(groups.map(g => g.id === groupId ? { ...g, parentEmail: email } : g));
-  };
+//   const updateParentEmail = (groupId: string, email: string) => {
+//     setGroups(groups.map(g => g.id === groupId ? { ...g, parentEmail: email } : g));
+//   };
 
-  const addChildToGroup = (groupId: string) => {
-    setGroups(groups.map(g => g.id === groupId ? { ...g, children: [...g.children, makeChild()] } : g));
-  };
+//   const addChildToGroup = (groupId: string) => {
+//     setGroups(groups.map(g => g.id === groupId ? { ...g, children: [...g.children, makeChild()] } : g));
+//   };
 
-  const updateChildEmail = (groupId: string, childId: string, email: string) => {
-    setGroups(groups.map(g => g.id === groupId ? {
-      ...g, children: g.children.map(c => c.id === childId ? { ...c, email, status: 'idle' } : c)
-    } : g));
-  };
+//   const updateChildEmail = (groupId: string, childId: string, email: string) => {
+//     setGroups(groups.map(g => g.id === groupId ? {
+//       ...g, children: g.children.map(c => c.id === childId ? { ...c, email, status: 'idle' } : c)
+//     } : g));
+//   };
 
-  /**
-   * Process parsed CSV rows into the Grouped UI (Rule 11 System Truth)
-   */
-  const handleCsvData = (rows: Record<string, string>[]) => {
-    const aggregation = new Map<string, string[]>();
+//   /**
+//    * Process parsed CSV rows into the Grouped UI (Rule 11 System Truth)
+//    */
+//   const handleCsvData = (rows: Record<string, string>[]) => {
+//     const aggregation = new Map<string, string[]>();
     
-    rows.forEach(row => {
-      const p = (row.parent_email || row.parentEmail || row.parent || '').trim().toLowerCase();
-      const c = (row.child_email || row.childEmail || row.student || '').trim().toLowerCase();
+//     rows.forEach(row => {
+//       const p = (row.parent_email || row.parentEmail || row.parent || '').trim().toLowerCase();
+//       const c = (row.child_email || row.childEmail || row.student || '').trim().toLowerCase();
       
-      if (p) {
-        const existing = aggregation.get(p) || [];
-        if (c) existing.push(c);
-        aggregation.set(p, existing);
-      }
-    });
+//       if (p) {
+//         const existing = aggregation.get(p) || [];
+//         if (c) existing.push(c);
+//         aggregation.set(p, existing);
+//       }
+//     });
 
-    const newGroups = Array.from(aggregation.entries()).map(([pEmail, cEmails]) => 
-      makeGroup(pEmail, cEmails.length > 0 ? cEmails : [''])
-    );
+//     const newGroups = Array.from(aggregation.entries()).map(([pEmail, cEmails]) => 
+//       makeGroup(pEmail, cEmails.length > 0 ? cEmails : [''])
+//     );
 
-    if (newGroups.length > 0) {
-      setGroups(newGroups);
-      toast.success(`Aggregated ${newGroups.length} unique family structures.`);
-    }
-  };
+//     if (newGroups.length > 0) {
+//       setGroups(newGroups);
+//       toast.success(`Aggregated ${newGroups.length} unique family structures.`);
+//     }
+//   };
 
-  /**
-   * Submit to Backend (Rule 10 Security)
-   */
-  const handleLinkAll = async () => {
-    if (!schoolId) return toast.error("Institutional context missing.");
-    setSubmitting(true);
+//   /**
+//    * Submit to Backend (Rule 10 Security)
+//    */
+//   const handleLinkAll = async () => {
+//     if (!schoolId) return toast.error("Institutional context missing.");
+//     setSubmitting(true);
     
-    const payload: ParentChildLinkInput[] = [];
-    groups.forEach(g => g.children.forEach(c => {
-        if (g.parentEmail && c.email) {
-            payload.push({ parentEmail: g.parentEmail, childEmail: c.email });
-        }
-    }));
+//     const payload: ParentChildLinkInput[] = [];
+//     groups.forEach(g => g.children.forEach(c => {
+//         if (g.parentEmail && c.email) {
+//             payload.push({ parentEmail: g.parentEmail, childEmail: c.email });
+//         }
+//     }));
 
-    if (payload.length === 0) {
-        toast.error("No valid pairs identified.");
-        setSubmitting(false);
-        return;
-    }
+//     if (payload.length === 0) {
+//         toast.error("No valid pairs identified.");
+//         setSubmitting(false);
+//         return;
+//     }
 
-    setGroups(groups.map(g => ({ ...g, children: g.children.map(c => ({ ...c, status: 'linking' })) })));
+//     setGroups(groups.map(g => ({ ...g, children: g.children.map(c => ({ ...c, status: 'linking' })) })));
     
-    // Action call
-    const results: ParentChildLinkResult[] = await bulkLinkParentsAndChildren(payload, schoolId, profile!.id, userRole);
+//     // Action call
+//     const results: ParentChildLinkResult[] = await bulkLinkParentsAndChildren(payload, schoolId, profile!.id, userRole);
 
-    let idx = 0;
-    setGroups(groups.map(g => ({
-      ...g, children: g.children.map(c => {
-        const res = results[idx++];
-        return { 
-            ...c, 
-            status: res.success ? 'linked' : 'error', 
-            message: res.message 
-        };
-      })
-    })));
-    setSubmitting(false);
-  };
+//     let idx = 0;
+//     setGroups(groups.map(g => ({
+//       ...g, children: g.children.map(c => {
+//         const res = results[idx++];
+//         return { 
+//             ...c, 
+//             status: res.success ? 'linked' : 'error', 
+//             message: res.message 
+//         };
+//       })
+//     })));
+//     setSubmitting(false);
+//   };
 
-  return (
-    <section className="space-y-6">
-      {/* ── Instructions ── */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 border border-white/5 rounded-[2rem] p-8 shadow-xl">
-        <div className="flex items-start gap-4">
-          <div className="p-3 bg-slate-950 rounded-xl border border-white/5">
-            <Info className="h-6 w-6 text-school-primary" style={{ color: primaryColor }} />
-          </div>
-          <div className="space-y-1">
-            <h3 className="text-sm font-black uppercase tracking-widest text-white italic">Family Relationship Linker</h3>
-            <p className="text-[10px] text-slate-500 uppercase font-bold leading-relaxed max-w-xl">
-              Connect guardian accounts to students. Duplicate parent rows in CSV uploads are automatically grouped into single family blocks.
-            </p>
-          </div>
-        </div>
+//   return (
+//     <section className="space-y-6">
+//       {/* ── Instructions ── */}
+//       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 border border-white/5 rounded-[2rem] p-8 shadow-xl">
+//         <div className="flex items-start gap-4">
+//           <div className="p-3 bg-slate-950 rounded-xl border border-white/5">
+//             <Info className="h-6 w-6 text-school-primary" style={{ color: primaryColor }} />
+//           </div>
+//           <div className="space-y-1">
+//             <h3 className="text-sm font-black uppercase tracking-widest text-white italic">Family Relationship Linker</h3>
+//             <p className="text-[10px] text-slate-500 uppercase font-bold leading-relaxed max-w-xl">
+//               Connect guardian accounts to students. Duplicate parent rows in CSV uploads are automatically grouped into single family blocks.
+//             </p>
+//           </div>
+//         </div>
 
-        <CSVTemplateButton 
-           fileName="parent_student_links"
-           headers={["parent_email", "child_email"]}
-           sampleRow={["guardian@example.com", "student@example.com"]}
-           className="bg-slate-950 border-white/10"
-        />
-      </div>
+//         <CSVTemplateButton 
+//            fileName="parent_student_links"
+//            headers={["parent_email", "child_email"]}
+//            sampleRow={["guardian@example.com", "student@example.com"]}
+//            className="bg-slate-950 border-white/10"
+//         />
+//       </div>
 
-      {/* ── CSV Importer ── */}
-      <CSVImporter 
-        title="Batch Family Import"
-        description="Dataset must contain parent_email and child_email columns."
-        expectedHeaders={["parent_email", "child_email"]}
-        onDataUpload={(data) => handleCsvData(data as Record<string, string>[])}
-      />
+//       {/* ── CSV Importer ── */}
+//       <CSVImporter 
+//         title="Batch Family Import"
+//         description="Dataset must contain parent_email and child_email columns."
+//         expectedHeaders={["parent_email", "child_email"]}
+//         onDataUpload={(data) => handleCsvData(data as Record<string, string>[])}
+//       />
 
-      {/* ── Interface ── */}
-      <div className="space-y-4">
-        {groups.map((group) => (
-          <div key={group.id} className="bg-slate-900 border border-white/5 rounded-[2rem] p-8 relative group shadow-2xl">
-            <button 
-                onClick={() => removeParentGroup(group.id)}
-                className="absolute top-6 right-6 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
-            >
-                <Trash2 className="h-4 w-4" />
-            </button>
+//       {/* ── Interface ── */}
+//       <div className="space-y-4">
+//         {groups.map((group) => (
+//           <div key={group.id} className="bg-slate-900 border border-white/5 rounded-[2rem] p-8 relative group shadow-2xl">
+//             <button 
+//                 onClick={() => removeParentGroup(group.id)}
+//                 className="absolute top-6 right-6 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
+//             >
+//                 <Trash2 className="h-4 w-4" />
+//             </button>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_2fr] gap-10">
-              {/* Guardian Search */}
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2" style={{ color: primaryColor }}>
-                  <User className="h-3 w-3" /> Guardian Account
-                </label>
-                <UserSearchInput 
-                  role="PARENT" 
-                  schoolId={schoolId} 
-                  placeholder="Query guardian registry..."
-                  value={group.parentEmail}
-                  onSelect={(email) => updateParentEmail(group.id, email)}
-                />
-              </div>
+//             <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_2fr] gap-10">
+//               {/* Guardian Search */}
+//               <div className="space-y-3">
+//                 <label className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2" style={{ color: primaryColor }}>
+//                   <User className="h-3 w-3" /> Guardian Account
+//                 </label>
+//                 <UserSearchInput 
+//                   role="PARENT" 
+//                   schoolId={schoolId} 
+//                   placeholder="Query guardian registry..."
+//                   value={group.parentEmail}
+//                   onSelect={(email) => updateParentEmail(group.id, email)}
+//                 />
+//               </div>
 
-              {/* Student List */}
-              <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                  <GraduationCap className="h-3 w-3" /> Student Assignments
-                </label>
+//               {/* Student List */}
+//               <div className="space-y-4">
+//                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+//                   <GraduationCap className="h-3 w-3" /> Student Assignments
+//                 </label>
                 
-                <div className="space-y-3">
-                  {group.children.map((child) => (
-                    <div key={child.id} className="space-y-1">
-                        <div className="flex gap-2 items-center group/row">
-                            <div className="relative flex-1">
-                                <UserSearchInput 
-                                    role="STUDENT" 
-                                    schoolId={schoolId} 
-                                    placeholder="Query student registry..."
-                                    value={child.email}
-                                    onSelect={(email) => updateChildEmail(group.id, child.id, email)}
-                                />
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                    {child.status === 'linking' && <Loader2 className="h-3 w-3 animate-spin text-school-primary" style={{ color: primaryColor }} />}
-                                    {child.status === 'linked' && <CheckCircle2 className="h-3 w-3 text-emerald-500" />}
-                                    {child.status === 'error' && <XCircle className="h-3 w-3 text-red-500" />}
-                                </div>
-                            </div>
-                            <button 
-                                onClick={() => setGroups(groups.map(g => g.id === group.id ? {...g, children: g.children.filter(c => c.id !== child.id)} : g))}
-                                className="p-3 text-slate-700 hover:text-red-400 opacity-0 group-hover/row:opacity-100 transition-colors"
-                            >
-                                <X className="h-4 w-4" />
-                            </button>
-                        </div>
-                        {child.message && (
-                            <p className={cn(
-                                "text-[9px] font-bold ml-1 uppercase tracking-tight",
-                                child.status === 'error' ? "text-red-400" : "text-emerald-400"
-                            )}>
-                                {child.message}
-                            </p>
-                        )}
-                    </div>
-                  ))}
-                </div>
+//                 <div className="space-y-3">
+//                   {group.children.map((child) => (
+//                     <div key={child.id} className="space-y-1">
+//                         <div className="flex gap-2 items-center group/row">
+//                             <div className="relative flex-1">
+//                                 <UserSearchInput 
+//                                     role="STUDENT" 
+//                                     schoolId={schoolId} 
+//                                     placeholder="Query student registry..."
+//                                     value={child.email}
+//                                     onSelect={(email) => updateChildEmail(group.id, child.id, email)}
+//                                 />
+//                                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
+//                                     {child.status === 'linking' && <Loader2 className="h-3 w-3 animate-spin text-school-primary" style={{ color: primaryColor }} />}
+//                                     {child.status === 'linked' && <CheckCircle2 className="h-3 w-3 text-emerald-500" />}
+//                                     {child.status === 'error' && <XCircle className="h-3 w-3 text-red-500" />}
+//                                 </div>
+//                             </div>
+//                             <button 
+//                                 onClick={() => setGroups(groups.map(g => g.id === group.id ? {...g, children: g.children.filter(c => c.id !== child.id)} : g))}
+//                                 className="p-3 text-slate-700 hover:text-red-400 opacity-0 group-hover/row:opacity-100 transition-colors"
+//                             >
+//                                 <X className="h-4 w-4" />
+//                             </button>
+//                         </div>
+//                         {child.message && (
+//                             <p className={cn(
+//                                 "text-[9px] font-bold ml-1 uppercase tracking-tight",
+//                                 child.status === 'error' ? "text-red-400" : "text-emerald-400"
+//                             )}>
+//                                 {child.message}
+//                             </p>
+//                         )}
+//                     </div>
+//                   ))}
+//                 </div>
 
-                <button 
-                    onClick={() => addChildToGroup(group.id)} 
-                    className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 hover:scale-105 transition-all"
-                    style={{ color: primaryColor }}
-                >
-                  <Plus className="h-3.5 w-3.5" /> Add Another Dependent
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+//                 <button 
+//                     onClick={() => addChildToGroup(group.id)} 
+//                     className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 hover:scale-105 transition-all"
+//                     style={{ color: primaryColor }}
+//                 >
+//                   <Plus className="h-3.5 w-3.5" /> Add Another Dependent
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
 
-      {/* Footer Actions */}
-      <footer className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-white/5 pt-8 px-6">
-        <button 
-          onClick={() => setGroups([...groups, makeGroup()])} 
-          className="flex items-center gap-2 text-slate-500 hover:text-white text-[10px] font-bold uppercase tracking-[0.2em] transition-all"
-        >
-          <Plus className="h-4 w-4" /> Add Master Family Block
-        </button>
+//       {/* Footer Actions */}
+//       <footer className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-white/5 pt-8 px-6">
+//         <button 
+//           onClick={() => setGroups([...groups, makeGroup()])} 
+//           className="flex items-center gap-2 text-slate-500 hover:text-white text-[10px] font-bold uppercase tracking-[0.2em] transition-all"
+//         >
+//           <Plus className="h-4 w-4" /> Add Master Family Block
+//         </button>
 
-        <button
-          onClick={handleLinkAll}
-          disabled={submitting}
-          className="w-full sm:w-auto text-slate-950 font-black text-[10px] uppercase tracking-widest px-10 py-4 rounded-xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-30 shadow-xl"
-          style={{ backgroundColor: primaryColor }}
-        >
-          {submitting ? (
-             <span className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" /> Synchronizing...
-             </span>
-          ) : "Confirm All Linkages"}
-        </button>
-      </footer>
-    </section>
-  );
-}
+//         <button
+//           onClick={handleLinkAll}
+//           disabled={submitting}
+//           className="w-full sm:w-auto text-slate-950 font-black text-[10px] uppercase tracking-widest px-10 py-4 rounded-xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-30 shadow-xl"
+//           style={{ backgroundColor: primaryColor }}
+//         >
+//           {submitting ? (
+//              <span className="flex items-center gap-2">
+//                 <Loader2 className="h-4 w-4 animate-spin" /> Synchronizing...
+//              </span>
+//           ) : "Confirm All Linkages"}
+//         </button>
+//       </footer>
+//     </section>
+//   );
+// }

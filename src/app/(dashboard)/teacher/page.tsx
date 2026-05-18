@@ -428,7 +428,7 @@
 
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { getTeacherData } from "@/app/actions/teacherData";
+import { getRegistryProfile } from "@/app/actions/profileRegistry";
 import { type ProfileInStore } from '@/types/profile';
 import TeacherDashboardContent from "@/components/TeacherDashboard/teacherDashBoardContent";
 import { type DashboardSubject } from '@/store/teacherDataStore';
@@ -444,7 +444,7 @@ export default async function TeacherDashboardPage() {
       redirect('/login');
     }
 
-    const teacherData = await getTeacherData(user.email!);
+    const teacherData = await getRegistryProfile(user.email!);
 
     if (!teacherData || teacherData.role !== 'TEACHER') {
         // Log the denial if necessary and redirect

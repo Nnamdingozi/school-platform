@@ -873,8 +873,8 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { getAnalyticsData, getUnassignedStudents } from "@/app/_actions/analytics-actions";
-import { AnalyticsHubClient } from "@/components/admin/AnalyticsHubClient";
+import { getAnalyticsData, getUnassignedStudents } from "@/app/actions/analytics.action";
+import { AnalyticsHubClient } from "@/components/admin-dasboard/analytics/analyticDashboardClient";
 import { Role } from "@prisma/client";
 
 /**

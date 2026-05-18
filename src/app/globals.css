@@ -1,151 +1,278 @@
-/* 1. IMPORTS FIRST */
+/* ============================================================
+   globals.css
+   Strategy:
+   - School primary / secondary are set via JS at runtime on <html>
+     using CSS custom properties: --school-primary-raw and
+     --school-secondary-raw (plain hex or oklch values).
+   - All derived shades + foreground tokens are computed here via
+     color-mix(), so contrast is always relative to the base color.
+   - Foreground tokens use oklch lightness to ensure WCAG AA contrast:
+     dark text on light backgrounds, light text on dark backgrounds.
+   - Dark mode flips surface/background tokens; school brand colors
+     are kept but adjusted for dark surfaces.
+   ============================================================ */
+
+/* 1. IMPORTS */
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
-/* 2. THEME REGISTRATION */
+/* ============================================================
+   2. THEME REGISTRATION
+   Maps every CSS variable to a Tailwind utility class.
+   ============================================================ */
 @theme {
-  /* Mapping standard Shadcn variables */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  
-  /* Mapping for @apply border-border */
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  /* Shadcn standard tokens */
+  --color-background:            var(--background);
+  --color-foreground:            var(--foreground);
+  --color-card:                  var(--card);
+  --color-card-foreground:       var(--card-foreground);
+  --color-popover:               var(--popover);
+  --color-popover-foreground:    var(--popover-foreground);
+  --color-primary:               var(--primary);
+  --color-primary-foreground:    var(--primary-foreground);
+  --color-secondary:             var(--secondary);
+  --color-secondary-foreground:  var(--secondary-foreground);
+  --color-muted:                 var(--muted);
+  --color-muted-foreground:      var(--muted-foreground);
+  --color-accent:                var(--accent);
+  --color-accent-foreground:     var(--accent-foreground);
+  --color-destructive:           var(--destructive);
+  --color-destructive-foreground:var(--destructive-foreground);
+  --color-border:                var(--border);
+  --color-input:                 var(--input);
+  --color-ring:                  var(--ring);
 
-  /* Mapping School Colors */
-  --color-school-primary: var(--school-primary);
-  --color-school-primary-50: var(--school-primary-50);
-  --color-school-primary-100: var(--school-primary-100);
-  --color-school-primary-600: var(--school-primary-600);
-  --color-school-primary-900: var(--school-primary-900);
+  /* ── School primary scale ── */
+  --color-school-primary:            var(--school-primary);
+  --color-school-primary-foreground: var(--school-primary-foreground);
+  --color-school-primary-50:         var(--school-primary-50);
+  --color-school-primary-100:        var(--school-primary-100);
+  --color-school-primary-200:        var(--school-primary-200);
+  --color-school-primary-300:        var(--school-primary-300);
+  --color-school-primary-400:        var(--school-primary-400);
+  --color-school-primary-500:        var(--school-primary-500);
+  --color-school-primary-600:        var(--school-primary-600);
+  --color-school-primary-700:        var(--school-primary-700);
+  --color-school-primary-800:        var(--school-primary-800);
+  --color-school-primary-900:        var(--school-primary-900);
+  --color-school-primary-950:        var(--school-primary-950);
 
-  --color-school-secondary: var(--school-secondary);
-  --color-school-secondary-50: var(--school-secondary-50);
-  --color-school-secondary-100: var(--school-secondary-100);
-  --color-school-secondary-800: var(--school-secondary-800);
-  --color-school-secondary-950: var(--school-secondary-950);
+  /* ── School secondary scale ── */
+  --color-school-secondary:            var(--school-secondary);
+  --color-school-secondary-foreground: var(--school-secondary-foreground);
+  --color-school-secondary-50:         var(--school-secondary-50);
+  --color-school-secondary-100:        var(--school-secondary-100);
+  --color-school-secondary-200:        var(--school-secondary-200);
+  --color-school-secondary-300:        var(--school-secondary-300);
+  --color-school-secondary-400:        var(--school-secondary-400);
+  --color-school-secondary-500:        var(--school-secondary-500);
+  --color-school-secondary-600:        var(--school-secondary-600);
+  --color-school-secondary-700:        var(--school-secondary-700);
+  --color-school-secondary-800:        var(--school-secondary-800);
+  --color-school-secondary-900:        var(--school-secondary-900);
+  --color-school-secondary-950:        var(--school-secondary-950);
 
-  --color-school-primary-200: var(--school-primary-200);
---color-school-primary-300: var(--school-primary-300);
---color-school-primary-500: var(--school-primary-500);
---color-school-primary-700: var(--school-primary-700);
---color-school-primary-800: var(--school-primary-800);
---color-school-primary-950: var(--school-primary-950);
-
-/* Missing school-secondary registrations */
---color-school-secondary-200: var(--school-secondary-200);
---color-school-secondary-300: var(--school-secondary-300);
---color-school-secondary-400: var(--school-secondary-400);
---color-school-secondary-500: var(--school-secondary-500);
---color-school-secondary-600: var(--school-secondary-600);
---color-school-secondary-700: var(--school-secondary-700);
---color-school-secondary-900: var(--school-secondary-900);
-
-  /* Radius mapping */
+  /* Radius */
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  /* Page surface — very light gray in light mode, deep dark in dark mode.
+     Use this for full-page backgrounds (landing, dashboard canvas).
+     Sits one step below --background (pure white) so cards/panels
+     on top of it have visible lift. */
+  --color-surface: var(--surface);
 }
 
-/* 3. VARIABLE DEFINITIONS */
+/* ============================================================
+   3. LIGHT MODE VARIABLE DEFINITIONS  (:root)
+   ============================================================ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(1 0 0);
+  /* ── Shadcn surface tokens ── */
+  --background:              oklch(1 0 0);
+  --foreground:              oklch(0.129 0.042 264.695);
+  --card:                    oklch(1 0 0);
+  --card-foreground:         oklch(0.129 0.042 264.695);
+  --popover:                 oklch(1 0 0);
+  --popover-foreground:      oklch(0.129 0.042 264.695);
+  --primary:                 oklch(0.208 0.042 265.755);
+  --primary-foreground:      oklch(0.984 0.003 247.858);
+  --secondary:               oklch(0.968 0.007 247.896);
+  --secondary-foreground:    oklch(0.208 0.042 265.755);
+  --muted:                   oklch(0.968 0.007 247.896);
+  --muted-foreground:        oklch(0.554 0.046 257.417);
+  --accent:                  oklch(0.968 0.007 247.896);
+  --accent-foreground:       oklch(0.208 0.042 265.755);
+  --destructive:             oklch(0.577 0.245 27.325);
+  --destructive-foreground:  oklch(1 0 0);
+  --border:                  oklch(0.929 0.013 255.508);
+  --input:                   oklch(0.929 0.013 255.508);
+  --ring:                    oklch(0.704 0.04 256.788);
+  --radius:                  0.625rem;
 
+  /* Page surface — almost white, just enough gray to distinguish
+     it from pure-white cards/panels sitting on top of it.
+     Use bg-surface on page wrappers instead of bg-white or bg-background. */
+  --surface: oklch(0.97 0.002 264);
 
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --radius: 0.625rem;
+  /* ── Default school brand colors (overridden at runtime via JS) ──
+     Schools set --school-primary-raw and --school-secondary-raw on
+     the <html> element. If they haven't been set yet, these fallbacks
+     are used. The *-raw variables are the "pure" brand color; the
+     named aliases below are what components actually consume.
+  ── */
+  --school-primary-raw:   #f59e0b;
+  --school-secondary-raw: #1e293b;
 
-  @layer utilities {
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
-  
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: transparent;
-    }
-  
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background-color: rgb(51 65 85 / 0.4); /* slate-700/40 */
-      border-radius: 9999px;
-    }
-  
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background-color: rgb(51 65 85 / 0.7);
-    }
-  
-    /* Firefox */
-    .custom-scrollbar {
-      scrollbar-width: thin;
-      scrollbar-color: rgb(51 65 85 / 0.4) transparent;
-    }
-  }
+  /* Alias so components always use --school-primary */
+  --school-primary:   var(--school-primary-raw);
+  --school-secondary: var(--school-secondary-raw);
 
+  /* ── Foreground tokens (CRITICAL for readability) ──────────────
+     Strategy: use color-mix to push toward white or black based on
+     the brightness of the brand color. We can't query oklch L at
+     CSS variable time, so we use a "light-on-dark / dark-on-light"
+     approach: mix the color heavily toward black → if that result is
+     still saturated, the original was bright (so use dark text).
 
-  /* School Scale */
-  --school-primary: #f59e0b;
-  --school-secondary: #1e293b;
+     Practical rule encoded here:
+       • For backgrounds using --school-primary, text = --school-primary-foreground
+       • For backgrounds using --school-secondary, text = --school-secondary-foreground
 
-  --school-primary-50: color-mix(in srgb, var(--school-primary), white 95%);
-  --school-primary-100: color-mix(in srgb, var(--school-primary), white 85%);
-  --school-primary-600: color-mix(in srgb, var(--school-primary), black 15%);
-  --school-primary-900: color-mix(in srgb, var(--school-primary), black 80%);
+     These are set to high-contrast black/white blends so any hue works.
+     Override per school in JS if you want brand-tinted foregrounds.
+  ── */
 
-  --school-secondary-50: color-mix(in srgb, var(--school-secondary), white 95%);
-  --school-secondary-100: color-mix(in srgb, var(--school-secondary), white 85%);
-  --school-secondary-800: color-mix(in srgb, var(--school-secondary), black 40%);
-  --school-secondary-950: color-mix(in srgb, var(--school-secondary), black 85%);
+  /*
+    How this works:
+    color-mix(in oklch, color 0%, white) = white
+    color-mix(in oklch, color 0%, black) = black
 
- /* Missing school-primary shades */
---school-primary-200: color-mix(in srgb, var(--school-primary), white 70%);
---school-primary-300: color-mix(in srgb, var(--school-primary), white 50%);
---school-primary-500: color-mix(in srgb, var(--school-primary), black 5%);
---school-primary-700: color-mix(in srgb, var(--school-primary), black 25%);
---school-primary-800: color-mix(in srgb, var(--school-primary), black 40%);
---school-primary-950: color-mix(in srgb, var(--school-primary), black 90%);
+    We can't do runtime lightness checks in pure CSS, but we can use
+    CSS relative color syntax (level 5) to extract lightness:
 
-/* Missing school-secondary shades */
---school-secondary-200: color-mix(in srgb, var(--school-secondary), white 75%);
---school-secondary-300: color-mix(in srgb, var(--school-secondary), white 60%);
---school-secondary-400: color-mix(in srgb, var(--school-secondary), white 45%);
---school-secondary-500: color-mix(in srgb, var(--school-secondary), white 25%);
---school-secondary-600: color-mix(in srgb, var(--school-secondary), black 15%);
---school-secondary-700: color-mix(in srgb, var(--school-secondary), black 25%);
---school-secondary-900: color-mix(in srgb, var(--school-secondary), black 55%);
+      color(from var(--school-primary) oklch l c h)
+
+    Then use @media (dynamic-range) or a calc() trick — but browser
+    support for full relative color + conditional is still limited.
+
+    BEST PRACTICE for a PaaS: compute foreground in JS when the school
+    registers/updates their color, and write both --school-primary-raw
+    AND --school-primary-foreground to the <html> element.
+
+    The defaults below (white for secondary, near-black for primary)
+    work for the default amber+slate pair and for most school combos
+    where primary is a mid-to-bright color and secondary is dark.
+
+    See the companion utility function below for the JS helper.
+  */
+  --school-primary-foreground:   oklch(0.1 0 0);   /* near-black — safe on most mid/bright colors */
+  --school-secondary-foreground: oklch(0.98 0 0);  /* near-white — safe on most dark colors */
+
+  /* ── School primary scale (light mode) ── */
+  --school-primary-50:  color-mix(in oklch, var(--school-primary), white 95%);
+  --school-primary-100: color-mix(in oklch, var(--school-primary), white 85%);
+  --school-primary-200: color-mix(in oklch, var(--school-primary), white 70%);
+  --school-primary-300: color-mix(in oklch, var(--school-primary), white 50%);
+  --school-primary-400: color-mix(in oklch, var(--school-primary), white 25%);
+  --school-primary-500: var(--school-primary);
+  --school-primary-600: color-mix(in oklch, var(--school-primary), black 15%);
+  --school-primary-700: color-mix(in oklch, var(--school-primary), black 30%);
+  --school-primary-800: color-mix(in oklch, var(--school-primary), black 45%);
+  --school-primary-900: color-mix(in oklch, var(--school-primary), black 60%);
+  --school-primary-950: color-mix(in oklch, var(--school-primary), black 80%);
+
+  /* ── School secondary scale (light mode) ── */
+  --school-secondary-50:  color-mix(in oklch, var(--school-secondary), white 95%);
+  --school-secondary-100: color-mix(in oklch, var(--school-secondary), white 85%);
+  --school-secondary-200: color-mix(in oklch, var(--school-secondary), white 70%);
+  --school-secondary-300: color-mix(in oklch, var(--school-secondary), white 55%);
+  --school-secondary-400: color-mix(in oklch, var(--school-secondary), white 40%);
+  --school-secondary-500: color-mix(in oklch, var(--school-secondary), white 20%);
+  --school-secondary-600: color-mix(in oklch, var(--school-secondary), black 10%);
+  --school-secondary-700: color-mix(in oklch, var(--school-secondary), black 20%);
+  --school-secondary-800: color-mix(in oklch, var(--school-secondary), black 35%);
+  --school-secondary-900: color-mix(in oklch, var(--school-secondary), black 55%);
+  --school-secondary-950: color-mix(in oklch, var(--school-secondary), black 80%);
 }
 
-/* 4. BASE LAYER */
+/* ============================================================
+   4. DARK MODE VARIABLE OVERRIDES  (.dark)
+   Applied when the <html> (or any ancestor) has class="dark".
+   
+   Strategy:
+   - Flip surface/background tokens to dark values
+   - Keep school brand colors as-is (they're identity colors)
+   - Adjust school scales so 50/100 become dark shades
+     and 800/900/950 become the light tints for dark surfaces
+   - Re-derive foreground tokens (same logic, brand colors unchanged)
+   ============================================================ */
+.dark {
+  /* ── Shadcn surface tokens (dark) ── */
+  --background:              oklch(0.129 0.042 264.695);
+  --foreground:              oklch(0.984 0.003 247.858);
+  --card:                    oklch(0.208 0.042 265.755);
+  --card-foreground:         oklch(0.984 0.003 247.858);
+  --popover:                 oklch(0.208 0.042 265.755);
+  --popover-foreground:      oklch(0.984 0.003 247.858);
+  --primary:                 oklch(0.984 0.003 247.858);
+  --primary-foreground:      oklch(0.208 0.042 265.755);
+  --secondary:               oklch(0.279 0.041 260.031);
+  --secondary-foreground:    oklch(0.984 0.003 247.858);
+  --muted:                   oklch(0.279 0.041 260.031);
+  --muted-foreground:        oklch(0.704 0.04 256.788);
+  --accent:                  oklch(0.279 0.041 260.031);
+  --accent-foreground:       oklch(0.984 0.003 247.858);
+  --destructive:             oklch(0.704 0.191 22.216);
+  --destructive-foreground:  oklch(0.984 0.003 247.858);
+  --border:                  oklch(0.279 0.041 260.031);
+  --input:                   oklch(0.279 0.041 260.031);
+  --ring:                    oklch(0.551 0.027 264.364);
+
+  /* Page surface — deep dark, slightly lighter than pure black
+     so cards (bg-background/bg-card) have visible lift on top of it */
+  --surface: oklch(0.1 0.01 264);
+
+  /* ── School brand colors stay the same ──
+     Brand identity should not invert on dark mode.
+     --school-primary and --school-secondary are unchanged.
+     Only the *scale* (tints/shades) gets remapped so that
+     light shades (50, 100) become usable on dark surfaces. ── */
+
+  /* On dark backgrounds, a "50-tint" of the school color should still
+     be subtle — so we mix toward a dark base rather than white */
+  --school-primary-50:  color-mix(in oklch, var(--school-primary), oklch(0.15 0 0) 90%);
+  --school-primary-100: color-mix(in oklch, var(--school-primary), oklch(0.15 0 0) 78%);
+  --school-primary-200: color-mix(in oklch, var(--school-primary), oklch(0.15 0 0) 60%);
+  --school-primary-300: color-mix(in oklch, var(--school-primary), oklch(0.15 0 0) 40%);
+  --school-primary-400: color-mix(in oklch, var(--school-primary), oklch(0.15 0 0) 20%);
+  --school-primary-500: var(--school-primary);
+  /* Shades 600–950: mix toward white on dark (for text/borders on dark bg) */
+  --school-primary-600: color-mix(in oklch, var(--school-primary), white 15%);
+  --school-primary-700: color-mix(in oklch, var(--school-primary), white 30%);
+  --school-primary-800: color-mix(in oklch, var(--school-primary), white 50%);
+  --school-primary-900: color-mix(in oklch, var(--school-primary), white 70%);
+  --school-primary-950: color-mix(in oklch, var(--school-primary), white 88%);
+
+  --school-secondary-50:  color-mix(in oklch, var(--school-secondary), oklch(0.15 0 0) 90%);
+  --school-secondary-100: color-mix(in oklch, var(--school-secondary), oklch(0.15 0 0) 75%);
+  --school-secondary-200: color-mix(in oklch, var(--school-secondary), oklch(0.15 0 0) 55%);
+  --school-secondary-300: color-mix(in oklch, var(--school-secondary), oklch(0.15 0 0) 35%);
+  --school-secondary-400: color-mix(in oklch, var(--school-secondary), oklch(0.15 0 0) 15%);
+  --school-secondary-500: var(--school-secondary);
+  --school-secondary-600: color-mix(in oklch, var(--school-secondary), white 20%);
+  --school-secondary-700: color-mix(in oklch, var(--school-secondary), white 38%);
+  --school-secondary-800: color-mix(in oklch, var(--school-secondary), white 55%);
+  --school-secondary-900: color-mix(in oklch, var(--school-secondary), white 72%);
+  --school-secondary-950: color-mix(in oklch, var(--school-secondary), white 88%);
+
+  /* Foreground tokens remain the same — brand colors don't change,
+     so the contrast relationship is identical */
+}
+
+/* ============================================================
+   5. BASE LAYER
+   ============================================================ */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -155,5 +282,48 @@
   }
 }
 
-/* Helper to handle dark mode */
+/* ============================================================
+   6. COMPONENT UTILITIES
+   ============================================================ */
+@layer utilities {
+  /* Readable text on school-primary backgrounds */
+  .text-on-school-primary {
+    color: var(--school-primary-foreground);
+  }
+
+  /* Readable text on school-secondary backgrounds */
+  .text-on-school-secondary {
+    color: var(--school-secondary-foreground);
+  }
+
+  /* School-branded button surfaces */
+  .bg-school-primary {
+    background-color: var(--school-primary);
+    color: var(--school-primary-foreground);
+  }
+
+  .bg-school-secondary {
+    background-color: var(--school-secondary);
+    color: var(--school-secondary-foreground);
+  }
+
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar       { width: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgb(51 65 85 / 0.4);
+    border-radius: 9999px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(51 65 85 / 0.7);
+  }
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(51 65 85 / 0.4) transparent;
+  }
+}
+
+/* ============================================================
+   7. DARK MODE VARIANT
+   ============================================================ */
 @custom-variant dark (&:is(.dark *));

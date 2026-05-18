@@ -821,26 +821,438 @@
 // }
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { createClient } from '@/lib/supabase/server'
+// import { revalidatePath } from 'next/cache'
+// import { logActivity } from "@/lib/activitylogger";
+// import { TxStatus, } from '@prisma/client'
+
+
+
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// export interface SubscriptionPlanItem {
+//     id:           string
+//     name:         string
+//     slug:         string
+//     priceNGN:     number
+//     priceKobo:    number
+//     durationDays: number
+//     description:  string
+//     features:     string[]
+//     popular:      boolean
+//     sortOrder:    number
+// }
+
+// export interface PaymentHistoryEntry {
+//     id:        string
+//     planName:  string
+//     amountNGN: number
+//     status:    TxStatus
+//     paidAt:    Date | null
+//     createdAt: Date
+// }
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// /**
+//  * Detailed entry for the payment history table.
+//  */
+// export interface PaymentHistoryEntry {
+//     id:        string
+//     planName:  string
+//     amountNGN: number
+//     status:    TxStatus
+//     paidAt:    Date | null
+//     createdAt: Date
+// }
+
+// /**
+//  * Rule 15: Strict Interface for the Billing UI.
+//  * Combines current subscription state with the transaction history.
+//  */
+// export interface SubscriptionWithHistory {
+//     id:               string
+//     plan:             string
+//     status:           string
+//     currentPeriodEnd: Date
+//     amountNGN:        number | null
+//     paidAt:           Date | null
+//     subPlan?: {
+//         name:         string
+//         priceNGN:     number
+//         durationDays: number
+//         features:     string[]
+//     } | null
+//     transactions:     PaymentHistoryEntry[]
+// }
+
+// // ── Logic ──────────────────────────────────────────────────────────────────────
+
+// /**
+//  * FETCH SUBSCRIPTION & TRANSACTION HISTORY
+//  * Rule 5: Isolated by schoolId for institutions.
+//  * Rule 6: Isolated by userId for independent learners.
+//  * Rule 11: Final System Truth derived from the DB ledger.
+//  */
+// export async function getSchoolSubscription(
+//     schoolId: string | null,
+//     userId: string
+// ): Promise<SubscriptionWithHistory | null> {
+//     try {
+//         // Scenario A: Institutional User (Tier 2)
+//         if (schoolId && schoolId !== "INDIVIDUAL") {
+//             const schoolData = await prisma.school.findUnique({
+//                 where: { id: schoolId },
+//                 include: {
+//                     subscription: {
+//                         include: { subPlan: true }
+//                     },
+//                     subscriptionTransactions: {
+//                         orderBy: { createdAt: 'desc' },
+//                         take: 50,
+//                     }
+//                 }
+//             });
+
+//             if (!schoolData || !schoolData.subscription) return null;
+
+//             const sub = schoolData.subscription;
+
+//             return {
+//                 id: sub.id,
+//                 plan: sub.plan,
+//                 status: sub.status,
+//                 currentPeriodEnd: sub.currentPeriodEnd,
+//                 amountNGN: sub.amountNGN,
+//                 paidAt: sub.paidAt,
+//                 subPlan: sub.subPlan ? {
+//                     name: sub.subPlan.name,
+//                     priceNGN: sub.subPlan.priceNGN,
+//                     durationDays: sub.subPlan.durationDays,
+//                     features: sub.subPlan.features,
+//                 } : null,
+//                 transactions: schoolData.subscriptionTransactions.map(t => ({
+//                     id: t.id,
+//                     planName: t.planName,
+//                     amountNGN: t.amountNGN,
+//                     status: t.status,
+//                     paidAt: t.paidAt,
+//                     createdAt: t.createdAt
+//                 }))
+//             };
+//         }
+
+//         // Scenario B: Independent Learner (Tier 3)
+//         // Rule 6: Fetch personal subscription record
+//         const personalSub = await prisma.subscription.findUnique({
+//             where: { profileId: userId },
+//             include: { 
+//                 subPlan: true,
+//                 // Rule 11: Transactions for individuals are identified by initiatedBy
+//                 // since the schema lacks a direct profileId relation on transactions.
+//             }
+//         });
+
+//         if (!personalSub) return null;
+
+//         // Fetch transactions where the user initiated the payment
+//         const personalTransactions = await prisma.subscriptionTransaction.findMany({
+//             where: { initiatedBy: userId },
+//             orderBy: { createdAt: 'desc' },
+//             take: 50
+//         });
+
+//         return {
+//             id: personalSub.id,
+//             plan: personalSub.plan,
+//             status: personalSub.status,
+//             currentPeriodEnd: personalSub.currentPeriodEnd,
+//             amountNGN: personalSub.amountNGN,
+//             paidAt: personalSub.paidAt,
+//             subPlan: personalSub.subPlan ? {
+//                 name: personalSub.subPlan.name,
+//                 priceNGN: personalSub.subPlan.priceNGN,
+//                 durationDays: personalSub.subPlan.durationDays,
+//                 features: personalSub.subPlan.features,
+//             } : null,
+//             transactions: personalTransactions.map(t => ({
+//                 id: t.id,
+//                 planName: t.planName,
+//                 amountNGN: t.amountNGN,
+//                 status: t.status,
+//                 paidAt: t.paidAt,
+//                 createdAt: t.createdAt
+//             }))
+//         };
+
+//     } catch (err: unknown) {
+//         console.error("[GET_SUBSCRIPTION_ERROR]:", getErrorMessage(err));
+//         return null;
+//     }
+// }
+
+// // ── 1. GLOBAL PLANS (Tier 1) ───────────────────────────────────────────────────
+
+// export async function getSubscriptionPlans(): Promise<SubscriptionPlanItem[]> {
+//     try {
+//         return await prisma.subscriptionPlan.findMany({
+//             where:   { active: true },
+//             orderBy: { sortOrder: 'asc' },
+//         })
+//     } catch (err: unknown) {
+//         return []
+//     }
+// }
+
+// // ── 2. INDIVIDUAL PAYMENT INITIATION (Tier 3) ──────────────────────────────────
+
+// /**
+//  * Rule 6: Individual Learner Payment Initiation.
+//  * Uses 'INDIVIDUAL' as a constant for schoolId to satisfy schema requirements 
+//  * while linking the transaction to the specific user profile.
+//  */
+// export async function initiateIndividualPayment(planId: string) {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user } } = await supabase.auth.getUser()
+//         if (!user) throw new Error("Unauthorized");
+
+//         const plan = await prisma.subscriptionPlan.findUnique({ where: { id: planId } });
+//         if (!plan || !plan.active) throw new Error("Plan not found or inactive");
+
+//         const reference = `indiv_${user.id.slice(0, 8)}_${Date.now()}`;
+
+//         // Rule 11: Atomic setup for Personal Subscription
+//         await prisma.$transaction([
+//             prisma.subscriptionTransaction.create({
+//                 data: {
+//                     schoolId: "INDIVIDUAL", // Constant to identify Tier-3 payments
+//                     planId: plan.id,
+//                     planName: plan.name,
+//                     amountNGN: plan.priceNGN,
+//                     amountKobo: plan.priceKobo,
+//                     reference,
+//                     status: TxStatus.PENDING,
+//                     initiatedBy: user.id,
+//                 }
+//             }),
+//             prisma.subscription.upsert({
+//                 where: { profileId: user.id },
+//                 update: { paystackReference: reference },
+//                 create: {
+//                     profileId: user.id,
+//                     schoolId: "INDIVIDUAL", 
+//                     plan: plan.name,
+//                     planId: plan.id,
+//                     status: 'pending',
+//                     currentPeriodEnd: new Date(),
+//                     paystackReference: reference
+//                 }
+//             })
+//         ]);
+
+//         const response = await fetch('https://api.paystack.co/transaction/initialize', {
+//             method:  'POST',
+//             headers: {
+//                 Authorization:  `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({
+//                 email: user.email,
+//                 amount: plan.priceKobo,
+//                 reference,
+//                 currency: 'NGN',
+//                 metadata: { userId: user.id, planId: plan.id, tier: 'INDIVIDUAL' },
+//                 callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing/verify?reference=${reference}`,
+//             }),
+//         });
+
+//         const paystackData = await response.json();
+//         if (!paystackData.status) throw new Error(paystackData.message);
+
+//         return {
+//             success: true,
+//             authorizationUrl: paystackData.data.authorization_url as string,
+//             reference
+//         };
+
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// // ── 3. INSTITUTIONAL PAYMENT INITIATION (Tier 2) ───────────────────────────────
+
+// export async function initiateSubscriptionPayment(schoolId: string, planId: string) {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user } } = await supabase.auth.getUser()
+//         if (!user) throw new Error("Unauthorized");
+
+//         const plan = await prisma.subscriptionPlan.findUnique({ where: { id: planId } });
+//         if (!plan) throw new Error("Plan not found");
+
+//         const reference = `school_${schoolId.slice(0, 8)}_${Date.now()}`;
+
+//         await prisma.$transaction([
+//             prisma.subscriptionTransaction.create({
+//                 data: {
+//                     schoolId,
+//                     planId: plan.id,
+//                     planName: plan.name,
+//                     amountNGN: plan.priceNGN,
+//                     amountKobo: plan.priceKobo,
+//                     reference,
+//                     status: TxStatus.PENDING,
+//                     initiatedBy: user.id,
+//                 }
+//             }),
+//             prisma.subscription.upsert({
+//                 where: { schoolId },
+//                 update: { paystackReference: reference },
+//                 create: {
+//                     schoolId,
+//                     plan: plan.name,
+//                     planId: plan.id,
+//                     status: 'pending',
+//                     currentPeriodEnd: new Date(),
+//                     paystackReference: reference
+//                 }
+//             })
+//         ]);
+
+//         const response = await fetch('https://api.paystack.co/transaction/initialize', {
+//             method:  'POST',
+//             headers: {
+//                 Authorization:  `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({
+//                 email: user.email,
+//                 amount: plan.priceKobo,
+//                 reference,
+//                 currency: 'NGN',
+//                 metadata: { schoolId, planId: plan.id, tier: 'INSTITUTIONAL' },
+//                 callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing/verify?reference=${reference}`,
+//             }),
+//         });
+
+//         const paystackData = await response.json();
+//         return { success: true, authorizationUrl: paystackData.data.authorization_url, reference };
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// // ── 4. UNIFIED VERIFICATION (The "Tier-Aware" Logic) ───────────────────────────
+
+// /**
+//  * Rule 11: System Truth Update.
+//  * Dynamically detects if the payment was for a School or an Individual.
+//  */
+// export async function verifySubscriptionPayment(reference: string) {
+//     try {
+//         const transaction = await prisma.subscriptionTransaction.findUnique({
+//             where: { reference },
+//             include: { plan: true }
+//         });
+
+//         if (!transaction) throw new Error("Transaction record missing.");
+//         if (transaction.status === TxStatus.SUCCESS) return { success: true };
+
+//         const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+//             headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` }
+//         });
+
+//         const paystackData = await response.json();
+//         if (!paystackData.status || paystackData.data.status !== 'success') {
+//             await prisma.subscriptionTransaction.update({ where: { reference }, data: { status: TxStatus.FAILED } });
+//             return { success: false, error: "Payment verification failed." };
+//         }
+
+//         const now = new Date();
+//         const expiresAt = new Date(now.getTime() + transaction.plan.durationDays * 24 * 60 * 60 * 1000);
+
+//         // TRANSACTIONAL TRUTH (Rule 11)
+//         await prisma.$transaction(async (tx) => {
+//             await tx.subscriptionTransaction.update({
+//                 where: { reference },
+//                 data: { status: TxStatus.SUCCESS, paidAt: now }
+//             });
+
+//             // Determine if we update by School or Profile (Individual Learner)
+//             if (transaction.schoolId === "INDIVIDUAL") {
+//                 await tx.subscription.update({
+//                     where: { profileId: transaction.initiatedBy! },
+//                     data: {
+//                         plan: transaction.planName,
+//                         planId: transaction.planId,
+//                         status: 'active',
+//                         currentPeriodEnd: expiresAt,
+//                         paidAt: now
+//                     }
+//                 });
+//             } else {
+//                 await tx.subscription.update({
+//                     where: { schoolId: transaction.schoolId },
+//                     data: {
+//                         plan: transaction.planName,
+//                         planId: transaction.planId,
+//                         status: 'active',
+//                         currentPeriodEnd: expiresAt,
+//                         paidAt: now
+//                     }
+//                 });
+//             }
+//         });
+
+//         // Log activity based on tier
+//         await logActivity({
+//             schoolId: transaction.schoolId === "INDIVIDUAL" ? null : transaction.schoolId,
+//             actorId: transaction.initiatedBy!,
+//             type: "SETTINGS_UPDATED",
+//             title: 'License Restored',
+//             description: `Successfully renewed ${transaction.planName} coverage.`
+//         });
+
+//         revalidatePath('/billing');
+//         return { success: true, planName: transaction.planName };
+
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { logActivity } from "@/lib/activitylogger";
-import { TxStatus, } from '@prisma/client'
-
-
-
+import { logActivity } from '@/app/actions/activitylog'
+import { Role, ActivityType, TxStatus, Prisma } from '@prisma/client'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
+/**
+ * Rule 15: Synced strictly with schema.prisma
+ * priceUSD is a Float in the DB, mapped here as number.
+ */
 export interface SubscriptionPlanItem {
     id:           string
     name:         string
     slug:         string
     priceNGN:     number
     priceKobo:    number
+    priceUSD:     number 
     durationDays: number
     description:  string
     features:     string[]
@@ -857,24 +1269,6 @@ export interface PaymentHistoryEntry {
     createdAt: Date
 }
 
-// ── Types ──────────────────────────────────────────────────────────────────────
-
-/**
- * Detailed entry for the payment history table.
- */
-export interface PaymentHistoryEntry {
-    id:        string
-    planName:  string
-    amountNGN: number
-    status:    TxStatus
-    paidAt:    Date | null
-    createdAt: Date
-}
-
-/**
- * Rule 15: Strict Interface for the Billing UI.
- * Combines current subscription state with the transaction history.
- */
 export interface SubscriptionWithHistory {
     id:               string
     plan:             string
@@ -882,140 +1276,30 @@ export interface SubscriptionWithHistory {
     currentPeriodEnd: Date
     amountNGN:        number | null
     paidAt:           Date | null
-    subPlan?: {
+    subPlan: {
         name:         string
         priceNGN:     number
         durationDays: number
+        description:  string
         features:     string[]
     } | null
     transactions:     PaymentHistoryEntry[]
 }
 
-// ── Logic ──────────────────────────────────────────────────────────────────────
-
-/**
- * FETCH SUBSCRIPTION & TRANSACTION HISTORY
- * Rule 5: Isolated by schoolId for institutions.
- * Rule 6: Isolated by userId for independent learners.
- * Rule 11: Final System Truth derived from the DB ledger.
- */
-export async function getSchoolSubscription(
-    schoolId: string | null,
-    userId: string
-): Promise<SubscriptionWithHistory | null> {
-    try {
-        // Scenario A: Institutional User (Tier 2)
-        if (schoolId && schoolId !== "INDIVIDUAL") {
-            const schoolData = await prisma.school.findUnique({
-                where: { id: schoolId },
-                include: {
-                    subscription: {
-                        include: { subPlan: true }
-                    },
-                    subscriptionTransactions: {
-                        orderBy: { createdAt: 'desc' },
-                        take: 50,
-                    }
-                }
-            });
-
-            if (!schoolData || !schoolData.subscription) return null;
-
-            const sub = schoolData.subscription;
-
-            return {
-                id: sub.id,
-                plan: sub.plan,
-                status: sub.status,
-                currentPeriodEnd: sub.currentPeriodEnd,
-                amountNGN: sub.amountNGN,
-                paidAt: sub.paidAt,
-                subPlan: sub.subPlan ? {
-                    name: sub.subPlan.name,
-                    priceNGN: sub.subPlan.priceNGN,
-                    durationDays: sub.subPlan.durationDays,
-                    features: sub.subPlan.features,
-                } : null,
-                transactions: schoolData.subscriptionTransactions.map(t => ({
-                    id: t.id,
-                    planName: t.planName,
-                    amountNGN: t.amountNGN,
-                    status: t.status,
-                    paidAt: t.paidAt,
-                    createdAt: t.createdAt
-                }))
-            };
-        }
-
-        // Scenario B: Independent Learner (Tier 3)
-        // Rule 6: Fetch personal subscription record
-        const personalSub = await prisma.subscription.findUnique({
-            where: { profileId: userId },
-            include: { 
-                subPlan: true,
-                // Rule 11: Transactions for individuals are identified by initiatedBy
-                // since the schema lacks a direct profileId relation on transactions.
-            }
-        });
-
-        if (!personalSub) return null;
-
-        // Fetch transactions where the user initiated the payment
-        const personalTransactions = await prisma.subscriptionTransaction.findMany({
-            where: { initiatedBy: userId },
-            orderBy: { createdAt: 'desc' },
-            take: 50
-        });
-
-        return {
-            id: personalSub.id,
-            plan: personalSub.plan,
-            status: personalSub.status,
-            currentPeriodEnd: personalSub.currentPeriodEnd,
-            amountNGN: personalSub.amountNGN,
-            paidAt: personalSub.paidAt,
-            subPlan: personalSub.subPlan ? {
-                name: personalSub.subPlan.name,
-                priceNGN: personalSub.subPlan.priceNGN,
-                durationDays: personalSub.subPlan.durationDays,
-                features: personalSub.subPlan.features,
-            } : null,
-            transactions: personalTransactions.map(t => ({
-                id: t.id,
-                planName: t.planName,
-                amountNGN: t.amountNGN,
-                status: t.status,
-                paidAt: t.paidAt,
-                createdAt: t.createdAt
-            }))
-        };
-
-    } catch (err: unknown) {
-        console.error("[GET_SUBSCRIPTION_ERROR]:", getErrorMessage(err));
-        return null;
-    }
-}
-
-// ── 1. GLOBAL PLANS (Tier 1) ───────────────────────────────────────────────────
+// ── Actions ───────────────────────────────────────────────────────────────────
 
 export async function getSubscriptionPlans(): Promise<SubscriptionPlanItem[]> {
     try {
-        return await prisma.subscriptionPlan.findMany({
+        const plans = await prisma.subscriptionPlan.findMany({
             where:   { active: true },
             orderBy: { sortOrder: 'asc' },
-        })
+        });
+        return plans as SubscriptionPlanItem[];
     } catch (err: unknown) {
-        return []
+        return [];
     }
 }
 
-// ── 2. INDIVIDUAL PAYMENT INITIATION (Tier 3) ──────────────────────────────────
-
-/**
- * Rule 6: Individual Learner Payment Initiation.
- * Uses 'INDIVIDUAL' as a constant for schoolId to satisfy schema requirements 
- * while linking the transaction to the specific user profile.
- */
 export async function initiateIndividualPayment(planId: string) {
     try {
         const supabase = await createClient()
@@ -1027,11 +1311,10 @@ export async function initiateIndividualPayment(planId: string) {
 
         const reference = `indiv_${user.id.slice(0, 8)}_${Date.now()}`;
 
-        // Rule 11: Atomic setup for Personal Subscription
         await prisma.$transaction([
             prisma.subscriptionTransaction.create({
                 data: {
-                    schoolId: "INDIVIDUAL", // Constant to identify Tier-3 payments
+                    schoolId: "INDIVIDUAL",
                     planId: plan.id,
                     planName: plan.name,
                     amountNGN: plan.priceNGN,
@@ -1073,20 +1356,11 @@ export async function initiateIndividualPayment(planId: string) {
         });
 
         const paystackData = await response.json();
-        if (!paystackData.status) throw new Error(paystackData.message);
-
-        return {
-            success: true,
-            authorizationUrl: paystackData.data.authorization_url as string,
-            reference
-        };
-
+        return { success: true, authorizationUrl: paystackData.data.authorization_url as string, reference };
     } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) };
     }
 }
-
-// ── 3. INSTITUTIONAL PAYMENT INITIATION (Tier 2) ───────────────────────────────
 
 export async function initiateSubscriptionPayment(schoolId: string, planId: string) {
     try {
@@ -1143,18 +1417,12 @@ export async function initiateSubscriptionPayment(schoolId: string, planId: stri
         });
 
         const paystackData = await response.json();
-        return { success: true, authorizationUrl: paystackData.data.authorization_url, reference };
+        return { success: true, authorizationUrl: paystackData.data.authorization_url as string, reference };
     } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) };
     }
 }
 
-// ── 4. UNIFIED VERIFICATION (The "Tier-Aware" Logic) ───────────────────────────
-
-/**
- * Rule 11: System Truth Update.
- * Dynamically detects if the payment was for a School or an Individual.
- */
 export async function verifySubscriptionPayment(reference: string) {
     try {
         const transaction = await prisma.subscriptionTransaction.findUnique({
@@ -1162,7 +1430,7 @@ export async function verifySubscriptionPayment(reference: string) {
             include: { plan: true }
         });
 
-        if (!transaction) throw new Error("Transaction record missing.");
+        if (!transaction) throw new Error("Transaction missing.");
         if (transaction.status === TxStatus.SUCCESS) return { success: true };
 
         const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
@@ -1178,52 +1446,60 @@ export async function verifySubscriptionPayment(reference: string) {
         const now = new Date();
         const expiresAt = new Date(now.getTime() + transaction.plan.durationDays * 24 * 60 * 60 * 1000);
 
-        // TRANSACTIONAL TRUTH (Rule 11)
         await prisma.$transaction(async (tx) => {
             await tx.subscriptionTransaction.update({
                 where: { reference },
                 data: { status: TxStatus.SUCCESS, paidAt: now }
             });
 
-            // Determine if we update by School or Profile (Individual Learner)
             if (transaction.schoolId === "INDIVIDUAL") {
                 await tx.subscription.update({
                     where: { profileId: transaction.initiatedBy! },
-                    data: {
-                        plan: transaction.planName,
-                        planId: transaction.planId,
-                        status: 'active',
-                        currentPeriodEnd: expiresAt,
-                        paidAt: now
-                    }
+                    data: { plan: transaction.planName, status: 'active', currentPeriodEnd: expiresAt, paidAt: now }
                 });
             } else {
                 await tx.subscription.update({
                     where: { schoolId: transaction.schoolId },
-                    data: {
-                        plan: transaction.planName,
-                        planId: transaction.planId,
-                        status: 'active',
-                        currentPeriodEnd: expiresAt,
-                        paidAt: now
-                    }
+                    data: { plan: transaction.planName, status: 'active', currentPeriodEnd: expiresAt, paidAt: now }
                 });
             }
         });
 
-        // Log activity based on tier
-        await logActivity({
-            schoolId: transaction.schoolId === "INDIVIDUAL" ? null : transaction.schoolId,
-            actorId: transaction.initiatedBy!,
-            type: "SETTINGS_UPDATED",
-            title: 'License Restored',
-            description: `Successfully renewed ${transaction.planName} coverage.`
-        });
-
-        revalidatePath('/billing');
         return { success: true, planName: transaction.planName };
-
     } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) };
     }
+}
+
+export async function getSchoolSubscription(schoolId: string, userId: string): Promise<SubscriptionWithHistory | null> {
+    try {
+        const res = await prisma.subscription.findFirst({
+            where: schoolId === "INDIVIDUAL" ? { profileId: userId } : { schoolId },
+            include: { subPlan: true }
+        });
+        if (!res) return null;
+
+        const txs = await prisma.subscriptionTransaction.findMany({
+            where: schoolId === "INDIVIDUAL" ? { initiatedBy: userId } : { schoolId },
+            orderBy: { createdAt: 'desc' }
+        });
+
+        return {
+            id: res.id,
+            plan: res.plan,
+            status: res.status,
+            currentPeriodEnd: res.currentPeriodEnd,
+            amountNGN: res.amountNGN,
+            paidAt: res.paidAt,
+            subPlan: res.subPlan,
+            transactions: txs.map(t => ({
+                id: t.id,
+                planName: t.planName,
+                amountNGN: t.amountNGN,
+                status: t.status,
+                paidAt: t.paidAt,
+                createdAt: t.createdAt
+            }))
+        };
+    } catch { return null; }
 }

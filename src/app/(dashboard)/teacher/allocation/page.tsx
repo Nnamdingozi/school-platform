@@ -229,48 +229,117 @@
 
 
 
-'use client'
+// 'use client'
 
-import { useProfileStore } from "@/store/profileStore";
-import { AllocationMatrix } from "@/components/admin-dasboard/allocation-matrix";
-import { Loader2, TableProperties } from "lucide-react";
-import { isTeacherProfile } from "@/types/profile";
+// import { useProfileStore } from "@/store/profileStore";
+// import { AllocationMatrix } from "@/components/admin-dasboard/allocation-matrix";
+// import { Loader2, TableProperties } from "lucide-react";
+// import { isTeacherProfile } from "@/types/profile";
 
-export default function TeacherAllocationPage() {
-    // Inside your TeacherAllocationPage component:
+// export default function TeacherAllocationPage() {
+//     // Inside your TeacherAllocationPage component:
 
-const { profile, isLoading } = useProfileStore();
+// const { profile, isLoading } = useProfileStore();
 
-if (isLoading) return <Loader2 className="animate-spin" />;
+// if (isLoading) return <Loader2 className="animate-spin" />;
 
-// ✅ FIX: Use the Type Guard to narrow the type from AnyProfile to ProfileInStore
-if (!profile || !isTeacherProfile(profile)) {
-    return <div className="p-20 text-center text-slate-500">Access Denied: Teachers only.</div>;
+// // ✅ FIX: Use the Type Guard to narrow the type from AnyProfile to ProfileInStore
+// if (!profile || !isTeacherProfile(profile)) {
+//     return <div className="p-20 text-center text-slate-500">Access Denied: Teachers only.</div>;
+// }
+
+// // Now TypeScript knows 'taughtClasses' exists 100%
+// const myClass = profile.taughtClasses[0]; 
+
+// if (!myClass) {
+//     return <div className="p-20 text-center text-slate-500 italic">No assigned classes found.</div>;
+// }
+
+//     return (
+//         <div className="p-4 md:p-8 lg:p-12 bg-slate-950 min-h-screen">
+//              <div className="max-w-7xl mx-auto space-y-8">
+//                 <header className="flex items-center gap-4">
+//                     <div className="h-14 w-14 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center">
+//                         <TableProperties className="h-7 w-7 text-school-primary" />
+//                     </div>
+//                     <div>
+//                         <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">My Class Allocation</h1>
+//                         <p className="text-slate-500 text-sm font-medium">{myClass.name} • Academic Year Registry</p>
+//                     </div>
+//                 </header>
+
+//                 {/* We reuse the exact same matrix component we built for the Admin! */}
+//                 <AllocationMatrix classId={myClass.id} schoolId={profile!.schoolId!} />
+//             </div>
+//         </div>
+//     );
+// }
+
+
+
+
+
+
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { Role } from "@prisma/client";
+import { TeacherAllocationClient } from "@/components/TeacherDashboard/teacherAllocationClient";
+
+/**
+ * Rule 16: Dynamic Contextual SEO
+ */
+export async function generateMetadata(): Promise<Metadata> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { title: "Class Allocation | SchoolPaaS" };
+
+    const profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+        select: { name: true }
+    });
+
+    return {
+        title: `Class Allocation | ${profile?.name || "Instructor"} | SchoolPaaS`,
+        description: "Institutional subject mapping and student-syllabus synchronization."
+    };
 }
 
-// Now TypeScript knows 'taughtClasses' exists 100%
-const myClass = profile.taughtClasses[0]; 
+/**
+ * Rule 12: Server-First Execution
+ */
+export default async function Page() {
+    // 1. Resolve Identity & Context (Rule 10)
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) redirect("/login");
 
-if (!myClass) {
-    return <div className="p-20 text-center text-slate-500 italic">No assigned classes found.</div>;
-}
+    const profile = await prisma.profile.findUnique({
+        where: { id: authUser.id },
+        include: { 
+            taughtClasses: {
+                include: { grade: true }
+            }
+        }
+    });
+
+    // Rule 10: Security - Ensure user is a Teacher
+    if (!profile || profile.role !== Role.TEACHER) {
+        redirect("/student?error=unauthorized_access");
+    }
+
+    // Rule 5: Check if the teacher has any assigned classes
+    const myClass = profile.taughtClasses[0];
 
     return (
-        <div className="p-4 md:p-8 lg:p-12 bg-slate-950 min-h-screen">
-             <div className="max-w-7xl mx-auto space-y-8">
-                <header className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center">
-                        <TableProperties className="h-7 w-7 text-school-primary" />
-                    </div>
-                    <div>
-                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">My Class Allocation</h1>
-                        <p className="text-slate-500 text-sm font-medium">{myClass.name} • Academic Year Registry</p>
-                    </div>
-                </header>
-
-                {/* We reuse the exact same matrix component we built for the Admin! */}
-                <AllocationMatrix classId={myClass.id} schoolId={profile!.schoolId!} />
-            </div>
-        </div>
+        <TeacherAllocationClient 
+            initialClass={myClass ? {
+                id: myClass.id,
+                name: myClass.name,
+                gradeName: myClass.grade.displayName,
+                schoolId: profile.schoolId!
+            } : null}
+        />
     );
 }

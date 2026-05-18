@@ -1,133 +1,152 @@
 'use client'
 
-import { useState } from "react"
-import { CurriculumCard } from "./curriculum-card"
-import { useProfileStore } from "@/store/profileStore"
-import { 
-    BookMarked, Settings2, CheckCircle2, 
-    AlertCircle, Loader2, ChevronRight 
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import Link from "next/link"
-import { type CurriculumStats } from "@/app/actions/curiculum-stats"
-
-// ── Types ──────────────────────────────────────────────────────────────────────
+import { CurriculumCard } from './curriculum-card'
+import { BookMarked, Settings2, CheckCircle2, AlertCircle, ChevronRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import Link from 'next/link'
+import { type CurriculumStats } from '@/app/actions/curiculum-stats'
 
 interface GradeWithSubjects {
-    id: string;
-    displayName: string;
-    gradeSubjects: { id: string }[];
+    id: string
+    displayName: string
+    gradeSubjects: { id: string }[]
 }
 
 interface CurriculumManagementClientProps {
-    initialGrades: GradeWithSubjects[];
-    initialStats: CurriculumStats | null;
+    initialGrades: GradeWithSubjects[]
+    initialStats: CurriculumStats | null
 }
+
+const MIN_SUBJECTS_FOR_SYNC = 8
 
 /**
  * INSTITUTIONAL ARCHITECTURE CONSOLE (Tier 2)
- * Rule 17: Pulls branding context from Zustand.
+ * Rule 12: Server-fetched grades and stats passed as props.
+ * Rule 16: Dynamic curriculum labels from stats (yearLabel, subjectLabel).
+ * Rule 17: Branding via school-primary design tokens.
  */
-export function CurriculumManagementClient({ initialGrades, initialStats }: CurriculumManagementClientProps) {
-    const { profile } = useProfileStore();
-    const primaryColor = profile?.primaryColor || "#f59e0b";
+export function CurriculumManagementClient({
+    initialGrades,
+    initialStats,
+}: CurriculumManagementClientProps) {
+    const yearLabel = initialStats?.yearLabel ?? 'Level'
+    const subjectLabel = initialStats?.subjectLabel ?? 'Subject'
 
     return (
-        <div className="p-4 md:p-8 lg:p-12 space-y-12 bg-slate-950 min-h-screen text-slate-50 animate-in fade-in duration-700">
-            
-            {/* ── Page Header ── */}
-            <header className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-10">
+        <div className="p-4 md:p-8 lg:p-12 space-y-12 bg-background min-h-screen text-foreground animate-in fade-in duration-700">
+            <header className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border pb-10">
                 <div className="flex items-center gap-5">
-                    <div 
-                        className="h-14 w-14 rounded-2xl border flex items-center justify-center shadow-2xl"
-                        style={{ backgroundColor: `${primaryColor}15`, borderColor: `${primaryColor}30` }}
-                    >
-                        <BookMarked className="h-7 w-7" style={{ color: primaryColor }} />
+                    <div className="h-14 w-14 rounded-2xl border border-school-primary/20 bg-school-primary/10 flex items-center justify-center shadow-2xl shadow-school-primary/10">
+                        <BookMarked className="h-7 w-7 text-school-primary" />
                     </div>
                     <div>
-                        <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none">Registry Architect</h1>
-                        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-2 italic">Institutional Master Syllabus Oversight</p>
+                        <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none">
+                            Registry Architect
+                        </h1>
+                        <p className="text-muted-foreground text-[10px] font-black uppercase tracking-widest mt-2 italic">
+                            Institutional Master Syllabus Oversight
+                        </p>
                     </div>
                 </div>
 
-                <Button asChild variant="outline" className="border-white/10 text-slate-400 hover:bg-white/5 uppercase text-[10px] font-black tracking-widest px-6 h-12 rounded-xl">
+                <Button
+                    asChild
+                    variant="outline"
+                    className="border-border text-muted-foreground hover:bg-school-primary/5 hover:text-foreground uppercase text-[10px] font-black tracking-widest px-6 h-12 rounded-xl"
+                >
                     <Link href="/admin/settings?tab=curriculum">
-                        <Settings2 className="w-4 h-4 mr-2" style={{ color: primaryColor }} /> Terminology Settings
+                        <Settings2 className="w-4 h-4 mr-2 text-school-primary" />
+                        Terminology Settings
                     </Link>
                 </Button>
             </header>
 
             <main className="max-w-5xl mx-auto space-y-10">
-                
-                {/* ── SECTION 01: STATUS CARD ── */}
                 <section className="space-y-4">
-                    <div className="flex items-center gap-3 px-2">
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: primaryColor }}>01</span>
-                        <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white">System Vitality</h3>
-                    </div>
+                    <SectionHeading index="01" title="System Vitality" />
                     <CurriculumCard initialStats={initialStats} />
                 </section>
 
-                {/* ── SECTION 02: GRADE AUDIT ── */}
                 <section className="space-y-4">
                     <div className="flex items-center justify-between px-2">
-                        <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: primaryColor }}>02</span>
-                            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white">Grade Matrix Health</h3>
-                        </div>
-                        <span className="text-[10px] font-bold text-slate-500 uppercase font-mono italic">
+                        <SectionHeading
+                            index="02"
+                            title={`${yearLabel} Matrix Health`}
+                        />
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest italic">
                             {initialGrades.length} Nodes Discovered
                         </span>
                     </div>
 
-                    <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <Card className="bg-card border-border rounded-[2.5rem] overflow-hidden shadow-2xl">
                         <CardContent className="p-0">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
-                                        <tr className="text-left text-slate-500 text-[10px] uppercase tracking-widest bg-slate-950/40 border-b border-white/5 font-black">
-                                            <th className="px-10 py-6 italic">Academic Level</th>
-                                            <th className="px-10 py-6 italic">Active Modules</th>
+                                        <tr className="text-left text-muted-foreground text-[10px] uppercase tracking-widest bg-background/50 border-b border-border font-black">
+                                            <th className="px-10 py-6 italic">{yearLabel} Registry</th>
+                                            <th className="px-10 py-6 italic">
+                                                Active {subjectLabel}s
+                                            </th>
                                             <th className="px-10 py-6 italic">Registry Status</th>
                                             <th className="px-10 py-6 text-right italic">Audit</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-white/5">
-                                        {initialGrades.map((grade) => (
-                                            <tr key={grade.id} className="hover:bg-white/[0.02] transition-all group">
-                                                <td className="px-10 py-8 font-black text-white uppercase italic text-lg">
-                                                    {grade.displayName}
-                                                </td>
-                                                <td className="px-10 py-8">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="h-8 w-12 bg-slate-950 rounded-lg border border-white/5 flex items-center justify-center text-xs font-mono font-bold shadow-inner" style={{ color: primaryColor }}>
-                                                            {grade.gradeSubjects?.length || 0}
+                                    <tbody className="divide-y divide-border">
+                                        {initialGrades.map((grade) => {
+                                            const subjectCount = grade.gradeSubjects?.length ?? 0
+                                            const isSynchronized =
+                                                subjectCount >= MIN_SUBJECTS_FOR_SYNC
+
+                                            return (
+                                                <tr
+                                                    key={grade.id}
+                                                    className="hover:bg-school-primary/5 transition-all group"
+                                                >
+                                                    <td className="px-10 py-8 font-black text-foreground uppercase italic text-lg">
+                                                        {grade.displayName}
+                                                    </td>
+                                                    <td className="px-10 py-8">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="h-8 min-w-12 px-2 bg-background rounded-lg border border-border flex items-center justify-center text-xs font-mono font-bold text-school-primary shadow-inner">
+                                                                {subjectCount}
+                                                            </div>
+                                                            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest italic">
+                                                                {subjectLabel}s
+                                                            </span>
                                                         </div>
-                                                        <span className="text-[10px] text-slate-500 uppercase font-bold tracking-tighter italic">Items</span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-10 py-8">
-                                                    {(grade.gradeSubjects?.length || 0) >= 8 ? (
-                                                        <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
-                                                            <CheckCircle2 className="h-4 w-4" /> Synchronized
-                                                        </div>
-                                                    ) : (
-                                                        <div className="flex items-center gap-2 text-amber-500 text-[10px] font-black uppercase tracking-widest">
-                                                            <AlertCircle className="h-3 w-3" /> Under-Provisioned
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td className="px-10 py-8 text-right">
-                                                    <Link href={`/admin/curriculum/allocation?gradeId=${grade.id}`}>
-                                                        <Button variant="ghost" className="h-12 px-6 rounded-2xl bg-slate-950 border border-white/5 group-hover:bg-school-primary group-hover:text-slate-950 transition-all shadow-lg flex items-center gap-2 text-[10px] font-black uppercase tracking-widest" style={{ '--hover-bg': primaryColor } as any}>
-                                                            Manage
-                                                            <ChevronRight className="h-4 w-4" />
+                                                    </td>
+                                                    <td className="px-10 py-8">
+                                                        {isSynchronized ? (
+                                                            <StatusBadge
+                                                                variant="success"
+                                                                label="Synchronized"
+                                                            />
+                                                        ) : (
+                                                            <StatusBadge
+                                                                variant="warning"
+                                                                label="Under-Provisioned"
+                                                            />
+                                                        )}
+                                                    </td>
+                                                    <td className="px-10 py-8 text-right">
+                                                        <Button
+                                                            asChild
+                                                            variant="ghost"
+                                                            className="h-12 px-6 rounded-2xl bg-background border border-border group-hover:bg-school-primary group-hover:text-on-school-primary transition-all shadow-lg text-[10px] font-black uppercase tracking-widest"
+                                                        >
+                                                            <Link
+                                                                href={`/admin/curriculum/allocation?gradeId=${grade.id}`}
+                                                            >
+                                                                Manage
+                                                                <ChevronRight className="h-4 w-4 ml-2" />
+                                                            </Link>
                                                         </Button>
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })}
                                     </tbody>
                                 </table>
                             </div>
@@ -135,6 +154,49 @@ export function CurriculumManagementClient({ initialGrades, initialStats }: Curr
                     </Card>
                 </section>
             </main>
+        </div>
+    )
+}
+
+interface SectionHeadingProps {
+    index: string
+    title: string
+}
+
+function SectionHeading({ index, title }: SectionHeadingProps) {
+    return (
+        <div className="flex items-center gap-3 px-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-school-primary">
+                {index}
+            </span>
+            <h3 className="text-sm font-black uppercase tracking-widest text-foreground">
+                {title}
+            </h3>
+        </div>
+    )
+}
+
+interface StatusBadgeProps {
+    variant: 'success' | 'warning'
+    label: string
+}
+
+function StatusBadge({ variant, label }: StatusBadgeProps) {
+    const isSuccess = variant === 'success'
+    return (
+        <div
+            className={
+                isSuccess
+                    ? 'flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest'
+                    : 'flex items-center gap-2 text-amber-500 text-[10px] font-black uppercase tracking-widest'
+            }
+        >
+            {isSuccess ? (
+                <CheckCircle2 className="h-4 w-4" />
+            ) : (
+                <AlertCircle className="h-3 w-3" />
+            )}
+            {label}
         </div>
     )
 }

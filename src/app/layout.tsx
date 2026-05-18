@@ -761,60 +761,277 @@
 
 
 
+// import { Inter } from "next/font/google";
+// import "./globals.css";
+// import { SchoolProvider } from "@/context/schoolProvider";
+// import { ProfileInitializer } from "@/components/profileInitializer";
+// import { Toaster } from "@/components/ui/sonner";
+// import { ScrollToTop } from '@/components/scroll-to-top';
+// import { getTeacherData } from "./actions/teacherData";
+// import { ProfileInStore } from '@/types/profile';
+// import { createServerClient } from '@supabase/ssr';
+// import { cookies } from 'next/headers';
+
+// const inter = Inter({ subsets: ["latin"] });
+
+// export default async function RootLayout({
+//     children,
+// }: Readonly<{
+//     children: React.ReactNode;
+// }>) {
+//     const cookieStore = await cookies();
+
+//     // ✅ Supabase client — reads session from cookies
+//     const supabase = createServerClient(
+//         process.env.NEXT_PUBLIC_SUPABASE_URL!,
+//         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+//         {
+//             cookies: {
+//                 getAll: () => cookieStore.getAll(),
+//                 setAll: () => {}, // no-op — middleware handles writing
+//             },
+//         }
+//     );
+
+//     const { data: { user } } = await supabase.auth.getUser();
+
+//     let profile: ProfileInStore | null = null;
+//     if (user?.email) {
+//         const teacher = await getTeacherData(user.email);
+//         profile = teacher as ProfileInStore | null;
+//     }
+
+//     return (
+//         <html lang="en">
+//             <body className={inter.className}>
+//                 <ScrollToTop />
+//                 <Toaster />
+//                 {/*
+//                     ✅ No Navbar/Footer here — they belong in specific layouts:
+//                     - app/(landing)/layout.tsx  → Navbar + Footer on public pages
+//                     - app/(dashboard)/layout.tsx → Sidebar + Header
+//                     - app/onboarding/            → no nav
+//                     Adding them here puts them on EVERY page
+//                 */}
+//                 <SchoolProvider initialProfile={profile}>
+//                     <ProfileInitializer profile={profile} />
+//                     {children}
+//                 </SchoolProvider>
+//             </body>
+//         </html>
+//     );
+// }
+
+
+
+// src/app/layout.tsx
+
+// import { Inter } from "next/font/google";
+// import "./globals.css";
+// import { SchoolProvider } from "@/context/schoolProvider";
+// import { ProfileInitializer } from "@/components/profileInitializer";
+// import { Toaster } from "@/components/ui/sonner";
+// import { ScrollToTop } from '@/components/scroll-to-top';
+// import { getTeacherData } from "./actions/teacherData";
+// import { getParentProfile } from "./actions/parentProfile";
+// import { ProfileInStore, ParentProfileInStore } from '@/types/profile';
+// import { createServerClient } from '@supabase/ssr';
+// import { cookies } from 'next/headers';
+// import { getSchoolThemeStyle } from '@/lib/school-theme';
+// import { Role } from "@prisma/client";
+
+// const inter = Inter({ subsets: ["latin"] });
+
+// // ── Theme resolution ───────────────────────────────────────────────────────────
+// // DB value wins over cookie. Cookie covers first load before DB resolves
+// // and logged-out visitors on the landing layout.
+// function resolveTheme(
+//     dbTheme: string | null | undefined,
+//     cookieTheme: string | null | undefined
+// ): 'dark' | 'light' {
+//     if (dbTheme === 'dark' || dbTheme === 'light') return dbTheme
+//     if (cookieTheme === 'dark' || cookieTheme === 'light') return cookieTheme
+//     return 'light'
+// }
+
+// export default async function RootLayout({
+//     children,
+// }: Readonly<{
+//     children: React.ReactNode;
+// }>) {
+//     const cookieStore = await cookies();
+
+//     // 1. Supabase client — reads session from cookies
+//     const supabase = createServerClient(
+//         process.env.NEXT_PUBLIC_SUPABASE_URL!,
+//         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+//         {
+//             cookies: {
+//                 getAll: () => cookieStore.getAll(),
+//                 setAll: () => {}, // no-op — middleware handles writing
+//             },
+//         }
+//     );
+
+//     const { data: { user } } = await supabase.auth.getUser();
+
+//     // 2. Fetch profile if authenticated
+//     //
+//     // We need to know the role to call the right action, so we do a lightweight
+//     // role check first — same pattern as the dashboard layout's profileBase query.
+//     // If no user, both profile and role stay null and we skip all of this.
+//     let profile: ProfileInStore | ParentProfileInStore | null = null;
+
+//     if (user?.email) {
+//         // Lightweight role check — avoids fetching the wrong profile shape
+//         const { prisma } = await import('@/lib/prisma');
+//         const base = await prisma.profile.findFirst({
+//             where:  { email: user.email },
+//             select: { role: true },
+//         });
+
+//         if (base?.role === Role.PARENT) {
+//             profile = await getParentProfile(user.email) as ParentProfileInStore | null;
+//         } else if (base?.role) {
+//             profile = await getTeacherData(user.email) as ProfileInStore | null;
+//         }
+//     }
+
+//     // 3. Resolve theme
+//     //
+//     // Cookie is read for logged-out visitors (landing pages).
+//     // For logged-in users, profile.theme (DB) takes priority.
+//     const cookieTheme = cookieStore.get('theme')?.value
+//     const isDark = resolveTheme(profile?.theme, cookieTheme) === 'dark'
+
+//     // 4. Resolve school colors
+//     //
+//     // Only applies when a school profile is loaded. Landing pages and
+//     // unauthenticated routes fall back to the defaults in globals.css (:root).
+//     const schoolColors = profile?.school?.primaryColor && profile?.school?.secondaryColor
+//         ? getSchoolThemeStyle({
+//               primary:   profile.school.primaryColor,
+//               secondary: profile.school.secondaryColor,
+//           })
+//         : {}
+
+//     return (
+//         // The dark class and school CSS variables live here on <html> —
+//         // the single source of truth for both. Child layouts (landing,
+//         // dashboard) no longer need to apply these themselves.
+//         <html
+//             lang="en"
+//             className={isDark ? 'dark' : ''}
+//             style={schoolColors}
+//         >
+//             <body className={`${inter.className} bg-background text-foreground`}>
+//                 <ScrollToTop />
+//                 <Toaster />
+//                 <SchoolProvider initialProfile={profile}>
+//                     <ProfileInitializer profile={profile} />
+//                     {children}
+//                 </SchoolProvider>
+//             </body>
+//         </html>
+//     );
+// }
+
+
+
+import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { getSchoolThemeStyle } from "@/lib/school-theme";
+import { cookies } from "next/headers";
+import { Role } from "@prisma/client";
+import { Toaster } from "@/components/ui/sonner";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { SchoolProvider } from "@/context/schoolProvider";
 import { ProfileInitializer } from "@/components/profileInitializer";
-import { Toaster } from "@/components/ui/sonner";
-import { ScrollToTop } from '@/components/scroll-to-top';
-import { getTeacherData } from "./actions/teacherData";
-import { ProfileInStore } from '@/types/profile';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-
+import { getRegistryProfile } from "./actions/profileRegistry";
+import { getParentProfile } from "./actions/parentProfile";
 const inter = Inter({ subsets: ["latin"] });
 
+export const metadata: Metadata = {
+  title: "SchoolPaaS | AI Academic Registry",
+  description: "Institutional infrastructure for the next generation of learning.",
+};
+
+/**
+ * THEME RESOLUTION LOGIC
+ * Rule 11: DB preference takes priority over session cookies.
+ */
+function resolveTheme(
+    dbTheme: string | null | undefined,
+    cookieTheme: string | null | undefined
+): 'dark' | 'light' {
+    if (dbTheme === 'dark' || dbTheme === 'light') return dbTheme as 'dark' | 'light';
+    if (cookieTheme === 'dark' || cookieTheme === 'light') return cookieTheme as 'dark' | 'light';
+    return 'dark'; // Default platform standard
+}
+
+/**
+ * ROOT LAYOUT (Global Core)
+ * Rule 12: Server-side data resolution to prevent "White Flash" and layout shifts.
+ * Rule 18: Dynamic Design Token injection via inline styles.
+ */
 export default async function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+  children,
+}: {
+  children: React.ReactNode;
+}) {
     const cookieStore = await cookies();
-
-    // ✅ Supabase client — reads session from cookies
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                getAll: () => cookieStore.getAll(),
-                setAll: () => {}, // no-op — middleware handles writing
-            },
-        }
-    );
-
+    const supabase = await createClient();
+    
+    // 1. Resolve Identity (Rule 10)
     const { data: { user } } = await supabase.auth.getUser();
 
-    let profile: ProfileInStore | null = null;
+    let profile = null;
     if (user?.email) {
-        const teacher = await getTeacherData(user.email);
-        profile = teacher as ProfileInStore | null;
+        // Lightweight check to determine hydration path
+        const base = await prisma.profile.findFirst({
+            where: { id: user.id },
+            select: { role: true, theme: true, primaryColor: true, secondaryColor: true }
+        });
+
+        if (base) {
+            // Hydrate full profile based on tier
+            profile = base.role === Role.PARENT 
+                ? await getParentProfile(user.email) 
+                : await getRegistryProfile(user.email);
+        }
     }
 
+    // 2. Resolve Theme Node (Rule 18)
+    const cookieTheme = cookieStore.get('theme')?.value;
+    // @ts-ignore - 'theme' added to Profile model per previous refactor
+    const isDark = resolveTheme(profile?.theme, cookieTheme) === 'dark';
+
+    // 3. Resolve Institutional Branding (Tier 2/3)
+    // ✅ FIX: Accessing colors from profile directly, as they do not exist on the School model.
+    const schoolColors = profile?.primaryColor && profile?.secondaryColor
+        ? getSchoolThemeStyle({
+              primary:   profile.primaryColor,
+              secondary: profile.secondaryColor,
+          })
+        : {};
+
     return (
-        <html lang="en">
-            <body className={inter.className}>
+        <html
+            lang="en"
+            className={isDark ? 'dark' : ''}
+            style={schoolColors}
+            suppressHydrationWarning // Prevents browser console mismatch errors for theme classes
+        >
+            <body className={`${inter.className} bg-background text-foreground antialiased selection:bg-school-primary/30`}>
                 <ScrollToTop />
                 <Toaster />
-                {/*
-                    ✅ No Navbar/Footer here — they belong in specific layouts:
-                    - app/(landing)/layout.tsx  → Navbar + Footer on public pages
-                    - app/(dashboard)/layout.tsx → Sidebar + Header
-                    - app/onboarding/            → no nav
-                    Adding them here puts them on EVERY page
-                */}
-                <SchoolProvider initialProfile={profile}>
-                    <ProfileInitializer profile={profile} />
+                
+                {/* Rule 17: Sync Registry Identity to Client Store */}
+                <SchoolProvider initialProfile={profile as any}>
+                    <ProfileInitializer profile={profile as any} />
                     {children}
                 </SchoolProvider>
             </body>

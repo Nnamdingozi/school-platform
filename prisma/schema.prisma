@@ -58,6 +58,7 @@ model Profile {
   phone        String?
   schoolId     String?
   curriculumId String
+  theme  String  @default("light")
 
   // Branding
   primaryColor   String @default("#f59e0b")
@@ -518,6 +519,19 @@ model ExamQuestion {
   schoolId String?
 
   @@index([examId])
+}
+
+
+model ScannedPaper {
+  id        String   @id @default(cuid())
+  subject   String   // e.g., "Mathematics"
+  year      Int      // e.g., 2023
+  type      String   // e.g., "WAEC" or "JAMB"
+  questions Json     // [{ text, answer, explanation, marks }]
+  schoolId  String?  // Tier 2 Isolation
+  creatorId String   // Tier 3 Ownership
+  imageUrl  String?  // Link to GCS
+  createdAt DateTime @default(now())
 }
 
 model ClassPerformance {
