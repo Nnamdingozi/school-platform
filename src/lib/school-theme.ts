@@ -1,3 +1,7 @@
+import { type CSSProperties } from 'react';
+
+
+
 /**
  * school-theme.ts
  *
@@ -153,17 +157,35 @@ export function hexToRgb(hex: string): [number, number, number] {
    *     );
    *   }
    */
-  export function getSchoolThemeStyle({
-    primary,
-    secondary,
-  }: SchoolTheme): React.CSSProperties {
-    return {
-      "--school-primary-raw": primary,
-      "--school-secondary-raw": secondary,
-      "--school-primary-foreground": getContrastForeground(primary),
-      "--school-secondary-foreground": getContrastForeground(secondary),
-    } as React.CSSProperties;
+  // export function getSchoolThemeStyle({
+  //   primary,
+  //   secondary,
+  // }: SchoolTheme): React.CSSProperties {
+  //   return {
+  //     "--school-primary-raw": primary,
+  //     "--school-secondary-raw": secondary,
+  //     "--school-primary-foreground": getContrastForeground(primary),
+  //     "--school-secondary-foreground": getContrastForeground(secondary),
+  //   } as React.CSSProperties;
+  // }
+
+
+ 
+
+  /**
+   * Rule 18: Generates an inline style object for the <html> tag.
+   * This is the secret to stopping the color flash.
+   */
+  export function getSchoolThemeStyle(primary: string | null, secondary: string | null): CSSProperties {
+      if (!primary || !secondary) return {};
+  
+      return {
+          "--school-primary-raw": primary,
+          "--school-secondary-raw": secondary,
+          // Optional: you can add foreground calculation here too
+      } as CSSProperties;
   }
+
   
   /**
    * Validate a school's chosen colors during registration.

@@ -653,7 +653,7 @@ export function AppSidebar() {
                             <NavItem href="/subjects/manage" icon={BookOpen} label="Assigned Subjects" />
                             <NavItem href="/teacher/allocation" icon={TableProperties} label="Subject Allocation" />
                             <NavItem href="/term-timeline" icon={Calendar} label="Termly Schedule" />
-                            <NavItem href="/teacher/pastQuestions" icon={Calendar} label="Past Questions" />
+                            <NavItem href="/pastQuestions" icon={Calendar} label="Past Questions" />
                             
                         </NavGroup>
 

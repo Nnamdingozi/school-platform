@@ -208,69 +208,282 @@
 // }
 
 
+// "use client";
+
+// import { useState, useRef, useTransition } from "react";
+// import { processPastQuestion } from "@/app/actions/scanned-question-bank";
+// import { Loader2, ImageIcon, BookOpen, Calendar, Landmark, ArrowRight, ShieldCheck } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+// import { useProfileStore } from "@/store/profileStore";
+// import { toast } from "sonner";
+// import { cn } from "@/lib/utils";
+
+// export function ArchiveUploader({ userId, schoolId, userRole, subjects }: any) {
+//   const { profile } = useProfileStore();
+//   const [isPending, startTransition] = useTransition();
+//   const [file, setFile] = useState<File | null>(null);
+//   const [meta, setMeta] = useState({ subject: "", year: 2024, examType: "WAEC" });
+//   const fileInputRef = useRef<HTMLInputElement>(null);
+//   const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//   const handleProcess = () => {
+//     if (!file || !meta.subject) return toast.error("Selection incomplete.");
+//     const formData = new FormData();
+//     formData.append("image", file);
+//     startTransition(async () => {
+//         const res = await processPastQuestion({ ...meta, formData, userId, schoolId, userRole });
+//         if (res.success) {
+//             toast.success("Identity registry synchronized.");
+//             setFile(null);
+//         } else toast.error(res.error);
+//     });
+//   };
+
+//   return (
+//     <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom-6 duration-700">
+//         <div className="lg:col-span-1 space-y-6">
+//             <div className="space-y-4">
+//                 <label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2"><BookOpen className="h-3 w-3" /> Subject</label>
+//                 <select value={meta.subject} onChange={e => setMeta({...meta, subject: e.target.value})} className="w-full bg-card border border-border rounded-2xl px-5 py-4 text-xs font-bold uppercase text-foreground outline-none focus:ring-2 focus:ring-school-primary/20">
+//                     <option value="">Select...</option>
+//                     {subjects.map((s: any) => <option key={s.id} value={s.name}>{s.name}</option>)}
+//                 </select>
+//             </div>
+//             <div className="space-y-4">
+//                 <label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2"><Calendar className="h-3 w-3" /> Year</label>
+//                 <input type="number" value={meta.year} onChange={e => setMeta({...meta, year: parseInt(e.target.value)})} className="w-full bg-card border border-border rounded-2xl px-5 py-4 text-xs font-bold text-foreground" />
+//             </div>
+//             <div className="space-y-4">
+//                 <label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2"><Landmark className="h-3 w-3" /> Assessment Body</label>
+//                 <select value={meta.examType} onChange={e => setMeta({...meta, examType: e.target.value})} className="w-full bg-card border border-border rounded-2xl px-5 py-4 text-xs font-bold uppercase text-foreground">
+//                     <option value="WAEC">WAEC</option>
+//                     <option value="JAMB">JAMB</option>
+//                     <option value="NECO">NECO</option>
+//                 </select>
+//             </div>
+//         </div>
+//         <div className="lg:col-span-2 space-y-8">
+//             <div onClick={() => fileInputRef.current?.click()} className={cn("bg-card/30 border-2 border-dashed border-border rounded-[2rem] h-[350px] flex flex-col items-center justify-center cursor-pointer transition-all", file ? "border-school-primary/40 bg-school-primary/5" : "hover:border-school-primary/30")}>
+//                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)} />
+//                 {file ? <p className="text-xs font-bold uppercase text-school-primary italic">{file.name}</p> : <div className="text-center space-y-2"><ImageIcon className="h-10 w-10 text-muted-foreground mx-auto" /><p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Select Source Node</p></div>}
+//             </div>
+//             <Button onClick={handleProcess} disabled={isPending || !file} className="w-full bg-school-primary text-on-school-primary font-extrabold py-8 rounded-[2rem] shadow-xl uppercase text-xs tracking-widest">
+//                 {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <>Finalize Logic Synthesis <ArrowRight className="ml-2 h-4 w-4" /></>}
+//             </Button>
+//         </div>
+//     </div>
+//   );
+// }
+
+
+
+
 "use client";
 
 import { useState, useRef, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { processPastQuestion } from "@/app/actions/scanned-question-bank";
-import { Loader2, ImageIcon, BookOpen, Calendar, Landmark, ArrowRight, ShieldCheck } from "lucide-react";
+import {
+  Loader2,
+  ImageIcon,
+  BookOpen,
+  Calendar,
+  Landmark,
+  ArrowRight,
+  CheckCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProfileStore } from "@/store/profileStore";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Role } from "@prisma/client";
 
-export function ArchiveUploader({ userId, schoolId, userRole, subjects }: any) {
+interface ArchiveUploaderProps {
+  userId: string;
+  schoolId: string | null;
+  userRole: Role;
+  subjects: { id: string; name: string }[];
+}
+
+export function ArchiveUploader({
+  userId,
+  schoolId,
+  userRole,
+  subjects,
+}: ArchiveUploaderProps) {
   const { profile } = useProfileStore();
+  const router = useRouter(); // Fix #5
   const [isPending, startTransition] = useTransition();
   const [file, setFile] = useState<File | null>(null);
-  const [meta, setMeta] = useState({ subject: "", year: 2024, examType: "WAEC" });
+  const [meta, setMeta] = useState({
+    subject: "",
+    year: new Date().getFullYear(),
+    examType: "WAEC",
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const primaryColor = profile?.primaryColor || "#f59e0b";
 
   const handleProcess = () => {
-    if (!file || !meta.subject) return toast.error("Selection incomplete.");
+    if (!file) return toast.error("Please select an image file.");
+    if (!meta.subject) return toast.error("Please select a subject.");
+
     const formData = new FormData();
     formData.append("image", file);
+
     startTransition(async () => {
-        const res = await processPastQuestion({ ...meta, formData, userId, schoolId, userRole });
-        if (res.success) {
-            toast.success("Identity registry synchronized.");
-            setFile(null);
-        } else toast.error(res.error);
+      const res = await processPastQuestion({
+        ...meta,
+        formData,
+        userId,
+        schoolId,
+        userRole,
+      });
+
+      if (res.success) {
+        toast.success(
+          `${res.count} question${res.count === 1 ? "" : "s"} extracted and saved.`
+        );
+        setFile(null);
+        setMeta({ subject: "", year: new Date().getFullYear(), examType: "WAEC" });
+        router.refresh(); // Fix #5 — refresh RSC so registry shows new paper
+      } else {
+        toast.error(res.error ?? "Something went wrong. Please try again.");
+      }
     });
   };
 
   return (
     <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom-6 duration-700">
-        <div className="lg:col-span-1 space-y-6">
-            <div className="space-y-4">
-                <label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2"><BookOpen className="h-3 w-3" /> Subject</label>
-                <select value={meta.subject} onChange={e => setMeta({...meta, subject: e.target.value})} className="w-full bg-card border border-border rounded-2xl px-5 py-4 text-xs font-bold uppercase text-foreground outline-none focus:ring-2 focus:ring-school-primary/20">
-                    <option value="">Select...</option>
-                    {subjects.map((s: any) => <option key={s.id} value={s.name}>{s.name}</option>)}
-                </select>
-            </div>
-            <div className="space-y-4">
-                <label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2"><Calendar className="h-3 w-3" /> Year</label>
-                <input type="number" value={meta.year} onChange={e => setMeta({...meta, year: parseInt(e.target.value)})} className="w-full bg-card border border-border rounded-2xl px-5 py-4 text-xs font-bold text-foreground" />
-            </div>
-            <div className="space-y-4">
-                <label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2"><Landmark className="h-3 w-3" /> Assessment Body</label>
-                <select value={meta.examType} onChange={e => setMeta({...meta, examType: e.target.value})} className="w-full bg-card border border-border rounded-2xl px-5 py-4 text-xs font-bold uppercase text-foreground">
-                    <option value="WAEC">WAEC</option>
-                    <option value="JAMB">JAMB</option>
-                    <option value="NECO">NECO</option>
-                </select>
-            </div>
+      {/* ── Left Column: Metadata ── */}
+      <div className="lg:col-span-1 space-y-6">
+        {/* Subject */}
+        <div className="space-y-4">
+          <label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2">
+            <BookOpen className="h-3 w-3" /> Subject
+          </label>
+          <select
+            value={meta.subject}
+            onChange={(e) => setMeta({ ...meta, subject: e.target.value })}
+            className="w-full bg-card border border-border rounded-2xl px-5 py-4 text-xs font-bold uppercase text-foreground outline-none focus:ring-2 focus:ring-school-primary/20"
+          >
+            <option value="">Select subject...</option>
+            {subjects.map((s) => (
+              <option key={s.id} value={s.name}>
+                {s.name}
+              </option>
+            ))}
+          </select>
         </div>
-        <div className="lg:col-span-2 space-y-8">
-            <div onClick={() => fileInputRef.current?.click()} className={cn("bg-card/30 border-2 border-dashed border-border rounded-[2rem] h-[350px] flex flex-col items-center justify-center cursor-pointer transition-all", file ? "border-school-primary/40 bg-school-primary/5" : "hover:border-school-primary/30")}>
-                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)} />
-                {file ? <p className="text-xs font-bold uppercase text-school-primary italic">{file.name}</p> : <div className="text-center space-y-2"><ImageIcon className="h-10 w-10 text-muted-foreground mx-auto" /><p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Select Source Node</p></div>}
-            </div>
-            <Button onClick={handleProcess} disabled={isPending || !file} className="w-full bg-school-primary text-on-school-primary font-extrabold py-8 rounded-[2rem] shadow-xl uppercase text-xs tracking-widest">
-                {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <>Finalize Logic Synthesis <ArrowRight className="ml-2 h-4 w-4" /></>}
-            </Button>
+
+        {/* Year */}
+        <div className="space-y-4">
+          <label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2">
+            <Calendar className="h-3 w-3" /> Year
+          </label>
+          <input
+            type="number"
+            min={1990}
+            max={new Date().getFullYear()}
+            value={meta.year}
+            onChange={(e) =>
+              setMeta({ ...meta, year: parseInt(e.target.value) || meta.year })
+            }
+            className="w-full bg-card border border-border rounded-2xl px-5 py-4 text-xs font-bold text-foreground outline-none focus:ring-2 focus:ring-school-primary/20"
+          />
         </div>
+
+        {/* Exam Body */}
+        <div className="space-y-4">
+          <label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2">
+            <Landmark className="h-3 w-3" /> Assessment Body
+          </label>
+          <select
+            value={meta.examType}
+            onChange={(e) => setMeta({ ...meta, examType: e.target.value })}
+            className="w-full bg-card border border-border rounded-2xl px-5 py-4 text-xs font-bold uppercase text-foreground outline-none focus:ring-2 focus:ring-school-primary/20"
+          >
+            <option value="WAEC">WAEC</option>
+            <option value="JAMB">JAMB</option>
+            <option value="NECO">NECO</option>
+          </select>
+        </div>
+      </div>
+
+      {/* ── Right Column: Upload + Action ── */}
+      <div className="lg:col-span-2 space-y-8">
+        {/* Drop Zone */}
+        <div
+          onClick={() => !isPending && fileInputRef.current?.click()}
+          className={cn(
+            "bg-card/30 border-2 border-dashed border-border rounded-[2rem] h-[350px] flex flex-col items-center justify-center cursor-pointer transition-all",
+            file
+              ? "border-school-primary/40 bg-school-primary/5"
+              : "hover:border-school-primary/30",
+            isPending && "cursor-not-allowed opacity-60"
+          )}
+        >
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            disabled={isPending}
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+          />
+          {file ? (
+            <div className="text-center space-y-3 px-8">
+              <CheckCircle2
+                className="h-10 w-10 mx-auto"
+                style={{ color: primaryColor }}
+              />
+              <p
+                className="text-xs font-bold uppercase italic break-all"
+                style={{ color: primaryColor }}
+              >
+                {file.name}
+              </p>
+              <p className="text-[10px] text-muted-foreground font-semibold">
+                {(file.size / 1024).toFixed(1)} KB — tap to change
+              </p>
+            </div>
+          ) : (
+            <div className="text-center space-y-2">
+              <ImageIcon className="h-10 w-10 text-muted-foreground mx-auto" />
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                Tap to select image
+              </p>
+              <p className="text-[9px] text-muted-foreground/60">
+                JPG, PNG, WEBP supported
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Submit */}
+        <Button
+          onClick={handleProcess}
+          disabled={isPending || !file || !meta.subject}
+          className="w-full bg-school-primary text-on-school-primary font-extrabold py-8 rounded-[2rem] shadow-xl uppercase text-xs tracking-widest"
+        >
+          {isPending ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Extracting questions...
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">
+              Finalize Logic Synthesis
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          )}
+        </Button>
+
+        {isPending && (
+          <p className="text-center text-[10px] text-muted-foreground font-semibold uppercase tracking-widest animate-pulse">
+            AI is reading the paper — this may take 10–30 seconds
+          </p>
+        )}
+      </div>
     </div>
   );
 }

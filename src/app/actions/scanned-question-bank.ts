@@ -1209,6 +1209,291 @@
 
 
 
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { Role, ActivityType, Prisma } from "@prisma/client";
+// import { logActivity } from "@/app/actions/activitylog";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { revalidatePath } from "next/cache";
+
+// // ─── Types ───────────────────────────────────────────────────────────────────
+
+// export interface ScannedPaperSet {
+//     id: string;
+//     subject: string;
+//     year: number;
+//     type: string;
+//     questions: any; // Mapped as JsonArray
+//     createdAt: Date;
+// }
+
+// // ─── AI Engine Logic (Rule 8) ────────────────────────────────────────────────
+
+// /**
+//  * Rule 8: AI Logic synthesis using Gemini 1.5 Pro.
+//  * Handles cleaning of markdown JSON wrappers for strict parsing.
+//  */
+// async function callGemini(prompt: string, inlineData?: { mimeType: string, data: string }) {
+//   const GEMINI_API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
+//   const model = "gemini-1.5-pro"; 
+  
+//   const body = {
+//     contents: [{
+//       parts: [
+//         ...(inlineData ? [{ inlineData }] : []),
+//         { text: prompt }
+//       ]
+//     }],
+//     generationConfig: { 
+//         temperature: 0.1, 
+//         responseMimeType: "application/json" 
+//     }
+//   };
+
+//   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(body),
+//   });
+
+//   if (!res.ok) throw new Error(`Registry AI Link Failure: ${res.statusText}`);
+  
+//   const json = await res.json();
+//   const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text;
+  
+//   if (!rawText) throw new Error("AI returned an empty logic node.");
+
+//   // Clean markdown if AI included it despite responseMimeType
+//   const cleanedText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+//   return JSON.parse(cleanedText);
+// }
+
+// // ─── Main Server Actions ──────────────────────────────────────────────────────
+
+// /**
+//  * FETCH ARCHIVE REGISTRY
+//  * Rule 5/6: Scopes institutional vs personal archives.
+//  */
+// export async function getScannedPapers(schoolId: string | null, userId: string): Promise<ScannedPaperSet[]> {
+//     try {
+//         const papers = await prisma.scannedPaper.findMany({
+//             where: {
+//                 OR: [
+//                     schoolId ? { schoolId } : { id: 'NEVER' },
+//                     { AND: [{ schoolId: null }, { creatorId: userId }] }
+//                 ]
+//             },
+//             orderBy: { year: 'desc' }
+//         });
+//         return papers as unknown as ScannedPaperSet[];
+//     } catch (error) { return []; }
+// }
+
+// /**
+//  * PROCESS & DISCARD LOGIC (Rule 11)
+//  * Rule 10: Security check ensures image is processed in memory only.
+//  */
+// export async function processPastQuestion(params: {
+//   formData: FormData;
+//   userId: string;
+//   schoolId: string | null;
+//   userRole: Role;
+//   subject: string; 
+//   year: number;
+//   examType: string;
+// }) {
+//   const { formData, userId, schoolId, userRole, subject, year, examType } = params;
+
+//   try {
+//     const imageFile = formData.get("image") as File;
+//     if (!imageFile) throw new Error("Image payload not discovered.");
+
+//     const buffer = await imageFile.arrayBuffer();
+//     const base64Image = Buffer.from(buffer).toString("base64");
+
+//     // 1. AI Synthesis (Direct Base64 Stream)
+//     const prompt = `
+//         Act as a Senior Academic Examiner. Analyze this ${imageFile.type} scan for ${subject} (${year}).
+//         1. Extract all questions.
+//         2. Provide expert solutions and rationale.
+//         RETURN ONLY JSON ARRAY:
+//         [{ "text": "...", "answer": "...", "explanation": "...", "marks": 5 }]
+//     `;
+
+//     const questions = await callGemini(prompt, { 
+//         mimeType: imageFile.type, 
+//         data: base64Image 
+//     });
+
+//     // 2. Persist ONLY logic nodes (Rule 11)
+//     await prisma.scannedPaper.create({
+//       data: {
+//         subject,
+//         year,
+//         type: examType,
+//         imageUrl: null, // Image discarded for privacy/cost
+//         schoolId,
+//         creatorId: userId,
+//         questions: questions as Prisma.InputJsonValue,
+//       }
+//     });
+
+//     // 3. Log Activity
+//     await logActivity({
+//       schoolId,
+//       actorId: userId,
+//       actorRole: userRole,
+//       type: ActivityType.SETTINGS_UPDATED,
+//       title: "Archive Node Synchronized",
+//       description: `Digitized ${questions.length} nodes for ${subject} ${year}. Source discarded.`
+//     });
+
+//     revalidatePath("/library/archives");
+//     return { success: true, count: questions.length };
+
+//   } catch (error: unknown) {
+//     return { success: false, error: getErrorMessage(error) };
+//   }
+// }
+
+
+
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { Role, ActivityType, Prisma } from "@prisma/client";
+// import { logActivity } from "@/app/actions/activitylog";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { revalidatePath } from "next/cache";
+
+
+
+// export interface ScannedPaperSet {
+//   id: string;
+//   subject: string;
+//   year: number;
+//   type: string;
+//   questions: any;
+//   createdAt: Date;
+// }
+
+
+// // ─── AI Engine Logic (Rule 8) ────────────────────────────────────────────────
+
+// async function callGemini(prompt: string, inlineData?: { mimeType: string, data: string }) {
+//   const GEMINI_API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
+  
+//   // ✅ FIX: Use the stable 'v1' endpoint and the 'gemini-1.5-pro' identifier
+//   const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
+  
+//   const body = {
+//     contents: [{
+//       parts: [
+//         ...(inlineData ? [{ inlineData }] : []),
+//         { text: prompt }
+//       ]
+//     }],
+//     generationConfig: { 
+//         temperature: 0.1, 
+//         // Rule 11: System Truth - Force JSON output
+//         responseMimeType: "application/json" 
+//     }
+//   };
+
+//   const res = await fetch(url, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(body),
+//   });
+
+//   if (!res.ok) {
+//     const errorText = await res.text();
+//     console.error("[GEMINI_CRITICAL_FAILURE]:", errorText);
+//     throw new Error(`Registry AI Link Failure: ${res.statusText}`);
+//   }
+  
+//   const json = await res.json();
+//   const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text;
+  
+//   if (!rawText) throw new Error("AI returned empty logic node.");
+
+//   // Safely parse JSON from AI stream
+//   return JSON.parse(rawText.trim());
+// }
+// // ─── Main Server Actions ──────────────────────────────────────────────────────
+
+// export async function processPastQuestion(params: {
+//   formData: FormData;
+//   userId: string;
+//   schoolId: string | null;
+//   userRole: Role;
+//   subject: string; 
+//   year: number;
+//   examType: string;
+// }) {
+//   const { formData, userId, schoolId, userRole, subject, year, examType } = params;
+
+//   try {
+//     const imageFile = formData.get("image") as File;
+//     if (!imageFile) throw new Error("Image payload not discovered.");
+
+//     const buffer = await imageFile.arrayBuffer();
+//     const base64Image = Buffer.from(buffer).toString("base64");
+
+//     const prompt = `Act as a Senior Academic Examiner. Extract all questions from this ${subject} paper (Year ${year}). Provide solutions and rationale. Return JSON array: [{ "text": "...", "answer": "...", "explanation": "..." }]`;
+
+//     const questions = await callGemini(prompt, { 
+//         mimeType: imageFile.type, 
+//         data: base64Image 
+//     });
+
+//     await prisma.scannedPaper.create({
+//       data: {
+//         subject,
+//         year,
+//         type: examType,
+//         imageUrl: null, 
+//         schoolId,
+//         creatorId: userId,
+//         questions: questions as Prisma.InputJsonValue,
+//       }
+//     });
+
+//     await logActivity({
+//       schoolId,
+//       actorId: userId,
+//       actorRole: userRole,
+//       type: ActivityType.SETTINGS_UPDATED,
+//       title: "Archive Node Synchronized",
+//       description: `Digitized ${questions.length} nodes for ${subject} ${year}.`
+//     });
+
+//     revalidatePath("/library/archives");
+//     return { success: true, count: questions.length };
+
+//   } catch (error: unknown) {
+//     console.error("[PROCESS_PAPER_ERROR]:", error);
+//     return { success: false, error: getErrorMessage(error) };
+//   }
+// }
+
+// export async function getScannedPapers(schoolId: string | null, userId: string) {
+//     try {
+//         return await prisma.scannedPaper.findMany({
+//             where: {
+//                 OR: [
+//                     schoolId ? { schoolId } : { id: 'NEVER' },
+//                     { AND: [{ schoolId: null }, { creatorId: userId }] }
+//                 ]
+//             },
+//             orderBy: { year: 'desc' }
+//         });
+//     } catch (error) { return []; }
+// }
+
+
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -1217,142 +1502,187 @@ import { logActivity } from "@/app/actions/activitylog";
 import { getErrorMessage } from "@/lib/error-handler";
 import { revalidatePath } from "next/cache";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ─── Type Export (Fix #1) ─────────────────────────────────────────────────────
+export type ScannedPaperSet = Awaited<ReturnType<typeof getScannedPapers>>[number];
 
-export interface ScannedPaperSet {
-    id: string;
-    subject: string;
-    year: number;
-    type: string;
-    questions: any; // Mapped as JsonArray
-    createdAt: Date;
-}
+export type ExtractedQuestion = {
+  text: string;
+  answer: string;
+  explanation: string;
+};
 
-// ─── AI Engine Logic (Rule 8) ────────────────────────────────────────────────
+// ─── AI Engine ────────────────────────────────────────────────────────────────
 
-/**
- * Rule 8: AI Logic synthesis using Gemini 1.5 Pro.
- * Handles cleaning of markdown JSON wrappers for strict parsing.
- */
-async function callGemini(prompt: string, inlineData?: { mimeType: string, data: string }) {
+
+async function callGemini(
+  prompt: string,
+  inlineData?: { mimeType: string; data: string }
+): Promise<ExtractedQuestion[]> {
   const GEMINI_API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
-  const model = "gemini-1.5-pro"; 
-  
+
+  if (!GEMINI_API_KEY) throw new Error("Gemini API key is not configured.");
+
+  const model = "gemini-2.5-flash"; // ← confirmed available on your key
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+
+  // Validate MIME type
+  const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+  if (inlineData && !allowedMimeTypes.includes(inlineData.mimeType)) {
+    throw new Error(`Unsupported image type: ${inlineData.mimeType}. Please upload a JPG, PNG, or WEBP.`);
+  }
+
   const body = {
-    contents: [{
-      parts: [
-        ...(inlineData ? [{ inlineData }] : []),
-        { text: prompt }
-      ]
-    }],
-    generationConfig: { 
-        temperature: 0.1, 
-        responseMimeType: "application/json" 
-    }
+    contents: [
+      {
+        parts: [
+          ...(inlineData ? [{ inlineData }] : []),
+          { text: prompt },
+        ],
+      },
+    ],
+    generationConfig: {
+      temperature: 0.1,
+      responseMimeType: "application/json",
+    },
   };
 
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
 
-  if (!res.ok) throw new Error(`Registry AI Link Failure: ${res.statusText}`);
-  
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => null);
+    const reason = errorBody?.error?.message ?? res.statusText;
+    console.error("[GEMINI_CRITICAL_FAILURE]:", JSON.stringify(errorBody, null, 2));
+    throw new Error(`AI extraction failed: ${reason}`);
+  }
+
   const json = await res.json();
   const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text;
-  
-  if (!rawText) throw new Error("AI returned an empty logic node.");
 
-  // Clean markdown if AI included it despite responseMimeType
-  const cleanedText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-  return JSON.parse(cleanedText);
+  if (!rawText) throw new Error("AI returned empty logic node.");
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(rawText.trim());
+  } catch {
+    throw new Error("AI returned malformed JSON. Try a clearer image.");
+  }
+
+  let questions: unknown = parsed;
+
+  if (!Array.isArray(questions)) {
+    const obj = questions as Record<string, unknown>;
+    questions =
+      obj.questions ??
+      obj.data ??
+      obj.items ??
+      Object.values(obj).find((v) => Array.isArray(v)) ??
+      [];
+  }
+
+  if (!Array.isArray(questions) || questions.length === 0) {
+    throw new Error("AI returned no questions. Try a clearer or higher-resolution image.");
+  }
+
+  const validated = (questions as unknown[]).filter(
+    (q): q is ExtractedQuestion =>
+      typeof q === "object" &&
+      q !== null &&
+      "text" in q &&
+      "answer" in q &&
+      "explanation" in q
+  );
+
+  if (validated.length === 0) {
+    throw new Error("AI questions missing required fields (text, answer, explanation).");
+  }
+
+  return validated;
 }
+// ─── Server Actions ───────────────────────────────────────────────────────────
 
-// ─── Main Server Actions ──────────────────────────────────────────────────────
-
-/**
- * FETCH ARCHIVE REGISTRY
- * Rule 5/6: Scopes institutional vs personal archives.
- */
-export async function getScannedPapers(schoolId: string | null, userId: string): Promise<ScannedPaperSet[]> {
-    try {
-        const papers = await prisma.scannedPaper.findMany({
-            where: {
-                OR: [
-                    schoolId ? { schoolId } : { id: 'NEVER' },
-                    { AND: [{ schoolId: null }, { creatorId: userId }] }
-                ]
-            },
-            orderBy: { year: 'desc' }
-        });
-        return papers as unknown as ScannedPaperSet[];
-    } catch (error) { return []; }
-}
-
-/**
- * PROCESS & DISCARD LOGIC (Rule 11)
- * Rule 10: Security check ensures image is processed in memory only.
- */
 export async function processPastQuestion(params: {
   formData: FormData;
   userId: string;
   schoolId: string | null;
   userRole: Role;
-  subject: string; 
+  subject: string;
   year: number;
   examType: string;
 }) {
   const { formData, userId, schoolId, userRole, subject, year, examType } = params;
 
   try {
-    const imageFile = formData.get("image") as File;
-    if (!imageFile) throw new Error("Image payload not discovered.");
+    const imageFile = formData.get("image") as File | null;
+    if (!imageFile || imageFile.size === 0)
+      throw new Error("Image payload not discovered.");
 
     const buffer = await imageFile.arrayBuffer();
     const base64Image = Buffer.from(buffer).toString("base64");
 
-    // 1. AI Synthesis (Direct Base64 Stream)
     const prompt = `
-        Act as a Senior Academic Examiner. Analyze this ${imageFile.type} scan for ${subject} (${year}).
-        1. Extract all questions.
-        2. Provide expert solutions and rationale.
-        RETURN ONLY JSON ARRAY:
-        [{ "text": "...", "answer": "...", "explanation": "...", "marks": 5 }]
+      Act as a Senior Academic Examiner for Nigerian secondary school exams.
+      Extract ALL questions visible in this ${subject} past question paper (${examType}, Year ${year}).
+      For each question, provide the correct answer and a clear explanation of the reasoning.
+      
+      Return a JSON array ONLY — no wrapper object, no extra keys, no markdown.
+      Schema: [{ "text": "full question text", "answer": "correct answer", "explanation": "step-by-step rationale" }]
     `;
 
-    const questions = await callGemini(prompt, { 
-        mimeType: imageFile.type, 
-        data: base64Image 
-    });
+    const questions = await callGemini(
+      prompt,
+      { mimeType: imageFile.type, data: base64Image }
+    );
 
-    // 2. Persist ONLY logic nodes (Rule 11)
     await prisma.scannedPaper.create({
       data: {
         subject,
         year,
         type: examType,
-        imageUrl: null, // Image discarded for privacy/cost
+        imageUrl: null,
         schoolId,
         creatorId: userId,
         questions: questions as Prisma.InputJsonValue,
-      }
+      },
     });
 
-    // 3. Log Activity
     await logActivity({
       schoolId,
       actorId: userId,
       actorRole: userRole,
       type: ActivityType.SETTINGS_UPDATED,
       title: "Archive Node Synchronized",
-      description: `Digitized ${questions.length} nodes for ${subject} ${year}. Source discarded.`
+      description: `Digitized ${questions.length} nodes for ${subject} ${year}.`,
     });
 
-    revalidatePath("/library/archives");
+    revalidatePath("/pastQuestions");
     return { success: true, count: questions.length };
-
   } catch (error: unknown) {
+    console.error("[PROCESS_PAPER_ERROR]:", error);
     return { success: false, error: getErrorMessage(error) };
+  }
+}
+
+export async function getScannedPapers(schoolId: string | null, userId: string) {
+  try {
+    // Fix #4 — Correct null schoolId query logic
+    return await prisma.scannedPaper.findMany({
+      where: schoolId
+        ? {
+            OR: [
+              { schoolId },
+              { creatorId: userId, schoolId: null },
+            ],
+          }
+        : { creatorId: userId, schoolId: null },
+      orderBy: { year: "desc" },
+    });
+  } catch (error) {
+    console.error("[GET_SCANNED_PAPERS_ERROR]:", error);
+    return [];
   }
 }

@@ -128,6 +128,8 @@
   --school-primary:   var(--school-primary-raw);
   --school-secondary: var(--school-secondary-raw);
 
+  
+
   /* ── Foreground tokens (CRITICAL for readability) ──────────────
      Strategy: use color-mix to push toward white or black based on
      the brightness of the brand color. We can't query oklch L at

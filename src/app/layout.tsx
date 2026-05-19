@@ -938,6 +938,108 @@
 
 
 
+// import { Metadata } from "next";
+// import { Inter } from "next/font/google";
+// import "./globals.css";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getSchoolThemeStyle } from "@/lib/school-theme";
+// import { cookies } from "next/headers";
+// import { Role } from "@prisma/client";
+// import { Toaster } from "@/components/ui/sonner";
+// import { ScrollToTop } from "@/components/scroll-to-top";
+// import { SchoolProvider } from "@/context/schoolProvider";
+// import { ProfileInitializer } from "@/components/profileInitializer";
+// import { getRegistryProfile } from "./actions/profileRegistry";
+// import { getParentProfile } from "./actions/parentProfile";
+// const inter = Inter({ subsets: ["latin"] });
+
+// export const metadata: Metadata = {
+//   title: "SchoolPaaS | AI Academic Registry",
+//   description: "Institutional infrastructure for the next generation of learning.",
+// };
+
+// /**
+//  * THEME RESOLUTION LOGIC
+//  * Rule 11: DB preference takes priority over session cookies.
+//  */
+// function resolveTheme(
+//     dbTheme: string | null | undefined,
+//     cookieTheme: string | null | undefined
+// ): 'dark' | 'light' {
+//     if (dbTheme === 'dark' || dbTheme === 'light') return dbTheme as 'dark' | 'light';
+//     if (cookieTheme === 'dark' || cookieTheme === 'light') return cookieTheme as 'dark' | 'light';
+//     return 'dark'; // Default platform standard
+// }
+
+// /**
+//  * ROOT LAYOUT (Global Core)
+//  * Rule 12: Server-side data resolution to prevent "White Flash" and layout shifts.
+//  * Rule 18: Dynamic Design Token injection via inline styles.
+//  */
+// export default async function RootLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//     const cookieStore = await cookies();
+//     const supabase = await createClient();
+    
+//     // 1. Resolve Identity (Rule 10)
+//     const { data: { user } } = await supabase.auth.getUser();
+
+//     let profile = null;
+//     if (user?.email) {
+//         // Lightweight check to determine hydration path
+//         const base = await prisma.profile.findFirst({
+//             where: { id: user.id },
+//             select: { role: true, theme: true, primaryColor: true, secondaryColor: true }
+//         });
+
+//         if (base) {
+//             // Hydrate full profile based on tier
+//             profile = base.role === Role.PARENT 
+//                 ? await getParentProfile(user.email) 
+//                 : await getRegistryProfile(user.email);
+//         }
+//     }
+
+//     // 2. Resolve Theme Node (Rule 18)
+//     const cookieTheme = cookieStore.get('theme')?.value;
+//     // @ts-ignore - 'theme' added to Profile model per previous refactor
+//     const isDark = resolveTheme(profile?.theme, cookieTheme) === 'dark';
+
+//     // 3. Resolve Institutional Branding (Tier 2/3)
+//     // ✅ FIX: Accessing colors from profile directly, as they do not exist on the School model.
+//     const schoolColors = profile?.primaryColor && profile?.secondaryColor
+//         ? getSchoolThemeStyle({
+//               primary:   profile.primaryColor,
+//               secondary: profile.secondaryColor,
+//           })
+//         : {};
+
+//     return (
+//         <html
+//             lang="en"
+//             className={isDark ? 'dark' : ''}
+//             style={schoolColors}
+//             suppressHydrationWarning // Prevents browser console mismatch errors for theme classes
+//         >
+//             <body className={`${inter.className} bg-background text-foreground antialiased selection:bg-school-primary/30`}>
+//                 <ScrollToTop />
+//                 <Toaster />
+                
+//                 {/* Rule 17: Sync Registry Identity to Client Store */}
+//                 <SchoolProvider initialProfile={profile as any}>
+//                     <ProfileInitializer profile={profile as any} />
+//                     {children}
+//                 </SchoolProvider>
+//             </body>
+//         </html>
+//     );
+// }
+
+
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -945,94 +1047,54 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { getSchoolThemeStyle } from "@/lib/school-theme";
 import { cookies } from "next/headers";
-import { Role } from "@prisma/client";
-import { Toaster } from "@/components/ui/sonner";
-import { ScrollToTop } from "@/components/scroll-to-top";
 import { SchoolProvider } from "@/context/schoolProvider";
 import { ProfileInitializer } from "@/components/profileInitializer";
-import { getRegistryProfile } from "./actions/profileRegistry";
-import { getParentProfile } from "./actions/parentProfile";
+import { BrandingProvider } from "@/context/brandingProvider"; // ✅ Import here
+import { Toaster } from "@/components/ui/sonner";
+
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "SchoolPaaS | AI Academic Registry",
-  description: "Institutional infrastructure for the next generation of learning.",
-};
-
-/**
- * THEME RESOLUTION LOGIC
- * Rule 11: DB preference takes priority over session cookies.
- */
-function resolveTheme(
-    dbTheme: string | null | undefined,
-    cookieTheme: string | null | undefined
-): 'dark' | 'light' {
-    if (dbTheme === 'dark' || dbTheme === 'light') return dbTheme as 'dark' | 'light';
-    if (cookieTheme === 'dark' || cookieTheme === 'light') return cookieTheme as 'dark' | 'light';
-    return 'dark'; // Default platform standard
-}
-
-/**
- * ROOT LAYOUT (Global Core)
- * Rule 12: Server-side data resolution to prevent "White Flash" and layout shifts.
- * Rule 18: Dynamic Design Token injection via inline styles.
- */
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
     const cookieStore = await cookies();
     const supabase = await createClient();
-    
-    // 1. Resolve Identity (Rule 10)
     const { data: { user } } = await supabase.auth.getUser();
 
+    // 1. Resolve Global Identity (Server-Side)
     let profile = null;
-    if (user?.email) {
-        // Lightweight check to determine hydration path
-        const base = await prisma.profile.findFirst({
+    if (user) {
+        profile = await prisma.profile.findUnique({
             where: { id: user.id },
-            select: { role: true, theme: true, primaryColor: true, secondaryColor: true }
+            select: { 
+                id: true, theme: true, primaryColor: true, 
+                secondaryColor: true, schoolId: true, role: true, 
+                name: true, email: true 
+            }
         });
-
-        if (base) {
-            // Hydrate full profile based on tier
-            profile = base.role === Role.PARENT 
-                ? await getParentProfile(user.email) 
-                : await getRegistryProfile(user.email);
-        }
     }
 
-    // 2. Resolve Theme Node (Rule 18)
-    const cookieTheme = cookieStore.get('theme')?.value;
-    // @ts-ignore - 'theme' added to Profile model per previous refactor
-    const isDark = resolveTheme(profile?.theme, cookieTheme) === 'dark';
-
-    // 3. Resolve Institutional Branding (Tier 2/3)
-    // ✅ FIX: Accessing colors from profile directly, as they do not exist on the School model.
-    const schoolColors = profile?.primaryColor && profile?.secondaryColor
-        ? getSchoolThemeStyle({
-              primary:   profile.primaryColor,
-              secondary: profile.secondaryColor,
-          })
-        : {};
+    // 2. Resolve Theme & Branding
+    const cookieTheme = cookieStore.get('theme')?.value || 'dark';
+    // @ts-ignore
+    const resolvedTheme = profile?.theme || cookieTheme;
+    const brandingStyles = getSchoolThemeStyle(profile?.primaryColor || null, profile?.secondaryColor || null);
 
     return (
-        <html
-            lang="en"
-            className={isDark ? 'dark' : ''}
-            style={schoolColors}
-            suppressHydrationWarning // Prevents browser console mismatch errors for theme classes
+        <html 
+            lang="en" 
+            className={resolvedTheme} 
+            style={brandingStyles} 
+            suppressHydrationWarning
         >
-            <body className={`${inter.className} bg-background text-foreground antialiased selection:bg-school-primary/30`}>
-                <ScrollToTop />
-                <Toaster />
-                
-                {/* Rule 17: Sync Registry Identity to Client Store */}
+            <body className={`${inter.className} bg-background text-foreground antialiased`}>
                 <SchoolProvider initialProfile={profile as any}>
+                    {/* Rule 17: Initialize Store */}
                     <ProfileInitializer profile={profile as any} />
-                    {children}
+                    
+                    {/* Rule 18: Inject Dynamic Tokens based on Store */}
+                    <BrandingProvider>
+                        <Toaster />
+                        {children}
+                    </BrandingProvider>
                 </SchoolProvider>
             </body>
         </html>
