@@ -161,13 +161,125 @@
 // }
 
 
+// 'use client'
+
+// import { Card, CardContent } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { ArrowRight, Loader2 } from "lucide-react";
+// import { cn } from "@/lib/utils";
+// import { CSSProperties } from "react";
+
+// interface PackageCardProps {
+//     pkg: {
+//         id: string;
+//         name: string;
+//         credits: number;
+//         priceNGN: number;
+//         description: string;
+//         popular: boolean;
+//     };
+//     isProcessing: boolean;
+//     isAnyLoading: boolean;
+//     onSelect: (id: string) => void;
+//     primaryColor: string;
+// }
+
+// /**
+//  * INSTITUTIONAL PACKAGE CARD (Tier 2)
+//  * Rule 11: Uses school branding colors for the "Popular" ring and buttons.
+//  * Rule 17: Localizes styles to prevent prop-drilling layout themes.
+//  */
+// export function PackageCard({ pkg, isProcessing, isAnyLoading, onSelect, primaryColor }: PackageCardProps) {
+    
+//     // ✅ FIX: Define standard CSS properties for the dynamic ring effect
+//     const cardStyle: CSSProperties = pkg.popular ? {
+//         borderColor: primaryColor,
+//         boxShadow: `0 0 20px ${primaryColor}20`, // Subtle glow in the school's color
+//     } : {};
+
+//     return (
+//         <Card 
+//             className={cn(
+//                 "bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col transition-all duration-300 group",
+//                 pkg.popular ? "border-2 shadow-2xl" : "hover:border-white/20",
+//                 isAnyLoading && !isProcessing && "opacity-50 grayscale-[0.5]"
+//             )}
+//             style={cardStyle}
+//         >
+//             {pkg.popular && (
+//                 <div 
+//                     className="py-2 text-center" 
+//                     style={{ backgroundColor: primaryColor }}
+//                 >
+//                     <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-950">
+//                         Institutional Choice
+//                     </p>
+//                 </div>
+//             )}
+
+//             <CardContent className="p-8 flex-1 flex flex-col justify-between space-y-8">
+//                 <div className="space-y-4">
+//                     <div className="flex flex-col gap-1">
+//                         <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">
+//                             {pkg.name}
+//                         </h3>
+//                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+//                             {pkg.credits.toLocaleString()} Transmission Units
+//                         </p>
+//                     </div>
+
+//                     <div className="flex items-baseline gap-1">
+//                         <span className="text-4xl font-black text-white italic tracking-tighter">
+//                             ₦{pkg.priceNGN.toLocaleString()}
+//                         </span>
+//                     </div>
+
+//                     <p className="text-xs text-slate-400 leading-relaxed font-medium italic">
+//                         {pkg.description}
+//                     </p>
+//                 </div>
+
+//                 <div className="space-y-3">
+//                     <Button 
+//                         onClick={() => onSelect(pkg.id)}
+//                         disabled={isAnyLoading}
+//                         className="w-full py-7 rounded-2xl font-black text-[10px] tracking-widest uppercase transition-all shadow-xl group/btn"
+//                         style={{ 
+//                             backgroundColor: isProcessing ? 'transparent' : primaryColor,
+//                             color: isProcessing ? primaryColor : '#020617',
+//                             border: isProcessing ? `1px solid ${primaryColor}` : 'none'
+//                         }}
+//                     >
+//                         {isProcessing ? (
+//                             <Loader2 className="animate-spin h-4 w-4" />
+//                         ) : (
+//                             <span className="flex items-center gap-2">
+//                                 Initialize Purchase 
+//                                 <ArrowRight className="h-3 w-3 transition-transform group-hover/btn:translate-x-1" />
+//                             </span>
+//                         )}
+//                     </Button>
+//                     <p className="text-[8px] text-center text-slate-600 font-bold uppercase tracking-widest">
+//                         Settled via Paystack Secure Gateway
+//                     </p>
+//                 </div>
+//             </CardContent>
+//         </Card>
+//     );
+// }
+
+
+
 'use client'
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { CSSProperties } from "react";
+import React, { useMemo } from 'react'
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ArrowRight, Loader2, Star } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { useProfileStore } from "@/store/profileStore"
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface PackageCardProps {
     pkg: {
@@ -181,87 +293,99 @@ interface PackageCardProps {
     isProcessing: boolean;
     isAnyLoading: boolean;
     onSelect: (id: string) => void;
-    primaryColor: string;
 }
 
 /**
- * INSTITUTIONAL PACKAGE CARD (Tier 2)
- * Rule 11: Uses school branding colors for the "Popular" ring and buttons.
- * Rule 17: Localizes styles to prevent prop-drilling layout themes.
+ * INSTITUTIONAL PACKAGE CARD (Tier 2/3)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 17: Syncs branding via Zustand store (Anti-Prop Drilling).
+ * Rule 18: Semantic Flip (bg-card, bg-surface, border-border).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
-export function PackageCard({ pkg, isProcessing, isAnyLoading, onSelect, primaryColor }: PackageCardProps) {
-    
-    // ✅ FIX: Define standard CSS properties for the dynamic ring effect
-    const cardStyle: CSSProperties = pkg.popular ? {
-        borderColor: primaryColor,
-        boxShadow: `0 0 20px ${primaryColor}20`, // Subtle glow in the school's color
-    } : {};
+export function PackageCard({ pkg, isProcessing, isAnyLoading, onSelect }: PackageCardProps) {
+    const { profile } = useProfileStore();
+
+    // Rule 21: Dynamic CSS Variable logic for the selection glow
+    const cardStyle = useMemo(() => {
+        if (!pkg.popular) return {};
+        return {
+            "--glow-color": "color-mix(in oklch, var(--school-primary), transparent 80%)",
+            borderColor: "var(--school-primary)",
+            boxShadow: `0 0 30px var(--glow-color)`,
+        } as React.CSSProperties;
+    }, [pkg.popular]);
 
     return (
         <Card 
             className={cn(
-                "bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col transition-all duration-300 group",
-                pkg.popular ? "border-2 shadow-2xl" : "hover:border-white/20",
-                isAnyLoading && !isProcessing && "opacity-50 grayscale-[0.5]"
+                "relative overflow-hidden flex flex-col transition-all duration-500 group",
+                "bg-card border-border rounded-[2rem]", // Rule 18 & 19
+                pkg.popular ? "border-2" : "hover:border-school-primary-200",
+                isAnyLoading && !isProcessing && "opacity-40 grayscale-[0.5] scale-[0.98]"
             )}
             style={cardStyle}
         >
+            {/* ── POPULAR BADGE (Rule 21) ── */}
             {pkg.popular && (
-                <div 
-                    className="py-2 text-center" 
-                    style={{ backgroundColor: primaryColor }}
-                >
-                    <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-950">
+                <div className="bg-school-primary py-2 text-center shadow-lg relative z-10">
+                    <p className="text-[9px] font-extrabold uppercase tracking-[0.3em] text-on-school-primary flex items-center justify-center gap-2">
+                        <Star className="h-2.5 w-2.5 fill-current" />
                         Institutional Choice
                     </p>
                 </div>
             )}
 
-            <CardContent className="p-8 flex-1 flex flex-col justify-between space-y-8">
-                <div className="space-y-4">
-                    <div className="flex flex-col gap-1">
-                        <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">
+            <CardContent className="p-8 md:p-10 flex-1 flex flex-col justify-between space-y-10">
+                <div className="space-y-6">
+                    <div className="space-y-1">
+                        {/* Rule 11: Package Header */}
+                        <h3 className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter leading-tight group-hover:text-school-primary transition-colors">
                             {pkg.name}
                         </h3>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                        {/* Rule 11: Metadata Typography */}
+                        <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest italic opacity-70">
                             {pkg.credits.toLocaleString()} Transmission Units
                         </p>
                     </div>
 
                     <div className="flex items-baseline gap-1">
-                        <span className="text-4xl font-black text-white italic tracking-tighter">
+                        <span className="text-4xl font-extrabold text-foreground italic tracking-tighter">
                             ₦{pkg.priceNGN.toLocaleString()}
                         </span>
                     </div>
 
-                    <p className="text-xs text-slate-400 leading-relaxed font-medium italic">
+                    <p className="text-xs text-muted-foreground leading-relaxed font-medium italic">
                         {pkg.description}
                     </p>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-4">
                     <Button 
                         onClick={() => onSelect(pkg.id)}
                         disabled={isAnyLoading}
-                        className="w-full py-7 rounded-2xl font-black text-[10px] tracking-widest uppercase transition-all shadow-xl group/btn"
-                        style={{ 
-                            backgroundColor: isProcessing ? 'transparent' : primaryColor,
-                            color: isProcessing ? primaryColor : '#020617',
-                            border: isProcessing ? `1px solid ${primaryColor}` : 'none'
-                        }}
+                        className={cn(
+                            "w-full h-14 rounded-2xl font-extrabold text-[10px] tracking-widest uppercase transition-all shadow-xl group/btn",
+                            isProcessing 
+                                ? "bg-surface border border-school-primary text-school-primary" 
+                                : "bg-school-primary text-on-school-primary hover:brightness-110 active:scale-95"
+                        )}
                     >
                         {isProcessing ? (
-                            <Loader2 className="animate-spin h-4 w-4" />
+                            <Loader2 className="animate-spin h-5 w-5" />
                         ) : (
-                            <span className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
                                 Initialize Purchase 
-                                <ArrowRight className="h-3 w-3 transition-transform group-hover/btn:translate-x-1" />
-                            </span>
+                                <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                            </div>
                         )}
                     </Button>
-                    <p className="text-[8px] text-center text-slate-600 font-bold uppercase tracking-widest">
-                        Settled via Paystack Secure Gateway
-                    </p>
+                    
+                    <div className="flex flex-col items-center gap-2">
+                         <p className="text-[8px] text-center text-muted-foreground font-bold uppercase tracking-widest opacity-40 italic">
+                            Settled via Paystack Secure Platform
+                        </p>
+                    </div>
                 </div>
             </CardContent>
         </Card>

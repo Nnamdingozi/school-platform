@@ -1081,36 +1081,22 @@
 // }
 
 
+// 
+
+
+
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { LoginForm } from "@/components/auth/loginClient";
 
-/**
- * Rule 16: Dynamic SEO
- */
 export const metadata: Metadata = {
     title: "Login | Registry Access | SchoolPaaS",
     description: "Secure gateway to the SchoolPaaS multicurricular registry.",
 };
 
-/**
- * Rule 12: Server-First Session Check
- */
-export default async function Page() {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    /**
-     * Rule 10: If a user is already authenticated, 
-     * move them directly to the dashboard to save time.
-     */
-    if (user) {
-        // Redirection logic is better handled in middleware for speed,
-        // but this server-side check adds a second layer of protection.
-        redirect("/teacher"); 
-    }
-
+export default function Page() {
+    // No redirect logic here — middleware handles
+    // authenticated users hitting /login and sends
+    // them to the correct role-based home route.
     return (
         <main className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
             <LoginForm />

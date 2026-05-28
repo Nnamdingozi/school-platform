@@ -38,48 +38,119 @@
 // }
 
 
+// 'use client'
+
+// import { useTransition } from 'react'
+// import { useRouter } from 'next/navigation'
+// import { markAllNotificationsReadAction } from '@/app/actions/notifications'
+// import { CheckCircle2, Loader2 } from 'lucide-react'
+// import { toast } from 'sonner'
+// import { useProfileStore } from '@/store/profileStore'
+
+// interface MarkAllReadButtonProps {
+//     unreadCount: number;
+// }
+
+// /**
+//  * REGISTRY UTILITY COMPONENT
+//  * Rule 14: Triggers server-side revalidation (router.refresh).
+//  * Rule 17: Pulls primaryColor from Zustand to theme the button.
+//  */
+// export function MarkAllReadButton({ unreadCount }: MarkAllReadButtonProps) {
+//     const router = useRouter();
+//     const { profile } = useProfileStore();
+//     const [isPending, startTransition] = useTransition();
+
+//     const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//     function handleMarkAll() {
+//         if (unreadCount === 0) return;
+
+//         startTransition(async () => {
+//             try {
+//                 // Rule 11: Final System Truth update on server
+//                 const result = await markAllNotificationsReadAction();
+                
+//                 if (result.success) {
+//                     toast.success('Communication registry synchronized.');
+//                     // Rule 14: Refresh current server page data
+//                     router.refresh();
+//                 } else {
+//                     toast.error('Registry sync failed.');
+//                 }
+//             } catch (error: unknown) {
+//                 toast.error('A critical connection error occurred.');
+//             }
+//         });
+//     }
+
+//     return (
+//         <button
+//             onClick={handleMarkAll}
+//             disabled={unreadCount === 0 || isPending}
+//             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-30 disabled:cursor-not-allowed group"
+//             style={{ 
+//                 backgroundColor: `${primaryColor}10`,
+//                 color: unreadCount > 0 ? primaryColor : '#475569' 
+//             }}
+//         >
+//             {isPending ? (
+//                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
+//             ) : (
+//                 <CheckCircle2 className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
+//             )}
+//             Mark all as read
+//         </button>
+//     );
+// }
+
+
 'use client'
 
-import { useTransition } from 'react'
+import React, { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { markAllNotificationsReadAction } from '@/app/actions/notifications'
 import { CheckCircle2, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useProfileStore } from '@/store/profileStore'
+import { cn } from '@/lib/utils'
 
 interface MarkAllReadButtonProps {
     unreadCount: number;
 }
 
 /**
- * REGISTRY UTILITY COMPONENT
- * Rule 14: Triggers server-side revalidation (router.refresh).
- * Rule 17: Pulls primaryColor from Zustand to theme the button.
+ * COMMUNICATION SYNC UTILITY (Tier 3)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold uppercase).
+ * Rule 14: Server-side revalidation protocols (router.refresh).
+ * Rule 18: Semantic Flip (bg-surface, bg-card, border-border).
+ * Rule 19: Standardized Geometry (rounded-2xl).
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function MarkAllReadButton({ unreadCount }: MarkAllReadButtonProps) {
     const router = useRouter();
     const { profile } = useProfileStore();
     const [isPending, startTransition] = useTransition();
 
-    const primaryColor = profile?.primaryColor || "#f59e0b";
+    const hasUnread = unreadCount > 0;
 
     function handleMarkAll() {
-        if (unreadCount === 0) return;
+        if (!hasUnread) return;
 
         startTransition(async () => {
             try {
-                // Rule 11: Final System Truth update on server
+                // Rule 11: System Truth synchronization on server
                 const result = await markAllNotificationsReadAction();
                 
                 if (result.success) {
                     toast.success('Communication registry synchronized.');
-                    // Rule 14: Refresh current server page data
+                    // Rule 14: Refresh server-side data stream
                     router.refresh();
                 } else {
                     toast.error('Registry sync failed.');
                 }
             } catch (error: unknown) {
-                toast.error('A critical connection error occurred.');
+                toast.error('Critical registry connection failure.');
             }
         });
     }
@@ -87,19 +158,24 @@ export function MarkAllReadButton({ unreadCount }: MarkAllReadButtonProps) {
     return (
         <button
             onClick={handleMarkAll}
-            disabled={unreadCount === 0 || isPending}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-30 disabled:cursor-not-allowed group"
-            style={{ 
-                backgroundColor: `${primaryColor}10`,
-                color: unreadCount > 0 ? primaryColor : '#475569' 
-            }}
+            disabled={!hasUnread || isPending}
+            className={cn(
+                "inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl transition-all active:scale-95 group",
+                "text-[10px] font-extrabold uppercase tracking-widest shadow-sm", // Rule 11
+                hasUnread 
+                    ? "bg-school-primary-50 border border-school-primary-200 text-school-primary hover:bg-school-primary-100" // Rule 21
+                    : "bg-surface border border-border text-muted-foreground/40 cursor-not-allowed grayscale"
+            )}
         >
             {isPending ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-                <CheckCircle2 className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
+                <CheckCircle2 className={cn(
+                    "h-4 w-4 transition-transform",
+                    hasUnread && "group-hover:scale-110"
+                )} />
             )}
-            Mark all as read
+            <span>Mark all as read</span>
         </button>
     );
 }

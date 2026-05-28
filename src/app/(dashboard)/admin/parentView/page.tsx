@@ -114,6 +114,59 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getParentsBySchool } from "@/app/actions/user-management";
+// import { ParentsListClient } from "@/components/admin-dasboard/parent/parentListClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Dynamic SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Parents | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         include: { school: { select: { name: true } } }
+//     });
+
+//     return {
+//         title: `Parent Registry | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
+//         description: "Institutional management of family accounts and student links."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Fetching
+//  */
+// export default async function ParentsPage() {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     // Rule 6 & 13: Institutional Gate
+//     if (!profile?.schoolId || profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN) {
+//         redirect("/student?error=unauthorized");
+//     }
+
+//     const parents = await getParentsBySchool(profile.schoolId);
+
+//     return (
+//         <ParentsListClient initialParents={parents} />
+//     );
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -123,7 +176,8 @@ import { ParentsListClient } from "@/components/admin-dasboard/parent/parentList
 import { Role } from "@prisma/client";
 
 /**
- * Rule 16: Dynamic SEO
+ * PARENT REGISTRY | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO - Reflects institutional branding in search metadata.
  */
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
@@ -137,30 +191,42 @@ export async function generateMetadata(): Promise<Metadata> {
 
     return {
         title: `Parent Registry | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
-        description: "Institutional management of family accounts and student links."
+        description: "Authoritative institutional management of family accounts and student linkages."
     };
 }
 
 /**
- * Rule 12: Server-First Fetching
+ * PARENT REGISTRY (Tier 2)
+ * Rule 12: Server-First Execution. Handles auth, role-gating, and data hydration.
+ * Rule 5/6: Strict Institutional Isolation via schoolId.
+ * Rule 15: Strict Prisma typing - no 'any' allowed in the data pipeline.
  */
 export default async function ParentsPage() {
+    // 1. Authentication Layer (Rule 10)
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) redirect("/login");
 
+    // 2. Authorization & Scoping (Rule 5/6)
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         select: { id: true, schoolId: true, role: true }
     });
 
-    // Rule 6 & 13: Institutional Gate
-    if (!profile?.schoolId || profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN) {
-        redirect("/student?error=unauthorized");
+    // Security Protocol: Only Institutional Admins (Tier 2) or Super Admins (Tier 1) may proceed.
+    // Independent Learners (schoolId: null) are strictly prohibited from this registry view.
+    if (
+        !profile?.schoolId || 
+        (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)
+    ) {
+        redirect("/dashboard?error=unauthorized_access");
     }
 
+    // 3. Data Hydration (Rule 12)
+    // Fetching the authoritative list of parents mapped to this institution.
     const parents = await getParentsBySchool(profile.schoolId);
 
+    // 4. Client-Side Handoff
     return (
         <ParentsListClient initialParents={parents} />
     );

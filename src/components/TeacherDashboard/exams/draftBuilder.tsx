@@ -634,6 +634,126 @@
 
 
 
+// "use client";
+
+// import React, { useCallback } from "react";
+// import { SubjectSelector } from "./subjectSelector";
+// import { SyllabusSelector } from "./syllabusSelector";
+// import { SettingsSidebar } from "./settingsSidebar";
+// import { Card } from "@/components/ui/card";
+// import { useExamStore, getErrorMessage, type AssignmentWithDetails } from "@/store/useExamStore";
+// import { cn } from "@/lib/utils";
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// /**
+//  * DRAFT BUILDER (Tier 2/3)
+//  * FIX: Standardized onSubmit to strictly return Promise<void> to satisfy SettingsSidebar.
+//  * Rule 11: High-fidelity Registry Typography.
+//  * Rule 18/19: Semantic Color Flip & [2rem] Geometry.
+//  */
+// export function DraftBuilder({ onSubmit }: { onSubmit: () => Promise<void> }) {
+//   const {
+//     assignments,
+//     selectedAssignment,
+//     setSelectedAssignment,
+//     termGroups,
+//     selectedTopicIds,
+//     setSelectedTopicIds,
+//   } = useExamStore();
+
+//   /**
+//    * ADAPTER: Reconciles Zustand's state setter with React's Dispatch type.
+//    */
+//   const handleSetTopics: React.Dispatch<React.SetStateAction<string[]>> = useCallback(
+//     (value) => {
+//       if (typeof value === "function") {
+//         const nextIds = value(selectedTopicIds);
+//         setSelectedTopicIds(nextIds);
+//       } else {
+//         setSelectedTopicIds(value);
+//       }
+//     },
+//     [selectedTopicIds, setSelectedTopicIds]
+//   );
+
+//   /**
+//    * SUBJECT HANDLER: Strict casting of store entities.
+//    */
+//   const handleSubjectChange = useCallback((assignment: unknown) => {
+//     setSelectedAssignment(assignment as AssignmentWithDetails | null);
+//   }, [setSelectedAssignment]);
+
+//   try {
+//     return (
+//       <div 
+//         className={cn(
+//           "max-w-7xl mx-auto w-full",
+//           "p-4 md:p-8 lg:p-12", 
+//           "grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12"
+//         )}
+//       >
+//         <div className="lg:col-span-2 space-y-10">
+          
+//           {/* ── STEP 1: SUBJECT SELECTION ── */}
+//           <Card className="p-6 md:p-10 rounded-[2rem] border-border bg-card shadow-xl transition-all hover:border-school-primary/20">
+//             <div className="flex items-center gap-4 mb-8">
+//               <div className="h-10 w-10 rounded-xl bg-school-primary/10 text-school-primary border border-school-primary/20 flex items-center justify-center text-xs font-extrabold shadow-inner">
+//                 01
+//               </div>
+//               <h3 className="text-lg md:text-xl font-extrabold uppercase italic tracking-tighter text-foreground">
+//                 Registry Selection
+//               </h3>
+//             </div>
+//             <div className="pt-8 border-t border-border">
+//               <SubjectSelector
+//                 assignments={assignments}
+//                 selectedAssignment={selectedAssignment}
+//                 setSelectedAssignment={handleSubjectChange}
+//               />
+//             </div>
+//           </Card>
+
+//           {/* ── STEP 2: SYLLABUS ARCHITECTURE ── */}
+//           <Card className="p-6 md:p-10 rounded-[2rem] border-border bg-card shadow-xl transition-all hover:border-school-primary/20">
+//             <div className="flex items-center gap-4 mb-8">
+//               <div className="h-10 w-10 rounded-xl bg-school-primary/10 text-school-primary border border-school-primary/20 flex items-center justify-center text-xs font-extrabold shadow-inner">
+//                 02
+//               </div>
+//               <h3 className="text-lg md:text-xl font-extrabold uppercase italic tracking-tighter text-foreground">
+//                 Syllabus Architecture
+//               </h3>
+//             </div>
+//             <div className="pt-8 border-t border-border">
+//               <SyllabusSelector
+//                 termGroups={termGroups}
+//                 selectedTopicIds={selectedTopicIds}
+//                 setSelectedTopicIds={handleSetTopics}
+//               />
+//             </div>
+//           </Card>
+//         </div>
+
+//         {/* ── SETTINGS COLUMN ── */}
+//         <div className="lg:col-span-1">
+//           {/* Rule 15: onSubmit now strictly matches the onBuildPool signature */}
+//           <SettingsSidebar onBuildPool={onSubmit} />
+//         </div>
+//       </div>
+//     );
+//   } catch (error) {
+//     console.error(`[DraftBuilder_Critical_Fault]: ${getErrorMessage(error)}`);
+//     return (
+//       <div className="p-12 text-center bg-surface border-2 border-dashed border-destructive/20 rounded-[2rem] max-w-2xl mx-auto mt-20">
+//         <h2 className="text-foreground font-extrabold text-xl uppercase italic tracking-tighter">Architect Logic Error</h2>
+//         <p className="text-muted-foreground text-xs mt-4 font-semibold uppercase tracking-widest">{getErrorMessage(error)}</p>
+//       </div>
+//     );
+//   }
+// }
+
+
+
 "use client";
 
 import React, { useCallback } from "react";
@@ -648,9 +768,11 @@ import { cn } from "@/lib/utils";
 
 /**
  * DRAFT BUILDER (Tier 2/3)
- * FIX: Standardized onSubmit to strictly return Promise<void> to satisfy SettingsSidebar.
- * Rule 11: High-fidelity Registry Typography.
- * Rule 18/19: Semantic Color Flip & [2rem] Geometry.
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 20: Compulsory Responsiveness with fluid padding and max-w-7xl.
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function DraftBuilder({ onSubmit }: { onSubmit: () => Promise<void> }) {
   const {
@@ -689,20 +811,21 @@ export function DraftBuilder({ onSubmit }: { onSubmit: () => Promise<void> }) {
       <div 
         className={cn(
           "max-w-7xl mx-auto w-full",
-          "p-4 md:p-8 lg:p-12", 
+          "p-4 md:p-8 lg:p-12", // Rule 20: Fluid Padding
           "grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12"
         )}
       >
-        <div className="lg:col-span-2 space-y-10">
+        <div className="lg:col-span-2 space-y-8 md:space-y-12">
           
           {/* ── STEP 1: SUBJECT SELECTION ── */}
-          <Card className="p-6 md:p-10 rounded-[2rem] border-border bg-card shadow-xl transition-all hover:border-school-primary/20">
+          <Card className="p-6 md:p-10 rounded-[2rem] border-border bg-card shadow-xl transition-all hover:border-school-primary-200">
             <div className="flex items-center gap-4 mb-8">
-              <div className="h-10 w-10 rounded-xl bg-school-primary/10 text-school-primary border border-school-primary/20 flex items-center justify-center text-xs font-extrabold shadow-inner">
+              {/* Rule 21: Scale Protocol for Step Indicators */}
+              <div className="h-10 w-10 rounded-xl bg-school-primary-100 border border-school-primary-200 text-school-primary flex items-center justify-center text-xs font-extrabold shadow-inner">
                 01
               </div>
               <h3 className="text-lg md:text-xl font-extrabold uppercase italic tracking-tighter text-foreground">
-                Registry Selection
+                Registry Hub Selection
               </h3>
             </div>
             <div className="pt-8 border-t border-border">
@@ -715,9 +838,10 @@ export function DraftBuilder({ onSubmit }: { onSubmit: () => Promise<void> }) {
           </Card>
 
           {/* ── STEP 2: SYLLABUS ARCHITECTURE ── */}
-          <Card className="p-6 md:p-10 rounded-[2rem] border-border bg-card shadow-xl transition-all hover:border-school-primary/20">
+          <Card className="p-6 md:p-10 rounded-[2rem] border-border bg-card shadow-xl transition-all hover:border-school-primary-200">
             <div className="flex items-center gap-4 mb-8">
-              <div className="h-10 w-10 rounded-xl bg-school-primary/10 text-school-primary border border-school-primary/20 flex items-center justify-center text-xs font-extrabold shadow-inner">
+              {/* Rule 21: Scale Protocol */}
+              <div className="h-10 w-10 rounded-xl bg-school-primary-100 border border-school-primary-200 text-school-primary flex items-center justify-center text-xs font-extrabold shadow-inner">
                 02
               </div>
               <h3 className="text-lg md:text-xl font-extrabold uppercase italic tracking-tighter text-foreground">
@@ -734,19 +858,19 @@ export function DraftBuilder({ onSubmit }: { onSubmit: () => Promise<void> }) {
           </Card>
         </div>
 
-        {/* ── SETTINGS COLUMN ── */}
+        {/* ── SETTINGS SIDEBAR ── */}
         <div className="lg:col-span-1">
-          {/* Rule 15: onSubmit now strictly matches the onBuildPool signature */}
           <SettingsSidebar onBuildPool={onSubmit} />
         </div>
       </div>
     );
   } catch (error) {
-    console.error(`[DraftBuilder_Critical_Fault]: ${getErrorMessage(error)}`);
+    // ── ERROR HUB (Rule 21: Mathematical Error Tints) ──
+    console.error(`[DRAFT_BUILDER_FAULT]: ${getErrorMessage(error)}`);
     return (
-      <div className="p-12 text-center bg-surface border-2 border-dashed border-destructive/20 rounded-[2rem] max-w-2xl mx-auto mt-20">
-        <h2 className="text-foreground font-extrabold text-xl uppercase italic tracking-tighter">Architect Logic Error</h2>
-        <p className="text-muted-foreground text-xs mt-4 font-semibold uppercase tracking-widest">{getErrorMessage(error)}</p>
+      <div className="p-12 text-center bg-destructive-50 border-2 border-dashed border-destructive-200 rounded-[2rem] max-w-2xl mx-auto mt-20">
+        <h2 className="text-destructive font-extrabold text-xl uppercase italic tracking-tighter">Architect Logic Error</h2>
+        <p className="text-destructive/70 text-[10px] mt-4 font-bold uppercase tracking-widest">{getErrorMessage(error)}</p>
       </div>
     );
   }

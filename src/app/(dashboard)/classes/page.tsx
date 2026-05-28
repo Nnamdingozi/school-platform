@@ -810,70 +810,156 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getClassDashboardData, getManagementHelpers } from "@/app/actions/class-management";
+// import { ClassesHubClient } from "@/components/classHubClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Dynamic SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Classrooms | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         include: { school: { select: { name: true } } }
+//     });
+
+//     return {
+//         title: `Class Registry | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
+//         description: "Institutional classroom management and peer registry."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Fetching
+//  */
+// export default async function ClassesPage() {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     if (!profile) redirect("/login");
+
+//     /**
+//      * Rule 6: Independent Learner Guard
+//      * Classes are a Tier-2 Institutional feature. 
+//      * If no schoolId, redirect to student dashboard.
+//      */
+//     if (!profile.schoolId) {
+//         redirect("/student?error=classes_restricted_to_schools");
+//     }
+
+//     // Parallel Fetch based on Role (Rule 11)
+//     const [dashboardData, helpers] = await Promise.all([
+//         getClassDashboardData(profile.id),
+//         (profile.role === Role.SCHOOL_ADMIN || profile.role === Role.SUPER_ADMIN) 
+//             ? getManagementHelpers(profile.schoolId) 
+//             : null
+//     ]);
+
+//     return (
+//         <ClassesHubClient 
+//             initialData={dashboardData as any} 
+//             helpers={helpers as any} 
+//             userRole={profile.role}
+//         />
+//     );
+// }
+
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { getClassDashboardData, getManagementHelpers } from "@/app/actions/class-management";
+import { 
+    getClassDashboardData, 
+    getManagementHelpers,
+    type ClassDashboardData,
+    type ManagementHelpers
+} from "@/app/actions/class-management";
 import { ClassesHubClient } from "@/components/classHubClient";
 import { Role } from "@prisma/client";
 
 /**
- * Rule 16: Dynamic SEO
+ * CLASSROOM HUBS | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO - Syncs institutional hub identity.
  */
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { title: "Classrooms | SchoolPaaS" };
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+    if (!authUser) return { title: "Classrooms | SchoolPaaS" };
 
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         include: { school: { select: { name: true } } }
     });
 
+    const hubName = profile?.school?.name || "Institution";
+
     return {
-        title: `Class Registry | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
-        description: "Institutional classroom management and peer registry."
+        title: `Classroom Hubs | ${hubName} | SchoolPaaS`,
+        description: "Institutional classroom hub management and peer identity registry."
     };
 }
 
 /**
- * Rule 12: Server-First Fetching
+ * CLASSROOM REGISTRY PAGE (Tier 2/3)
+ * Rule 12: Server-First Fetching. Handles security scoping and multi-role data hydration.
+ * Rule 5/6: Multi-tenant isolation - gates institutional hubs from independent learners.
+ * Rule 15: Pure TypeScript - Zero 'any' types in the registry pipeline.
  */
 export default async function ClassesPage() {
+    // 1. Resolve Identity & Session Verification (Rule 10)
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) redirect("/login");
 
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         select: { id: true, schoolId: true, role: true }
     });
 
     if (!profile) redirect("/login");
 
-    /**
-     * Rule 6: Independent Learner Guard
-     * Classes are a Tier-2 Institutional feature. 
-     * If no schoolId, redirect to student dashboard.
-     */
+    // 2. Authorization Security Gate (Rule 6)
+    // Classroom Hubs are strictly Tier-2 Institutional features. 
+    // Independent Learners are redirected to their personal dashboard.
     if (!profile.schoolId) {
-        redirect("/student?error=classes_restricted_to_schools");
+        redirect("/student?error=hubs_restricted_to_institutions");
     }
 
-    // Parallel Fetch based on Role (Rule 11)
+    // 3. Authoritative Data Hydration (Rule 11)
+    // Parallel fetching based on identity role to optimize registry sync time.
     const [dashboardData, helpers] = await Promise.all([
-        getClassDashboardData(profile.id),
+        getClassDashboardData(profile.id) as Promise<ClassDashboardData | null>,
         (profile.role === Role.SCHOOL_ADMIN || profile.role === Role.SUPER_ADMIN) 
-            ? getManagementHelpers(profile.schoolId) 
-            : null
+            ? getManagementHelpers(profile.schoolId) as Promise<ManagementHelpers>
+            : Promise.resolve(null)
     ]);
 
+    // 4. Client-Side Protocol Handoff (Rule 15)
+    // Handoff of strictly typed data structures to the polymorphic Orchestrator.
     return (
-        <ClassesHubClient 
-            initialData={dashboardData as any} 
-            helpers={helpers as any} 
-            userRole={profile.role}
-        />
+        <main className="min-h-screen bg-background">
+            <ClassesHubClient 
+                initialData={dashboardData} 
+                helpers={helpers} 
+                userRole={profile.role}
+            />
+        </main>
     );
 }

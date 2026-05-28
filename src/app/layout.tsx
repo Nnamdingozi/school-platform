@@ -1040,6 +1040,69 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { Inter } from "next/font/google";
+// import "./globals.css";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getSchoolThemeStyle } from "@/lib/school-theme";
+// import { cookies } from "next/headers";
+// import { SchoolProvider } from "@/context/schoolProvider";
+// import { ProfileInitializer } from "@/components/profileInitializer";
+// import { BrandingProvider } from "@/context/brandingProvider"; // ✅ Import here
+// import { Toaster } from "@/components/ui/sonner";
+
+// const inter = Inter({ subsets: ["latin"] });
+
+// export default async function RootLayout({ children }: { children: React.ReactNode }) {
+//     const cookieStore = await cookies();
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+
+//     // 1. Resolve Global Identity (Server-Side)
+//     let profile = null;
+//     if (user) {
+//         profile = await prisma.profile.findUnique({
+//             where: { id: user.id },
+//             select: { 
+//                 id: true, theme: true, primaryColor: true, 
+//                 secondaryColor: true, schoolId: true, role: true, 
+//                 name: true, email: true 
+//             }
+//         });
+//     }
+
+//     // 2. Resolve Theme & Branding
+//     const cookieTheme = cookieStore.get('theme')?.value || 'dark';
+//     // @ts-ignore
+//     const resolvedTheme = profile?.theme || cookieTheme;
+//     const brandingStyles = getSchoolThemeStyle(profile?.primaryColor || null, profile?.secondaryColor || null);
+
+//     return (
+//         <html 
+//             lang="en" 
+//             className={resolvedTheme} 
+//             style={brandingStyles} 
+//             suppressHydrationWarning
+//         >
+//             <body className={`${inter.className} bg-background text-foreground antialiased`}>
+//                 <SchoolProvider initialProfile={profile as any}>
+//                     {/* Rule 17: Initialize Store */}
+//                     <ProfileInitializer profile={profile as any} />
+                    
+//                     {/* Rule 18: Inject Dynamic Tokens based on Store */}
+//                     <BrandingProvider>
+//                         <Toaster />
+//                         {children}
+//                     </BrandingProvider>
+//                 </SchoolProvider>
+//             </body>
+//         </html>
+//     );
+// }
+
+
+
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -1049,7 +1112,7 @@ import { getSchoolThemeStyle } from "@/lib/school-theme";
 import { cookies } from "next/headers";
 import { SchoolProvider } from "@/context/schoolProvider";
 import { ProfileInitializer } from "@/components/profileInitializer";
-import { BrandingProvider } from "@/context/brandingProvider"; // ✅ Import here
+import { BrandingProvider } from "@/context/brandingProvider";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -1064,33 +1127,43 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     if (user) {
         profile = await prisma.profile.findUnique({
             where: { id: user.id },
-            select: { 
-                id: true, theme: true, primaryColor: true, 
-                secondaryColor: true, schoolId: true, role: true, 
-                name: true, email: true 
+            select: {
+                id: true,
+                theme: true,
+                schoolId: true,
+                role: true,
+                name: true,
+                email: true,
+                // ✅ Fetch colors from School, not Profile
+                school: {
+                    select: {
+                        primaryColor: true,
+                        secondaryColor: true,
+                    }
+                }
             }
         });
     }
 
     // 2. Resolve Theme & Branding
     const cookieTheme = cookieStore.get('theme')?.value || 'dark';
-    // @ts-ignore
     const resolvedTheme = profile?.theme || cookieTheme;
-    const brandingStyles = getSchoolThemeStyle(profile?.primaryColor || null, profile?.secondaryColor || null);
+
+    // ✅ Pull colors from the nested school relation
+    const primaryColor = profile?.school?.primaryColor || null;
+    const secondaryColor = profile?.school?.secondaryColor || null;
+    const brandingStyles = getSchoolThemeStyle(primaryColor, secondaryColor);
 
     return (
-        <html 
-            lang="en" 
-            className={resolvedTheme} 
-            style={brandingStyles} 
+        <html
+            lang="en"
+            className={resolvedTheme}
+            style={brandingStyles}
             suppressHydrationWarning
         >
             <body className={`${inter.className} bg-background text-foreground antialiased`}>
                 <SchoolProvider initialProfile={profile as any}>
-                    {/* Rule 17: Initialize Store */}
                     <ProfileInitializer profile={profile as any} />
-                    
-                    {/* Rule 18: Inject Dynamic Tokens based on Store */}
                     <BrandingProvider>
                         <Toaster />
                         {children}

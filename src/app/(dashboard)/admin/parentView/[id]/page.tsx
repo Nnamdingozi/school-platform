@@ -830,6 +830,66 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect, notFound } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getUserById } from "@/app/actions/user-management";
+// import { ParentDetailClient } from "@/components/admin-dasboard/parent/parentDetailClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Dynamic SEO
+//  */
+// export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+//     const { id } = await params;
+//     const user = await prisma.profile.findUnique({
+//         where: { id },
+//         select: { name: true, email: true }
+//     });
+
+//     return {
+//         title: `${user?.name || user?.email || "Guardian"} | Registry | SchoolPaaS`,
+//         description: "Institutional management of family account details."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Fetching & Security
+//  */
+// export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+//     const { id } = await params;
+
+//     // 1. Resolve Admin Identity (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     const actor = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { schoolId: true, role: true }
+//     });
+
+//     // Rule 10: Security - Only Admins can see detail registries
+//     if (!actor || (actor.role !== Role.SCHOOL_ADMIN && actor.role !== Role.SUPER_ADMIN)) {
+//         redirect("/teacher?error=unauthorized");
+//     }
+
+//     // 2. Fetch Parent Detail (Rule 5 Isolation inside action)
+//     const parentData = await getUserById(id, actor.schoolId);
+
+//     if (!parentData || parentData.role !== Role.PARENT) {
+//         return notFound();
+//     }
+
+//     return (
+//         <ParentDetailClient 
+//             initialUser={parentData} 
+//         />
+//     );
+// }
+
+
 import { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -839,7 +899,9 @@ import { ParentDetailClient } from "@/components/admin-dasboard/parent/parentDet
 import { Role } from "@prisma/client";
 
 /**
- * Rule 16: Dynamic SEO
+ * PARENT DETAIL | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO
+ * Ensures the document title reflects the specific identity node being audited.
  */
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params;
@@ -850,38 +912,49 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
     return {
         title: `${user?.name || user?.email || "Guardian"} | Registry | SchoolPaaS`,
-        description: "Institutional management of family account details."
+        description: "Institutional management of family account details and student linkages."
     };
 }
 
 /**
- * Rule 12: Server-First Fetching & Security
+ * PARENT DETAIL (Tier 2)
+ * Rule 12: Server-First Fetching.
+ * Rule 5/6: Multi-tenant isolation. Prevents cross-school identity traversal.
+ * Rule 10: Strict Security Gate for Institutional Admins.
  */
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
-    // 1. Resolve Admin Identity (Rule 10)
+    // 1. Authentication Layer (Rule 10)
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) redirect("/login");
 
+    // 2. Authorization Layer (Rule 5/6)
     const actor = await prisma.profile.findUnique({
         where: { id: authUser.id },
         select: { schoolId: true, role: true }
     });
 
-    // Rule 10: Security - Only Admins can see detail registries
-    if (!actor || (actor.role !== Role.SCHOOL_ADMIN && actor.role !== Role.SUPER_ADMIN)) {
-        redirect("/teacher?error=unauthorized");
+    // Security Protocol: Access strictly limited to Institutional or Global Admins.
+    if (
+        !actor || 
+        (actor.role !== Role.SCHOOL_ADMIN && actor.role !== Role.SUPER_ADMIN)
+    ) {
+        redirect("/dashboard?error=unauthorized_access");
     }
 
-    // 2. Fetch Parent Detail (Rule 5 Isolation inside action)
+    // 3. Data Hydration (Rule 12)
+    // Fetching the authoritative detail record. 
+    // schoolId is passed to ensure the record belongs to the actor's institution.
     const parentData = await getUserById(id, actor.schoolId);
 
+    // Rule 13: Handle null or mismatched role context
     if (!parentData || parentData.role !== Role.PARENT) {
         return notFound();
     }
 
+    // 4. Client-Side Handoff (Rule 17: Branding injected via Client Component's Store)
     return (
         <ParentDetailClient 
             initialUser={parentData} 

@@ -134,6 +134,78 @@
 
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { checkSubscription } from "@/app/actions/subscription-guard";
+// import { getSubscriptionPlans } from "@/app/actions/subscription.actions";
+// import { BillingTerminalClient } from "@/components/auth/billingClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Access Suspended | SchoolPaaS" };
+
+//     return {
+//         title: "Registry Suspension | Billing Required | SchoolPaaS",
+//         description: "Your institutional or individual access tier has expired. Renew to restore registry synchronization."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Execution
+//  */
+// export default async function BillingPage() {
+//     // 1. Establish Identity (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         include: { school: { select: { name: true } } }
+//     });
+
+//     if (!profile) redirect("/login");
+
+//     // 2. Rule 11: DB Truth Check (using our refactored guard)
+//     const subStatus = await checkSubscription(profile.id, profile.schoolId);
+
+//     // Redirect active users back to their tier-specific hubs
+//     if (subStatus.isActive) {
+//         if (profile.role === Role.PARENT) redirect("/parent");
+//         if (profile.role === Role.STUDENT || profile.role === Role.INDIVIDUAL_LEARNER) redirect("/student");
+//         redirect("/teacher");
+//     }
+
+//     // 3. Fetch Global Tiers (Tier 1 Core Data)
+//     const plans = await getSubscriptionPlans();
+
+//     // 4. Rule 10: Server-Side Authorization
+//     const canAuthorizePayment = 
+//         profile.role === Role.SCHOOL_ADMIN || 
+//         profile.role === Role.INDIVIDUAL_LEARNER || 
+//         profile.role === Role.SUPER_ADMIN;
+
+//     return (
+//         <main className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+//             <BillingTerminalClient 
+//                 profile={profile as any}
+//                 plans={plans}
+//                 canPay={canAuthorizePayment}
+//                 isInstitutional={!!profile.schoolId}
+//             />
+//         </main>
+//     );
+// }
+
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -144,13 +216,10 @@ import { BillingTerminalClient } from "@/components/auth/billingClient";
 import { Role } from "@prisma/client";
 
 /**
+ * BILLING HUB | ACCESS RESTRICTED
  * Rule 16: Dynamic Contextual SEO
  */
 export async function generateMetadata(): Promise<Metadata> {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { title: "Access Suspended | SchoolPaaS" };
-
     return {
         title: "Registry Suspension | Billing Required | SchoolPaaS",
         description: "Your institutional or individual access tier has expired. Renew to restore registry synchronization."
@@ -158,7 +227,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Rule 12: Server-First Execution
+ * BILLING TERMINAL PAGE (Tier 2/3)
+ * Rule 12: Server-First Execution.
+ * Rule 10: Role-based Authorization Gate.
  */
 export default async function BillingPage() {
     // 1. Establish Identity (Rule 10)
@@ -168,15 +239,27 @@ export default async function BillingPage() {
 
     const profile = await prisma.profile.findUnique({
         where: { id: authUser.id },
-        include: { school: { select: { name: true } } }
+        include: { 
+            school: { 
+                select: { 
+                    name: true,
+                    // Fetch the school admin for non-admin users to contact
+                    users: {
+                        where: { role: Role.SCHOOL_ADMIN },
+                        select: { name: true, email: true },
+                        take: 1
+                    }
+                } 
+            } 
+        }
     });
 
     if (!profile) redirect("/login");
 
-    // 2. Rule 11: DB Truth Check (using our refactored guard)
+    // 2. Rule 11: DB Truth Check
+    // If they landed here by mistake but are actually active, redirect them back to work.
     const subStatus = await checkSubscription(profile.id, profile.schoolId);
 
-    // Redirect active users back to their tier-specific hubs
     if (subStatus.isActive) {
         if (profile.role === Role.PARENT) redirect("/parent");
         if (profile.role === Role.STUDENT || profile.role === Role.INDIVIDUAL_LEARNER) redirect("/student");
@@ -186,19 +269,26 @@ export default async function BillingPage() {
     // 3. Fetch Global Tiers (Tier 1 Core Data)
     const plans = await getSubscriptionPlans();
 
-    // 4. Rule 10: Server-Side Authorization
+    // 4. Rule 10: Define Payment Authority
     const canAuthorizePayment = 
         profile.role === Role.SCHOOL_ADMIN || 
         profile.role === Role.INDIVIDUAL_LEARNER || 
         profile.role === Role.SUPER_ADMIN;
 
     return (
-        <main className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+        <main className="min-h-screen bg-background flex items-center justify-center p-4 md:p-8">
             <BillingTerminalClient 
-                profile={profile as any}
+                profile={{
+                    id: profile.id,
+                    name: profile.name,
+                    email: profile.email,
+                    schoolId: profile.schoolId,
+                    schoolName: profile.school?.name ?? "Personal Hub"
+                }}
                 plans={plans}
                 canPay={canAuthorizePayment}
                 isInstitutional={!!profile.schoolId}
+                adminContact={profile.school?.users[0] ?? null}
             />
         </main>
     );

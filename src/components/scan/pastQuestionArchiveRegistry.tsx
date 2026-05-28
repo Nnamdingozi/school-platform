@@ -1,47 +1,193 @@
+
+
 // "use client";
 
 // import { useState } from "react";
-// import { Card, CardContent } from "@/components/ui/card";
-// import { FileText, ChevronRight, Zap, ArrowLeft, Eye, EyeOff, ShieldCheck } from "lucide-react";
+// import { Card } from "@/components/ui/card";
+// import {
+//   FileText,
+//   ChevronRight,
+//   Zap,
+//   ArrowLeft,
+//   Eye,
+//   EyeOff,
+//   ShieldCheck,
+//   Inbox,
+// } from "lucide-react";
 // import { useProfileStore } from "@/store/profileStore";
-// import { ScannedPaperSet } from "@/app/actions/scanned-question-bank";
+// import { ScannedPaperSet, ExtractedQuestion } from "@/app/actions/scanned-question-bank";
 
-// export function ArchiveRegistry({ initialData }: { initialData: ScannedPaperSet[] }) {
+// export function ArchiveRegistry({
+//   initialData,
+// }: {
+//   initialData: ScannedPaperSet[];
+// }) {
 //   const { profile } = useProfileStore();
 //   const [selected, setSelected] = useState<ScannedPaperSet | null>(null);
 //   const [revealed, setRevealed] = useState<number | null>(null);
 //   const primaryColor = profile?.primaryColor || "#f59e0b";
 
-//   if (selected) return (
+//   // ── Detail View ──────────────────────────────────────────────────────────────
+//   if (selected) {
+//     // Fix #2 — Cast Prisma JSON field to typed array before rendering
+//     const questions = (selected.questions as unknown as ExtractedQuestion[]) ?? [];
+
+//     return (
 //       <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
-//           <button onClick={() => { setSelected(null); setRevealed(null); }} className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-[10px] font-bold uppercase tracking-widest transition-colors"><ArrowLeft className="h-4 w-4" /> Registry Index</button>
-//           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border pb-8">
-//               <div><h2 className="text-3xl font-extrabold text-foreground uppercase italic tracking-tighter">{selected.subject}</h2><p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest mt-1">{selected.type} • Session {selected.year}</p></div>
-//               <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-5 py-2 rounded-xl text-emerald-500"><ShieldCheck className="h-4 w-4" /><span className="text-[9px] font-black uppercase tracking-widest">Verified Logic Node</span></div>
+//         <button
+//           onClick={() => {
+//             setSelected(null);
+//             setRevealed(null);
+//           }}
+//           className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-[10px] font-bold uppercase tracking-widest transition-colors"
+//         >
+//           <ArrowLeft className="h-4 w-4" /> Registry Index
+//         </button>
+
+//         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border pb-8">
+//           <div>
+//             <h2 className="text-3xl font-extrabold text-foreground uppercase italic tracking-tighter">
+//               {selected.subject}
+//             </h2>
+//             <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest mt-1">
+//               {selected.type} • Session {selected.year}
+//             </p>
 //           </div>
+//           <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-5 py-2 rounded-xl text-emerald-500">
+//             <ShieldCheck className="h-4 w-4" />
+//             <span className="text-[9px] font-black uppercase tracking-widest">
+//               Verified Logic Node
+//             </span>
+//           </div>
+//         </div>
+
+//         {questions.length === 0 ? (
+//           <div className="flex flex-col items-center justify-center py-20 text-center space-y-3">
+//             <Inbox className="h-10 w-10 text-muted-foreground" />
+//             <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
+//               No questions found in this paper
+//             </p>
+//           </div>
+//         ) : (
 //           <div className="grid grid-cols-1 gap-6">
-//               {selected.questions.map((q: any, i: number) => (
-//                   <Card key={i} className="bg-card border-border rounded-[2rem] p-10 space-y-8 shadow-xl">
-//                       <div className="flex gap-6"><span className="text-2xl font-black italic opacity-20" style={{ color: primaryColor }}>0{i+1}</span><p className="text-lg font-bold text-foreground leading-relaxed">{q.text}</p></div>
-//                       <div className="pt-8 border-t border-border flex flex-col gap-6">
-//                           <button onClick={() => setRevealed(revealed === i ? null : i)} className="w-fit flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all" style={{ color: primaryColor }}>{revealed === i ? <><EyeOff className="h-4 w-4" /> Conceal</> : <><Eye className="h-4 w-4" /> Reveal Solution</>}</button>
-//                           {revealed === i && <div className="bg-background rounded-3xl p-8 border border-border animate-in slide-in-from-top-4 space-y-4 shadow-inner"><div><p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Correct Response</p><p className="text-lg font-extrabold text-foreground italic">"{q.answer}"</p></div><div><p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Rationale</p><p className="text-sm text-muted-foreground leading-relaxed font-medium">{q.explanation}</p></div></div>}
+//             {questions.map((q, i) => (
+//               <Card
+//                 key={i}
+//                 className="bg-card border-border rounded-[2rem] p-10 space-y-8 shadow-xl"
+//               >
+//                 <div className="flex gap-6">
+//                   <span
+//                     className="text-2xl font-black italic opacity-20 shrink-0"
+//                     style={{ color: primaryColor }}
+//                   >
+//                     {String(i + 1).padStart(2, "0")}
+//                   </span>
+//                   <p className="text-lg font-bold text-foreground leading-relaxed">
+//                     {q.text}
+//                   </p>
+//                 </div>
+
+//                 <div className="pt-8 border-t border-border flex flex-col gap-6">
+//                   <button
+//                     onClick={() => setRevealed(revealed === i ? null : i)}
+//                     className="w-fit flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all"
+//                     style={{ color: primaryColor }}
+//                   >
+//                     {revealed === i ? (
+//                       <>
+//                         <EyeOff className="h-4 w-4" /> Conceal
+//                       </>
+//                     ) : (
+//                       <>
+//                         <Eye className="h-4 w-4" /> Reveal Solution
+//                       </>
+//                     )}
+//                   </button>
+
+//                   {revealed === i && (
+//                     <div className="bg-background rounded-3xl p-8 border border-border animate-in slide-in-from-top-4 space-y-4 shadow-inner">
+//                       <div>
+//                         <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+//                           Correct Response
+//                         </p>
+//                         <p className="text-lg font-extrabold text-foreground italic">
+//                           {q.answer}
+//                         </p>
 //                       </div>
-//                   </Card>
-//               ))}
+//                       <div>
+//                         <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+//                           Rationale
+//                         </p>
+//                         <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+//                           {q.explanation}
+//                         </p>
+//                       </div>
+//                     </div>
+//                   )}
+//                 </div>
+//               </Card>
+//             ))}
 //           </div>
+//         )}
 //       </div>
-//   );
+//     );
+//   }
+
+//   // ── Grid View ────────────────────────────────────────────────────────────────
+//   if (initialData.length === 0) {
+//     return (
+//       <div className="flex flex-col items-center justify-center py-32 text-center space-y-4">
+//         <Inbox className="h-12 w-12 text-muted-foreground" />
+//         <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
+//           No archived papers yet
+//         </p>
+//         <p className="text-[10px] text-muted-foreground/60">
+//           Switch to the Architect tab to scan your first paper
+//         </p>
+//       </div>
+//     );
+//   }
 
 //   return (
 //     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-right-4 duration-700">
-//         {initialData.map((paper) => (
-//             <Card key={paper.id} onClick={() => setSelected(paper)} className="bg-card border-border hover:border-school-primary/30 transition-all rounded-[2.5rem] p-10 space-y-8 shadow-xl cursor-pointer group">
-//                 <div className="flex justify-between items-start"><div className="p-4 bg-background rounded-2xl border border-border shadow-inner group-hover:border-school-primary/20"><FileText className="h-7 w-7 text-muted-foreground group-hover:text-school-primary transition-colors" /></div><span className="px-3 py-1 bg-background border border-border rounded-lg text-[9px] font-black text-slate-500 uppercase">{paper.type}</span></div>
-//                 <div><h3 className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">{paper.subject}</h3><p className="text-xs font-bold text-school-primary mt-3" style={{ color: primaryColor }}>Registry Session {paper.year}</p></div>
-//                 <div className="flex items-center justify-between pt-8 border-t border-border"><span className="text-[9px] font-black text-muted-foreground uppercase flex items-center gap-2"><Zap className="h-3.5 w-3.5" style={{ color: primaryColor }} /> AI Processed</span><ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1" /></div>
-//             </Card>
-//         ))}
+//       {initialData.map((paper) => (
+//         <Card
+//           key={paper.id}
+//           onClick={() => setSelected(paper)}
+//           className="bg-card border-border hover:border-school-primary/30 transition-all rounded-[2.5rem] p-10 space-y-8 shadow-xl cursor-pointer group"
+//         >
+//           <div className="flex justify-between items-start">
+//             <div className="p-4 bg-background rounded-2xl border border-border shadow-inner group-hover:border-school-primary/20">
+//               <FileText className="h-7 w-7 text-muted-foreground group-hover:text-school-primary transition-colors" />
+//             </div>
+//             <span className="px-3 py-1 bg-background border border-border rounded-lg text-[9px] font-black text-slate-500 uppercase">
+//               {paper.type}
+//             </span>
+//           </div>
+
+//           <div>
+//             <h3 className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//               {paper.subject}
+//             </h3>
+//             <p
+//               className="text-xs font-bold mt-3"
+//               style={{ color: primaryColor }}
+//             >
+//               Registry Session {paper.year}
+//             </p>
+//           </div>
+
+//           <div className="flex items-center justify-between pt-8 border-t border-border">
+//             <span className="text-[9px] font-black text-muted-foreground uppercase flex items-center gap-2">
+//               <Zap className="h-3.5 w-3.5" style={{ color: primaryColor }} />
+//               {Array.isArray(paper.questions)
+//                 ? `${(paper.questions as unknown[]).length} Questions`
+//                 : "AI Processed"}
+//             </span>
+//             <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+//           </div>
+//         </Card>
+//       ))}
 //     </div>
 //   );
 // }
@@ -63,13 +209,30 @@ import {
   Inbox,
 } from "lucide-react";
 import { useProfileStore } from "@/store/profileStore";
-import { ScannedPaperSet, ExtractedQuestion } from "@/app/actions/scanned-question-bank";
+import {
+  ScannedPaperSet,
+  ExtractedQuestion,
+} from "@/app/actions/scanned-question-bank";
+import {
+  PastQuestionDownloader,
+  BulkPastQuestionDownloader,
+} from "./pastQuestionDownloader";
+import { PastQuestionDeleteButton } from "./pastQuestionDeleteButton";
+import { Role } from "@prisma/client";
+
+interface ArchiveRegistryProps {
+  initialData: ScannedPaperSet[];
+  userId: string;
+  schoolId: string | null;
+  userRole: Role;
+}
 
 export function ArchiveRegistry({
   initialData,
-}: {
-  initialData: ScannedPaperSet[];
-}) {
+  userId,
+  schoolId,
+  userRole,
+}: ArchiveRegistryProps) {
   const { profile } = useProfileStore();
   const [selected, setSelected] = useState<ScannedPaperSet | null>(null);
   const [revealed, setRevealed] = useState<number | null>(null);
@@ -77,21 +240,37 @@ export function ArchiveRegistry({
 
   // ── Detail View ──────────────────────────────────────────────────────────────
   if (selected) {
-    // Fix #2 — Cast Prisma JSON field to typed array before rendering
     const questions = (selected.questions as unknown as ExtractedQuestion[]) ?? [];
 
     return (
       <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
-        <button
-          onClick={() => {
-            setSelected(null);
-            setRevealed(null);
-          }}
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-[10px] font-bold uppercase tracking-widest transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" /> Registry Index
-        </button>
+        {/* Top bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <button
+            onClick={() => { setSelected(null); setRevealed(null); }}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-[10px] font-bold uppercase tracking-widest transition-colors w-fit"
+          >
+            <ArrowLeft className="h-4 w-4" /> Registry Index
+          </button>
 
+          {/* Action buttons */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <PastQuestionDownloader
+              paper={selected}
+              userId={userId}
+              schoolId={schoolId}
+            />
+            <PastQuestionDeleteButton
+              paper={selected}
+              userId={userId}
+              schoolId={schoolId}
+              userRole={userRole}
+              onDeleted={() => { setSelected(null); setRevealed(null); }}
+            />
+          </div>
+        </div>
+
+        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border pb-8">
           <div>
             <h2 className="text-3xl font-extrabold text-foreground uppercase italic tracking-tighter">
@@ -101,7 +280,7 @@ export function ArchiveRegistry({
               {selected.type} • Session {selected.year}
             </p>
           </div>
-          <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-5 py-2 rounded-xl text-emerald-500">
+          <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-5 py-2 rounded-xl text-emerald-500 w-fit">
             <ShieldCheck className="h-4 w-4" />
             <span className="text-[9px] font-black uppercase tracking-widest">
               Verified Logic Node
@@ -109,6 +288,7 @@ export function ArchiveRegistry({
           </div>
         </div>
 
+        {/* Questions */}
         {questions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center space-y-3">
             <Inbox className="h-10 w-10 text-muted-foreground" />
@@ -121,44 +301,40 @@ export function ArchiveRegistry({
             {questions.map((q, i) => (
               <Card
                 key={i}
-                className="bg-card border-border rounded-[2rem] p-10 space-y-8 shadow-xl"
+                className="bg-card border-border rounded-[2rem] p-6 sm:p-10 space-y-8 shadow-xl"
               >
-                <div className="flex gap-6">
+                <div className="flex gap-4 sm:gap-6">
                   <span
-                    className="text-2xl font-black italic opacity-20 shrink-0"
+                    className="text-xl sm:text-2xl font-black italic opacity-20 shrink-0"
                     style={{ color: primaryColor }}
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <p className="text-lg font-bold text-foreground leading-relaxed">
+                  <p className="text-base sm:text-lg font-bold text-foreground leading-relaxed">
                     {q.text}
                   </p>
                 </div>
 
-                <div className="pt-8 border-t border-border flex flex-col gap-6">
+                <div className="pt-6 sm:pt-8 border-t border-border flex flex-col gap-6">
                   <button
                     onClick={() => setRevealed(revealed === i ? null : i)}
                     className="w-fit flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all"
                     style={{ color: primaryColor }}
                   >
                     {revealed === i ? (
-                      <>
-                        <EyeOff className="h-4 w-4" /> Conceal
-                      </>
+                      <><EyeOff className="h-4 w-4" /> Conceal</>
                     ) : (
-                      <>
-                        <Eye className="h-4 w-4" /> Reveal Solution
-                      </>
+                      <><Eye className="h-4 w-4" /> Reveal Solution</>
                     )}
                   </button>
 
                   {revealed === i && (
-                    <div className="bg-background rounded-3xl p-8 border border-border animate-in slide-in-from-top-4 space-y-4 shadow-inner">
+                    <div className="bg-background rounded-3xl p-6 sm:p-8 border border-border animate-in slide-in-from-top-4 space-y-4 shadow-inner">
                       <div>
                         <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
                           Correct Response
                         </p>
-                        <p className="text-lg font-extrabold text-foreground italic">
+                        <p className="text-base sm:text-lg font-extrabold text-foreground italic">
                           {q.answer}
                         </p>
                       </div>
@@ -197,45 +373,88 @@ export function ArchiveRegistry({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-right-4 duration-700">
-      {initialData.map((paper) => (
-        <Card
-          key={paper.id}
-          onClick={() => setSelected(paper)}
-          className="bg-card border-border hover:border-school-primary/30 transition-all rounded-[2.5rem] p-10 space-y-8 shadow-xl cursor-pointer group"
-        >
-          <div className="flex justify-between items-start">
-            <div className="p-4 bg-background rounded-2xl border border-border shadow-inner group-hover:border-school-primary/20">
-              <FileText className="h-7 w-7 text-muted-foreground group-hover:text-school-primary transition-colors" />
+    <div className="space-y-8">
+      {/* Bulk download bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
+        <div>
+          <p className="text-xs font-bold text-foreground uppercase tracking-widest">
+            {initialData.length} Paper{initialData.length !== 1 ? "s" : ""} in Registry
+          </p>
+          <p className="text-[10px] text-muted-foreground mt-1">
+            Click a card to view · Download or delete individual papers
+          </p>
+        </div>
+        <BulkPastQuestionDownloader
+          papers={initialData}
+          userId={userId}
+          schoolId={schoolId}
+        />
+      </div>
+
+      {/* Cards grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-bottom-4 duration-700">
+        {initialData.map((paper) => (
+          <Card
+            key={paper.id}
+            className="bg-card border-border rounded-[2.5rem] p-8 sm:p-10 space-y-8 shadow-xl group relative"
+          >
+            {/* Card top */}
+            <div className="flex justify-between items-start">
+              <div
+                onClick={() => setSelected(paper)}
+                className="p-4 bg-background rounded-2xl border border-border shadow-inner group-hover:border-school-primary/20 cursor-pointer transition-all"
+              >
+                <FileText className="h-7 w-7 text-muted-foreground group-hover:text-school-primary transition-colors" />
+              </div>
+              <span className="px-3 py-1 bg-background border border-border rounded-lg text-[9px] font-black text-slate-500 uppercase">
+                {paper.type}
+              </span>
             </div>
-            <span className="px-3 py-1 bg-background border border-border rounded-lg text-[9px] font-black text-slate-500 uppercase">
-              {paper.type}
-            </span>
-          </div>
 
-          <div>
-            <h3 className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
-              {paper.subject}
-            </h3>
-            <p
-              className="text-xs font-bold mt-3"
-              style={{ color: primaryColor }}
+            {/* Card body */}
+            <div
+              onClick={() => setSelected(paper)}
+              className="cursor-pointer space-y-1"
             >
-              Registry Session {paper.year}
-            </p>
-          </div>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+                {paper.subject}
+              </h3>
+              <p className="text-xs font-bold mt-3" style={{ color: primaryColor }}>
+                Registry Session {paper.year}
+              </p>
+            </div>
 
-          <div className="flex items-center justify-between pt-8 border-t border-border">
-            <span className="text-[9px] font-black text-muted-foreground uppercase flex items-center gap-2">
-              <Zap className="h-3.5 w-3.5" style={{ color: primaryColor }} />
-              {Array.isArray(paper.questions)
-                ? `${(paper.questions as unknown[]).length} Questions`
-                : "AI Processed"}
-            </span>
-            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Card>
-      ))}
+            {/* Card footer */}
+            <div className="flex items-center justify-between pt-6 border-t border-border flex-wrap gap-3">
+              <span className="text-[9px] font-black text-muted-foreground uppercase flex items-center gap-2">
+                <Zap className="h-3.5 w-3.5" style={{ color: primaryColor }} />
+                {Array.isArray(paper.questions)
+                  ? `${(paper.questions as unknown[]).length} Questions`
+                  : "AI Processed"}
+              </span>
+
+              <div className="flex items-center gap-2">
+                <PastQuestionDownloader
+                  paper={paper}
+                  userId={userId}
+                  schoolId={schoolId}
+                />
+                <PastQuestionDeleteButton
+                  paper={paper}
+                  userId={userId}
+                  schoolId={schoolId}
+                  userRole={userRole}
+                  onDeleted={() => {}}
+                />
+                <ChevronRight
+                  onClick={() => setSelected(paper)}
+                  className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform cursor-pointer shrink-0"
+                />
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

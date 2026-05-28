@@ -101,24 +101,26 @@ export function AnalyticsHubClient({
                     {activeTab === 'visuals' ? (
                         <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <GradeDistributionChart data={initialData.gradeDistribution} />
-                                <AssessmentScoresChart data={initialData.assessmentScores} />
+                                <GradeDistributionChart data={initialData?.gradeDistribution ?? []} />
+                                <AssessmentScoresChart data={initialData?.assessmentScores ?? []} />
                             </div>
-                            <CommunicationTrendChart data={initialData.communicationTrend} />
+                            <CommunicationTrendChart data={initialData?.communicationTrend ?? []} />
                         </div>
                     ) : (
                         <div className="animate-in slide-in-from-right-4 duration-500">
                             <UnassignedStudentsAlert initialData={unassignedData} />
                         </div>
                     )}
+
                 </div>
 
                 <aside className="space-y-8">
-                    <StatusDistributionChart data={initialData.statusDistribution} />
-                    <AcademicContentHealth data={initialData.contentHealth} />
+
+                    <StatusDistributionChart data={initialData?.statusDistribution ?? []} />
+                    <AcademicContentHealth data={initialData?.contentHealth ?? null} />
 
                     <Card className="bg-card border-border rounded-[2.5rem] overflow-hidden shadow-2xl">
-                        <div className="p-6 border-b border-border bg-background/50 text-center">
+                        <div className="p-6 border-b border-border bg-background text-center">
                             <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest italic">
                                 System Registry Vitals
                             </h4>

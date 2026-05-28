@@ -176,7 +176,7 @@
 
 
 import { Metadata } from "next";
-import { redirect, notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { WhatsAppHub } from "@/components/communication/whatsAppHub";

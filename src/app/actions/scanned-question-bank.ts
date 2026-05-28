@@ -1686,3 +1686,68 @@ export async function getScannedPapers(schoolId: string | null, userId: string) 
     return [];
   }
 }
+
+
+
+
+
+// ─── Download Action ──────────────────────────────────────────────────────────
+
+export async function getScannedPaperById(id: string, userId: string, schoolId: string | null) {
+  try {
+    const paper = await prisma.scannedPaper.findFirst({
+      where: {
+        id,
+        OR: schoolId
+          ? [{ schoolId }, { creatorId: userId, schoolId: null }]
+          : [{ creatorId: userId, schoolId: null }],
+      },
+    });
+
+    if (!paper) throw new Error("Paper not found or access denied.");
+    return { success: true, paper };
+  } catch (error: unknown) {
+    return { success: false, error: getErrorMessage(error) };
+  }
+}
+
+
+// ─── Delete Action ────────────────────────────────────────────────────────────
+
+export async function deleteScannedPaper(
+  id: string,
+  userId: string,
+  schoolId: string | null,
+  userRole: Role
+) {
+  try {
+    // Verify ownership before deleting
+    const paper = await prisma.scannedPaper.findFirst({
+      where: {
+        id,
+        OR: schoolId
+          ? [{ schoolId }, { creatorId: userId, schoolId: null }]
+          : [{ creatorId: userId, schoolId: null }],
+      },
+    });
+
+    if (!paper) throw new Error("Paper not found or access denied.");
+
+    await prisma.scannedPaper.delete({ where: { id } });
+
+    await logActivity({
+      schoolId,
+      actorId: userId,
+      actorRole: userRole,
+      type: ActivityType.SETTINGS_UPDATED,
+      title: "Archive Node Deleted",
+      description: `Removed ${paper.subject} ${paper.year} from the registry.`,
+    });
+
+    revalidatePath("/pastQuestions");
+    return { success: true };
+  } catch (error: unknown) {
+    console.error("[DELETE_SCANNED_PAPER_ERROR]:", error);
+    return { success: false, error: getErrorMessage(error) };
+  }
+}

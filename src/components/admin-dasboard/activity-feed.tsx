@@ -282,11 +282,284 @@
 // }
 
 
+// 'use client'
+
+// import { useEffect, useState } from 'react'
+// import { useProfileStore } from '@/store/profileStore'
+// import { getActivityFeed, ActivityItem } from '@/app/actions/activitylog'
+// import { ActivityType } from '@prisma/client'
+// import {
+//     ClipboardCheck, FileText, UserPlus,
+//     Bell, LogIn, LogOut, Settings, Send, User,
+//     GraduationCap, BookOpen, Loader2, RefreshCw,
+// } from 'lucide-react'
+// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+// import { ScrollArea } from '@/components/ui/scroll-area'
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+// import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+// import { getErrorMessage } from '@/lib/error-handler'
+
+// // ── Activity config ────────────────────────────────────────────────────────────
+
+// const ACTIVITY_CONFIG: Record<ActivityType, {
+//     icon:  React.ElementType
+//     color: string
+// }> = {
+//     ASSESSMENT_CREATED: { icon: ClipboardCheck, color: 'bg-school-primary/10 text-school-primary'  },
+//     ASSESSMENT_GRADED:  { icon: ClipboardCheck, color: 'bg-school-primary/10 text-school-primary'  },
+//     STUDENT_ENROLLED:   { icon: UserPlus,       color: 'bg-green-500/10 text-green-500'             },
+//     STUDENT_ASSIGNED:   { icon: UserPlus,       color: 'bg-green-500/10 text-green-500'             },
+//     TEACHER_ASSIGNED:   { icon: GraduationCap,  color: 'bg-blue-500/10 text-blue-500'               },
+//     USER_INVITED:       { icon: UserPlus,       color: 'bg-school-primary/10 text-school-primary'   },
+//     USER_DEACTIVATED:   { icon: User,           color: 'bg-amber-500/10 text-amber-500'             },
+//     USER_DELETED:       { icon: User,           color: 'bg-red-500/10 text-red-500'                 },
+//     USER_REACTIVATED:   { icon: User,           color: 'bg-green-500/10 text-green-500'             },
+//     CLASS_CREATED:      { icon: BookOpen,       color: 'bg-purple-500/10 text-purple-500'           },
+//     SETTINGS_UPDATED:   { icon: Settings,       color: 'bg-gray-500/10 text-gray-500'               },
+//     CURRICULUM_UPDATED: { icon: BookOpen,       color: 'bg-school-primary/10 text-school-primary'   },
+//     TERM_DATES_UPDATED: { icon: FileText,       color: 'bg-blue-500/10 text-blue-500'               },
+//     WHATSAPP_SENT:      { icon: Send,           color: 'bg-green-500/10 text-green-500'             },
+//     LOGIN:              { icon: LogIn,          color: 'bg-gray-500/10 text-gray-500'               },
+//     LOGOUT:             { icon: LogOut,         color: 'bg-gray-500/10 text-gray-500'               },
+//     REPORT_GENERATED:   { icon: FileText,       color: 'bg-school-primary/10 text-school-primary'   },
+// }
+
+// // ── Time formatter ─────────────────────────────────────────────────────────────
+
+// function timeAgo(date: Date): string {
+//     const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
+//     if (seconds < 60)     return 'just now'
+//     if (seconds < 3600)   return `${Math.floor(seconds / 60)}m ago`
+//     if (seconds < 86400)  return `${Math.floor(seconds / 3600)}h ago`
+//     if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`
+//     return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+// }
+
+// // ── Empty state ────────────────────────────────────────────────────────────────
+
+// function EmptyFeed({ message }: { message: string }) {
+//     return (
+//         <div className="flex flex-col items-center justify-center h-48 gap-2 text-center px-4">
+//             <Bell className="h-8 w-8 text-muted-foreground/30" />
+//             <p className="text-sm text-muted-foreground">{message}</p>
+//         </div>
+//     )
+// }
+
+// // ── Activity row ───────────────────────────────────────────────────────────────
+
+// function ActivityRow({
+//     activity,
+//     showActor,
+//     isLast,
+// }: {
+//     activity:  ActivityItem
+//     showActor: boolean
+//     isLast:    boolean
+// }) {
+//     const config = ACTIVITY_CONFIG[activity.type]
+//     const Icon   = config?.icon  ?? Bell
+//     const color  = config?.color ?? 'bg-muted text-muted-foreground'
+
+//     return (
+//         <div className="relative flex gap-3 py-3">
+//             {/* Timeline connector */}
+//             {!isLast && (
+//                 <div className="absolute left-4 top-11 bottom-0 w-px bg-border" />
+//             )}
+
+//             {/* Icon */}
+//             <div className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${color}`}>
+//                 <Icon className="h-4 w-4" />
+//             </div>
+
+//             {/* Content */}
+//             <div className="flex-1 space-y-0.5 min-w-0">
+//                 <p className="text-sm font-semibold text-foreground leading-snug truncate">
+//                     {activity.title}
+//                 </p>
+//                 <p className="text-xs text-muted-foreground truncate">
+//                     {activity.description}
+//                 </p>
+//                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground/70 flex-wrap">
+//                     {showActor && activity.actorName && (
+//                         <>
+//                             <span className="font-medium text-muted-foreground">
+//                                 {activity.actorName}
+//                             </span>
+//                             <span>·</span>
+//                         </>
+//                     )}
+//                     <span>{timeAgo(activity.createdAt)}</span>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// // ── Main component ─────────────────────────────────────────────────────────────
+
+// export function ActivityFeed() {
+//     const { profile }  = useProfileStore()
+//     const schoolId     = profile?.schoolId ?? ''
+//     const actorId      = profile?.id       ?? ''
+
+//     const [data,       setData]       = useState<{
+//         myActivity:     ActivityItem[]
+//         schoolActivity: ActivityItem[]
+//     } | null>(null)
+//     const [loading,    setLoading]    = useState(true)
+//     const [refreshing, setRefreshing] = useState(false)
+//     const [activeTab,  setActiveTab]  = useState('my')
+
+//     const initials = (profile?.name ?? 'U')
+//         .split(' ')
+//         .map(n => n[0])
+//         .slice(0, 2)
+//         .join('')
+//         .toUpperCase()
+
+//         async function fetchData(isRefresh = false) {
+//             if (!schoolId || !actorId) return;
+        
+//             // ✅ Use proper if/else for state updates (statements)
+//             if (isRefresh) {
+//                 setRefreshing(true);
+//             } else {
+//                 setLoading(true);
+//             }
+            
+//             try {
+//                 const result = await getActivityFeed(schoolId, actorId);
+//                 setData(result);
+//             } catch (error) {
+//                 console.error("Failed to sync feed");
+//                 getErrorMessage(error)
+//             } finally {
+//                 if (isRefresh) {
+//                     setRefreshing(false);
+//                 } else {
+//                     setLoading(false);
+//                 }
+//             }
+//         }
+
+//     useEffect(() => {
+//         fetchData()
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//     }, [schoolId, actorId])
+
+//     return (
+//         <Card className="h-fit">
+//             <CardHeader className="pb-3">
+//                 <div className="flex items-center justify-between gap-2">
+//                     <CardTitle className="text-lg font-semibold text-foreground">
+//                         Activity Feed
+//                     </CardTitle>
+//                     <button
+//                         onClick={() => fetchData(true)}
+//                         disabled={refreshing}
+//                         className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+//                     >
+//                         <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+//                         <span className="hidden sm:inline">Refresh</span>
+//                     </button>
+//                 </div>
+
+//                 {/* Current user pill */}
+//                 <div className="flex items-center gap-2.5 pt-2 pb-1 border-b border-border">
+//                     <Avatar className="h-8 w-8 shrink-0">
+//                         <AvatarFallback className="bg-school-primary/10 text-school-primary text-xs font-bold">
+//                             {initials}
+//                         </AvatarFallback>
+//                     </Avatar>
+//                     <div className="flex-1 min-w-0">
+//                         <p className="text-sm font-semibold text-foreground truncate">
+//                             {profile?.name ?? 'Admin'}
+//                         </p>
+//                         <p className="text-[11px] text-muted-foreground capitalize">
+//                             {profile?.role?.toLowerCase().replace(/_/g, ' ') ?? 'Administrator'}
+//                         </p>
+//                     </div>
+//                 </div>
+//             </CardHeader>
+
+//             <CardContent className="p-0">
+//                 <Tabs value={activeTab} onValueChange={setActiveTab}>
+//                     <div className="px-6 pb-2">
+//                         <TabsList className="grid w-full grid-cols-2 h-9">
+//                             <TabsTrigger value="my" className="text-xs">
+//                                 <User className="h-3 w-3 mr-1" />
+//                                 My Activity
+//                             </TabsTrigger>
+//                             <TabsTrigger value="all" className="text-xs">
+//                                 <Bell className="h-3 w-3 mr-1" />
+//                                 School Feed
+//                             </TabsTrigger>
+//                         </TabsList>
+//                     </div>
+
+//                     {/* ── My Activity ── */}
+//                     <TabsContent value="my" className="mt-0">
+//                         <ScrollArea className="h-[280px] px-6">
+//                             {loading ? (
+//                                 <div className="flex items-center justify-center h-48 gap-2">
+//                                     <Loader2 className="h-4 w-4 animate-spin text-school-primary" />
+//                                     <span className="text-xs text-muted-foreground">Loading...</span>
+//                                 </div>
+//                             ) : !data?.myActivity.length ? (
+//                                 <EmptyFeed message="No activity recorded yet. Actions you take will appear here." />
+//                             ) : (
+//                                 <div className="pb-4">
+//                                     {data.myActivity.map((activity, i) => (
+//                                         <ActivityRow
+//                                             key={activity.id}
+//                                             activity={activity}
+//                                             showActor={false}
+//                                             isLast={i === data.myActivity.length - 1}
+//                                         />
+//                                     ))}
+//                                 </div>
+//                             )}
+//                         </ScrollArea>
+//                     </TabsContent>
+
+//                     {/* ── School Feed ── */}
+//                     <TabsContent value="all" className="mt-0">
+//                         <ScrollArea className="h-[280px] px-6">
+//                             {loading ? (
+//                                 <div className="flex items-center justify-center h-48 gap-2">
+//                                     <Loader2 className="h-4 w-4 animate-spin text-school-primary" />
+//                                     <span className="text-xs text-muted-foreground">Loading...</span>
+//                                 </div>
+//                             ) : !data?.schoolActivity.length ? (
+//                                 <EmptyFeed message="No school activity yet. Actions taken by any admin will appear here." />
+//                             ) : (
+//                                 <div className="pb-4">
+//                                     {data.schoolActivity.map((activity, i) => (
+//                                         <ActivityRow
+//                                             key={activity.id}
+//                                             activity={activity}
+//                                             showActor={true}
+//                                             isLast={i === data.schoolActivity.length - 1}
+//                                         />
+//                                     ))}
+//                                 </div>
+//                             )}
+//                         </ScrollArea>
+//                     </TabsContent>
+//                 </Tabs>
+//             </CardContent>
+//         </Card>
+//     )
+// }
+
+
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useProfileStore } from '@/store/profileStore'
-import { getActivityFeed, ActivityItem } from '@/app/actions/activitylog'
+import { getActivityFeed, type ActivityItem } from '@/app/actions/activitylog'
 import { ActivityType } from '@prisma/client'
 import {
     ClipboardCheck, FileText, UserPlus,
@@ -298,33 +571,35 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { getErrorMessage } from '@/lib/error-handler'
+import { cn } from '@/lib/utils'
 
-// ── Activity config ────────────────────────────────────────────────────────────
+// ── Activity Config (Rule 21: Scale Protocol) ──────────────────────────────────
 
 const ACTIVITY_CONFIG: Record<ActivityType, {
     icon:  React.ElementType
     color: string
 }> = {
-    ASSESSMENT_CREATED: { icon: ClipboardCheck, color: 'bg-school-primary/10 text-school-primary'  },
-    ASSESSMENT_GRADED:  { icon: ClipboardCheck, color: 'bg-school-primary/10 text-school-primary'  },
-    STUDENT_ENROLLED:   { icon: UserPlus,       color: 'bg-green-500/10 text-green-500'             },
-    STUDENT_ASSIGNED:   { icon: UserPlus,       color: 'bg-green-500/10 text-green-500'             },
-    TEACHER_ASSIGNED:   { icon: GraduationCap,  color: 'bg-blue-500/10 text-blue-500'               },
-    USER_INVITED:       { icon: UserPlus,       color: 'bg-school-primary/10 text-school-primary'   },
-    USER_DEACTIVATED:   { icon: User,           color: 'bg-amber-500/10 text-amber-500'             },
-    USER_DELETED:       { icon: User,           color: 'bg-red-500/10 text-red-500'                 },
-    USER_REACTIVATED:   { icon: User,           color: 'bg-green-500/10 text-green-500'             },
-    CLASS_CREATED:      { icon: BookOpen,       color: 'bg-purple-500/10 text-purple-500'           },
-    SETTINGS_UPDATED:   { icon: Settings,       color: 'bg-gray-500/10 text-gray-500'               },
-    CURRICULUM_UPDATED: { icon: BookOpen,       color: 'bg-school-primary/10 text-school-primary'   },
-    TERM_DATES_UPDATED: { icon: FileText,       color: 'bg-blue-500/10 text-blue-500'               },
-    WHATSAPP_SENT:      { icon: Send,           color: 'bg-green-500/10 text-green-500'             },
-    LOGIN:              { icon: LogIn,          color: 'bg-gray-500/10 text-gray-500'               },
-    LOGOUT:             { icon: LogOut,         color: 'bg-gray-500/10 text-gray-500'               },
-    REPORT_GENERATED:   { icon: FileText,       color: 'bg-school-primary/10 text-school-primary'   },
+    // Using Mathematical Scale -50/-100 instead of muddy /10 opacity
+    ASSESSMENT_CREATED: { icon: ClipboardCheck, color: 'bg-school-primary-50 text-school-primary'  },
+    ASSESSMENT_GRADED:  { icon: ClipboardCheck, color: 'bg-school-primary-50 text-school-primary'  },
+    STUDENT_ENROLLED:   { icon: UserPlus,       color: 'bg-emerald-50 text-emerald-600'            },
+    STUDENT_ASSIGNED:   { icon: UserPlus,       color: 'bg-emerald-50 text-emerald-600'            },
+    TEACHER_ASSIGNED:   { icon: GraduationCap,  color: 'bg-blue-50 text-blue-600'                  },
+    USER_INVITED:       { icon: UserPlus,       color: 'bg-school-primary-50 text-school-primary'  },
+    USER_DEACTIVATED:   { icon: User,           color: 'bg-amber-50 text-amber-600'                },
+    USER_DELETED:       { icon: User,           color: 'bg-destructive/10 text-destructive'        },
+    USER_REACTIVATED:   { icon: User,           color: 'bg-emerald-50 text-emerald-600'            },
+    CLASS_CREATED:      { icon: BookOpen,       color: 'bg-purple-50 text-purple-600'              },
+    SETTINGS_UPDATED:   { icon: Settings,       color: 'bg-muted text-muted-foreground'            },
+    CURRICULUM_UPDATED: { icon: BookOpen,       color: 'bg-school-primary-50 text-school-primary'  },
+    TERM_DATES_UPDATED: { icon: FileText,       color: 'bg-blue-50 text-blue-600'                  },
+    WHATSAPP_SENT:      { icon: Send,           color: 'bg-emerald-50 text-emerald-600'            },
+    LOGIN:              { icon: LogIn,          color: 'bg-muted text-muted-foreground'            },
+    LOGOUT:             { icon: LogOut,         color: 'bg-muted text-muted-foreground'            },
+    REPORT_GENERATED:   { icon: FileText,       color: 'bg-school-primary-50 text-school-primary'  },
 }
 
-// ── Time formatter ─────────────────────────────────────────────────────────────
+// ── Time Formatter ─────────────────────────────────────────────────────────────
 
 function timeAgo(date: Date): string {
     const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
@@ -335,114 +610,50 @@ function timeAgo(date: Date): string {
     return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
 }
 
-// ── Empty state ────────────────────────────────────────────────────────────────
+// ── Main Component ─────────────────────────────────────────────────────────────
 
-function EmptyFeed({ message }: { message: string }) {
-    return (
-        <div className="flex flex-col items-center justify-center h-48 gap-2 text-center px-4">
-            <Bell className="h-8 w-8 text-muted-foreground/30" />
-            <p className="text-sm text-muted-foreground">{message}</p>
-        </div>
-    )
-}
-
-// ── Activity row ───────────────────────────────────────────────────────────────
-
-function ActivityRow({
-    activity,
-    showActor,
-    isLast,
-}: {
-    activity:  ActivityItem
-    showActor: boolean
-    isLast:    boolean
-}) {
-    const config = ACTIVITY_CONFIG[activity.type]
-    const Icon   = config?.icon  ?? Bell
-    const color  = config?.color ?? 'bg-muted text-muted-foreground'
-
-    return (
-        <div className="relative flex gap-3 py-3">
-            {/* Timeline connector */}
-            {!isLast && (
-                <div className="absolute left-4 top-11 bottom-0 w-px bg-border" />
-            )}
-
-            {/* Icon */}
-            <div className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${color}`}>
-                <Icon className="h-4 w-4" />
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 space-y-0.5 min-w-0">
-                <p className="text-sm font-semibold text-foreground leading-snug truncate">
-                    {activity.title}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">
-                    {activity.description}
-                </p>
-                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground/70 flex-wrap">
-                    {showActor && activity.actorName && (
-                        <>
-                            <span className="font-medium text-muted-foreground">
-                                {activity.actorName}
-                            </span>
-                            <span>·</span>
-                        </>
-                    )}
-                    <span>{timeAgo(activity.createdAt)}</span>
-                </div>
-            </div>
-        </div>
-    )
-}
-
-// ── Main component ─────────────────────────────────────────────────────────────
-
+/**
+ * ACTIVITY FEED (Tier 2/3 Heartbeat)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-card, bg-surface, border-border).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 21: Scale Protocol for clean brand tints.
+ */
 export function ActivityFeed() {
     const { profile }  = useProfileStore()
     const schoolId     = profile?.schoolId ?? ''
     const actorId      = profile?.id       ?? ''
 
-    const [data,       setData]       = useState<{
+    const [data, setData] = useState<{
         myActivity:     ActivityItem[]
         schoolActivity: ActivityItem[]
     } | null>(null)
-    const [loading,    setLoading]    = useState(true)
+    const [loading, setLoading] = useState(true)
     const [refreshing, setRefreshing] = useState(false)
-    const [activeTab,  setActiveTab]  = useState('my')
+    const [activeTab, setActiveTab] = useState('my')
 
     const initials = (profile?.name ?? 'U')
         .split(' ')
+        .filter(Boolean)
         .map(n => n[0])
         .slice(0, 2)
         .join('')
         .toUpperCase()
 
-        async function fetchData(isRefresh = false) {
-            if (!schoolId || !actorId) return;
+    async function fetchData(isRefresh = false) {
+        if (!schoolId || !actorId) return;
+        if (isRefresh) setRefreshing(true); else setLoading(true);
         
-            // ✅ Use proper if/else for state updates (statements)
-            if (isRefresh) {
-                setRefreshing(true);
-            } else {
-                setLoading(true);
-            }
-            
-            try {
-                const result = await getActivityFeed(schoolId, actorId);
-                setData(result);
-            } catch (error) {
-                console.error("Failed to sync feed");
-                getErrorMessage(error)
-            } finally {
-                if (isRefresh) {
-                    setRefreshing(false);
-                } else {
-                    setLoading(false);
-                }
-            }
+        try {
+            const result = await getActivityFeed(schoolId, actorId);
+            setData(result);
+        } catch (error) {
+            console.error("[FEED_SYNC_ERROR]:", getErrorMessage(error));
+        } finally {
+            setRefreshing(false);
+            setLoading(false);
         }
+    }
 
     useEffect(() => {
         fetchData()
@@ -450,34 +661,35 @@ export function ActivityFeed() {
     }, [schoolId, actorId])
 
     return (
-        <Card className="h-fit">
-            <CardHeader className="pb-3">
-                <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="text-lg font-semibold text-foreground">
+        <Card className="h-full bg-card border-border rounded-[2rem] shadow-xl overflow-hidden">
+            <CardHeader className="p-6 md:p-8 pb-4">
+                <div className="flex items-center justify-between gap-4">
+                    {/* Rule 11: Registry Header Typography */}
+                    <CardTitle className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter">
                         Activity Feed
                     </CardTitle>
                     <button
                         onClick={() => fetchData(true)}
                         disabled={refreshing}
-                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                        className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-school-primary transition-all disabled:opacity-50"
                     >
-                        <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-                        <span className="hidden sm:inline">Refresh</span>
+                        <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
+                        <span className="hidden sm:inline">Synchronize</span>
                     </button>
                 </div>
 
-                {/* Current user pill */}
-                <div className="flex items-center gap-2.5 pt-2 pb-1 border-b border-border">
-                    <Avatar className="h-8 w-8 shrink-0">
-                        <AvatarFallback className="bg-school-primary/10 text-school-primary text-xs font-bold">
+                {/* Identity Pill (Rule 19) */}
+                <div className="flex items-center gap-3 py-4 border-b border-border">
+                    <Avatar className="h-10 w-10 rounded-xl border border-school-primary-200">
+                        <AvatarFallback className="bg-school-primary-50 text-school-primary text-xs font-extrabold italic">
                             {initials}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-foreground truncate">
-                            {profile?.name ?? 'Admin'}
+                        <p className="text-sm font-bold text-foreground truncate leading-none">
+                            {profile?.name ?? 'Registry Node'}
                         </p>
-                        <p className="text-[11px] text-muted-foreground capitalize">
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mt-1 italic">
                             {profile?.role?.toLowerCase().replace(/_/g, ' ') ?? 'Administrator'}
                         </p>
                     </div>
@@ -486,31 +698,25 @@ export function ActivityFeed() {
 
             <CardContent className="p-0">
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <div className="px-6 pb-2">
-                        <TabsList className="grid w-full grid-cols-2 h-9">
-                            <TabsTrigger value="my" className="text-xs">
-                                <User className="h-3 w-3 mr-1" />
-                                My Activity
+                    <div className="px-6 md:px-8 pb-4">
+                        <TabsList className="grid w-full grid-cols-2 bg-surface h-10 p-1 rounded-xl">
+                            <TabsTrigger value="my" className="text-[10px] font-bold uppercase tracking-widest">
+                                <User className="h-3 w-3 mr-2" /> My Registry
                             </TabsTrigger>
-                            <TabsTrigger value="all" className="text-xs">
-                                <Bell className="h-3 w-3 mr-1" />
-                                School Feed
+                            <TabsTrigger value="all" className="text-[10px] font-bold uppercase tracking-widest">
+                                <Bell className="h-3 w-3 mr-2" /> School Feed
                             </TabsTrigger>
                         </TabsList>
                     </div>
 
-                    {/* ── My Activity ── */}
-                    <TabsContent value="my" className="mt-0">
-                        <ScrollArea className="h-[280px] px-6">
+                    <TabsContent value="my" className="mt-0 outline-none">
+                        <ScrollArea className="h-[320px] px-6 md:px-8">
                             {loading ? (
-                                <div className="flex items-center justify-center h-48 gap-2">
-                                    <Loader2 className="h-4 w-4 animate-spin text-school-primary" />
-                                    <span className="text-xs text-muted-foreground">Loading...</span>
-                                </div>
+                                <LoaderState />
                             ) : !data?.myActivity.length ? (
-                                <EmptyFeed message="No activity recorded yet. Actions you take will appear here." />
+                                <EmptyFeed message="No activity recorded in your registry node." />
                             ) : (
-                                <div className="pb-4">
+                                <div className="pb-8">
                                     {data.myActivity.map((activity, i) => (
                                         <ActivityRow
                                             key={activity.id}
@@ -524,18 +730,14 @@ export function ActivityFeed() {
                         </ScrollArea>
                     </TabsContent>
 
-                    {/* ── School Feed ── */}
-                    <TabsContent value="all" className="mt-0">
-                        <ScrollArea className="h-[280px] px-6">
+                    <TabsContent value="all" className="mt-0 outline-none">
+                        <ScrollArea className="h-[320px] px-6 md:px-8">
                             {loading ? (
-                                <div className="flex items-center justify-center h-48 gap-2">
-                                    <Loader2 className="h-4 w-4 animate-spin text-school-primary" />
-                                    <span className="text-xs text-muted-foreground">Loading...</span>
-                                </div>
+                                <LoaderState />
                             ) : !data?.schoolActivity.length ? (
-                                <EmptyFeed message="No school activity yet. Actions taken by any admin will appear here." />
+                                <EmptyFeed message="No institutional activity discovered." />
                             ) : (
-                                <div className="pb-4">
+                                <div className="pb-8">
                                     {data.schoolActivity.map((activity, i) => (
                                         <ActivityRow
                                             key={activity.id}
@@ -551,5 +753,70 @@ export function ActivityFeed() {
                 </Tabs>
             </CardContent>
         </Card>
+    )
+}
+
+// ── Sub-Components (Registry Style) ─────────────────────────────────────────
+
+function ActivityRow({ activity, showActor, isLast }: { activity: ActivityItem, showActor: boolean, isLast: boolean }) {
+    const config = ACTIVITY_CONFIG[activity.type]
+    const Icon = config?.icon ?? Bell
+
+    return (
+        <div className="relative flex gap-4 py-4 group">
+            {/* Timeline connector (Rule 18) */}
+            {!isLast && (
+                <div className="absolute left-[15px] top-12 bottom-0 w-px bg-border group-hover:bg-school-primary-200 transition-colors" />
+            )}
+
+            {/* Rule 19: Small Item Radius */}
+            <div className={cn(
+                "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl shadow-inner transition-transform group-hover:scale-110",
+                config?.color ?? 'bg-surface text-muted-foreground'
+            )}>
+                <Icon className="h-4 w-4" />
+            </div>
+
+            <div className="flex-1 space-y-1 min-w-0">
+                <p className="text-sm font-bold text-foreground leading-tight truncate italic">
+                    {activity.title}
+                </p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                    {activity.description}
+                </p>
+                {/* Rule 11: Metadata Typography */}
+                <div className="flex items-center gap-2 text-[9px] font-semibold text-muted-foreground/60 uppercase tracking-widest pt-1">
+                    {showActor && activity.actorName && (
+                        <>
+                            <span className="text-school-primary/80 font-bold">{activity.actorName}</span>
+                            <span>•</span>
+                        </>
+                    )}
+                    <span>{timeAgo(activity.createdAt)}</span>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function LoaderState() {
+    return (
+        <div className="flex flex-col items-center justify-center h-64 gap-4">
+            <Loader2 className="h-6 w-6 animate-spin text-school-primary" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-pulse">Fetching Ledger...</span>
+        </div>
+    )
+}
+
+function EmptyFeed({ message }: { message: string }) {
+    return (
+        <div className="flex flex-col items-center justify-center h-64 gap-4 text-center px-6">
+            <div className="p-4 rounded-full bg-surface border border-border">
+                <Bell className="h-6 w-6 text-muted-foreground/20" />
+            </div>
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest italic leading-relaxed">
+                {message}
+            </p>
+        </div>
     )
 }

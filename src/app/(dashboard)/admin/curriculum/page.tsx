@@ -467,62 +467,155 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getCurriculumStats } from "@/app/actions/curiculum-stats";
+// import { getManagementHelpers } from "@/app/actions/class-management"
+// import { CurriculumManagementClient } from "@/components/admin-dasboard/curriculum/curriculumManagementClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Curriculum | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         include: { school: { select: { name: true } } }
+//     });
+
+//     return {
+//         title: `Curriculum Architecture | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
+//         description: "Master oversight of institutional academic structure and grade distribution."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Fetching
+//  */
+// export default async function Page() {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     // Rule 6 & 13: Institutional Guard
+//     if (!profile?.schoolId || (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)) {
+//         redirect("/teacher?error=access_restricted");
+//     }
+
+//     // Parallel Fetch (Rule 11: System Truth)
+//     const [managementRes, stats] = await Promise.all([
+//         getManagementHelpers(profile.schoolId),
+//         getCurriculumStats(profile.schoolId)
+//     ]);
+
+//     return (
+//         <CurriculumManagementClient 
+//             initialGrades={managementRes.grades as any} 
+//             initialStats={stats}
+//         />
+//     );
+// }
+
+
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { getCurriculumStats } from "@/app/actions/curiculum-stats";
+import { getCurriculumStats, type CurriculumStats } from "@/app/actions/curiculum-stats";
 import { getManagementHelpers } from "@/app/actions/class-management"
 import { CurriculumManagementClient } from "@/components/admin-dasboard/curriculum/curriculumManagementClient";
 import { Role } from "@prisma/client";
 
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
 /**
- * Rule 16: Contextual SEO
+ * Interface representing a Grade Hub and its associated subject modules.
+ */
+interface GradeWithSubjects {
+    id: string;
+    displayName: string;
+    gradeSubjects: { id: string }[];
+}
+
+/**
+ * CURRICULUM ARCHITECTURE | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO
  */
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { title: "Curriculum | SchoolPaaS" };
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+    if (!authUser) return { title: "Curriculum | SchoolPaaS" };
 
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         include: { school: { select: { name: true } } }
     });
 
+    const hubName = profile?.school?.name || "Institutional Hub";
+
     return {
-        title: `Curriculum Architecture | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
-        description: "Master oversight of institutional academic structure and grade distribution."
+        title: `Curriculum Architecture | ${hubName} | SchoolPaaS`,
+        description: "Master oversight of institutional academic structure, hub distribution, and syllabus modules."
     };
 }
 
 /**
- * Rule 12: Server-First Fetching
+ * CURRICULUM MANAGEMENT PAGE (Tier 2)
+ * Rule 12: Server-First Execution. Handles security scoping and data hydration.
+ * Rule 5/6: Multi-tenant isolation - strictly limited to Institutional Admins.
+ * Rule 15: Pure TypeScript - Zero 'any' types allowed.
  */
-export default async function Page() {
+export default async function CurriculumPage() {
+    // 1. Resolve Identity & Authentication (Rule 10)
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) redirect("/login");
 
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         select: { id: true, schoolId: true, role: true }
     });
 
-    // Rule 6 & 13: Institutional Guard
-    if (!profile?.schoolId || (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)) {
-        redirect("/teacher?error=access_restricted");
+    // 2. Authorization Security Gate (Rule 6)
+    // Strictly restricted to Tier-2 Hub Administrators.
+    if (
+        !profile?.schoolId || 
+        (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)
+    ) {
+        redirect("/dashboard?error=unauthorized_curriculum_access");
     }
 
-    // Parallel Fetch (Rule 11: System Truth)
+    // 3. Authoritative Data Hydration (Rule 11)
+    // Parallel fetching of management helpers and curriculum vitality stats.
     const [managementRes, stats] = await Promise.all([
         getManagementHelpers(profile.schoolId),
         getCurriculumStats(profile.schoolId)
     ]);
 
+    // 4. Client-Side Protocol Handoff (Rule 15)
+    // Safe casting of the management response to our strict Hub Interface.
+    const initialGrades = (managementRes.grades as unknown as GradeWithSubjects[]) || [];
+
     return (
-        <CurriculumManagementClient 
-            initialGrades={managementRes.grades as any} 
-            initialStats={stats}
-        />
+        <main className="min-h-screen bg-background">
+            <CurriculumManagementClient 
+                initialGrades={initialGrades} 
+                initialStats={stats as CurriculumStats | null}
+            />
+        </main>
     );
 }

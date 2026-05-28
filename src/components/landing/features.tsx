@@ -1,40 +1,178 @@
+// // "use client";
+
+// // import { Sparkles, BarChart3, MessageSquare, Check } from "lucide-react";
+// // import { motion, Variants } from "framer-motion";
+
+// // const features = [
+// //   {
+// //     icon: Sparkles,
+// //     title: "AI Content Engine",
+// //     description:
+// //       "Generate curriculum-aligned videos, quizzes, and lesson plans in seconds. Let AI handle the heavy lifting while teachers focus on teaching.",
+// //     highlights: [
+// //       "Video generation from prompts",
+// //       "Auto-generated assessments",
+// //       "Aligned lesson plans",
+// //     ],
+// //   },
+// //   {
+// //     icon: BarChart3,
+// //     title: "Smart Assessments",
+// //     description:
+// //       "Track topic mastery with interactive charts and detailed analytics. Identify knowledge gaps before they become problems.",
+// //     highlights: [
+// //       "Real-time mastery tracking",
+// //       "Interactive progress charts",
+// //       "Gap identification",
+// //     ],
+// //   },
+// //   {
+// //     icon: MessageSquare,
+// //     title: "WhatsApp Bridge",
+// //     description:
+// //       "Automated feedback sent directly to parents' phones via WhatsApp. Keep families engaged without extra teacher workload.",
+// //     highlights: [
+// //       "Automated progress reports",
+// //       "Direct parent notifications",
+// //       "Zero extra workload",
+// //     ],
+// //   },
+// // ];
+
+// // const cardVariants: Variants = {
+// //   hidden: { opacity: 0, y: 30, scale: 0.95 },
+// //   visible: (i: number) => ({
+// //     opacity: 1,
+// //     y: 0,
+// //     scale: 1,
+// //     transition: { 
+// //       duration: 0.5, 
+// //       delay: i * 0.15, 
+// //       ease: [0.25, 0.4, 0.25, 1] 
+// //     },
+// //   }),
+// // };
+
+// // export function Features() {
+// //   return (
+// //     <section id="features" className="bg-background py-24 lg:py-32">
+// //       <div className="mx-auto max-w-7xl px-6">
+        
+// //         {/* Header Section */}
+// //         <motion.div
+// //           className="mx-auto mb-20 max-w-2xl text-center"
+// //           initial={{ opacity: 0, y: 20 }}
+// //           whileInView={{ opacity: 1, y: 0 }}
+// //           viewport={{ once: true, margin: "-100px" }}
+// //           transition={{ duration: 0.7, ease: "easeOut" }}
+// //         >
+// //           <p className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-amber-600">
+// //             AI-Powered Features
+// //           </p>
+// //           <h2 className="text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+// //             Intelligence Built Into{" "}
+// //             <span className="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 bg-clip-text text-transparent">
+// //               Every Workflow
+// //             </span>
+// //           </h2>
+// //           <p className="mt-6 text-pretty text-lg leading-relaxed text-muted-foreground">
+// //             From content creation to parent communication, AI automates the
+// //             repetitive so you can focus on making a real impact.
+// //           </p>
+// //         </motion.div>
+
+// //         {/* Features Grid */}
+// //         <div className="grid gap-8 lg:grid-cols-3">
+// //           {features.map((feature, i) => (
+// //             <motion.div
+// //               key={feature.title}
+// //               custom={i}
+// //               variants={cardVariants}
+// //               initial="hidden"
+// //               whileInView="visible"
+// //               viewport={{ once: true, margin: "-60px" }}
+// //               whileHover={{ 
+// //                 y: -10, 
+// //                 transition: { duration: 0.3 } 
+// //               }}
+// //               className="group relative flex flex-col rounded-3xl border border-amber-100 bg-card p-10 transition-all duration-300 hover:border-amber-500/40 hover:shadow-[0_20px_50px_rgba(245,158,11,0.12)]"
+// //             >
+// //               {/* Icon - Maintained original h-12 w-12 size */}
+// //               <div className="mb-8 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 ring-1 ring-amber-200 transition-all duration-300 group-hover:bg-amber-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-amber-500/30">
+// //                 <feature.icon className="h-6 w-6" />
+// //               </div>
+
+// //               <h3 className="mb-4 text-2xl font-bold text-foreground">
+// //                 {feature.title}
+// //               </h3>
+              
+// //               <p className="mb-8 text-base leading-relaxed text-muted-foreground">
+// //                 {feature.description}
+// //               </p>
+
+// //               {/* Highlights List */}
+// //               <ul className="mt-auto flex flex-col gap-4 border-t border-amber-100 pt-8 group-hover:border-amber-500/10">
+// //                 {feature.highlights.map((highlight) => (
+// //                   <li
+// //                     key={highlight}
+// //                     className="flex items-center gap-3 text-sm font-medium text-foreground/90"
+// //                   >
+// //                     <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+// //                       <Check className="h-3 w-3" />
+// //                     </div>
+// //                     {highlight}
+// //                   </li>
+// //                 ))}
+// //               </ul>
+// //             </motion.div>
+// //           ))}
+// //         </div>
+// //       </div>
+// //     </section>
+// //   );
+// // }
+
+
 // "use client";
 
-// import { Sparkles, BarChart3, MessageSquare, Check } from "lucide-react";
+// import { Sparkles, BarChart3, MessageSquare, Check, ShieldCheck, Zap } from "lucide-react";
 // import { motion, Variants } from "framer-motion";
+// import { cn } from "@/lib/utils";
+
+// // ── Data: Feature Matrix ──────────────────────────────────────────────────────
 
 // const features = [
 //   {
 //     icon: Sparkles,
-//     title: "AI Content Engine",
+//     title: "Syllabus Synthesis",
 //     description:
-//       "Generate curriculum-aligned videos, quizzes, and lesson plans in seconds. Let AI handle the heavy lifting while teachers focus on teaching.",
+//       "Generate curriculum-aligned academic nodes, interactive quizzes, and lesson scripts in seconds. AI-driven logic for high-performance pedagogy.",
 //     highlights: [
-//       "Video generation from prompts",
-//       "Auto-generated assessments",
-//       "Aligned lesson plans",
+//       "Instant node generation",
+//       "Auto-calibrated assessments",
+//       "Global core alignment",
 //     ],
 //   },
 //   {
 //     icon: BarChart3,
-//     title: "Smart Assessments",
+//     title: "Mastery Telemetry",
 //     description:
-//       "Track topic mastery with interactive charts and detailed analytics. Identify knowledge gaps before they become problems.",
+//       "Track modular proficiency with real-time analytics. Identify knowledge gaps across entire cohorts or individual learning paths instantly.",
 //     highlights: [
-//       "Real-time mastery tracking",
-//       "Interactive progress charts",
-//       "Gap identification",
+//       "Real-time proficiency tracking",
+//       "Institutional broadsheets",
+//       "Personal growth indexing",
 //     ],
 //   },
 //   {
 //     icon: MessageSquare,
-//     title: "WhatsApp Bridge",
+//     title: "Registry Bridge",
 //     description:
-//       "Automated feedback sent directly to parents' phones via WhatsApp. Keep families engaged without extra teacher workload.",
+//       "Automated transmission of reports and feedback directly to parents via WhatsApp. Seamless institutional-family synchronization.",
 //     highlights: [
-//       "Automated progress reports",
-//       "Direct parent notifications",
-//       "Zero extra workload",
+//       "Automated report delivery",
+//       "Real-time family alerts",
+//       "Zero-latency communication",
 //     ],
 //   },
 // ];
@@ -53,35 +191,41 @@
 //   }),
 // };
 
+// /**
+//  * CORE OPERATIONAL FEATURES (Tier 2 & 3)
+//  * Rule 11: Standardizes the "Registry" aesthetic with black/italic/uppercase.
+//  * Rule 6: Highlights features relevant to both Schools and Individuals.
+//  */
 // export function Features() {
 //   return (
-//     <section id="features" className="bg-background py-24 lg:py-32">
+//     <section id="features" className="bg-slate-950 py-24 lg:py-32 overflow-hidden">
 //       <div className="mx-auto max-w-7xl px-6">
         
-//         {/* Header Section */}
+//         {/* ── HEADER SECTION ── */}
 //         <motion.div
-//           className="mx-auto mb-20 max-w-2xl text-center"
+//           className="mx-auto mb-24 max-w-3xl text-center space-y-6"
 //           initial={{ opacity: 0, y: 20 }}
 //           whileInView={{ opacity: 1, y: 0 }}
 //           viewport={{ once: true, margin: "-100px" }}
 //           transition={{ duration: 0.7, ease: "easeOut" }}
 //         >
-//           <p className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-amber-600">
-//             AI-Powered Features
-//           </p>
-//           <h2 className="text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl">
-//             Intelligence Built Into{" "}
-//             <span className="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 bg-clip-text text-transparent">
-//               Every Workflow
-//             </span>
+//           <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-slate-900 px-5 py-2 text-[10px] font-black uppercase tracking-[0.3em] text-school-primary shadow-xl">
+//             <Zap className="h-4 w-4" />
+//             Infrastructure Capability
+//           </div>
+
+//           <h2 className="text-balance text-5xl font-black tracking-tighter text-white md:text-6xl uppercase italic leading-none">
+//             Intelligence in Every <br/>
+//             <span className="text-school-primary underline decoration-white/10 underline-offset-8">Registry Workflow</span>
 //           </h2>
-//           <p className="mt-6 text-pretty text-lg leading-relaxed text-muted-foreground">
-//             From content creation to parent communication, AI automates the
-//             repetitive so you can focus on making a real impact.
+
+//           <p className="mt-8 text-pretty text-sm md:text-lg font-bold uppercase tracking-widest leading-relaxed text-slate-500 italic">
+//             From automated content synthesis to family communication bridges, 
+//             SchoolPaaS digitizes the repetitive so you can scale impact.
 //           </p>
 //         </motion.div>
 
-//         {/* Features Grid */}
+//         {/* ── FEATURES GRID ── */}
 //         <div className="grid gap-8 lg:grid-cols-3">
 //           {features.map((feature, i) => (
 //             <motion.div
@@ -91,34 +235,32 @@
 //               initial="hidden"
 //               whileInView="visible"
 //               viewport={{ once: true, margin: "-60px" }}
-//               whileHover={{ 
-//                 y: -10, 
-//                 transition: { duration: 0.3 } 
-//               }}
-//               className="group relative flex flex-col rounded-3xl border border-amber-100 bg-card p-10 transition-all duration-300 hover:border-amber-500/40 hover:shadow-[0_20px_50px_rgba(245,158,11,0.12)]"
+//               className="group relative flex flex-col rounded-[3rem] border border-white/5 bg-slate-900 p-10 shadow-2xl transition-all duration-500 hover:border-school-primary/30"
 //             >
-//               {/* Icon - Maintained original h-12 w-12 size */}
-//               <div className="mb-8 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 ring-1 ring-amber-200 transition-all duration-300 group-hover:bg-amber-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-amber-500/30">
-//                 <feature.icon className="h-6 w-6" />
+//               {/* Feature Icon */}
+//               <div className="mb-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-950 border border-white/5 text-slate-600 transition-all duration-500 group-hover:scale-110 group-hover:bg-school-primary group-hover:text-slate-950">
+//                 <feature.icon className="h-8 w-8" strokeWidth={1.5} />
 //               </div>
 
-//               <h3 className="mb-4 text-2xl font-bold text-foreground">
-//                 {feature.title}
-//               </h3>
-              
-//               <p className="mb-8 text-base leading-relaxed text-muted-foreground">
-//                 {feature.description}
-//               </p>
+//               <div className="space-y-4 mb-10">
+//                   <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">
+//                     {feature.title}
+//                   </h3>
+                  
+//                   <p className="text-[11px] font-bold leading-relaxed text-slate-400 uppercase tracking-widest italic">
+//                     {feature.description}
+//                   </p>
+//               </div>
 
 //               {/* Highlights List */}
-//               <ul className="mt-auto flex flex-col gap-4 border-t border-amber-100 pt-8 group-hover:border-amber-500/10">
+//               <ul className="mt-auto flex flex-col gap-4 border-t border-white/5 pt-8">
 //                 {feature.highlights.map((highlight) => (
 //                   <li
 //                     key={highlight}
-//                     className="flex items-center gap-3 text-sm font-medium text-foreground/90"
+//                     className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-white/80"
 //                   >
-//                     <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-colors">
-//                       <Check className="h-3 w-3" />
+//                     <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-slate-950 border border-white/5 text-school-primary group-hover:border-school-primary/30 transition-colors">
+//                       <Check className="h-3 w-3" strokeWidth={3} />
 //                     </div>
 //                     {highlight}
 //                   </li>
@@ -135,7 +277,8 @@
 
 "use client";
 
-import { Sparkles, BarChart3, MessageSquare, Check, ShieldCheck, Zap } from "lucide-react";
+import React from "react";
+import { Sparkles, BarChart3, MessageSquare, Check, Zap } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -178,14 +321,14 @@ const features = [
 ];
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  hidden: { opacity: 0, y: 30, scale: 0.98 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
     transition: { 
       duration: 0.5, 
-      delay: i * 0.15, 
+      delay: i * 0.1, 
       ease: [0.25, 0.4, 0.25, 1] 
     },
   }),
@@ -193,40 +336,44 @@ const cardVariants: Variants = {
 
 /**
  * CORE OPERATIONAL FEATURES (Tier 2 & 3)
- * Rule 11: Standardizes the "Registry" aesthetic with black/italic/uppercase.
- * Rule 6: Highlights features relevant to both Schools and Individuals.
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem] for feature blocks.
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function Features() {
   return (
-    <section id="features" className="bg-slate-950 py-24 lg:py-32 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="features" className="bg-background py-16 md:py-24 lg:py-32 overflow-hidden border-t border-border">
+      {/* Rule 20: Fluid Container and Padding */}
+      <div className="mx-auto max-w-7xl px-4 md:px-8 lg:px-12 w-full">
         
-        {/* ── HEADER SECTION ── */}
+        {/* ── HEADER SECTION (Rule 11) ── */}
         <motion.div
-          className="mx-auto mb-24 max-w-3xl text-center space-y-6"
+          className="mx-auto mb-16 md:mb-24 max-w-3xl text-center space-y-6"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-slate-900 px-5 py-2 text-[10px] font-black uppercase tracking-[0.3em] text-school-primary shadow-xl">
-            <Zap className="h-4 w-4" />
+          {/* Rule 21: Scale Protocol Badge */}
+          <div className="inline-flex items-center gap-3 rounded-full border border-school-primary-200 bg-school-primary-50 px-5 py-2 text-[10px] font-bold uppercase tracking-widest text-school-primary shadow-sm">
+            <Zap className="h-4 w-4 fill-current" />
             Infrastructure Capability
           </div>
 
-          <h2 className="text-balance text-5xl font-black tracking-tighter text-white md:text-6xl uppercase italic leading-none">
+          <h2 className="text-balance text-4xl md:text-6xl font-extrabold tracking-tighter text-foreground uppercase italic leading-none">
             Intelligence in Every <br/>
-            <span className="text-school-primary underline decoration-white/10 underline-offset-8">Registry Workflow</span>
+            <span className="text-school-primary decoration-border/40 underline-offset-8">Registry Workflow</span>
           </h2>
 
-          <p className="mt-8 text-pretty text-sm md:text-lg font-bold uppercase tracking-widest leading-relaxed text-slate-500 italic">
+          <p className="mt-8 text-pretty text-sm md:text-lg font-semibold uppercase tracking-widest leading-relaxed text-muted-foreground italic opacity-80">
             From automated content synthesis to family communication bridges, 
-            SchoolPaaS digitizes the repetitive so you can scale impact.
+            SchoolPaaS digitizes institutional friction to enable scale.
           </p>
         </motion.div>
 
-        {/* ── FEATURES GRID ── */}
-        <div className="grid gap-8 lg:grid-cols-3">
+        {/* ── FEATURES GRID (Rule 20) ── */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, i) => (
             <motion.div
               key={feature.title}
@@ -235,32 +382,35 @@ export function Features() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-60px" }}
-              className="group relative flex flex-col rounded-[3rem] border border-white/5 bg-slate-900 p-10 shadow-2xl transition-all duration-500 hover:border-school-primary/30"
+              className={cn(
+                "group relative flex flex-col p-8 md:p-10 transition-all duration-500",
+                "bg-card border border-border rounded-[2rem] shadow-xl hover:border-school-primary/30" // Rule 18/19
+              )}
             >
-              {/* Feature Icon */}
-              <div className="mb-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-950 border border-white/5 text-slate-600 transition-all duration-500 group-hover:scale-110 group-hover:bg-school-primary group-hover:text-slate-950">
+              {/* Feature Icon (Rule 21) */}
+              <div className="mb-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface border border-border text-muted-foreground transition-all duration-500 group-hover:scale-110 group-hover:bg-school-primary group-hover:text-on-school-primary group-hover:border-transparent shadow-inner">
                 <feature.icon className="h-8 w-8" strokeWidth={1.5} />
               </div>
 
               <div className="space-y-4 mb-10">
-                  <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">
+                  <h3 className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter">
                     {feature.title}
                   </h3>
                   
-                  <p className="text-[11px] font-bold leading-relaxed text-slate-400 uppercase tracking-widest italic">
+                  <p className="text-[11px] font-semibold leading-relaxed text-muted-foreground uppercase tracking-widest italic">
                     {feature.description}
                   </p>
               </div>
 
-              {/* Highlights List */}
-              <ul className="mt-auto flex flex-col gap-4 border-t border-white/5 pt-8">
+              {/* Highlights List (Rule 21) */}
+              <ul className="mt-auto flex flex-col gap-4 border-t border-border pt-8">
                 {feature.highlights.map((highlight) => (
                   <li
                     key={highlight}
-                    className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-white/80"
+                    className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-foreground/80"
                   >
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-slate-950 border border-white/5 text-school-primary group-hover:border-school-primary/30 transition-colors">
-                      <Check className="h-3 w-3" strokeWidth={3} />
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-school-primary-50 border border-school-primary-200 text-school-primary group-hover:border-school-primary/40 transition-colors">
+                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
                     </div>
                     {highlight}
                   </li>

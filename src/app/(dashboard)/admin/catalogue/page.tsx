@@ -1199,62 +1199,157 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getCourseCatalogue } from "@/app/actions/course-catalogue"
+// import { getManagementHelpers } from "@/app/actions/class-management";
+// import { SubjectRegistryClient } from "@/components/admin-dasboard/catelogueClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Dynamic SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//   const supabase = await createClient();
+//   const { data: { user } } = await supabase.auth.getUser();
+//   if (!user) return { title: "Registry | SchoolPaaS" };
+
+//   const profile = await prisma.profile.findUnique({
+//     where: { id: user.id },
+//     include: { school: { select: { name: true } } }
+//   });
+
+//   return {
+//     title: `Subject Registry | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
+//     description: "Architect and manage institutional course infrastructure."
+//   };
+// }
+
+// /**
+//  * Rule 12: Server-First Fetching
+//  */
+// export default async function SubjectRegistryPage() {
+//   const supabase = await createClient();
+//   const { data: { user } } = await supabase.auth.getUser();
+//   if (!user) redirect("/login");
+
+//   const profile = await prisma.profile.findUnique({
+//     where: { id: user.id },
+//     select: { id: true, schoolId: true, role: true }
+//   });
+
+//   // Rule 6 & 13: Institutional Guard
+//   if (!profile?.schoolId || (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)) {
+//     redirect("/student");
+//   }
+
+//   // Parallel Fetch (Rule 11 System Truth)
+//   const [catalogueRes, managementHelpers] = await Promise.all([
+//     getCourseCatalogue(profile.schoolId),
+//     getManagementHelpers(profile.schoolId)
+//   ]);
+
+//   return (
+//     <SubjectRegistryClient 
+//       initialCourses={catalogueRes.success ? (catalogueRes.data as any) : []} 
+//       helpers={managementHelpers}
+//     />
+//   );
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { getCourseCatalogue } from "@/app/actions/course-catalogue"
-import { getManagementHelpers } from "@/app/actions/class-management";
+import { getCourseCatalogue } from "@/app/actions/course-catalogue";
+import { getManagementHelpers, type ManagementHelpers } from "@/app/actions/class-management";
 import { SubjectRegistryClient } from "@/components/admin-dasboard/catelogueClient";
 import { Role } from "@prisma/client";
 
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
 /**
- * Rule 16: Dynamic SEO
+ * Interface representing the Hub's course architecture.
+ * Syncs with the return shape of getCourseCatalogue.
+ */
+interface CatalogueCourse {
+  id: string;
+  name: string;
+  grades: { id: string; displayName: string }[];
+  totalTopics: number;
+}
+
+/**
+ * SUBJECT REGISTRY | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO - Hub-specific indexing.
  */
 export async function generateMetadata(): Promise<Metadata> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { title: "Registry | SchoolPaaS" };
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  
+  if (!authUser) return { title: "Registry | SchoolPaaS" };
 
   const profile = await prisma.profile.findUnique({
-    where: { id: user.id },
+    where: { id: authUser.id },
     include: { school: { select: { name: true } } }
   });
 
+  const hubName = profile?.school?.name || "Institutional Hub";
+
   return {
-    title: `Subject Registry | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
-    description: "Architect and manage institutional course infrastructure."
+    title: `Subject Registry | ${hubName} | SchoolPaaS`,
+    description: "Architect and manage institutional course infrastructure and syllabus modules."
   };
 }
 
 /**
- * Rule 12: Server-First Fetching
+ * SUBJECT REGISTRY PAGE (Tier 2)
+ * Rule 12: Server-First Execution. Handles identity verification and data hydration.
+ * Rule 5/6: Multi-tenant isolation - strictly limited to Institutional Admins.
+ * Rule 15: Pure TypeScript - Zero 'any' types in the protocol.
  */
 export default async function SubjectRegistryPage() {
+  // 1. Resolve Identity & Verification (Rule 10)
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) redirect("/login");
 
   const profile = await prisma.profile.findUnique({
-    where: { id: user.id },
+    where: { id: authUser.id },
     select: { id: true, schoolId: true, role: true }
   });
 
-  // Rule 6 & 13: Institutional Guard
-  if (!profile?.schoolId || (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)) {
-    redirect("/student");
+  // 2. Authorization Security Gate (Rule 6)
+  // Strictly restricted to Tier-2 Hub Administrators.
+  if (
+    !profile?.schoolId || 
+    (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)
+  ) {
+    redirect("/dashboard?error=unauthorized_registry_access");
   }
 
-  // Parallel Fetch (Rule 11 System Truth)
+  // 3. Authoritative Data Hydration (Rule 11)
+  // We fetch the subject catalogue and management helpers in parallel for performance.
   const [catalogueRes, managementHelpers] = await Promise.all([
     getCourseCatalogue(profile.schoolId),
     getManagementHelpers(profile.schoolId)
   ]);
 
+  // 4. Client-Side Protocol Handoff (Rule 15)
+  // Normalized casting from Prisma JSON result to strict UI interface.
+  const initialCourses = catalogueRes.success 
+    ? (catalogueRes.data as unknown as CatalogueCourse[]) 
+    : [];
+
   return (
-    <SubjectRegistryClient 
-      initialCourses={catalogueRes.success ? (catalogueRes.data as any) : []} 
-      helpers={managementHelpers}
-    />
+    <main className="min-h-screen bg-background">
+      <SubjectRegistryClient 
+        initialCourses={initialCourses} 
+        helpers={managementHelpers as ManagementHelpers}
+      />
+    </main>
   );
 }

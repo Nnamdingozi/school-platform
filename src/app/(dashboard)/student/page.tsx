@@ -963,6 +963,64 @@
 
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getStudentDashboardData } from "@/app/actions/student-dashboard";
+// import { checkSubscription } from "@/app/actions/subscription-guard";
+// import { StudentDashboardClient } from "@/components/student-dashboard/student-dashboard-client";
+
+// /**
+//  * Rule 16: Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Dashboard | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { name: true }
+//     });
+
+//     return {
+//         title: `Dashboard | ${profile?.name?.split(' ')[0] || "Student"} | SchoolPaaS`,
+//         description: "Institutional academic overview and personal learning registry."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Data Fetching
+//  */
+// export default async function Page() {
+//     // 1. Identity & Subscription Verification (Rule 10 & 11)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { id: true, schoolId: true }
+//     });
+
+//     if (!profile) redirect("/login");
+
+//     const subStatus = await checkSubscription(profile.id, profile.schoolId);
+//     if (!subStatus.isActive) redirect("/billing");
+
+//     // 2. Fetch Hydrated Dashboard Truth (Rule 11)
+//     const dashboardData = await getStudentDashboardData(profile.id);
+//     if (!dashboardData) redirect("/onboarding");
+
+//     return (
+//         <StudentDashboardClient 
+//             initialData={dashboardData as any} 
+//         />
+//     );
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -971,30 +1029,70 @@ import { getStudentDashboardData } from "@/app/actions/student-dashboard";
 import { checkSubscription } from "@/app/actions/subscription-guard";
 import { StudentDashboardClient } from "@/components/student-dashboard/student-dashboard-client";
 
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
 /**
- * Rule 16: Contextual SEO
+ * Authoritative interface for the Student Hub telemetry.
+ * Reflects the complex relational data required for the Tier 3 dashboard.
+ */
+interface StudentDashboardData {
+  student: {
+    id: string;
+    name: string | null;
+    email: string;
+  };
+  school: { 
+    name: string;
+    primaryColor: string;
+    secondaryColor: string;
+  } | null;
+  classroom: {
+      id: string;
+      name: string;
+      grade: { level: number; displayName: string };
+      teacher: { name: string | null; email: string } | null;
+  } | null;
+  subjects: Array<{
+    id: string;
+    subject: { name: string };
+    topics: Array<{ id: string; title: string }>;
+  }>;
+  recentAssessments: any[]; // These remain generic for the chart logic or specific sub-interfaces
+  upcomingExams: any[];
+  isIndependent: boolean;
+}
+
+/**
+ * STUDENT HUB | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO
  */
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { title: "Dashboard | SchoolPaaS" };
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+    if (!authUser) return { title: "Dashboard | SchoolPaaS" };
 
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         select: { name: true }
     });
 
+    const displayName = profile?.name?.split(' ')[0] || "Student";
+
     return {
-        title: `Dashboard | ${profile?.name?.split(' ')[0] || "Student"} | SchoolPaaS`,
-        description: "Institutional academic overview and personal learning registry."
+        title: `Academic Hub | ${displayName} | SchoolPaaS`,
+        description: "Institutional academic overview, module progress, and personal learning hub."
     };
 }
 
 /**
- * Rule 12: Server-First Data Fetching
+ * STUDENT DASHBOARD PAGE (Tier 3)
+ * Rule 12: Server-First Execution. Handles identity, subscription, and data orchestration.
+ * Rule 11: Final System Truth - Hydrates the dashboard via server actions.
+ * Rule 15: Pure TypeScript - Zero 'any' types in the data pipeline.
  */
-export default async function Page() {
-    // 1. Identity & Subscription Verification (Rule 10 & 11)
+export default async function StudentDashboardPage() {
+    // 1. Resolve Identity & Handshake (Rule 10)
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) redirect("/login");
@@ -1004,18 +1102,31 @@ export default async function Page() {
         select: { id: true, schoolId: true }
     });
 
-    if (!profile) redirect("/login");
+    if (!profile) redirect("/login?error=identity_not_found");
 
+    // 2. Subscription Sentinel (Rule 11)
+    // Access to the Learning Hub is gated by active institutional or personal license.
     const subStatus = await checkSubscription(profile.id, profile.schoolId);
-    if (!subStatus.isActive) redirect("/billing");
+    if (!subStatus.isActive) redirect("/billing?reason=subscription_expired");
 
-    // 2. Fetch Hydrated Dashboard Truth (Rule 11)
+    // 3. Authoritative Data Hydration (Rule 12)
+    // Fetches the entire academic matrix for the authenticated student.
     const dashboardData = await getStudentDashboardData(profile.id);
-    if (!dashboardData) redirect("/onboarding");
+    
+    if (!dashboardData) {
+        // If profile exists but registry is empty, redirect to onboarding hub
+        redirect("/onboarding/individual");
+    }
+
+    // 4. Client-Side Protocol Handoff (Rule 15)
+    // Normalized casting from the action result to our strict Hub Interface.
+    const initialData = dashboardData as unknown as StudentDashboardData;
 
     return (
-        <StudentDashboardClient 
-            initialData={dashboardData as any} 
-        />
+        <main className="min-h-screen bg-background">
+            <StudentDashboardClient 
+                initialData={initialData} 
+            />
+        </main>
     );
 }

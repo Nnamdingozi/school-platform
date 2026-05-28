@@ -228,9 +228,520 @@
 // }
 
 
+// 'use client';
+
+// import { useState } from 'react';
+// import { useOnboardingStore } from '@/store/onboardingStore';
+// import { Button } from '@/components/ui/button';
+// import { Input } from '@/components/ui/input';
+// import { Label } from '@/components/ui/label';
+// import { toTitleCase, formatPhone } from '@/lib/utils/formatters';
+// import { 
+//     Eye, EyeOff, ArrowRight, User, 
+//     Mail, Lock, Phone, CheckCircle2,
+//    Loader2, Fingerprint 
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+
+// /**
+//  * ONBOARDING PHASE 01: IDENTITY PROVISIONING
+//  * Rule 1: Institutional Layer Initialization.
+//  * Rule 11: Enforces Registry typography and branding.
+//  */
+// export function AdminStep() {
+//     const { nextStep, setAdminData, setError, isLoading, error, adminData } = useOnboardingStore();
+//     const [showPassword, setShowPassword] = useState(false);
+
+//     const [form, setForm] = useState({
+//         name: adminData?.name ?? '',
+//         email: adminData?.email ?? '',
+//         password: adminData?.password ?? '',
+//         phone: adminData?.phone ?? '',
+//     });
+
+//     const alreadyRegistered = !!adminData?.email;
+
+//     const passwordStrength = (pwd: string) => {
+//         if (pwd.length === 0) return 0;
+//         let score = 0;
+//         if (pwd.length >= 8) score++;
+//         if (/[A-Z]/.test(pwd)) score++;
+//         if (/[0-9]/.test(pwd)) score++;
+//         if (/[^A-Za-z0-9]/.test(pwd)) score++;
+//         return score;
+//     };
+
+//     const strength = passwordStrength(form.password);
+//     const strengthLabel = ['', 'Critical', 'Moderate', 'Secure', 'Optimal'][strength];
+//     const strengthColor = ['', 'bg-red-500', 'bg-amber-500', 'bg-yellow-400', 'bg-emerald-500'][strength];
+
+//     async function handleSubmit(e: React.FormEvent) {
+//         e.preventDefault();
+//         setError(null);
+
+//         if (!alreadyRegistered && form.password.length < 8) {
+//             setError('Security protocol requires at least 8 characters.');
+//             return;
+//         }
+
+//         setAdminData({
+//             ...form,
+//             name: toTitleCase(form.name),
+//             phone: formatPhone(form.phone),
+//         });
+        
+//         nextStep();
+//     }
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
+            
+//             {/* ── HEADER ── */}
+//             <div className="text-center space-y-2">
+//                 <div className="flex justify-center mb-4">
+//                     <div className="h-12 w-12 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center shadow-xl shadow-school-primary/5">
+//                         <Fingerprint className="h-6 w-6 text-school-primary" />
+//                     </div>
+//                 </div>
+//                 <h1 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none">
+//                     Identity Setup
+//                 </h1>
+//                 <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
+//                     Establish the master administrator node
+//                 </p>
+//             </div>
+
+//             {alreadyRegistered && (
+//                 <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-4 animate-in zoom-in-95">
+//                     <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
+//                     <div>
+//                         <p className="text-emerald-500 text-[10px] font-black uppercase tracking-widest">Node Provisioned</p>
+//                         <p className="text-slate-400 text-xs font-medium italic">Synchronized as: {adminData?.email}</p>
+//                     </div>
+//                 </div>
+//             )}
+
+//             <form onSubmit={handleSubmit} className="space-y-6">
+                
+//                 {/* NAME FIELD */}
+//                 <div className="space-y-2">
+//                     <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+//                         Full Legal Name
+//                     </Label>
+//                     <div className="relative group">
+//                         <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-700 group-focus-within:text-school-primary transition-colors" />
+//                         <Input
+//                             value={form.name}
+//                             onChange={(e) => setForm({ ...form, name: e.target.value })}
+//                             onBlur={(e) => setForm({ ...form, name: toTitleCase(e.target.value) })}
+//                             placeholder="e.g. DR. SARAH JOHNSON"
+//                             required
+//                             disabled={alreadyRegistered}
+//                             className="pl-12 bg-slate-900 border-white/5 text-white font-black uppercase italic text-sm rounded-2xl h-14 focus:border-school-primary transition-all"
+//                         />
+//                     </div>
+//                 </div>
+
+//                 {/* EMAIL FIELD */}
+//                 <div className="space-y-2">
+//                     <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+//                         Institutional Email
+//                     </Label>
+//                     <div className="relative group">
+//                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-700 group-focus-within:text-school-primary transition-colors" />
+//                         <Input
+//                             type="email"
+//                             value={form.email}
+//                             onChange={(e) => setForm({ ...form, email: e.target.value })}
+//                             placeholder="admin@schoolpaas.com"
+//                             required
+//                             disabled={alreadyRegistered}
+//                             className="pl-12 bg-slate-900 border-white/5 text-white font-mono lowercase text-sm rounded-2xl h-14 focus:border-school-primary transition-all"
+//                         />
+//                     </div>
+//                 </div>
+
+//                 {/* PHONE FIELD */}
+//                 <div className="space-y-2">
+//                     <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+//                         Contact Node (Optional)
+//                     </Label>
+//                     <div className="relative group">
+//                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-700 group-focus-within:text-school-primary transition-colors" />
+//                         <Input
+//                             type="tel"
+//                             value={form.phone}
+//                             onChange={(e) => setForm({ ...form, phone: e.target.value })}
+//                             onBlur={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
+//                             placeholder="+234..."
+//                             disabled={alreadyRegistered}
+//                             className="pl-12 bg-slate-900 border-white/5 text-white font-mono text-sm rounded-2xl h-14 focus:border-school-primary transition-all"
+//                         />
+//                     </div>
+//                 </div>
+
+//                 {/* PASSWORD FIELD (Only for new registrations) */}
+//                 {!alreadyRegistered && (
+//                     <div className="space-y-3">
+//                         <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+//                             Access Secret Key
+//                         </Label>
+//                         <div className="relative group">
+//                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-700 group-focus-within:text-school-primary transition-colors" />
+//                             <Input
+//                                 type={showPassword ? 'text' : 'password'}
+//                                 value={form.password}
+//                                 onChange={(e) => setForm({ ...form, password: e.target.value })}
+//                                 placeholder="Min. 8 Bits"
+//                                 required
+//                                 className="pl-12 pr-12 bg-slate-900 border-white/5 text-white font-bold text-sm rounded-2xl h-14 focus:border-school-primary transition-all"
+//                             />
+//                             <button
+//                                 type="button"
+//                                 onClick={() => setShowPassword(!showPassword)}
+//                                 className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-700 hover:text-white transition-colors"
+//                             >
+//                                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+//                             </button>
+//                         </div>
+
+//                         {form.password.length > 0 && (
+//                             <div className="p-4 bg-slate-950/50 rounded-2xl border border-white/5 space-y-3">
+//                                 <div className="flex gap-1.5">
+//                                     {[1, 2, 3, 4].map((i) => (
+//                                         <div
+//                                             key={i}
+//                                             className={cn(
+//                                                 "h-1 flex-1 rounded-full transition-all duration-500",
+//                                                 i <= strength ? strengthColor : "bg-slate-800"
+//                                             )}
+//                                         />
+//                                     ))}
+//                                 </div>
+//                                 <div className="flex justify-between items-center">
+//                                     <p className="text-[9px] text-slate-600 font-black uppercase tracking-tighter italic">Encryption Strength</p>
+//                                     <span className={cn(
+//                                         "text-[9px] font-black uppercase italic",
+//                                         strength === 1 && "text-red-500",
+//                                         strength === 2 && "text-amber-500",
+//                                         strength === 3 && "text-yellow-400",
+//                                         strength === 4 && "text-emerald-500",
+//                                     )}>
+//                                         {strengthLabel}
+//                                     </span>
+//                                 </div>
+//                             </div>
+//                         )}
+//                     </div>
+//                 )}
+
+//                 {/* ERROR PANEL */}
+//                 {error && (
+//                     <div className="p-4 rounded-2xl bg-red-500/5 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest italic animate-in shake">
+//                         Protocol Error: {error}
+//                     </div>
+//                 )}
+
+//                 {/* SUBMIT ACTION */}
+//                 <div className="pt-4 space-y-6">
+//                     <Button
+//                         type="submit"
+//                         disabled={isLoading}
+//                         className="w-full bg-school-primary hover:scale-[1.02] active:scale-95 text-slate-950 font-black h-16 rounded-2xl transition-all duration-300 shadow-2xl shadow-school-primary/10 text-xs tracking-[0.2em] uppercase group"
+//                     >
+//                         {isLoading ? (
+//                             <Loader2 className="h-5 w-5 animate-spin" />
+//                         ) : (
+//                             <span className="flex items-center gap-3">
+//                                 {alreadyRegistered ? 'PROCEED TO RE-SYNC' : 'INITIALIZE SYNC'}
+//                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+//                             </span>
+//                         )}
+//                     </Button>
+
+//                     <p className="text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
+//                         Node already exists?{' '}
+//                         <a href="/login" className="text-school-primary hover:underline italic">Initialize access</a>
+//                     </p>
+//                 </div>
+//             </form>
+//         </div>
+//     );
+// }
+
+
+
+// 'use client';
+
+// import React, { useState } from 'react';
+// import { useOnboardingStore } from '@/store/onboardingStore';
+// import { Button } from '@/components/ui/button';
+// import { Input } from '@/components/ui/input';
+// import { Label } from '@/components/ui/label';
+// import { toTitleCase, formatPhone } from '@/lib/utils/formatters';
+// import { 
+//     Eye, EyeOff, ArrowRight, User, 
+//     Mail, Lock, Phone, CheckCircle2,
+//     Loader2, Fingerprint 
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+
+// /**
+//  * ONBOARDING PHASE 01: IDENTITY PROFILE
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Flip (bg-background, bg-surface, border-border).
+//  * Rule 19: Standardized Geometry (rounded-xl, rounded-2xl).
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  */
+// export function AdminStep() {
+//     const { nextStep, setAdminData, setError, isLoading, error, adminData } = useOnboardingStore();
+//     const [showPassword, setShowPassword] = useState(false);
+
+//     const [form, setForm] = useState({
+//         name: adminData?.name ?? '',
+//         email: adminData?.email ?? '',
+//         password: adminData?.password ?? '',
+//         phone: adminData?.phone ?? '',
+//     });
+
+//     const alreadyRegistered = !!adminData?.email;
+
+//     const passwordStrength = (pwd: string) => {
+//         if (pwd.length === 0) return 0;
+//         let score = 0;
+//         if (pwd.length >= 8) score++;
+//         if (/[A-Z]/.test(pwd)) score++;
+//         if (/[0-9]/.test(pwd)) score++;
+//         if (/[^A-Za-z0-9]/.test(pwd)) score++;
+//         return score;
+//     };
+
+//     const strength = passwordStrength(form.password);
+//     const strengthLabel = ['', 'Critical', 'Moderate', 'Secure', 'Optimal'][strength];
+//     const strengthColor = ['', 'bg-destructive', 'bg-amber-500', 'bg-yellow-400', 'bg-emerald-500'][strength];
+
+//     async function handleSubmit(e: React.FormEvent) {
+//         e.preventDefault();
+//         setError(null);
+
+//         if (!alreadyRegistered && form.password.length < 8) {
+//             setError('Security Protocol: Access credentials must be at least 8 characters.');
+//             return;
+//         }
+
+//         setAdminData({
+//             ...form,
+//             name: toTitleCase(form.name),
+//             phone: formatPhone(form.phone),
+//         });
+        
+//         nextStep();
+//     }
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
+            
+//             {/* ── HEADER (Rule 11/21) ── */}
+//             <div className="text-center space-y-3">
+//                 <div className="flex justify-center mb-4">
+//                     {/* Rule 21: Scale Protocol Icon Container */}
+//                     <div className="h-14 w-14 rounded-2xl bg-school-primary-50 border border-school-primary-200 flex items-center justify-center shadow-lg">
+//                         <Fingerprint className="h-7 w-7 text-school-primary" />
+//                     </div>
+//                 </div>
+//                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                     Identity Setup
+//                 </h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
+//                     Establish the master administrative profile
+//                 </p>
+//             </div>
+
+//             {/* ── ALREADY PROVISIONED STATE ── */}
+//             {alreadyRegistered && (
+//                 <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-4 animate-in zoom-in-95">
+//                     <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+//                     <div>
+//                         <p className="text-emerald-700 text-[10px] font-bold uppercase tracking-widest">Profile Provisioned</p>
+//                         <p className="text-muted-foreground text-xs font-medium italic">Synchronized as: {adminData?.email}</p>
+//                     </div>
+//                 </div>
+//             )}
+
+//             <form onSubmit={handleSubmit} className="space-y-6">
+                
+//                 {/* ── NAME ENTRY (Rule 18/19) ── */}
+//                 <div className="space-y-2 group">
+//                     <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                         Full Legal Name
+//                     </Label>
+//                     <div className="relative">
+//                         <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+//                         <Input
+//                             value={form.name}
+//                             onChange={(e) => setForm({ ...form, name: e.target.value })}
+//                             onBlur={(e) => setForm({ ...form, name: toTitleCase(e.target.value) })}
+//                             placeholder="e.g. DR. SARAH JOHNSON"
+//                             required
+//                             disabled={alreadyRegistered}
+//                             className={cn(
+//                                 "pl-12 bg-surface border-border text-foreground font-extrabold uppercase italic text-sm rounded-xl h-14 transition-all",
+//                                 "focus-visible:ring-2 focus-visible:ring-school-primary-200 focus-visible:border-school-primary",
+//                                 "disabled:opacity-40 disabled:grayscale"
+//                             )}
+//                         />
+//                     </div>
+//                 </div>
+
+//                 {/* ── EMAIL ENTRY ── */}
+//                 <div className="space-y-2 group">
+//                     <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                         Institutional Email
+//                     </Label>
+//                     <div className="relative">
+//                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+//                         <Input
+//                             type="email"
+//                             value={form.email}
+//                             onChange={(e) => setForm({ ...form, email: e.target.value })}
+//                             placeholder="admin@schoolpaas.com"
+//                             required
+//                             disabled={alreadyRegistered}
+//                             className={cn(
+//                                 "pl-12 bg-surface border-border text-foreground font-mono lowercase text-sm rounded-xl h-14 transition-all",
+//                                 "focus-visible:ring-2 focus-visible:ring-school-primary-200 focus-visible:border-school-primary",
+//                                 "disabled:opacity-40"
+//                             )}
+//                         />
+//                     </div>
+//                 </div>
+
+//                 {/* ── PHONE ENTRY ── */}
+//                 <div className="space-y-2 group">
+//                     <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                         Contact Hub (Optional)
+//                     </Label>
+//                     <div className="relative">
+//                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+//                         <Input
+//                             type="tel"
+//                             value={form.phone}
+//                             onChange={(e) => setForm({ ...form, phone: e.target.value })}
+//                             onBlur={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
+//                             placeholder="+234..."
+//                             disabled={alreadyRegistered}
+//                             className={cn(
+//                                 "pl-12 bg-surface border-border text-foreground font-mono text-sm rounded-xl h-14 transition-all",
+//                                 "focus-visible:ring-2 focus-visible:ring-school-primary-200 focus-visible:border-school-primary",
+//                                 "disabled:opacity-40"
+//                             )}
+//                         />
+//                     </div>
+//                 </div>
+
+//                 {/* ── SECURITY CREDENTIALS (Rule 21) ── */}
+//                 {!alreadyRegistered && (
+//                     <div className="space-y-4">
+//                         <div className="space-y-2 group">
+//                             <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                                 Access Secret Key
+//                             </Label>
+//                             <div className="relative">
+//                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+//                                 <Input
+//                                     type={showPassword ? 'text' : 'password'}
+//                                     value={form.password}
+//                                     onChange={(e) => setForm({ ...form, password: e.target.value })}
+//                                     placeholder="Minimum 8 Bits"
+//                                     required
+//                                     className={cn(
+//                                         "pl-12 pr-12 bg-surface border-border text-foreground font-bold text-sm rounded-xl h-14 transition-all",
+//                                         "focus-visible:ring-2 focus-visible:ring-school-primary-200 focus-visible:border-school-primary"
+//                                     )}
+//                                 />
+//                                 <button
+//                                     type="button"
+//                                     onClick={() => setShowPassword(!showPassword)}
+//                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+//                                 >
+//                                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+//                                 </button>
+//                             </div>
+//                         </div>
+
+//                         {form.password.length > 0 && (
+//                             <div className="p-4 bg-surface rounded-xl border border-border space-y-3 shadow-inner">
+//                                 <div className="flex gap-1.5">
+//                                     {[1, 2, 3, 4].map((i) => (
+//                                         <div
+//                                             key={i}
+//                                             className={cn(
+//                                                 "h-1 flex-1 rounded-full transition-all duration-700",
+//                                                 i <= strength ? strengthColor : "bg-muted"
+//                                             )}
+//                                         />
+//                                     ))}
+//                                 </div>
+//                                 <div className="flex justify-between items-center px-1">
+//                                     <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest italic">Security Logic</p>
+//                                     <span className={cn(
+//                                         "text-[9px] font-extrabold uppercase italic tracking-widest",
+//                                         strength === 1 && "text-destructive",
+//                                         strength === 2 && "text-amber-500",
+//                                         strength === 3 && "text-yellow-500",
+//                                         strength === 4 && "text-emerald-500",
+//                                     )}>
+//                                         {strengthLabel}
+//                                     </span>
+//                                 </div>
+//                             </div>
+//                         )}
+//                     </div>
+//                 )}
+
+//                 {/* ── ERROR PROTOCOL ── */}
+//                 {error && (
+//                     <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-bold uppercase tracking-widest italic animate-in shake">
+//                         Protocol Breach: {error}
+//                     </div>
+//                 )}
+
+//                 {/* ── ACTION HUB (Rule 21) ── */}
+//                 <div className="pt-6 space-y-6">
+//                     <Button
+//                         type="submit"
+//                         disabled={isLoading}
+//                         className={cn(
+//                             "w-full h-16 rounded-2xl transition-all duration-300 shadow-xl group",
+//                             "bg-school-primary text-on-school-primary font-extrabold text-[11px] uppercase tracking-widest",
+//                             "hover:brightness-110 shadow-school-primary-200 active:scale-[0.98] disabled:opacity-30"
+//                         )}
+//                     >
+//                         {isLoading ? (
+//                             <Loader2 className="h-5 w-5 animate-spin" />
+//                         ) : (
+//                             <span className="flex items-center gap-3">
+//                                 {alreadyRegistered ? 'PROCEED TO RE-SYNC' : 'INITIALIZE SYNC'}
+//                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+//                             </span>
+//                         )}
+//                     </Button>
+
+//                     <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+//                         Node already provisioned?{' '}
+//                         <a href="/login" className="text-school-primary hover:underline italic font-extrabold">Initialize Hub Access</a>
+//                     </p>
+//                 </div>
+//             </form>
+//         </div>
+//     );
+// }
+
+
+
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -239,18 +750,32 @@ import { toTitleCase, formatPhone } from '@/lib/utils/formatters';
 import { 
     Eye, EyeOff, ArrowRight, User, 
     Mail, Lock, Phone, CheckCircle2,
-   Loader2, Fingerprint 
+    Loader2, Fingerprint, Trash2, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 /**
- * ONBOARDING PHASE 01: IDENTITY PROVISIONING
- * Rule 1: Institutional Layer Initialization.
- * Rule 11: Enforces Registry typography and branding.
+ * ONBOARDING PHASE 01: IDENTITY PROFILE
+ * Updated to support Bug 3 (Delete details) and Bug 1/4 (Payment lockdown).
  */
 export function AdminStep() {
-    const { nextStep, setAdminData, setError, isLoading, error, adminData } = useOnboardingStore();
+    const { 
+        nextStep, 
+        setAdminData, 
+        setError, 
+        isLoading, 
+        error, 
+        adminData, 
+        paymentStatus, 
+        reset 
+    } = useOnboardingStore();
+
     const [showPassword, setShowPassword] = useState(false);
+
+    // BUG 1 & 3 FIX: A user can only edit if they HAVEN'T paid.
+    // If they just moved to step 2, we let them come back and edit.
+    const isLocked = paymentStatus === 'paid';
 
     const [form, setForm] = useState({
         name: adminData?.name ?? '',
@@ -258,8 +783,6 @@ export function AdminStep() {
         password: adminData?.password ?? '',
         phone: adminData?.phone ?? '',
     });
-
-    const alreadyRegistered = !!adminData?.email;
 
     const passwordStrength = (pwd: string) => {
         if (pwd.length === 0) return 0;
@@ -273,14 +796,20 @@ export function AdminStep() {
 
     const strength = passwordStrength(form.password);
     const strengthLabel = ['', 'Critical', 'Moderate', 'Secure', 'Optimal'][strength];
-    const strengthColor = ['', 'bg-red-500', 'bg-amber-500', 'bg-yellow-400', 'bg-emerald-500'][strength];
+    const strengthColor = ['', 'bg-destructive', 'bg-amber-500', 'bg-yellow-400', 'bg-emerald-500'][strength];
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError(null);
 
-        if (!alreadyRegistered && form.password.length < 8) {
-            setError('Security protocol requires at least 8 characters.');
+        // If locked, just move to next step
+        if (isLocked) {
+            nextStep();
+            return;
+        }
+
+        if (form.password.length < 8) {
+            setError('Security Protocol: Access credentials must be at least 8 characters.');
             return;
         }
 
@@ -293,140 +822,139 @@ export function AdminStep() {
         nextStep();
     }
 
+    const handleDeleteDetails = () => {
+        if (isLocked) {
+            toast.error("Security Protocol: Provisioned accounts cannot be purged.");
+            return;
+        }
+        if (confirm("Are you sure? This will delete all your progress and identity data.")) {
+            reset();
+            setForm({ name: '', email: '', password: '', phone: '' });
+            toast.success("Identity registry cleared.");
+        }
+    };
+
     return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
+        <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
             
             {/* ── HEADER ── */}
-            <div className="text-center space-y-2">
+            <div className="text-center space-y-3">
                 <div className="flex justify-center mb-4">
-                    <div className="h-12 w-12 rounded-2xl bg-school-primary/10 border border-school-primary/20 flex items-center justify-center shadow-xl shadow-school-primary/5">
-                        <Fingerprint className="h-6 w-6 text-school-primary" />
+                    <div className="h-14 w-14 rounded-2xl bg-school-primary-50 border border-school-primary-200 flex items-center justify-center shadow-lg">
+                        {isLocked ? <ShieldCheck className="h-7 w-7 text-emerald-600" /> : <Fingerprint className="h-7 w-7 text-school-primary" />}
                     </div>
                 </div>
-                <h1 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none">
-                    Identity Setup
+                <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+                    {isLocked ? 'Identity Verified' : 'Identity Setup'}
                 </h1>
-                <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
-                    Establish the master administrator node
+                <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
+                    {isLocked ? 'Provisioned administrative credentials' : 'Establish the master administrative profile'}
                 </p>
             </div>
 
-            {alreadyRegistered && (
-                <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-4 animate-in zoom-in-95">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
+            {/* ── LOCK STATUS ── */}
+            {isLocked && (
+                <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-4 animate-in zoom-in-95">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
                     <div>
-                        <p className="text-emerald-500 text-[10px] font-black uppercase tracking-widest">Node Provisioned</p>
-                        <p className="text-slate-400 text-xs font-medium italic">Synchronized as: {adminData?.email}</p>
+                        <p className="text-emerald-700 text-[10px] font-bold uppercase tracking-widest">Registry Synchronized</p>
+                        <p className="text-muted-foreground text-xs font-medium italic">Master profile locked for security.</p>
                     </div>
                 </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 
-                {/* NAME FIELD */}
-                <div className="space-y-2">
-                    <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                {/* ── NAME ENTRY ── */}
+                <div className="space-y-2 group">
+                    <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 group-focus-within:text-school-primary">
                         Full Legal Name
                     </Label>
-                    <div className="relative group">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-700 group-focus-within:text-school-primary transition-colors" />
+                    <div className="relative">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
                         <Input
                             value={form.name}
                             onChange={(e) => setForm({ ...form, name: e.target.value })}
                             onBlur={(e) => setForm({ ...form, name: toTitleCase(e.target.value) })}
-                            placeholder="e.g. DR. SARAH JOHNSON"
                             required
-                            disabled={alreadyRegistered}
-                            className="pl-12 bg-slate-900 border-white/5 text-white font-black uppercase italic text-sm rounded-2xl h-14 focus:border-school-primary transition-all"
+                            disabled={isLocked}
+                            className="pl-12 bg-surface border-border text-foreground font-extrabold uppercase italic text-sm rounded-xl h-14 transition-all disabled:opacity-60"
                         />
                     </div>
                 </div>
 
-                {/* EMAIL FIELD */}
-                <div className="space-y-2">
-                    <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                {/* ── EMAIL ENTRY ── */}
+                <div className="space-y-2 group">
+                    <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 group-focus-within:text-school-primary">
                         Institutional Email
                     </Label>
-                    <div className="relative group">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-700 group-focus-within:text-school-primary transition-colors" />
+                    <div className="relative">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
                         <Input
                             type="email"
                             value={form.email}
                             onChange={(e) => setForm({ ...form, email: e.target.value })}
-                            placeholder="admin@schoolpaas.com"
                             required
-                            disabled={alreadyRegistered}
-                            className="pl-12 bg-slate-900 border-white/5 text-white font-mono lowercase text-sm rounded-2xl h-14 focus:border-school-primary transition-all"
+                            disabled={isLocked}
+                            className="pl-12 bg-surface border-border text-foreground font-mono lowercase text-sm rounded-xl h-14 transition-all disabled:opacity-60"
                         />
                     </div>
                 </div>
 
-                {/* PHONE FIELD */}
-                <div className="space-y-2">
-                    <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                        Contact Node (Optional)
+                {/* ── PHONE ENTRY ── */}
+                <div className="space-y-2 group">
+                    <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 group-focus-within:text-school-primary">
+                        Contact Hub (Optional)
                     </Label>
-                    <div className="relative group">
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-700 group-focus-within:text-school-primary transition-colors" />
+                    <div className="relative">
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
                         <Input
                             type="tel"
                             value={form.phone}
                             onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                            onBlur={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
-                            placeholder="+234..."
-                            disabled={alreadyRegistered}
-                            className="pl-12 bg-slate-900 border-white/5 text-white font-mono text-sm rounded-2xl h-14 focus:border-school-primary transition-all"
+                            disabled={isLocked}
+                            className="pl-12 bg-surface border-border text-foreground font-mono text-sm rounded-xl h-14 transition-all disabled:opacity-60"
                         />
                     </div>
                 </div>
 
-                {/* PASSWORD FIELD (Only for new registrations) */}
-                {!alreadyRegistered && (
-                    <div className="space-y-3">
-                        <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                            Access Secret Key
-                        </Label>
-                        <div className="relative group">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-700 group-focus-within:text-school-primary transition-colors" />
-                            <Input
-                                type={showPassword ? 'text' : 'password'}
-                                value={form.password}
-                                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                placeholder="Min. 8 Bits"
-                                required
-                                className="pl-12 pr-12 bg-slate-900 border-white/5 text-white font-bold text-sm rounded-2xl h-14 focus:border-school-primary transition-all"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-700 hover:text-white transition-colors"
-                            >
-                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </button>
+                {/* ── SECURITY CREDENTIALS ── */}
+                {!isLocked && (
+                    <div className="space-y-4">
+                        <div className="space-y-2 group">
+                            <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 group-focus-within:text-school-primary">
+                                Access Secret Key
+                            </Label>
+                            <div className="relative">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+                                <Input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={form.password}
+                                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                    placeholder="Minimum 8 Bits"
+                                    required
+                                    className="pl-12 pr-12 bg-surface border-border text-foreground font-bold text-sm rounded-xl h-14 transition-all"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                            </div>
                         </div>
 
                         {form.password.length > 0 && (
-                            <div className="p-4 bg-slate-950/50 rounded-2xl border border-white/5 space-y-3">
+                            <div className="p-4 bg-surface rounded-xl border border-border space-y-3">
                                 <div className="flex gap-1.5">
                                     {[1, 2, 3, 4].map((i) => (
-                                        <div
-                                            key={i}
-                                            className={cn(
-                                                "h-1 flex-1 rounded-full transition-all duration-500",
-                                                i <= strength ? strengthColor : "bg-slate-800"
-                                            )}
-                                        />
+                                        <div key={i} className={cn("h-1 flex-1 rounded-full", i <= strength ? strengthColor : "bg-muted")} />
                                     ))}
                                 </div>
-                                <div className="flex justify-between items-center">
-                                    <p className="text-[9px] text-slate-600 font-black uppercase tracking-tighter italic">Encryption Strength</p>
-                                    <span className={cn(
-                                        "text-[9px] font-black uppercase italic",
-                                        strength === 1 && "text-red-500",
-                                        strength === 2 && "text-amber-500",
-                                        strength === 3 && "text-yellow-400",
-                                        strength === 4 && "text-emerald-500",
-                                    )}>
+                                <div className="flex justify-between items-center px-1">
+                                    <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest italic">Security Logic</p>
+                                    <span className={cn("text-[9px] font-extrabold uppercase italic tracking-widest", strength === 4 ? "text-emerald-500" : "text-amber-500")}>
                                         {strengthLabel}
                                     </span>
                                 </div>
@@ -435,34 +963,37 @@ export function AdminStep() {
                     </div>
                 )}
 
-                {/* ERROR PANEL */}
-                {error && (
-                    <div className="p-4 rounded-2xl bg-red-500/5 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest italic animate-in shake">
-                        Protocol Error: {error}
-                    </div>
-                )}
-
-                {/* SUBMIT ACTION */}
-                <div className="pt-4 space-y-6">
+                {/* ── ACTION HUB ── */}
+                <div className="pt-6 space-y-6">
                     <Button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-school-primary hover:scale-[1.02] active:scale-95 text-slate-950 font-black h-16 rounded-2xl transition-all duration-300 shadow-2xl shadow-school-primary/10 text-xs tracking-[0.2em] uppercase group"
+                        className={cn(
+                            "w-full h-16 rounded-2xl shadow-xl transition-all group font-extrabold text-[11px] uppercase tracking-widest",
+                            isLocked ? "bg-emerald-600 text-white" : "bg-school-primary text-on-school-primary shadow-school-primary-200"
+                        )}
                     >
                         {isLoading ? (
                             <Loader2 className="h-5 w-5 animate-spin" />
                         ) : (
                             <span className="flex items-center gap-3">
-                                {alreadyRegistered ? 'PROCEED TO RE-SYNC' : 'INITIALIZE SYNC'}
+                                {isLocked ? 'PROCEED TO HUB CONFIG' : 'INITIALIZE SYNC'}
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                             </span>
                         )}
                     </Button>
 
-                    <p className="text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                        Node already exists?{' '}
-                        <a href="/login" className="text-school-primary hover:underline italic">Initialize access</a>
-                    </p>
+                    {/* BUG 3: DELETE BUTTON (Only if not paid) */}
+                    {!isLocked && adminData?.email && (
+                        <button
+                            type="button"
+                            onClick={handleDeleteDetails}
+                            className="w-full flex items-center justify-center gap-2 text-[10px] font-bold text-muted-foreground/40 hover:text-destructive transition-colors uppercase tracking-[0.2em]"
+                        >
+                            <Trash2 className="h-3 w-3" />
+                            Purge Identity Registry
+                        </button>
+                    )}
                 </div>
             </form>
         </div>

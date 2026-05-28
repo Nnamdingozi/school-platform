@@ -243,13 +243,285 @@
 // }
 
 
+// "use client"
+
+// import { useState, useRef } from "react"
+// import Papa from "papaparse"
+// import { Upload, Loader2, FileCheck, AlertCircle } from "lucide-react"
+// import { cn } from "@/lib/utils"
+// import { useProfileStore } from "@/store/profileStore"
+
+// type ParsedRow = Record<string, string>
+
+// interface CSVImporterProps {
+//   title: string
+//   description?: string
+//   expectedHeaders: string[]
+//   onDataUpload: (rows: ParsedRow[]) => void | Promise<void>
+// }
+
+// export function CSVImporter({ title, description, expectedHeaders, onDataUpload }: CSVImporterProps) {
+//   const { profile } = useProfileStore();
+//   const [fileName, setFileName] = useState<string | null>(null)
+//   const [error, setError] = useState<string | null>(null)
+//   const [isParsing, setIsParsing] = useState(false)
+//   const [dragOver, setDragOver] = useState(false)
+//   const fileInputRef = useRef<HTMLInputElement>(null)
+//   const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//   function handleFile(file: File) {
+//     setFileName(file.name)
+//     setError(null)
+//     setIsParsing(true)
+
+//     Papa.parse<ParsedRow>(file, {
+//       header: true,
+//       skipEmptyLines: true,
+//       complete: async (results) => {
+//         setIsParsing(false)
+//         const headers = (results.meta.fields ?? []).map((h) => h.trim())
+//         const missing = expectedHeaders.filter((h) => !headers.includes(h))
+
+//         if (missing.length > 0) {
+//           setError(`Format Failure. Missing Columns: ${missing.join(", ")}`)
+//           return
+//         }
+
+//         try {
+//           await onDataUpload(results.data);
+//         } catch (err: unknown) {
+//           setError("Data integration failed.");
+//         }
+//       },
+//       error: () => {
+//         setIsParsing(false)
+//         setError("CSV Parse interrupted.")
+//       },
+//     })
+//   }
+
+//   return (
+//     <div 
+//       onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+//       onDragLeave={() => setDragOver(false)}
+//       onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) handleFile(f); }}
+//       className={cn(
+//         "rounded-3xl border-2 border-dashed p-10 transition-all text-center group",
+//         dragOver ? "bg-white/5 shadow-2xl" : "border-white/5 bg-slate-900/50 hover:border-white/10"
+//       )}
+//       style={dragOver ? { borderColor: primaryColor } : {}}
+//     >
+//       <div className="space-y-4">
+//         <div className="flex flex-col items-center gap-3">
+//             <div 
+//                 className="h-14 w-14 rounded-2xl bg-slate-950 flex items-center justify-center border border-white/5 shadow-inner transition-transform group-hover:scale-105"
+//             >
+//                 {isParsing ? <Loader2 className="h-6 w-6 animate-spin" style={{ color: primaryColor }} /> : <Upload className="h-6 w-6 text-slate-600" />}
+//             </div>
+//             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white italic">{title}</h3>
+//             {description && <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{description}</p>}
+//         </div>
+
+//         <button
+//           type="button"
+//           onClick={() => fileInputRef.current?.click()}
+//           className="bg-slate-800 hover:bg-slate-700 text-white text-[9px] font-black py-3 px-8 rounded-xl border border-white/5 uppercase tracking-widest"
+//         >
+//           {fileName ? "Change Dataset" : "Browse Filesystem"}
+//         </button>
+        
+//         <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
+
+//         {fileName && !error && !isParsing && (
+//             <div className="flex items-center justify-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
+//                 <FileCheck className="h-3.5 w-3.5" /> Registry Attached: {fileName}
+//             </div>
+//         )}
+
+//         {error && (
+//             <div className="flex items-center justify-center gap-2 text-red-500 text-[10px] font-black uppercase tracking-widest">
+//                 <AlertCircle className="h-3.5 w-3.5" /> {error}
+//             </div>
+//         )}
+//       </div>
+//     </div>
+//   )
+// }
+
+
+
+// "use client"
+
+// import React, { useState, useRef } from "react"
+// import Papa from "papaparse"
+// import { Upload, Loader2, FileCheck, AlertCircle } from "lucide-react"
+// import { cn } from "@/lib/utils"
+// import { useProfileStore } from "@/store/profileStore"
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// type ParsedRow = Record<string, string>
+
+// interface CSVImporterProps {
+//   title: string
+//   description?: string
+//   expectedHeaders: string[]
+//   onDataUpload: (rows: ParsedRow[]) => Promise<void> | void
+// }
+
+// /**
+//  * CSV IMPORTER (Utility Gateway)
+//  * Rule 11: High-density Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Color Flip (bg-card, bg-surface, border-border).
+//  * Rule 19: Standardized Geometry [2rem] Dropzone.
+//  */
+// export function CSVImporter({ 
+//   title, 
+//   description, 
+//   expectedHeaders, 
+//   onDataUpload 
+// }: CSVImporterProps) {
+//   const { profile } = useProfileStore();
+//   const [fileName, setFileName] = useState<string | null>(null)
+//   const [error, setError] = useState<string | null>(null)
+//   const [isParsing, setIsParsing] = useState(false)
+//   const [dragOver, setDragOver] = useState(false)
+//   const fileInputRef = useRef<HTMLInputElement>(null)
+
+//   // Rule 15: Style type safety
+//   const activeBorderStyle: React.CSSProperties = dragOver && profile?.primaryColor 
+//     ? { borderColor: profile.primaryColor } as React.CSSProperties
+//     : {};
+
+//   async function handleFile(file: File) {
+//     setFileName(file.name)
+//     setError(null)
+//     setIsParsing(true)
+
+//     Papa.parse<ParsedRow>(file, {
+//       header: true,
+//       skipEmptyLines: true,
+//       complete: async (results) => {
+//         setIsParsing(false)
+//         const headers = (results.meta.fields ?? []).map((h) => h.trim())
+//         const missing = expectedHeaders.filter((h) => !headers.includes(h))
+
+//         if (missing.length > 0) {
+//           setError(`Format Failure. Missing Columns: ${missing.join(", ")}`)
+//           return
+//         }
+
+//         try {
+//           // Rule 12: Ensure data integration follows async protocols
+//           await onDataUpload(results.data);
+//         } catch (err: unknown) {
+//           setError("Data integration protocols failed.");
+//         }
+//       },
+//       error: () => {
+//         setIsParsing(false)
+//         setError("CSV Parse interrupted.")
+//       },
+//     })
+//   }
+
+//   return (
+//     <div 
+//       onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+//       onDragLeave={() => setDragOver(false)}
+//       onDrop={(e) => { 
+//         e.preventDefault(); 
+//         setDragOver(false); 
+//         const f = e.dataTransfer.files?.[0]; 
+//         if (f) handleFile(f); 
+//       }}
+//       className={cn(
+//         "relative rounded-[2rem] border-2 border-dashed p-8 md:p-12 transition-all text-center group",
+//         "bg-card border-border hover:border-school-primary/40", // Rule 18
+//         dragOver ? "bg-surface shadow-2xl scale-[1.01]" : "shadow-sm"
+//       )}
+//       style={activeBorderStyle}
+//     >
+//       <div className="space-y-6">
+//         <div className="flex flex-col items-center gap-4">
+//             {/* Rule 19: Item Radius Standardized to 2xl */}
+//             <div 
+//                 className={cn(
+//                   "h-16 w-16 rounded-2xl flex items-center justify-center transition-all",
+//                   "bg-surface border border-border shadow-inner group-hover:scale-110",
+//                   isParsing ? "animate-pulse" : ""
+//                 )}
+//             >
+//                 {isParsing ? (
+//                   <Loader2 className="h-7 w-7 animate-spin text-school-primary" />
+//                 ) : (
+//                   <Upload className="h-7 w-7 text-muted-foreground group-hover:text-school-primary transition-colors" />
+//                 )}
+//             </div>
+            
+//             <div className="space-y-2">
+//                 <h3 className="text-base font-extrabold uppercase tracking-tighter text-foreground italic leading-none">
+//                   {title}
+//                 </h3>
+//                 {description && (
+//                   <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest italic opacity-70">
+//                     {description}
+//                   </p>
+//                 )}
+//             </div>
+//         </div>
+
+//         <button
+//           type="button"
+//           onClick={() => fileInputRef.current?.click()}
+//           className={cn(
+//             "h-12 px-8 rounded-xl transition-all",
+//             "bg-surface border border-border text-foreground text-[10px] font-bold uppercase tracking-widest",
+//             "hover:bg-background hover:border-school-primary/30 active:scale-95"
+//           )}
+//         >
+//           {fileName ? "Replace Dataset" : "Browse Filesystem"}
+//         </button>
+        
+//         <input 
+//           ref={fileInputRef} 
+//           type="file" 
+//           accept=".csv" 
+//           className="hidden" 
+//           onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} 
+//         />
+
+//         {/* ── FEEDBACK NODES ── */}
+//         <div className="min-h-[20px] flex items-center justify-center gap-3">
+//           {fileName && !error && !isParsing && (
+//               <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-bold uppercase tracking-widest animate-in fade-in zoom-in-95">
+//                   <FileCheck className="h-4 w-4" /> Registry Attached: {fileName}
+//               </div>
+//           )}
+
+//           {error && (
+//               <div className="flex items-center gap-2 text-destructive text-[10px] font-bold uppercase tracking-widest animate-in shake">
+//                   <AlertCircle className="h-4 w-4" /> {error}
+//               </div>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   )
+// }
+
+
+
+
 "use client"
 
-import { useState, useRef } from "react"
+import React, { useState, useRef } from "react"
 import Papa from "papaparse"
 import { Upload, Loader2, FileCheck, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useProfileStore } from "@/store/profileStore"
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 type ParsedRow = Record<string, string>
 
@@ -257,19 +529,34 @@ interface CSVImporterProps {
   title: string
   description?: string
   expectedHeaders: string[]
-  onDataUpload: (rows: ParsedRow[]) => void | Promise<void>
+  onDataUpload: (rows: ParsedRow[]) => Promise<void> | void
 }
 
-export function CSVImporter({ title, description, expectedHeaders, onDataUpload }: CSVImporterProps) {
+/**
+ * CSV IMPORTER (Utility Gateway)
+ * Rule 11: High-density Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Color Flip (bg-card, bg-surface, border-border).
+ * Rule 19: Standardized Geometry [2rem] Dropzone.
+ */
+export function CSVImporter({ 
+  title, 
+  description, 
+  expectedHeaders, 
+  onDataUpload 
+}: CSVImporterProps) {
   const { profile } = useProfileStore();
   const [fileName, setFileName] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isParsing, setIsParsing] = useState(false)
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const primaryColor = profile?.primaryColor || "#f59e0b";
 
-  function handleFile(file: File) {
+  // Rule 15: Style type safety
+  const activeBorderStyle: React.CSSProperties = dragOver && profile?.primaryColor 
+    ? { borderColor: profile.primaryColor } as React.CSSProperties
+    : {};
+
+  async function handleFile(file: File) {
     setFileName(file.name)
     setError(null)
     setIsParsing(true)
@@ -288,9 +575,10 @@ export function CSVImporter({ title, description, expectedHeaders, onDataUpload 
         }
 
         try {
+          // Rule 12: Ensure data integration follows async protocols
           await onDataUpload(results.data);
         } catch (err: unknown) {
-          setError("Data integration failed.");
+          setError("Data integration protocols failed.");
         }
       },
       error: () => {
@@ -304,45 +592,82 @@ export function CSVImporter({ title, description, expectedHeaders, onDataUpload 
     <div 
       onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
       onDragLeave={() => setDragOver(false)}
-      onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) handleFile(f); }}
+      onDrop={(e) => { 
+        e.preventDefault(); 
+        setDragOver(false); 
+        const f = e.dataTransfer.files?.[0]; 
+        if (f) handleFile(f); 
+      }}
       className={cn(
-        "rounded-3xl border-2 border-dashed p-10 transition-all text-center group",
-        dragOver ? "bg-white/5 shadow-2xl" : "border-white/5 bg-slate-900/50 hover:border-white/10"
+        "relative rounded-[2rem] border-2 border-dashed p-8 md:p-12 transition-all text-center group",
+        "bg-card border-border hover:border-school-primary/40", // Rule 18
+        dragOver ? "bg-surface shadow-2xl scale-[1.01]" : "shadow-sm"
       )}
-      style={dragOver ? { borderColor: primaryColor } : {}}
+      style={activeBorderStyle}
     >
-      <div className="space-y-4">
-        <div className="flex flex-col items-center gap-3">
+      <div className="space-y-6">
+        <div className="flex flex-col items-center gap-4">
+            {/* Rule 19: Item Radius Standardized to 2xl */}
             <div 
-                className="h-14 w-14 rounded-2xl bg-slate-950 flex items-center justify-center border border-white/5 shadow-inner transition-transform group-hover:scale-105"
+                className={cn(
+                  "h-16 w-16 rounded-2xl flex items-center justify-center transition-all",
+                  "bg-surface border border-border shadow-inner group-hover:scale-110",
+                  isParsing ? "animate-pulse" : ""
+                )}
             >
-                {isParsing ? <Loader2 className="h-6 w-6 animate-spin" style={{ color: primaryColor }} /> : <Upload className="h-6 w-6 text-slate-600" />}
+                {isParsing ? (
+                  <Loader2 className="h-7 w-7 animate-spin text-school-primary" />
+                ) : (
+                  <Upload className="h-7 w-7 text-muted-foreground group-hover:text-school-primary transition-colors" />
+                )}
             </div>
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white italic">{title}</h3>
-            {description && <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{description}</p>}
+            
+            <div className="space-y-2">
+                <h3 className="text-base font-extrabold uppercase tracking-tighter text-foreground italic leading-none">
+                  {title}
+                </h3>
+                {description && (
+                  <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest italic opacity-70">
+                    {description}
+                  </p>
+                )}
+            </div>
         </div>
 
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="bg-slate-800 hover:bg-slate-700 text-white text-[9px] font-black py-3 px-8 rounded-xl border border-white/5 uppercase tracking-widest"
+          className={cn(
+            "h-12 px-8 rounded-xl transition-all",
+            "bg-surface border border-border text-foreground text-[10px] font-bold uppercase tracking-widest",
+            "hover:bg-background hover:border-school-primary/30 active:scale-95"
+          )}
         >
-          {fileName ? "Change Dataset" : "Browse Filesystem"}
+          {fileName ? "Replace Dataset" : "Browse Filesystem"}
         </button>
         
-        <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
+        <input 
+          ref={fileInputRef} 
+          type="file" 
+          accept=".csv" 
+          className="hidden" 
+          onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} 
+        />
 
-        {fileName && !error && !isParsing && (
-            <div className="flex items-center justify-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
-                <FileCheck className="h-3.5 w-3.5" /> Registry Attached: {fileName}
-            </div>
-        )}
+        {/* ── FEEDBACK NODES ── */}
+        <div className="min-h-[20px] flex items-center justify-center gap-3">
+          {fileName && !error && !isParsing && (
+              <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-bold uppercase tracking-widest animate-in fade-in zoom-in-95">
+                  <FileCheck className="h-4 w-4" /> Registry Attached: {fileName}
+              </div>
+          )}
 
-        {error && (
-            <div className="flex items-center justify-center gap-2 text-red-500 text-[10px] font-black uppercase tracking-widest">
-                <AlertCircle className="h-3.5 w-3.5" /> {error}
-            </div>
-        )}
+          {error && (
+              <div className="flex items-center gap-2 text-destructive text-[10px] font-bold uppercase tracking-widest animate-in shake">
+                  <AlertCircle className="h-4 w-4" /> {error}
+              </div>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -1805,7 +1805,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { getStudentLesson } from "@/app/actions/lesson.actions"
-import { getScannedQuestions } from "@/app/actions/scanned-question-bank";
+import { getScannedPapers } from "@/app/actions/scanned-question-bank";
 import { LessonContentClient } from "@/components/student-dashboard/lesson/lessonContentClient";
 
 
@@ -1850,11 +1850,7 @@ export default async function Page({ params }: PageProps) {
   // 2. Fetch Lesson & Scanned Registry in Parallel (Rule 11)
   const [lessonRes, scannedQuestions] = await Promise.all([
     getStudentLesson(topicId, profile.schoolId),
-    getScannedQuestions({
-        topicId,
-        schoolId: profile.schoolId,
-        userId: profile.id
-    })
+    getScannedPapers(schoolId: profile.schoolId, userId: profile.id)
   ]);
 
   if (!lessonRes.success || !lessonRes.data) {

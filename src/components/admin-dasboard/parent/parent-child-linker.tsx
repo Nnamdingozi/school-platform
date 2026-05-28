@@ -1225,3 +1225,295 @@
 //     </section>
 //   );
 // }
+
+
+'use client';
+
+import React, { useState } from 'react';
+import {
+  Loader2,
+  X,
+  Plus,
+  User,
+  GraduationCap,
+  Trash2,
+  Info,
+  CheckCircle2,
+  XCircle,
+} from 'lucide-react';
+import { useProfileStore } from '@/store/profileStore';
+import {
+  bulkLinkParentsAndChildren,
+  type ParentChildLinkInput,
+  type ParentChildLinkResult,
+} from '@/app/actions/parent-linking';
+import { UserSearchInput } from '@/components/admin-dasboard/user-searchInput';
+import { CSVImporter } from '@/components/shared/CSVImporter';
+import { CSVTemplateButton } from '@/components/shared/CSVTemplateButton';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { Role } from "@prisma/client";
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+type RowStatus = 'idle' | 'linking' | 'linked' | 'error';
+
+interface ChildEntry { 
+    id: string; 
+    email: string; 
+    status: RowStatus; 
+    message?: string; 
+}
+
+interface ParentGroup { 
+    id: string; 
+    parentEmail: string; 
+    children: ChildEntry[]; 
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+const makeChild = (email = ''): ChildEntry => ({ 
+    id: crypto.randomUUID(), 
+    email, 
+    status: 'idle' 
+});
+
+const makeGroup = (parentEmail = '', childEmails: string[] = ['']): ParentGroup => ({
+  id: crypto.randomUUID(),
+  parentEmail,
+  children: childEmails.map(email => makeChild(email)),
+});
+
+// ── Main Component ─────────────────────────────────────────────────────────────
+
+/**
+ * INSTITUTIONAL FAMILY MAPPING (Tier 2)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic tokens (bg-card, bg-surface, border-border).
+ * Rule 19: Standardized Geometry [2rem] for family blocks.
+ * Rule 20: Responsive layout with fluid padding.
+ */
+export function ParentChildLinker() {
+  const { profile } = useProfileStore();
+  const schoolId = profile?.schoolId ?? '';
+  const userRole = (profile?.role as Role) || Role.TEACHER;
+
+  const [groups, setGroups] = useState<ParentGroup[]>([makeGroup()]);
+  const [submitting, setSubmitting] = useState(false);
+
+  // ── Handlers ──
+
+  const removeParentGroup = (groupId: string) => {
+    if (groups.length > 1) setGroups(groups.filter(g => g.id !== groupId));
+  };
+
+  const updateParentEmail = (groupId: string, email: string) => {
+    setGroups(groups.map(g => g.id === groupId ? { ...g, parentEmail: email } : g));
+  };
+
+  const addChildToGroup = (groupId: string) => {
+    setGroups(groups.map(g => g.id === groupId ? { ...g, children: [...g.children, makeChild()] } : g));
+  };
+
+  const updateChildEmail = (groupId: string, childId: string, email: string) => {
+    setGroups(groups.map(g => g.id === groupId ? {
+      ...g, children: g.children.map(c => c.id === childId ? { ...c, email, status: 'idle' } : c)
+    } : g));
+  };
+
+  const handleCsvData = (rows: Record<string, string>[]) => {
+    const aggregation = new Map<string, string[]>();
+    
+    rows.forEach(row => {
+      const p = (row.parent_email || row.parentEmail || row.parent || '').trim().toLowerCase();
+      const c = (row.child_email || row.childEmail || row.student || '').trim().toLowerCase();
+      
+      if (p) {
+        const existing = aggregation.get(p) || [];
+        if (c) existing.push(c);
+        aggregation.set(p, existing);
+      }
+    });
+
+    const newGroups = Array.from(aggregation.entries()).map(([pEmail, cEmails]) => 
+      makeGroup(pEmail, cEmails.length > 0 ? cEmails : [''])
+    );
+
+    if (newGroups.length > 0) {
+      setGroups(newGroups);
+      toast.success(`Aggregated ${newGroups.length} Family Structures.`);
+    }
+  };
+
+  const handleLinkAll = async () => {
+    if (!schoolId) return toast.error("Institutional context missing.");
+    setSubmitting(true);
+    
+    const payload: ParentChildLinkInput[] = [];
+    groups.forEach(g => g.children.forEach(c => {
+        if (g.parentEmail && c.email) {
+            payload.push({ parentEmail: g.parentEmail, childEmail: c.email });
+        }
+    }));
+
+    if (payload.length === 0) {
+        toast.error("No valid pairs identified.");
+        setSubmitting(false);
+        return;
+    }
+
+    setGroups(groups.map(g => ({ ...g, children: g.children.map(c => ({ ...c, status: 'linking' })) })));
+    
+    // Action call (Rule 12: Server-First Action)
+    const results: ParentChildLinkResult[] = await bulkLinkParentsAndChildren(payload, schoolId, profile!.id, userRole);
+
+    let idx = 0;
+    setGroups(groups.map(g => ({
+      ...g, children: g.children.map(c => {
+        const res = results[idx++];
+        return { ...c, status: res.success ? 'linked' : 'error', message: res.message };
+      })
+    })));
+    setSubmitting(false);
+  };
+
+  return (
+    <section className="space-y-8 animate-in fade-in duration-700">
+      
+      {/* ── INSTRUCTIONS (Rule 18) ── */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-card border border-border rounded-[2rem] p-6 md:p-10 shadow-xl">
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-surface rounded-2xl border border-border shadow-inner">
+            <Info className="h-6 w-6 text-school-primary" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-sm font-extrabold uppercase tracking-widest text-foreground italic">Family Relationship Linker</h3>
+            <p className="text-[10px] text-muted-foreground uppercase font-semibold leading-relaxed max-w-xl tracking-wide">
+              Synchronize guardian nodes with student profiles. Batch uploads are automatically aggregated into family blocks.
+            </p>
+          </div>
+        </div>
+
+        <CSVTemplateButton 
+           fileName="family_mapping_template"
+           headers={["parent_email", "child_email"]}
+           sampleRow={["guardian@schoolpaas.com", "student@schoolpaas.com"]}
+           className="bg-surface border-border text-[10px] font-bold uppercase tracking-widest px-6 h-12 rounded-2xl"
+        />
+      </div>
+
+      {/* ── BATCH IMPORTER ── */}
+      <CSVImporter 
+        title="Batch Family Import"
+        description="Dataset must contain parent_email and child_email columns."
+        expectedHeaders={["parent_email", "child_email"]}
+        onDataUpload={(data) => handleCsvData(data as Record<string, string>[])}
+      />
+
+      {/* ── FAMILY MATRIX (Rule 19) ── */}
+      <div className="space-y-6">
+        {groups.map((group) => (
+          <div key={group.id} className="bg-card border border-border rounded-[2rem] p-6 md:p-10 relative group shadow-2xl transition-all hover:border-school-primary/20">
+            <button 
+                onClick={() => removeParentGroup(group.id)}
+                className="absolute top-8 right-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-all active:scale-90"
+            >
+                <Trash2 className="h-5 w-5" />
+            </button>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_2fr] gap-12">
+              {/* GUARDIAN SECTOR */}
+              <div className="space-y-4">
+                <label className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 text-school-primary">
+                  <User className="h-3.5 w-3.5" /> Guardian Registry Node
+                </label>
+                <UserSearchInput 
+                  role="PARENT" 
+                  schoolId={schoolId} 
+                  placeholder="Query guardian email..."
+                  value={group.parentEmail}
+                  onSelect={(email) => updateParentEmail(group.id, email)}
+                  // Note: UserSearchInput must handle bg-surface internal styling
+                />
+              </div>
+
+              {/* STUDENT ASSIGNMENTS */}
+              <div className="space-y-6">
+                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                  <GraduationCap className="h-3.5 w-3.5" /> Dependent Student Nodes
+                </label>
+                
+                <div className="space-y-4">
+                  {group.children.map((child) => (
+                    <div key={child.id} className="space-y-2">
+                        <div className="flex gap-3 items-center group/row">
+                            <div className="relative flex-1">
+                                <UserSearchInput 
+                                    role="STUDENT" 
+                                    schoolId={schoolId} 
+                                    placeholder="Query student email..."
+                                    value={child.email}
+                                    onSelect={(email) => updateChildEmail(group.id, child.id, email)}
+                                />
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                    {child.status === 'linking' && <Loader2 className="h-4 w-4 animate-spin text-school-primary" />}
+                                    {child.status === 'linked' && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
+                                    {child.status === 'error' && <XCircle className="h-4 w-4 text-destructive" />}
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => setGroups(groups.map(g => g.id === group.id ? {...g, children: g.children.filter(c => c.id !== child.id)} : g))}
+                                className="p-3 text-muted-foreground hover:text-destructive opacity-0 group-hover/row:opacity-100 transition-all active:scale-90"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        </div>
+                        {child.message && (
+                            <p className={cn(
+                                "text-[9px] font-bold ml-1 uppercase tracking-widest italic",
+                                child.status === 'error' ? "text-destructive" : "text-emerald-500"
+                            )}>
+                                {child.message}
+                            </p>
+                        )}
+                    </div>
+                  ))}
+                </div>
+
+                <button 
+                    onClick={() => addChildToGroup(group.id)} 
+                    className="text-[10px] font-extrabold uppercase tracking-widest flex items-center gap-2 text-school-primary hover:opacity-80 transition-all mt-4"
+                >
+                  <Plus className="h-4 w-4" /> Add Another Dependent
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── FOOTER ACTIONS (Rule 20) ── */}
+      <footer className="mt-12 flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-border pt-10 px-4">
+        <button 
+          onClick={() => setGroups([...groups, makeGroup()])} 
+          className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-[10px] font-bold uppercase tracking-widest transition-all"
+        >
+          <Plus className="h-4 w-4" /> Add Master Family Block
+        </button>
+
+        <button
+          onClick={handleLinkAll}
+          disabled={submitting}
+          className="w-full sm:w-auto bg-school-primary text-on-school-primary font-extrabold text-[10px] uppercase tracking-widest px-12 py-5 rounded-2xl hover:brightness-110 active:scale-95 transition-all disabled:opacity-20 shadow-xl"
+        >
+          {submitting ? (
+             <span className="flex items-center gap-3">
+                <Loader2 className="h-4 w-4 animate-spin" /> Synchronizing Ledger...
+             </span>
+          ) : "Confirm Final Matrix Linkage"}
+        </button>
+      </footer>
+    </section>
+  );
+}

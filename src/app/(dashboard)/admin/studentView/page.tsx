@@ -117,6 +117,66 @@
 
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getStudentsBySchool} from '@/app/actions/user-management'
+// import { checkSubscription } from "@/app/actions/subscription-guard";
+// import { StudentsListClient } from "@/components/admin-dasboard/student/studentListClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Students | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         include: { school: { select: { name: true } } }
+//     });
+
+//     return {
+//         title: `Student Registry | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
+//         description: "Institutional management of student identities and classroom placements."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Fetching
+//  */
+// export default async function StudentsPage() {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     // Rule 6 & 13: Institutional Gate
+//     if (!profile?.schoolId || (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)) {
+//         redirect("/teacher?error=access_denied");
+//     }
+
+//     // Rule 11: System Truth - Check subscription before allowing access to management
+//     const subStatus = await checkSubscription(profile.id, profile.schoolId);
+//     if (!subStatus.isActive) redirect("/billing");
+
+//     // Fetch Tier-2 Institutional Data
+//     const students = await getStudentsBySchool(profile.schoolId);
+
+//     return (
+//         <StudentsListClient initialStudents={students} />
+//     );
+// }
+
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -127,49 +187,64 @@ import { StudentsListClient } from "@/components/admin-dasboard/student/studentL
 import { Role } from "@prisma/client";
 
 /**
+ * STUDENT REGISTRY | SERVER PAGE
  * Rule 16: Dynamic Contextual SEO
+ * Synchronizes institutional identity with search engine metadata.
  */
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { title: "Students | SchoolPaaS" };
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) return { title: "Students | SchoolPaaS" };
 
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         include: { school: { select: { name: true } } }
     });
 
     return {
         title: `Student Registry | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
-        description: "Institutional management of student identities and classroom placements."
+        description: "Institutional management of student identities, registry nodes, and classroom placements."
     };
 }
 
 /**
- * Rule 12: Server-First Fetching
+ * STUDENT REGISTRY (Tier 2)
+ * Rule 12: Server-First Fetching. Handles security scoping and data hydration.
+ * Rule 5/6: Multi-tenant isolation. Strictly gates access to Institutional Admins.
+ * Rule 11: Subscription Guard ensures management features are active.
  */
 export default async function StudentsPage() {
+    // 1. Authentication Layer (Rule 10)
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) redirect("/login");
 
+    // 2. Authorization & Scoping (Rule 5/6)
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         select: { id: true, schoolId: true, role: true }
     });
 
-    // Rule 6 & 13: Institutional Gate
-    if (!profile?.schoolId || (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)) {
-        redirect("/teacher?error=access_denied");
+    // Security Protocol: Only Institutional Admins (Tier 2) or Super Admins (Tier 1) may proceed.
+    if (
+        !profile?.schoolId || 
+        (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)
+    ) {
+        redirect("/dashboard?error=unauthorized_registry_access");
     }
 
-    // Rule 11: System Truth - Check subscription before allowing access to management
+    // 3. Subscription Sentinel (Rule 11)
+    // Management capabilities are locked behind an active institutional subscription.
     const subStatus = await checkSubscription(profile.id, profile.schoolId);
-    if (!subStatus.isActive) redirect("/billing");
+    if (!subStatus.isActive) {
+        redirect("/billing?reason=subscription_required");
+    }
 
-    // Fetch Tier-2 Institutional Data
+    // 4. Data Hydration (Rule 12)
+    // Fetching the authoritative student ledger for this specific institution.
     const students = await getStudentsBySchool(profile.schoolId);
 
+    // 5. Client-Side Handoff (Rule 17: Branding handled via Client Component Store)
     return (
         <StudentsListClient initialStudents={students} />
     );

@@ -840,15 +840,249 @@
 // }
 
 
+// 'use client'
+
+// import { useState, useTransition, useEffect } from 'react'
+// import { format } from 'date-fns'
+// import { Card, CardContent } from '@/components/ui/card'
+// import { Button } from '@/components/ui/button'
+// import {
+//     Calendar as CalendarIcon, RefreshCcw,
+//     Loader2, Info, CheckCircle2, AlertCircle, ArrowRight
+// } from 'lucide-react'
+// import { Calendar } from '@/components/ui/calendar'
+// import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+// import { syncInstitutionalTermDates } from '@/app/actions/term.action'
+// import { type SchoolSettingsData } from '@/app/actions/school-settings.action'
+// import { useProfileStore } from '@/store/profileStore'
+// import { toast } from 'sonner'
+// import { cn } from '@/lib/utils'
+
+// interface TermsSectionProps {
+//     data: SchoolSettingsData
+//     onUpdate: (updated: Partial<SchoolSettingsData>) => void
+// }
+
+// /**
+//  * INSTITUTIONAL CALENDAR MANAGEMENT (Tier 2)
+//  * Rule 4: Prevents modification of Global Core terms.
+//  * Rule 11: Final System Truth synchronization across all grade levels.
+//  * Rule 17: Leverages Zustand for school-specific primary branding.
+//  */
+// export function TermsSection({ data, onUpdate }: TermsSectionProps) {
+//     const { profile } = useProfileStore();
+//     const [isPending, startTransition] = useTransition();
+//     const [syncingId, setSyncingId] = useState<number | null>(null);
+    
+//     const primaryColor = profile?.primaryColor || "#f59e0b";
+//     const termLabel = data.curriculum?.termLabel ?? 'Term';
+
+//     /**
+//      * Map existing terms from prop into state keyed by index (1, 2, 3)
+//      */
+//     const [localDates, setLocalDates] = useState(() => {
+//         const map: Record<number, { start?: Date, end?: Date }> = { 
+//             1: {}, 2: {}, 3: {} 
+//         };
+//         data.terms.forEach(t => {
+//             if (t.index >= 1 && t.index <= 3) {
+//                 if (!map[t.index].start && t.startDate) map[t.index].start = new Date(t.startDate);
+//                 if (!map[t.index].end && t.endDate) map[t.index].end = new Date(t.endDate);
+//             }
+//         });
+//         return map;
+//     });
+
+//     // Re-sync if parent data refreshes
+//     useEffect(() => {
+//         const map: Record<number, { start?: Date, end?: Date }> = { 1: {}, 2: {}, 3: {} };
+//         data.terms.forEach(t => {
+//             if (t.index >= 1 && t.index <= 3) {
+//                 if (!map[t.index].start && t.startDate) map[t.index].start = new Date(t.startDate);
+//                 if (!map[t.index].end && t.endDate) map[t.index].end = new Date(t.endDate);
+//             }
+//         });
+//         setLocalDates(map);
+//     }, [data]);
+
+//     /**
+//      * RULE 11: Execute institutional sync
+//      */
+//     const handleSync = (index: number) => {
+//         const dates = localDates[index];
+//         if (!dates.start || !dates.end) {
+//             toast.error("Both commencement and termination dates are required.");
+//             return;
+//         }
+//         if (dates.start >= dates.end) {
+//             toast.error("Timeline Logic Error: Start date must precede end date.");
+//             return;
+//         }
+
+//         setSyncingId(index);
+//         startTransition(async () => {
+//             try {
+//                 /**
+//                  * ✅ FIXED: Call action with exactly 3 arguments (index, start, end).
+//                  * Identity/SchoolId is handled securely on the server via session.
+//                  */
+//                 const res = await syncInstitutionalTermDates(index, dates.start!, dates.end!);
+                
+//                 if (res.success) {
+//                     toast.success(`Institutional ${termLabel} ${index} synchronized across all grades.`);
+//                     // Rule 11: Update parent state to reflect DB truth immediately
+//                     onUpdate({
+//                         terms: data.terms.map(t => 
+//                             t.index === index 
+//                                 ? { ...t, startDate: dates.start!, endDate: dates.end! } 
+//                                 : t
+//                         )
+//                     });
+//                 } else {
+//                     toast.error(res.error || "Registry synchronization failed.");
+//                 }
+//             } catch (err: unknown) {
+//                 toast.error("A critical error occurred during calendar sync.");
+//             } finally {
+//                 setSyncingId(null);
+//             }
+//         });
+//     };
+
+//     return (
+//         <div className="space-y-6 animate-in fade-in duration-500">
+            
+//             {/* ── INFO BANNER ── */}
+//             <div className="flex items-start gap-4 bg-slate-900 border border-white/5 p-8 rounded-[2.5rem] shadow-xl">
+//                 <div className="p-3 bg-slate-950 rounded-xl border border-white/5">
+//                     <CalendarIcon className="h-6 w-6" style={{ color: primaryColor }} />
+//                 </div>
+//                 <div className="space-y-2">
+//                     <h3 className="text-sm font-black uppercase text-white italic tracking-widest">
+//                         Academic Timeline Protocol
+//                     </h3>
+//                     <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed max-w-2xl italic">
+//                         Configure institutional dates for each {termLabel.toLowerCase()} index. 
+//                         Synchronization will apply these dates to all academic levels simultaneously, 
+//                         ensuring registry consistency for reports and automated transmissions.
+//                     </p>
+//                 </div>
+//             </div>
+
+//             {/* ── TERM CARDS ── */}
+//             <div className="grid grid-cols-1 gap-4">
+//                 {[1, 2, 3].map((idx) => {
+//                     const current = localDates[idx];
+//                     const isSynced = !!(current.start && current.end);
+//                     const isSyncing = syncingId === idx && isPending;
+//                     const hasError = current.start && current.end && current.start >= current.end;
+
+//                     return (
+//                         <Card key={idx} className={cn(
+//                             "bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all",
+//                             isSynced ? "hover:border-white/10" : "border-amber-500/20"
+//                         )}>
+//                             <CardContent className="p-8">
+//                                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                                    
+//                                     {/* Label & Status */}
+//                                     <div className="flex items-center gap-5">
+//                                         <div 
+//                                             className="h-12 w-12 rounded-2xl bg-slate-950 flex items-center justify-center border border-white/5 font-black text-xs italic" 
+//                                             style={{ color: isSynced ? primaryColor : '#475569' }}
+//                                         >
+//                                             0{idx}
+//                                         </div>
+//                                         <div>
+//                                             <h4 className="text-lg font-black text-white uppercase italic">{termLabel} {idx}</h4>
+//                                             <div className="flex items-center gap-2 mt-1">
+//                                                 {isSynced ? (
+//                                                     <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/5 px-2 py-0.5 rounded uppercase tracking-widest">Synchronized</span>
+//                                                 ) : (
+//                                                     <span className="text-[9px] font-black text-amber-500 bg-amber-500/5 px-2 py-0.5 rounded uppercase tracking-widest">Sync Required</span>
+//                                                 )}
+//                                             </div>
+//                                         </div>
+//                                     </div>
+
+//                                     {/* Date Controls */}
+//                                     <div className="flex flex-wrap items-end gap-6">
+//                                         <DateInput 
+//                                             label="Commencement" 
+//                                             value={current.start} 
+//                                             onChange={(d) => setLocalDates(prev => ({ ...prev, [idx]: { ...prev[idx], start: d } }))} 
+//                                             primaryColor={primaryColor}
+//                                         />
+//                                         <ArrowRight className="h-4 w-4 text-slate-800 hidden lg:block mb-4" />
+//                                         <DateInput 
+//                                             label="Termination" 
+//                                             value={current.end} 
+//                                             onChange={(d) => setLocalDates(prev => ({ ...prev, [idx]: { ...prev[idx], end: d } }))} 
+//                                             primaryColor={primaryColor}
+//                                         />
+                                        
+//                                         <div className="flex flex-col gap-2">
+//                                             <Button 
+//                                                 disabled={isSyncing || !current.start || !current.end || !!hasError}
+//                                                 onClick={() => handleSync(idx)}
+//                                                 className="rounded-xl px-10 h-12 font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
+//                                                 style={{ backgroundColor: primaryColor, color: '#000' }}
+//                                             >
+//                                                 {isSyncing ? <Loader2 className="animate-spin h-4 w-4" /> : <><RefreshCcw className="h-3.5 w-3.5 mr-2" /> Sync Node</>}
+//                                             </Button>
+//                                             {hasError && (
+//                                                 <p className="text-[9px] font-black text-red-500 uppercase text-center animate-pulse">Timeline Error</p>
+//                                             )}
+//                                         </div>
+//                                     </div>
+//                                 </div>
+//                             </CardContent>
+//                         </Card>
+//                     )
+//                 })}
+//             </div>
+//         </div>
+//     )
+// }
+
+// /**
+//  * ── HELPER: INTERNAL DATE PICKER ──
+//  */
+// function DateInput({ label, value, onChange, primaryColor }: { label: string, value?: Date, onChange: (d: Date) => void, primaryColor: string }) {
+//     return (
+//         <div className="space-y-2">
+//             <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-1">{label}</p>
+//             <Popover>
+//                 <PopoverTrigger asChild>
+//                     <button className="bg-slate-950 border border-white/5 rounded-xl px-5 py-3.5 text-xs font-bold text-slate-300 w-44 text-left hover:border-white/20 transition-all shadow-inner">
+//                         {value ? format(value, 'dd MMM yyyy') : "Select Date"}
+//                     </button>
+//                 </PopoverTrigger>
+//                 <PopoverContent className="w-auto p-0 bg-slate-900 border-white/10 shadow-2xl rounded-2xl overflow-hidden">
+//                     <Calendar 
+//                         mode="single" 
+//                         selected={value} 
+//                         onSelect={(d) => d && onChange(d)} 
+//                         initialFocus 
+//                         className="bg-slate-900 text-white"
+//                         style={{ color: '#fff' }}
+//                     />
+//                 </PopoverContent>
+//             </Popover>
+//         </div>
+//     )
+// }
+
+
 'use client'
 
-import { useState, useTransition, useEffect } from 'react'
+import React, { useState, useTransition, useEffect } from 'react'
 import { format } from 'date-fns'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
     Calendar as CalendarIcon, RefreshCcw,
-    Loader2, Info, CheckCircle2, AlertCircle, ArrowRight
+    Loader2, CheckCircle2, ArrowRight, ChevronDown
 } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -865,25 +1099,20 @@ interface TermsSectionProps {
 
 /**
  * INSTITUTIONAL CALENDAR MANAGEMENT (Tier 2)
- * Rule 4: Prevents modification of Global Core terms.
- * Rule 11: Final System Truth synchronization across all grade levels.
- * Rule 17: Leverages Zustand for school-specific primary branding.
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem] for architecture cards.
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function TermsSection({ data, onUpdate }: TermsSectionProps) {
     const { profile } = useProfileStore();
     const [isPending, startTransition] = useTransition();
     const [syncingId, setSyncingId] = useState<number | null>(null);
     
-    const primaryColor = profile?.primaryColor || "#f59e0b";
     const termLabel = data.curriculum?.termLabel ?? 'Term';
 
-    /**
-     * Map existing terms from prop into state keyed by index (1, 2, 3)
-     */
     const [localDates, setLocalDates] = useState(() => {
-        const map: Record<number, { start?: Date, end?: Date }> = { 
-            1: {}, 2: {}, 3: {} 
-        };
+        const map: Record<number, { start?: Date, end?: Date }> = { 1: {}, 2: {}, 3: {} };
         data.terms.forEach(t => {
             if (t.index >= 1 && t.index <= 3) {
                 if (!map[t.index].start && t.startDate) map[t.index].start = new Date(t.startDate);
@@ -893,7 +1122,6 @@ export function TermsSection({ data, onUpdate }: TermsSectionProps) {
         return map;
     });
 
-    // Re-sync if parent data refreshes
     useEffect(() => {
         const map: Record<number, { start?: Date, end?: Date }> = { 1: {}, 2: {}, 3: {} };
         data.terms.forEach(t => {
@@ -905,32 +1133,24 @@ export function TermsSection({ data, onUpdate }: TermsSectionProps) {
         setLocalDates(map);
     }, [data]);
 
-    /**
-     * RULE 11: Execute institutional sync
-     */
     const handleSync = (index: number) => {
         const dates = localDates[index];
         if (!dates.start || !dates.end) {
-            toast.error("Both commencement and termination dates are required.");
+            toast.error("Registry Gate: Both commencement and termination dates are required.");
             return;
         }
         if (dates.start >= dates.end) {
-            toast.error("Timeline Logic Error: Start date must precede end date.");
+            toast.error("Timeline Logic Error: Commencement must precede termination.");
             return;
         }
 
         setSyncingId(index);
         startTransition(async () => {
             try {
-                /**
-                 * ✅ FIXED: Call action with exactly 3 arguments (index, start, end).
-                 * Identity/SchoolId is handled securely on the server via session.
-                 */
                 const res = await syncInstitutionalTermDates(index, dates.start!, dates.end!);
                 
                 if (res.success) {
-                    toast.success(`Institutional ${termLabel} ${index} synchronized across all grades.`);
-                    // Rule 11: Update parent state to reflect DB truth immediately
+                    toast.success(`Institutional Timeline Synchronized: ${termLabel} ${index}`);
                     onUpdate({
                         terms: data.terms.map(t => 
                             t.index === index 
@@ -939,10 +1159,10 @@ export function TermsSection({ data, onUpdate }: TermsSectionProps) {
                         )
                     });
                 } else {
-                    toast.error(res.error || "Registry synchronization failed.");
+                    toast.error("Registry synchronization failed.");
                 }
             } catch (err: unknown) {
-                toast.error("A critical error occurred during calendar sync.");
+                toast.error("Critical failure during calendar sync.");
             } finally {
                 setSyncingId(null);
             }
@@ -950,27 +1170,29 @@ export function TermsSection({ data, onUpdate }: TermsSectionProps) {
     };
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="space-y-8 animate-in fade-in duration-700">
             
-            {/* ── INFO BANNER ── */}
-            <div className="flex items-start gap-4 bg-slate-900 border border-white/5 p-8 rounded-[2.5rem] shadow-xl">
-                <div className="p-3 bg-slate-950 rounded-xl border border-white/5">
-                    <CalendarIcon className="h-6 w-6" style={{ color: primaryColor }} />
+            {/* ── CONTEXT BANNER (Rule 18/21) ── */}
+            <div className="bg-card border border-border p-6 md:p-8 rounded-[2rem] flex flex-col md:flex-row items-start gap-6 shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-school-primary-50 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity" />
+                
+                <div className="p-3 bg-surface rounded-2xl border border-border shadow-sm z-10">
+                    <CalendarIcon className="h-6 w-6 text-school-primary" />
                 </div>
-                <div className="space-y-2">
-                    <h3 className="text-sm font-black uppercase text-white italic tracking-widest">
+                <div className="space-y-2 z-10">
+                    <h3 className="text-sm font-extrabold uppercase text-foreground italic tracking-tight">
                         Academic Timeline Protocol
                     </h3>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed max-w-2xl italic">
-                        Configure institutional dates for each {termLabel.toLowerCase()} index. 
-                        Synchronization will apply these dates to all academic levels simultaneously, 
-                        ensuring registry consistency for reports and automated transmissions.
+                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest leading-relaxed max-w-2xl italic opacity-80">
+                        Configure institutional dates for each {termLabel.toLowerCase()} hub. 
+                        Synchronization applies timeline metadata across all academic modules simultaneously, 
+                        ensuring registry consistency for automated transmissions.
                     </p>
                 </div>
             </div>
 
-            {/* ── TERM CARDS ── */}
-            <div className="grid grid-cols-1 gap-4">
+            {/* ── TERM CARDS (Rule 19/20) ── */}
+            <div className="space-y-4">
                 {[1, 2, 3].map((idx) => {
                     const current = localDates[idx];
                     const isSynced = !!(current.start && current.end);
@@ -979,59 +1201,70 @@ export function TermsSection({ data, onUpdate }: TermsSectionProps) {
 
                     return (
                         <Card key={idx} className={cn(
-                            "bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all",
-                            isSynced ? "hover:border-white/10" : "border-amber-500/20"
+                            "bg-card border-border rounded-[2rem] overflow-hidden shadow-lg transition-all duration-300",
+                            isSynced ? "hover:border-school-primary-200" : "border-amber-200 bg-amber-50/10"
                         )}>
-                            <CardContent className="p-8">
-                                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                            <CardContent className="p-6 md:p-8">
+                                <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8">
                                     
-                                    {/* Label & Status */}
+                                    {/* Identity sector */}
                                     <div className="flex items-center gap-5">
                                         <div 
-                                            className="h-12 w-12 rounded-2xl bg-slate-950 flex items-center justify-center border border-white/5 font-black text-xs italic" 
-                                            style={{ color: isSynced ? primaryColor : '#475569' }}
+                                            className={cn(
+                                                "h-14 w-14 rounded-2xl flex items-center justify-center border font-extrabold text-sm italic transition-colors shadow-inner",
+                                                isSynced ? "bg-school-primary-50 border-school-primary-200 text-school-primary" : "bg-surface border-border text-muted-foreground/30"
+                                            )}
                                         >
                                             0{idx}
                                         </div>
-                                        <div>
-                                            <h4 className="text-lg font-black text-white uppercase italic">{termLabel} {idx}</h4>
-                                            <div className="flex items-center gap-2 mt-1">
+                                        <div className="space-y-1">
+                                            <h4 className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter">{termLabel} {idx}</h4>
+                                            <div className="flex items-center gap-2">
                                                 {isSynced ? (
-                                                    <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/5 px-2 py-0.5 rounded uppercase tracking-widest">Synchronized</span>
+                                                    <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 uppercase tracking-widest">Synchronized</span>
                                                 ) : (
-                                                    <span className="text-[9px] font-black text-amber-500 bg-amber-500/5 px-2 py-0.5 rounded uppercase tracking-widest">Sync Required</span>
+                                                    <span className="text-[9px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 uppercase tracking-widest">Timeline Required</span>
                                                 )}
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Date Controls */}
-                                    <div className="flex flex-wrap items-end gap-6">
+                                    {/* Controls sector (Rule 20) */}
+                                    <div className="flex flex-wrap items-end gap-6 md:gap-8">
                                         <DateInput 
                                             label="Commencement" 
                                             value={current.start} 
                                             onChange={(d) => setLocalDates(prev => ({ ...prev, [idx]: { ...prev[idx], start: d } }))} 
-                                            primaryColor={primaryColor}
                                         />
-                                        <ArrowRight className="h-4 w-4 text-slate-800 hidden lg:block mb-4" />
+                                        <div className="hidden xl:flex items-center pb-5">
+                                            <ArrowRight className="h-4 w-4 text-muted-foreground/20" />
+                                        </div>
                                         <DateInput 
                                             label="Termination" 
                                             value={current.end} 
                                             onChange={(d) => setLocalDates(prev => ({ ...prev, [idx]: { ...prev[idx], end: d } }))} 
-                                            primaryColor={primaryColor}
                                         />
                                         
-                                        <div className="flex flex-col gap-2">
-                                            <Button 
+                                        <div className="flex flex-col gap-2 min-w-[160px]">
+                                            <button 
                                                 disabled={isSyncing || !current.start || !current.end || !!hasError}
                                                 onClick={() => handleSync(idx)}
-                                                className="rounded-xl px-10 h-12 font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
-                                                style={{ backgroundColor: primaryColor, color: '#000' }}
+                                                className={cn(
+                                                    "h-12 px-8 rounded-xl font-extrabold text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 disabled:opacity-20",
+                                                    isSynced ? "bg-school-primary text-on-school-primary" : "bg-foreground text-background"
+                                                )}
                                             >
-                                                {isSyncing ? <Loader2 className="animate-spin h-4 w-4" /> : <><RefreshCcw className="h-3.5 w-3.5 mr-2" /> Sync Node</>}
-                                            </Button>
+                                                {isSyncing ? (
+                                                    <Loader2 className="animate-spin h-4 w-4 mx-auto" />
+                                                ) : (
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        <RefreshCcw className="h-3.5 w-3.5" />
+                                                        Sync Hub
+                                                    </div>
+                                                )}
+                                            </button>
                                             {hasError && (
-                                                <p className="text-[9px] font-black text-red-500 uppercase text-center animate-pulse">Timeline Error</p>
+                                                <p className="text-[9px] font-bold text-destructive uppercase text-center animate-pulse tracking-tighter">Timeline Logic Error</p>
                                             )}
                                         </div>
                                     </div>
@@ -1045,27 +1278,32 @@ export function TermsSection({ data, onUpdate }: TermsSectionProps) {
     )
 }
 
-/**
- * ── HELPER: INTERNAL DATE PICKER ──
- */
-function DateInput({ label, value, onChange, primaryColor }: { label: string, value?: Date, onChange: (d: Date) => void, primaryColor: string }) {
+// ── Sub-Component (Rule 18/19/21) ───────────────────────────────────────────
+
+function DateInput({ label, value, onChange }: { label: string, value?: Date, onChange: (d: Date) => void }) {
     return (
-        <div className="space-y-2">
-            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-1">{label}</p>
+        <div className="space-y-2 group">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">{label}</p>
             <Popover>
                 <PopoverTrigger asChild>
-                    <button className="bg-slate-950 border border-white/5 rounded-xl px-5 py-3.5 text-xs font-bold text-slate-300 w-44 text-left hover:border-white/20 transition-all shadow-inner">
-                        {value ? format(value, 'dd MMM yyyy') : "Select Date"}
+                    <button className={cn(
+                        "h-12 w-44 px-4 flex items-center justify-between rounded-xl border transition-all shadow-sm outline-none",
+                        "bg-surface border-border text-foreground hover:border-school-primary-200",
+                        "focus:ring-2 focus:ring-school-primary-200"
+                    )}>
+                        <span className="text-xs font-bold uppercase italic tabular-nums">
+                            {value ? format(value, 'dd MMM yyyy') : "Select Date"}
+                        </span>
+                        <ChevronDown className="h-3.5 w-3.5 opacity-30" />
                     </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-slate-900 border-white/10 shadow-2xl rounded-2xl overflow-hidden">
+                <PopoverContent className="w-auto p-0 bg-card border-border shadow-2xl rounded-2xl overflow-hidden animate-in zoom-in-95" align="start">
                     <Calendar 
                         mode="single" 
                         selected={value} 
                         onSelect={(d) => d && onChange(d)} 
                         initialFocus 
-                        className="bg-slate-900 text-white"
-                        style={{ color: '#fff' }}
+                        className="bg-card text-foreground"
                     />
                 </PopoverContent>
             </Popover>

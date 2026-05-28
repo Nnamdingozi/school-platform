@@ -150,106 +150,220 @@
 //     </div>
 //   )
 // }
-"use client"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { TrendingUp, CheckCircle2, Clock, Award } from "lucide-react"
-import { cn } from "@/lib/utils"
 
-// ── Types ───────────────────────────────────────────────────────────────────
 
-interface Assessment {
+// "use client"
+
+// import { Card, CardContent } from "@/components/ui/card"
+// import { TrendingUp, CheckCircle2, Clock, Award } from "lucide-react"
+// import { cn } from "@/lib/utils"
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface Assessment {
+//   score: number | null;
+//   maxScore: number | null;
+// }
+
+// interface Exam {
+//   id: string;
+// }
+
+// interface QuickStatsProps {
+//   // FIX: Replaced 'any[]' with specific interfaces
+//   assessments: Assessment[];
+//   exams?: Exam[]; 
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export function QuickStats({ assessments, exams = [] }: QuickStatsProps) {
+  
+//   // ── 1. Calculate Real Metrics ──
+  
+//   // A. Average Score (Safely handling nulls)
+//   const totalScore = assessments.reduce((acc, a) => acc + (a.score || 0), 0);
+//   const totalMax = assessments.reduce((acc, a) => acc + (a.maxScore || 0), 0);
+//   const avgPercent = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
+
+//   // B. Achievements (Count assessments where score is >= 75%)
+//   const achievements = assessments.filter(a => {
+//     if (!a.score || !a.maxScore) return false;
+//     return (a.score / a.maxScore) * 100 >= 75;
+//   }).length;
+
+//   // ── 2. Define the Stat Display Logic ──
+//   const stats = [
+//     {
+//       label: "Academic Avg",
+//       value: `${avgPercent}%`,
+//       icon: TrendingUp,
+//       color: "text-school-primary",
+//       bg: "bg-school-primary/10",
+//     },
+//     {
+//       label: "Modules Graded",
+//       value: assessments.length.toString(),
+//       icon: CheckCircle2,
+//       color: "text-emerald-500",
+//       bg: "bg-emerald-500/10",
+//     },
+//     {
+//       label: "Pending CBT",
+//       value: exams.length.toString(),
+//       icon: Clock,
+//       color: "text-amber-500",
+//       bg: "bg-amber-500/10",
+//     },
+//     {
+//       label: "Distinctions",
+//       value: achievements.toString(),
+//       icon: Award,
+//       color: "text-purple-500",
+//       bg: "bg-purple-500/10",
+//     },
+//   ]
+
+//   return (
+//     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+//       {stats.map((stat) => {
+//         const Icon = stat.icon
+//         return (
+//           <Card key={stat.label} className="overflow-hidden border-white/5 bg-slate-900 shadow-xl rounded-2xl transition-all hover:border-white/10">
+//             <CardContent className="p-5">
+//               <div className="flex items-center justify-between mb-4">
+//                 <div className={cn(
+//                     "flex h-10 w-10 items-center justify-center rounded-xl border border-white/5", 
+//                     stat.bg, 
+//                     stat.color
+//                 )}>
+//                   <Icon className="h-5 w-5" />
+//                 </div>
+//               </div>
+//               <div className="space-y-1">
+//                 <p className="text-2xl font-black text-white italic tracking-tighter uppercase">
+//                     {stat.value}
+//                 </p>
+//                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">
+//                     {stat.label}
+//                 </p>
+//               </div>
+//             </CardContent>
+//           </Card>
+//         )
+//       })}
+//     </div>
+//   )
+// }
+
+
+"use client";
+
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { TrendingUp, CheckCircle2, Clock, Award } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+interface AssessmentNode {
   score: number | null;
   maxScore: number | null;
 }
 
-interface Exam {
+interface ExamNode {
   id: string;
 }
 
 interface QuickStatsProps {
-  // FIX: Replaced 'any[]' with specific interfaces
-  assessments: Assessment[];
-  exams?: Exam[]; 
+  assessments: AssessmentNode[];
+  exams?: ExamNode[]; 
 }
 
-// ── Main Component ──────────────────────────────────────────────────────────
-
+/**
+ * REGISTRY TELEMETRY TILES (Tier 3)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry (rounded-2xl).
+ * Rule 20: Compulsory Responsiveness (Fluid Grid).
+ * Rule 21: Scale Protocol for clean mathematical status tints.
+ */
 export function QuickStats({ assessments, exams = [] }: QuickStatsProps) {
   
-  // ── 1. Calculate Real Metrics ──
+  // ── 1. Telemetry Synthesis ──
   
-  // A. Average Score (Safely handling nulls)
   const totalScore = assessments.reduce((acc, a) => acc + (a.score || 0), 0);
   const totalMax = assessments.reduce((acc, a) => acc + (a.maxScore || 0), 0);
   const avgPercent = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
 
-  // B. Achievements (Count assessments where score is >= 75%)
-  const achievements = assessments.filter(a => {
+  const distinctions = assessments.filter(a => {
     if (!a.score || !a.maxScore) return false;
     return (a.score / a.maxScore) * 100 >= 75;
   }).length;
 
-  // ── 2. Define the Stat Display Logic ──
+  // ── 2. Configuration Matrix (Rule 21) ──
   const stats = [
     {
       label: "Academic Avg",
       value: `${avgPercent}%`,
       icon: TrendingUp,
-      color: "text-school-primary",
-      bg: "bg-school-primary/10",
+      container: "bg-school-primary-50 border-school-primary-200 text-school-primary",
     },
     {
-      label: "Modules Graded",
+      label: "Modules Synced",
       value: assessments.length.toString(),
       icon: CheckCircle2,
-      color: "text-emerald-500",
-      bg: "bg-emerald-500/10",
+      container: "bg-emerald-50 border-emerald-200 text-emerald-600",
     },
     {
-      label: "Pending CBT",
+      label: "Pending Hubs",
       value: exams.length.toString(),
       icon: Clock,
-      color: "text-amber-500",
-      bg: "bg-amber-500/10",
+      container: "bg-amber-50 border-amber-200 text-amber-600",
     },
     {
       label: "Distinctions",
-      value: achievements.toString(),
+      value: distinctions.toString(),
       icon: Award,
-      color: "text-purple-500",
-      bg: "bg-purple-500/10",
+      container: "bg-purple-50 border-purple-200 text-purple-600",
     },
-  ]
+  ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       {stats.map((stat) => {
-        const Icon = stat.icon
+        const Icon = stat.icon;
         return (
-          <Card key={stat.label} className="overflow-hidden border-white/5 bg-slate-900 shadow-xl rounded-2xl transition-all hover:border-white/10">
-            <CardContent className="p-5">
-              <div className="flex items-center justify-between mb-4">
+          <Card 
+            key={stat.label} 
+            className="overflow-hidden bg-card border-border shadow-md rounded-2xl transition-all hover:border-school-primary-200 hover:shadow-lg group"
+          >
+            <CardContent className="p-5 md:p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                {/* Rule 21: Scale Protocol applied to icon containers */}
                 <div className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-xl border border-white/5", 
-                    stat.bg, 
-                    stat.color
+                    "flex h-10 w-10 items-center justify-center rounded-xl border shadow-inner transition-transform group-hover:scale-110", 
+                    stat.container
                 )}>
                   <Icon className="h-5 w-5" />
                 </div>
               </div>
+
               <div className="space-y-1">
-                <p className="text-2xl font-black text-white italic tracking-tighter uppercase">
+                {/* Rule 11: Header Scaling */}
+                <p className="text-2xl font-extrabold text-foreground italic tracking-tighter uppercase tabular-nums">
                     {stat.value}
                 </p>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">
+                {/* Rule 11: Metadata Labels */}
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
                     {stat.label}
                 </p>
               </div>
             </CardContent>
           </Card>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

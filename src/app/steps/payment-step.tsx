@@ -835,156 +835,2066 @@
 
 
 
+// 'use client';
+
+// import { useState, useEffect, useCallback, useRef } from 'react';
+// import { useOnboardingStore, type PlanType, type PaymentProvider } from '@/store/onboardingStore';
+// import { verifyPaystackPayment } from '@/app/actions/onboarding';
+// import { 
+//     Check, ArrowRight, ArrowLeft, Zap, Shield, 
+//     Building2, Loader2
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+// import { toast } from 'sonner';
+// import { Button } from '@/components/ui/button';
+
+// /**
+//  * ONBOARDING PHASE 02: LICENSE PROVISIONING
+//  * Rule 17: Pulls plans directly from the Onboarding Store (Hydrated by Shell).
+//  * Rule 11: Real-time DB Plans (System Truth).
+//  */
+// export function PaymentStep() {
+//     const { 
+//         plans, nextStep, prevStep, adminData, setPaymentData, 
+//         setLoading, setError, isLoading, error 
+//     } = useOnboardingStore();
+    
+//     const [selectedPlanId, setSelectedPlanId] = useState<string>(
+//         plans.find(p => p.popular)?.id || plans[0]?.id || ""
+//     );
+//     const [selectedProvider, setSelectedProvider] = useState<PaymentProvider>('paystack');
+//     const [currency, setCurrency] = useState<'ngn' | 'usd'>('ngn');
+//     const isScriptLoaded = useRef(false);
+
+//     const activePlan = plans.find(p => p.id === selectedPlanId);
+
+//     useEffect(() => {
+//         if (typeof window !== 'undefined' && !(window as any).PaystackPop) {
+//             const script = document.createElement('script');
+//             script.src = 'https://js.paystack.co/v1/inline.js';
+//             script.async = true;
+//             script.onload = () => { isScriptLoaded.current = true; };
+//             document.head.appendChild(script);
+//         } else { isScriptLoaded.current = true; }
+//     }, []);
+
+//     const getPlanIcon = (slug: string) => {
+//         if (slug.includes('enterprise')) return Building2;
+//         if (slug.includes('pro')) return Shield;
+//         return Zap;
+//     };
+
+//     const handlePaystack = useCallback(() => {
+//         if (!adminData || !activePlan) return setError("Protocol error: Logic context missing.");
+        
+//         const amount = currency === 'ngn' ? activePlan.priceKobo : activePlan.priceUSD * 100;
+
+//         setLoading(true);
+//         try {
+//             const handler = (window as any).PaystackPop.setup({
+//                 key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+//                 email: adminData.email,
+//                 amount: amount, 
+//                 currency: currency.toUpperCase(),
+//                 metadata: { plan: activePlan.slug, name: adminData.name },
+//                 callback: (response: { reference: string }) => {
+//                     const verify = async () => {
+//                         try {
+//                             const result = await verifyPaystackPayment(response.reference);
+//                             if (!result.success) throw new Error(result.error);
+//                             setPaymentData({ 
+//                                 provider: 'paystack', 
+//                                 plan: activePlan.slug as PlanType, 
+//                                 reference: response.reference, 
+//                                 verified: true 
+//                             });
+//                             nextStep();
+//                         } catch (err: any) { setError(err.message); } finally { setLoading(false); }
+//                     };
+//                     verify();
+//                 },
+//                 onClose: () => setLoading(false),
+//             });
+//             handler.openIframe();
+//         } catch (err) { setLoading(false); }
+//     }, [adminData, currency, activePlan, setPaymentData, nextStep, setLoading, setError]);
+
+//     if (!activePlan) return <div className="p-20 text-center animate-pulse">Initializing Tiers...</div>;
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-10">
+//             <div className="text-center space-y-2">
+//                 <h1 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none">License Tier</h1>
+//                 <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">Institutional Node Scaling</p>
+//             </div>
+
+//             {/* Currency */}
+//             <div className="flex justify-center">
+//                 <div className="flex bg-slate-900 border border-white/5 rounded-2xl p-1.5 gap-1.5 shadow-inner">
+//                     {(['ngn', 'usd'] as const).map((c) => (
+//                         <button key={c} onClick={() => setCurrency(c)} className={cn('px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all', currency === c ? 'bg-school-primary text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white')}>
+//                             {c === 'ngn' ? '₦ NGN Sync' : '$ USD Sync'}
+//                         </button>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             {/* Plans */}
+//             <div className="space-y-4">
+//                 {plans.map((p) => {
+//                     const isSelected = selectedPlanId === p.id;
+//                     const Icon = getPlanIcon(p.slug);
+//                     const price = currency === 'ngn' ? p.priceNGN : p.priceUSD;
+//                     return (
+//                         <button
+//                             key={p.id}
+//                             onClick={() => setSelectedPlanId(p.id)}
+//                             className={cn('w-full text-left rounded-[2rem] border-2 p-8 transition-all duration-500 group relative', isSelected ? 'bg-slate-900 border-school-primary shadow-2xl' : 'bg-slate-950 border-white/5 hover:border-white/10')}
+//                         >
+//                             <div className="relative z-10 flex items-start justify-between gap-6">
+//                                 <div className="flex items-start gap-6">
+//                                     <div className={cn('h-12 w-12 rounded-xl flex items-center justify-center shrink-0 mt-1 transition-colors', isSelected ? 'bg-slate-950 border-white/10 border' : 'bg-slate-900')}>
+//                                         <Icon className="h-6 w-6 text-slate-600 group-hover:text-school-primary" />
+//                                     </div>
+//                                     <div className="space-y-2">
+//                                         <span className="text-xl font-black text-white uppercase italic tracking-tight">{p.name}</span>
+//                                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">{p.description}</p>
+//                                         {isSelected && (
+//                                             <ul className="mt-6 grid grid-cols-1 gap-3 animate-in slide-in-from-top-2">
+//                                                 {p.features.map((f) => (
+//                                                     <li key={f} className="flex items-center gap-2 text-[9px] font-black text-slate-400 uppercase">
+//                                                         <Check className="h-3 w-3 text-school-primary shrink-0" /> {f}
+//                                                     </li>
+//                                                 ))}
+//                                             </ul>
+//                                         )}
+//                                     </div>
+//                                 </div>
+//                                 <div className="text-right">
+//                                     <p className="text-2xl font-black text-white italic">
+//                                         {currency === 'ngn' ? '₦' : '$'}{price.toLocaleString()}
+//                                     </p>
+//                                 </div>
+//                             </div>
+//                         </button>
+//                     );
+//                 })}
+//             </div>
+
+//             <div className="flex gap-4">
+//                 <Button variant="outline" onClick={prevStep} className="h-16 px-8 rounded-2xl border-white/5 bg-slate-900 text-slate-500"><ArrowLeft /></Button>
+//                 <Button onClick={handlePaystack} disabled={isLoading} className="flex-1 bg-school-primary text-slate-950 font-black h-16 rounded-2xl shadow-xl uppercase text-[11px] tracking-[0.2em]">
+//                     {isLoading ? <Loader2 className="animate-spin" /> : "Initialize Registry License"}
+//                 </Button>
+//             </div>
+//         </div>
+//     );
+// }
+
+
+// 'use client';
+
+// import React, { useState, useEffect, useCallback, useRef } from 'react';
+// import { useOnboardingStore, type PlanType, type PaymentProvider } from '@/store/onboardingStore';
+// import { verifyPaystackPayment } from '@/app/actions/onboarding';
+// import { 
+//     Check, ArrowLeft, Zap, Shield, 
+//     Building2, Loader2, CreditCard
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+// import { toast } from 'sonner';
+// import { Button } from '@/components/ui/button';
+
+// /**
+//  * ONBOARDING PHASE 02: LICENSE PROVISIONING
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+//  * Rule 19: Standardized Geometry [2rem] for plan cards.
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  */
+// export function PaymentStep() {
+//     const { 
+//         plans, nextStep, prevStep, adminData, setPaymentData, 
+//         setLoading, setError, isLoading 
+//     } = useOnboardingStore();
+    
+//     const [selectedPlanId, setSelectedPlanId] = useState<string>(
+//         plans.find(p => p.popular)?.id || plans[0]?.id || ""
+//     );
+//     const [currency, setCurrency] = useState<'ngn' | 'usd'>('ngn');
+//     const isScriptLoaded = useRef(false);
+
+//     const activePlan = plans.find(p => p.id === selectedPlanId);
+
+//     // Rule 11: System Truth - External Gateway Script Loading
+//     useEffect(() => {
+//         if (typeof window !== 'undefined' && !(window as any).PaystackPop) {
+//             const script = document.createElement('script');
+//             script.src = 'https://js.paystack.co/v1/inline.js';
+//             script.async = true;
+//             script.onload = () => { isScriptLoaded.current = true; };
+//             document.head.appendChild(script);
+//         } else { isScriptLoaded.current = true; }
+//     }, []);
+
+//     const getPlanIcon = (slug: string) => {
+//         if (slug.includes('enterprise')) return Building2;
+//         if (slug.includes('pro')) return Shield;
+//         return Zap;
+//     };
+
+//     const handlePaystack = useCallback(() => {
+//         if (!adminData || !activePlan) return setError("Protocol Error: Logic context missing.");
+        
+//         const amount = currency === 'ngn' ? activePlan.priceKobo : activePlan.priceUSD * 100;
+
+//         setLoading(true);
+//         try {
+//             const handler = (window as any).PaystackPop.setup({
+//                 key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+//                 email: adminData.email,
+//                 amount: amount, 
+//                 currency: currency.toUpperCase(),
+//                 metadata: { plan: activePlan.slug, name: adminData.name },
+//                 callback: (response: { reference: string }) => {
+//                     const verify = async () => {
+//                         try {
+//                             const result = await verifyPaystackPayment(response.reference);
+//                             if (!result.success) throw new Error(result.error);
+//                             setPaymentData({ 
+//                                 provider: 'paystack', 
+//                                 plan: activePlan.slug as PlanType, 
+//                                 reference: response.reference, 
+//                                 verified: true 
+//                             });
+//                             nextStep();
+//                         } catch (err: any) { setError(err.message); } finally { setLoading(false); }
+//                     };
+//                     verify();
+//                 },
+//                 onClose: () => setLoading(false),
+//             });
+//             handler.openIframe();
+//         } catch (err) { 
+//             setLoading(false); 
+//             toast.error("Gateway Protocol Breach: Connection aborted.");
+//         }
+//     }, [adminData, currency, activePlan, setPaymentData, nextStep, setLoading, setError]);
+
+//     if (!activePlan) return (
+//         <div className="p-20 flex flex-col items-center justify-center gap-4 animate-pulse">
+//             <Loader2 className="h-8 w-8 animate-spin text-school-primary" />
+//             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Initializing Licensing Tiers...</p>
+//         </div>
+//     );
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
+            
+//             {/* ── HEADER (Rule 11) ── */}
+//             <div className="text-center space-y-2">
+//                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                     License Tier
+//                 </h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
+//                     Institutional Registry Scaling
+//                 </p>
+//             </div>
+
+//             {/* ── CURRENCY SELECTOR (Rule 18/19/21) ── */}
+//             <div className="flex justify-center">
+//                 <div className="flex bg-surface border border-border rounded-2xl p-1.5 gap-1.5 shadow-inner">
+//                     {(['ngn', 'usd'] as const).map((c) => (
+//                         <button 
+//                             key={c} 
+//                             onClick={() => setCurrency(c)} 
+//                             className={cn(
+//                                 'px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all active:scale-95', 
+//                                 currency === c 
+//                                     ? 'bg-school-primary text-on-school-primary shadow-lg shadow-school-primary-100' 
+//                                     : 'text-muted-foreground hover:text-foreground'
+//                             )}
+//                         >
+//                             {c === 'ngn' ? '₦ NGN Sync' : '$ USD Global'}
+//                         </button>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             {/* ── PLANS LIST (Rule 19/21) ── */}
+//             <div className="space-y-4">
+//                 {plans.map((p) => {
+//                     const isSelected = selectedPlanId === p.id;
+//                     const Icon = getPlanIcon(p.slug);
+//                     const price = currency === 'ngn' ? p.priceNGN : p.priceUSD;
+                    
+//                     return (
+//                         <button
+//                             key={p.id}
+//                             onClick={() => setSelectedPlanId(p.id)}
+//                             className={cn(
+//                                 'w-full text-left rounded-[2rem] border-2 p-6 md:p-8 transition-all duration-500 group relative overflow-hidden', 
+//                                 isSelected 
+//                                     ? 'bg-card border-school-primary shadow-xl scale-[1.02]' 
+//                                     : 'bg-surface border-border hover:border-school-primary-200'
+//                             )}
+//                         >
+//                             {/* Rule 21 Scale Decoration */}
+//                             {isSelected && <div className="absolute top-0 right-0 w-32 h-32 bg-school-primary-50 rounded-full blur-3xl opacity-60" />}
+
+//                             <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
+//                                 <div className="flex items-start gap-6">
+//                                     <div className={cn(
+//                                         'h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-inner', 
+//                                         isSelected ? 'bg-school-primary text-on-school-primary' : 'bg-card border border-border text-muted-foreground'
+//                                     )}>
+//                                         <Icon className="h-6 w-6" strokeWidth={2.5} />
+//                                     </div>
+//                                     <div className="space-y-2">
+//                                         <span className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                                             {p.name}
+//                                         </span>
+//                                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic opacity-70">
+//                                             {p.description}
+//                                         </p>
+                                        
+//                                         {isSelected && (
+//                                             <ul className="mt-6 grid grid-cols-1 gap-3 animate-in slide-in-from-top-2 duration-300">
+//                                                 {p.features.map((f) => (
+//                                                     <li key={f} className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
+//                                                         <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded bg-school-primary-50 border border-school-primary-200">
+//                                                             <Check className="h-3 w-3 text-school-primary" strokeWidth={4} />
+//                                                         </div>
+//                                                         {f}
+//                                                     </li>
+//                                                 ))}
+//                                             </ul>
+//                                         )}
+//                                     </div>
+//                                 </div>
+//                                 <div className="text-right self-end md:self-start">
+//                                     <p className="text-2xl font-extrabold text-foreground italic tracking-tighter tabular-nums">
+//                                         {currency === 'ngn' ? '₦' : '$'}{price.toLocaleString()}
+//                                     </p>
+//                                     <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1 opacity-40">
+//                                         Per Provisioning Cycle
+//                                     </p>
+//                                 </div>
+//                             </div>
+//                         </button>
+//                     );
+//                 })}
+//             </div>
+
+//             {/* ── NAVIGATION ACTIONS (Rule 20) ── */}
+//             <div className="flex items-center gap-4 pt-4">
+//                 <Button 
+//                     variant="outline" 
+//                     onClick={prevStep} 
+//                     className="h-16 w-16 md:w-20 rounded-2xl border-border bg-surface text-muted-foreground hover:bg-background hover:text-foreground transition-all shrink-0 shadow-sm"
+//                 >
+//                     <ArrowLeft className="h-5 w-5" strokeWidth={3} />
+//                 </Button>
+                
+//                 <Button 
+//                     onClick={handlePaystack} 
+//                     disabled={isLoading} 
+//                     className={cn(
+//                         "flex-1 h-16 rounded-2xl shadow-xl transition-all active:scale-95 group",
+//                         "bg-school-primary text-on-school-primary font-extrabold text-[11px] uppercase tracking-widest",
+//                         "hover:brightness-110 shadow-school-primary-200 disabled:opacity-30"
+//                     )}
+//                 >
+//                     {isLoading ? (
+//                         <Loader2 className="h-5 w-5 animate-spin mx-auto" />
+//                     ) : (
+//                         <div className="flex items-center justify-center gap-3">
+//                             <CreditCard className="h-4 w-4" />
+//                             Initialize Registry License
+//                         </div>
+//                     )}
+//                 </Button>
+//             </div>
+
+//             <div className="flex justify-center items-center gap-4 opacity-30 grayscale pt-2">
+//                 <div className="h-[1px] flex-1 bg-border" />
+//                 <p className="text-[8px] font-bold uppercase tracking-[0.3em]">Paystack Secure Transaction Hub</p>
+//                 <div className="h-[1px] flex-1 bg-border" />
+//             </div>
+//         </div>
+//     );
+// }
+
+
+
+
+
+// 'use client';
+
+// import React, { useState, useEffect, useCallback, useRef } from 'react';
+// import { useOnboardingStore, type PlanType } from '@/store/onboardingStore';
+// import { completeOnboarding, verifyPaystackPayment } from '@/app/actions/onboarding';
+// import { 
+//     Check, ArrowLeft, Zap, Shield, 
+//     Building2, Loader2, CreditCard,
+//     Lock
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+// import { toast } from 'sonner';
+// import { Button } from '@/components/ui/button';
+
+// /**
+//  * ONBOARDING PHASE 03: LICENSE PROVISIONING
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 12: Atomic Server Action for Hub Initialization.
+//  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+//  * Rule 19: Standardized Geometry [2rem] for plan cards.
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  */
+// export function PaymentStep() {
+//     const { 
+//         plans, prevStep, adminData, schoolData, 
+//         setPaymentData, setLoading, setError, 
+//         isLoading, setProvisioned, setConfirmedEmail 
+//     } = useOnboardingStore();
+    
+//     const [selectedPlanId, setSelectedPlanId] = useState<string>(
+//         plans.find(p => p.popular)?.id || plans[0]?.id || ""
+//     );
+//     const [currency, setCurrency] = useState<'ngn' | 'usd'>('ngn');
+//     const isScriptLoaded = useRef(false);
+
+//     const activePlan = plans.find(p => p.id === selectedPlanId);
+
+//     // Rule 11: External Gateway Script Synchronization
+//     useEffect(() => {
+//         if (typeof window !== 'undefined' && !(window as any).PaystackPop) {
+//             const script = document.createElement('script');
+//             script.src = 'https://js.paystack.co/v1/inline.js';
+//             script.async = true;
+//             script.onload = () => { isScriptLoaded.current = true; };
+//             document.head.appendChild(script);
+//         } else { isScriptLoaded.current = true; }
+//     }, []);
+
+//     const getPlanIcon = (slug: string) => {
+//         if (slug.includes('enterprise')) return Building2;
+//         if (slug.includes('pro')) return Shield;
+//         return Zap;
+//     };
+
+//     /**
+//      * ATOMIC SYNC HUB
+//      * Rule 11: Executes the single-transaction provisioning after payment.
+//      */
+//     const handlePaystack = useCallback(() => {
+//         if (!adminData || !schoolData || !activePlan) {
+//             toast.error("Registry Context Missing: Protocol aborted.");
+//             return;
+//         }
+        
+//         const amount = currency === 'ngn' ? activePlan.priceKobo : activePlan.priceUSD * 100;
+
+//         setLoading(true);
+//         try {
+//             const handler = (window as any).PaystackPop.setup({
+//                 key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+//                 email: adminData.email,
+//                 amount: amount, 
+//                 currency: currency.toUpperCase(),
+//                 metadata: { 
+//                     plan: activePlan.slug, 
+//                     schoolName: schoolData.schoolName,
+//                     adminName: adminData.name 
+//                 },
+//                 callback: (response: { reference: string }) => {
+//                     const finalizeRegistry = async () => {
+//                         try {
+//                             // 1. Verify Payment Truth
+//                             const verification = await verifyPaystackPayment(response.reference);
+//                             if (!verification.success) throw new Error("Payment Verification Failed.");
+
+//                             // 2. Rule 11: Create Institutional Hub + Admin Profile + Subscription
+//                             const result = await completeOnboarding(
+//                                 adminData,
+//                                 schoolData,
+//                                 response.reference,
+//                                 activePlan.slug as PlanType
+//                             );
+
+//                             if (!result.success) throw new Error(result.error);
+
+//                             setPaymentData({ 
+//                                 provider: 'paystack', 
+//                                 plan: activePlan.slug as PlanType, 
+//                                 reference: response.reference, 
+//                                 verified: true 
+//                             });
+                            
+//                             setConfirmedEmail(adminData.email);
+//                             setProvisioned(true);
+//                             toast.success("Institutional Hub Synchronized.");
+//                         } catch (err: any) { 
+//                             setError(err.message || "Registry synchronization failed."); 
+//                         } finally { 
+//                             setLoading(false); 
+//                         }
+//                     };
+//                     finalizeRegistry();
+//                 },
+//                 onClose: () => setLoading(false),
+//             });
+//             handler.openIframe();
+//         } catch (err) { 
+//             setLoading(false); 
+//             toast.error("Gateway protocol breach.");
+//         }
+//     }, [adminData, schoolData, currency, activePlan, setPaymentData, setLoading, setError, setProvisioned, setConfirmedEmail]);
+
+//     if (!activePlan) return (
+//         <div className="p-20 flex flex-col items-center justify-center gap-4 animate-pulse">
+//             <Loader2 className="h-8 w-8 animate-spin text-school-primary" />
+//             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Initializing Licensing Hub...</p>
+//         </div>
+//     );
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
+            
+//             {/* ── HEADER (Rule 11) ── */}
+//             <div className="text-center space-y-2">
+//                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                     License Tier
+//                 </h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
+//                     Select institutional registry capacity
+//                 </p>
+//             </div>
+
+//             {/* ── CURRENCY HUB (Rule 21 Scale Protocol) ── */}
+//             <div className="flex justify-center">
+//                 <div className="flex bg-surface border border-border rounded-2xl p-1.5 gap-1.5 shadow-inner">
+//                     {(['ngn', 'usd'] as const).map((c) => (
+//                         <button 
+//                             key={c} 
+//                             onClick={() => setCurrency(c)} 
+//                             className={cn(
+//                                 'px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all', 
+//                                 currency === c 
+//                                     ? 'bg-school-primary text-on-school-primary shadow-lg' 
+//                                     : 'text-muted-foreground hover:text-foreground'
+//                             )}
+//                         >
+//                             {c === 'ngn' ? '₦ NGN' : '$ USD'}
+//                         </button>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             {/* ── PLANS LIST (Rule 19/21) ── */}
+//             <div className="space-y-4">
+//                 {plans.map((p) => {
+//                     const isSelected = selectedPlanId === p.id;
+//                     const Icon = getPlanIcon(p.slug);
+//                     const price = currency === 'ngn' ? p.priceNGN : p.priceUSD;
+                    
+//                     return (
+//                         <button
+//                             key={p.id}
+//                             onClick={() => setSelectedPlanId(p.id)}
+//                             className={cn(
+//                                 'w-full text-left rounded-[2rem] border-2 p-6 md:p-8 transition-all duration-500 group relative overflow-hidden', 
+//                                 isSelected 
+//                                     ? 'bg-card border-school-primary shadow-xl scale-[1.02]' 
+//                                     : 'bg-surface border-border hover:border-school-primary-200'
+//                             )}
+//                         >
+//                             <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
+//                                 <div className="flex items-start gap-6">
+//                                     <div className={cn(
+//                                         'h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-inner', 
+//                                         isSelected ? 'bg-school-primary text-on-school-primary' : 'bg-card border border-border text-muted-foreground'
+//                                     )}>
+//                                         <Icon className="h-6 w-6" strokeWidth={2.5} />
+//                                     </div>
+//                                     <div className="space-y-2">
+//                                         <span className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                                             {p.name}
+//                                         </span>
+//                                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic opacity-70">
+//                                             {p.description}
+//                                         </p>
+                                        
+//                                         {isSelected && (
+//                                             <ul className="mt-6 grid grid-cols-1 gap-3 animate-in slide-in-from-top-2 duration-300">
+//                                                 {p.features.slice(0, 4).map((f) => (
+//                                                     <li key={f} className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
+//                                                         <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded bg-school-primary-50 border border-school-primary-200">
+//                                                             <Check className="h-3 w-3 text-school-primary" strokeWidth={4} />
+//                                                         </div>
+//                                                         {f}
+//                                                     </li>
+//                                                 ))}
+//                                             </ul>
+//                                         )}
+//                                     </div>
+//                                 </div>
+//                                 <div className="text-right self-end md:self-start">
+//                                     <p className="text-2xl font-extrabold text-foreground italic tracking-tighter tabular-nums">
+//                                         {currency === 'ngn' ? '₦' : '$'}{price.toLocaleString()}
+//                                     </p>
+//                                 </div>
+//                             </div>
+//                         </button>
+//                     );
+//                 })}
+//             </div>
+
+//             {/* ── NAVIGATION ACTIONS (Rule 20) ── */}
+//             <div className="flex items-center gap-4 pt-4">
+//                 <Button 
+//                     variant="outline" 
+//                     onClick={prevStep} 
+//                     className="h-16 w-16 md:w-20 rounded-2xl border-border bg-surface text-muted-foreground hover:bg-background hover:text-foreground transition-all shrink-0"
+//                 >
+//                     <ArrowLeft className="h-5 w-5" strokeWidth={3} />
+//                 </Button>
+                
+//                 <Button 
+//                     onClick={handlePaystack} 
+//                     disabled={isLoading} 
+//                     className={cn(
+//                         "flex-1 h-16 rounded-2xl shadow-xl transition-all active:scale-95 group",
+//                         "bg-school-primary text-on-school-primary font-extrabold text-[11px] uppercase tracking-widest",
+//                         "hover:brightness-110 shadow-school-primary-200 disabled:opacity-30"
+//                     )}
+//                 >
+//                     {isLoading ? (
+//                         <Loader2 className="h-5 w-5 animate-spin mx-auto" />
+//                     ) : (
+//                         <div className="flex items-center justify-center gap-3">
+//                             <CreditCard className="h-4 w-4" />
+//                             Finalize Hub Synchronization
+//                         </div>
+//                     )}
+//                 </Button>
+//             </div>
+
+//             <div className="flex justify-center items-center gap-4 opacity-30 grayscale pt-2">
+//                 <Lock className="h-3 w-3" />
+//                 <p className="text-[8px] font-bold uppercase tracking-[0.3em]">PCI-DSS Secured Transaction Hub</p>
+//             </div>
+//         </div>
+//     );
+// }
+
+
+// 'use client';
+
+// import React, { useState, useEffect, useCallback, useRef } from 'react';
+// import { useOnboardingStore, type PlanType } from '@/store/onboardingStore';
+// import { completeOnboarding, verifyPaystackPayment } from '@/app/actions/onboarding';
+// import { 
+//     Check, ArrowLeft, Zap, Shield, 
+//     Building2, Loader2, CreditCard,
+//     Lock
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+// import { toast } from 'sonner';
+// import { Button } from '@/components/ui/button';
+// import { toTitleCase } from '@/lib/utils/formatters';
+
+// /**
+//  * ONBOARDING PHASE 03: LICENSE PROVISIONING & FINAL DEPLOYMENT
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 12: Atomic Server Action for Hub Initialization.
+//  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+//  * Rule 19: Standardized Geometry [2rem] for plan cards.
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  */
+// export function PaymentStep() {
+//     const { 
+//         plans, prevStep, adminData, schoolData, 
+//         setPaymentData, setLoading, setError, 
+//         isLoading, setProvisioned, setConfirmedEmail 
+//     } = useOnboardingStore();
+    
+//     const [selectedPlanId, setSelectedPlanId] = useState<string>(
+//         plans.find(p => p.popular)?.id || plans[0]?.id || ""
+//     );
+//     const [currency, setCurrency] = useState<'ngn' | 'usd'>('ngn');
+//     const isScriptLoaded = useRef(false);
+
+//     const activePlan = plans.find(p => p.id === selectedPlanId);
+
+//     // Rule 11: External Gateway Script Synchronization
+//     useEffect(() => {
+//         if (typeof window !== 'undefined' && !(window as any).PaystackPop) {
+//             const script = document.createElement('script');
+//             script.src = 'https://js.paystack.co/v1/inline.js';
+//             script.async = true;
+//             script.onload = () => { isScriptLoaded.current = true; };
+//             document.head.appendChild(script);
+//         } else { isScriptLoaded.current = true; }
+//     }, []);
+
+//     const getPlanIcon = (slug: string) => {
+//         if (slug.includes('enterprise')) return Building2;
+//         if (slug.includes('pro')) return Shield;
+//         return Zap;
+//     };
+
+//     /**
+//      * TRANSACTIONAL DEPLOYMENT HUB
+//      * Rule 11/12: This is the final transactional unit of the onboarding flow.
+//      */
+//     const handleFinalizeDeployment = useCallback(() => {
+//         if (!adminData || !schoolData || !activePlan || !adminData.password) {
+//             setError("Registry Context Error: Identity profile or hub data incomplete.");
+//             return;
+//         }
+        
+//         const amount = currency === 'ngn' ? activePlan.priceKobo : activePlan.priceUSD * 100;
+
+//         setLoading(true);
+//         setError(null);
+
+//         try {
+//             const handler = (window as any).PaystackPop.setup({
+//                 key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+//                 email: adminData.email,
+//                 amount: amount, 
+//                 currency: currency.toUpperCase(),
+//                 metadata: { 
+//                     plan: activePlan.slug, 
+//                     schoolName: schoolData.schoolName,
+//                     adminName: adminData.name 
+//                 },
+//                 callback: (response: { reference: string }) => {
+//                     const executeFinalSync = async () => {
+//                         try {
+//                             // 1. Rule 11: Verify Gateway Truth
+//                             const verification = await verifyPaystackPayment(response.reference);
+//                             if (!verification.success) throw new Error("Payment Verification Failed.");
+
+//                             // 2. Rule 11/12: Single Atomic Transaction (Hub + Profile + Subscription)
+//                             const result = await completeOnboarding(
+//                                 {
+//                                     ...adminData,
+//                                     name: toTitleCase(adminData.name),
+//                                 },
+//                                 schoolData,
+//                                 response.reference,
+//                                 activePlan.slug as PlanType
+//                             );
+
+//                             if (!result.success) throw new Error(result.error);
+
+//                             // 3. Update Registry State
+//                             setPaymentData({ 
+//                                 provider: 'paystack', 
+//                                 plan: activePlan.slug as PlanType, 
+//                                 reference: response.reference, 
+//                                 verified: true 
+//                             });
+                            
+//                             // 4. Rule 17: Promote to Confirmation Hub
+//                             setConfirmedEmail(adminData.email);
+//                             setProvisioned(true); // Triggers the Shell to show ConfirmationScreen
+//                             toast.success("Institutional Hub Synchronized Successfully.");
+                            
+//                         } catch (err: any) { 
+//                             setError(err.message || "Final synchronization protocol failed."); 
+//                         } finally { 
+//                             setLoading(false); 
+//                         }
+//                     };
+//                     executeFinalSync();
+//                 },
+//                 onClose: () => setLoading(false),
+//             });
+//             handler.openIframe();
+//         } catch (err) { 
+//             setLoading(false); 
+//             toast.error("Gateway connection breach: Hub sync aborted.");
+//         }
+//     }, [adminData, schoolData, currency, activePlan, setPaymentData, setLoading, setError, setProvisioned, setConfirmedEmail]);
+
+//     if (!activePlan) return (
+//         <div className="p-20 flex flex-col items-center justify-center gap-4 animate-pulse">
+//             <Loader2 className="h-8 w-8 animate-spin text-school-primary" />
+//             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">Initializing Licensing Hub...</p>
+//         </div>
+//     );
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
+            
+//             {/* ── HEADER (Rule 11) ── */}
+//             <div className="text-center space-y-2">
+//                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                     License Tier
+//                 </h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
+//                     Finalize institutional registry capacity
+//                 </p>
+//             </div>
+
+//             {/* ── CURRENCY SELECTOR (Rule 21) ── */}
+//             <div className="flex justify-center">
+//                 <div className="flex bg-surface border border-border rounded-2xl p-1.5 gap-1.5 shadow-inner">
+//                     {(['ngn', 'usd'] as const).map((c) => (
+//                         <button 
+//                             key={c} 
+//                             onClick={() => setCurrency(c)} 
+//                             className={cn(
+//                                 'px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all active:scale-95', 
+//                                 currency === c 
+//                                     ? 'bg-school-primary text-on-school-primary shadow-lg shadow-school-primary-100' 
+//                                     : 'text-muted-foreground hover:text-foreground'
+//                             )}
+//                         >
+//                             {c === 'ngn' ? '₦ NGN Sync' : '$ USD Global'}
+//                         </button>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             {/* ── PLANS LIST (Rule 19/21) ── */}
+//             <div className="space-y-4">
+//                 {plans.map((p) => {
+//                     const isSelected = selectedPlanId === p.id;
+//                     const Icon = getPlanIcon(p.slug);
+//                     const price = currency === 'ngn' ? p.priceNGN : p.priceUSD;
+                    
+//                     return (
+//                         <button
+//                             key={p.id}
+//                             onClick={() => setSelectedPlanId(p.id)}
+//                             className={cn(
+//                                 'w-full text-left rounded-[2rem] border-2 p-6 md:p-8 transition-all duration-500 group relative overflow-hidden', 
+//                                 isSelected 
+//                                     ? 'bg-card border-school-primary shadow-xl scale-[1.02]' 
+//                                     : 'bg-surface border-border hover:border-school-primary-200'
+//                             )}
+//                         >
+//                             {/* Rule 21 mathematical decoration */}
+//                             {isSelected && <div className="absolute top-0 right-0 w-32 h-32 bg-school-primary-50 rounded-full blur-3xl opacity-60" />}
+
+//                             <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
+//                                 <div className="flex items-start gap-6">
+//                                     <div className={cn(
+//                                         'h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-inner', 
+//                                         isSelected ? 'bg-school-primary text-on-school-primary' : 'bg-card border border-border text-muted-foreground'
+//                                     )}>
+//                                         <Icon className="h-6 w-6" strokeWidth={2.5} />
+//                                     </div>
+//                                     <div className="space-y-2">
+//                                         <span className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                                             {p.name}
+//                                         </span>
+//                                         <ul className="mt-4 space-y-2">
+//                                             {p.features.slice(0, 3).map((f) => (
+//                                                 <li key={f} className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
+//                                                     <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded bg-school-primary-50 border border-school-primary-200">
+//                                                         <Check className="h-3 w-3 text-school-primary" strokeWidth={4} />
+//                                                     </div>
+//                                                     {f}
+//                                                 </li>
+//                                             ))}
+//                                         </ul>
+//                                     </div>
+//                                 </div>
+//                                 <div className="text-right self-end md:self-start">
+//                                     <p className="text-2xl font-extrabold text-foreground italic tracking-tighter tabular-nums">
+//                                         {currency === 'ngn' ? '₦' : '$'}{price.toLocaleString()}
+//                                     </p>
+//                                 </div>
+//                             </div>
+//                         </button>
+//                     );
+//                 })}
+//             </div>
+
+//             {/* ── ERROR DISPLAY ── */}
+//             {error && (
+//                 <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-bold uppercase tracking-widest italic animate-in shake">
+//                     Protocol Error: {error}
+//                 </div>
+//             )}
+
+//             {/* ── NAVIGATION ACTIONS (Rule 20) ── */}
+//             <div className="flex items-center gap-4 pt-4">
+//                 <Button 
+//                     variant="outline" 
+//                     type="button"
+//                     onClick={prevStep} 
+//                     className="h-16 px-8 rounded-xl border-border bg-surface text-muted-foreground transition-all hover:bg-background shadow-sm"
+//                 >
+//                     <ArrowLeft className="h-5 w-5" strokeWidth={3} />
+//                 </Button>
+                
+//                 <Button 
+//                     onClick={handleFinalizeDeployment} 
+//                     disabled={isLoading} 
+//                     className={cn(
+//                         "flex-1 h-16 rounded-xl shadow-xl transition-all active:scale-95 group",
+//                         "bg-school-primary text-on-school-primary font-extrabold text-[11px] uppercase tracking-widest",
+//                         "hover:brightness-110 shadow-school-primary-200 disabled:opacity-30"
+//                     )}
+//                 >
+//                     {isLoading ? (
+//                         <Loader2 className="h-5 w-5 animate-spin mx-auto" />
+//                     ) : (
+//                         <div className="flex items-center justify-center gap-3">
+//                             <CreditCard className="h-4 w-4" />
+//                             Finalize Hub Synchronization
+//                         </div>
+//                     )}
+//                 </Button>
+//             </div>
+
+//             <div className="flex justify-center items-center gap-4 opacity-30 grayscale pt-2">
+//                 <Lock className="h-3 w-3" />
+//                 <p className="text-[8px] font-bold uppercase tracking-[0.3em]">PCI-DSS Secured Transaction Hub</p>
+//             </div>
+//         </div>
+//     );
+// }
+
+
+// 'use client';
+
+// import React, { useState, useEffect, useCallback, useRef } from 'react';
+// import { useOnboardingStore, type PlanType } from '@/store/onboardingStore';
+// import { completeOnboarding, verifyPaystackPayment } from '@/app/actions/onboarding';
+// import { 
+//     Check, ArrowLeft, Zap, Shield, 
+//     Building2, Loader2, CreditCard,
+//     Lock, ShieldAlert
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+// import { toast } from 'sonner';
+// import { Button } from '@/components/ui/button';
+// import { toTitleCase } from '@/lib/utils/formatters';
+
+// /**
+//  * ONBOARDING PHASE 03: LICENSE PROVISIONING & FINAL DEPLOYMENT
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 15: Resolved Error at 1720 by strict destructuring and null-checks.
+//  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+//  * Rule 21: Scale Protocol for mathematical tints.
+//  */
+// export function PaymentStep() {
+//     // ✅ FIX: Explicit destructuring of 'error' and 'setError' from the Hub Store
+//     const { 
+//         plans, prevStep, adminData, schoolData, 
+//         setPaymentData, setLoading, setError, 
+//         isLoading, error, setProvisioned, setConfirmedEmail 
+//     } = useOnboardingStore();
+    
+//     const [selectedPlanId, setSelectedPlanId] = useState<string>(
+//         plans.find(p => p.popular)?.id || plans[0]?.id || ""
+//     );
+//     const [currency, setCurrency] = useState<'ngn' | 'usd'>('ngn');
+//     const isScriptLoaded = useRef(false);
+
+//     const activePlan = plans.find(p => p.id === selectedPlanId);
+
+//     useEffect(() => {
+//         if (typeof window !== 'undefined' && !(window as any).PaystackPop) {
+//             const script = document.createElement('script');
+//             script.src = 'https://js.paystack.co/v1/inline.js';
+//             script.async = true;
+//             script.onload = () => { isScriptLoaded.current = true; };
+//             document.head.appendChild(script);
+//         } else { isScriptLoaded.current = true; }
+//     }, []);
+
+//     const getPlanIcon = (slug: string) => {
+//         if (slug.includes('enterprise')) return Building2;
+//         if (slug.includes('pro')) return Shield;
+//         return Zap;
+//     };
+
+//     const handleFinalizeDeployment = useCallback(() => {
+//         if (!adminData || !schoolData || !activePlan || !adminData.password) {
+//             setError("Registry Context Error: Identity profile or hub data incomplete.");
+//             return;
+//         }
+        
+//         const amount = currency === 'ngn' ? activePlan.priceKobo : activePlan.priceUSD * 100;
+
+//         setLoading(true);
+//         setError(null);
+
+//         try {
+//             const handler = (window as any).PaystackPop.setup({
+//                 key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+//                 email: adminData.email,
+//                 amount: amount, 
+//                 currency: currency.toUpperCase(),
+//                 metadata: { 
+//                     plan: activePlan.slug, 
+//                     schoolName: schoolData.schoolName,
+//                     adminName: adminData.name 
+//                 },
+//                 callback: (response: { reference: string }) => {
+//                     const executeFinalSync = async () => {
+//                         try {
+//                             const verification = await verifyPaystackPayment(response.reference);
+//                             if (!verification.success) throw new Error("Payment Verification Failed.");
+
+//                             const result = await completeOnboarding(
+//                                 {
+//                                     ...adminData,
+//                                     name: toTitleCase(adminData.name),
+//                                 },
+//                                 schoolData,
+//                                 response.reference,
+//                                 activePlan.slug as PlanType
+//                             );
+
+//                             if (!result.success) throw new Error(result.error);
+
+//                             setPaymentData({ 
+//                                 provider: 'paystack', 
+//                                 plan: activePlan.slug as PlanType, 
+//                                 reference: response.reference, 
+//                                 verified: true 
+//                             });
+                            
+//                             setConfirmedEmail(adminData.email);
+//                             setProvisioned(true);
+//                             toast.success("Institutional Hub Synchronized.");
+                            
+//                         } catch (err: any) { 
+//                             setError(err.message || "Final synchronization protocol failed."); 
+//                         } finally { 
+//                             setLoading(false); 
+//                         }
+//                     };
+//                     executeFinalSync();
+//                 },
+//                 onClose: () => setLoading(false),
+//             });
+//             handler.openIframe();
+//         } catch (err) { 
+//             setLoading(false); 
+//             toast.error("Gateway connection breach.");
+//         }
+//     }, [adminData, schoolData, currency, activePlan, setPaymentData, setLoading, setError, setProvisioned, setConfirmedEmail]);
+
+//     if (!activePlan) return <div className="p-20 text-center italic opacity-40">Synchronizing Tiers...</div>;
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
+            
+//             <div className="text-center space-y-2">
+//                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                     License Tier
+//                 </h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
+//                     Finalize institutional registry capacity
+//                 </p>
+//             </div>
+
+//             <div className="flex justify-center">
+//                 <div className="flex bg-surface border border-border rounded-2xl p-1.5 gap-1.5 shadow-inner">
+//                     {(['ngn', 'usd'] as const).map((c) => (
+//                         <button 
+//                             key={c} 
+//                             onClick={() => setCurrency(c)} 
+//                             className={cn(
+//                                 'px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all', 
+//                                 currency === c 
+//                                     ? 'bg-school-primary text-on-school-primary shadow-lg shadow-school-primary-200' 
+//                                     : 'text-muted-foreground hover:text-foreground'
+//                             )}
+//                         >
+//                             {c === 'ngn' ? '₦ NGN Sync' : '$ USD Global'}
+//                         </button>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             <div className="space-y-4">
+//                 {plans.map((p) => {
+//                     const isSelected = selectedPlanId === p.id;
+//                     const Icon = getPlanIcon(p.slug);
+//                     const price = currency === 'ngn' ? p.priceNGN : p.priceUSD;
+                    
+//                     return (
+//                         <button
+//                             key={p.id}
+//                             onClick={() => setSelectedPlanId(p.id)}
+//                             className={cn(
+//                                 'w-full text-left rounded-[2rem] border-2 p-6 md:p-8 transition-all duration-500 group relative overflow-hidden', 
+//                                 isSelected 
+//                                     ? 'bg-card border-school-primary shadow-xl scale-[1.02]' 
+//                                     : 'bg-surface border-border hover:border-school-primary-200'
+//                             )}
+//                         >
+//                             <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
+//                                 <div className="flex items-start gap-6">
+//                                     <div className={cn(
+//                                         'h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-inner', 
+//                                         isSelected ? 'bg-school-primary text-on-school-primary' : 'bg-card border border-border text-muted-foreground'
+//                                     )}>
+//                                         <Icon className="h-6 w-6" strokeWidth={2.5} />
+//                                     </div>
+//                                     <div className="space-y-2">
+//                                         <span className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                                             {p.name}
+//                                         </span>
+//                                         <ul className="mt-4 space-y-2">
+//                                             {p.features.slice(0, 3).map((f) => (
+//                                                 <li key={f} className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
+//                                                     <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded bg-school-primary-50 border border-school-primary-200">
+//                                                         <Check className="h-3 w-3 text-school-primary" strokeWidth={4} />
+//                                                     </div>
+//                                                     {f}
+//                                                 </li>
+//                                             ))}
+//                                         </ul>
+//                                     </div>
+//                                 </div>
+//                                 <div className="text-right self-end md:self-start">
+//                                     <p className="text-2xl font-extrabold text-foreground italic tracking-tighter tabular-nums">
+//                                         {currency === 'ngn' ? '₦' : '$'}{price.toLocaleString()}
+//                                     </p>
+//                                 </div>
+//                             </div>
+//                         </button>
+//                     );
+//                 })}
+//             </div>
+
+//             {/* ✅ RESOLVED ERROR 1720: Using a clean conditional render for the error protocol */}
+//             {typeof error === 'string' && error.length > 0 && (
+//                 <div className="p-5 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-extrabold uppercase tracking-widest italic animate-in shake duration-500">
+//                     <div className="flex items-center gap-3">
+//                         <ShieldAlert className="h-4 w-4 shrink-0" />
+//                         <span>Protocol Breach: {error}</span>
+//                     </div>
+//                 </div>
+//             )}
+
+//             <div className="flex items-center gap-4 pt-4">
+//                 <Button 
+//                     variant="outline" 
+//                     type="button"
+//                     onClick={prevStep} 
+//                     className="h-16 px-8 rounded-2xl border-border bg-surface text-muted-foreground transition-all hover:bg-background"
+//                 >
+//                     <ArrowLeft className="h-5 w-5" strokeWidth={3} />
+//                 </Button>
+                
+//                 <Button 
+//                     onClick={handleFinalizeDeployment} 
+//                     disabled={isLoading} 
+//                     className={cn(
+//                         "flex-1 h-16 rounded-2xl shadow-xl transition-all active:scale-95 group",
+//                         "bg-school-primary text-on-school-primary font-extrabold text-[11px] uppercase tracking-widest",
+//                         "hover:brightness-110 shadow-school-primary-200 disabled:opacity-30"
+//                     )}
+//                 >
+//                     {isLoading ? (
+//                         <Loader2 className="h-5 w-5 animate-spin mx-auto" />
+//                     ) : (
+//                         <div className="flex items-center justify-center gap-3">
+//                             <CreditCard className="h-4 w-4" />
+//                             Finalize Hub Synchronization
+//                         </div>
+//                     )}
+//                 </Button>
+//             </div>
+//         </div>
+//     );
+// }
+
+
+
+// 'use client';
+
+// import React, { useState, useEffect, useCallback, useRef } from 'react';
+// import { useOnboardingStore, type PlanType } from '@/store/onboardingStore';
+// import { completeOnboarding, verifyPaystackPayment } from '@/app/actions/onboarding';
+// import { 
+//     Check, ArrowLeft, Zap, Shield, 
+//     Building2, Loader2, CreditCard,
+//     Lock, ShieldAlert, ShieldCheck
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+// import { toast } from 'sonner';
+// import { Button } from '@/components/ui/button';
+// import { toTitleCase } from '@/lib/utils/formatters';
+
+// /**
+//  * ONBOARDING PHASE 03: LICENSE PROVISIONING & FINAL DEPLOYMENT
+//  * Logic Fix: Ensures DB records are only created post-payment verification.
+//  * Bug 1 Fix: Prevents double payment by checking paymentStatus.
+//  */
+// export function PaymentStep() {
+//     const { 
+//         plans, prevStep, adminData, schoolData, 
+//         setPaymentData, setLoading, setError, 
+//         isLoading, error, setProvisioned, setConfirmedEmail,
+//         paymentStatus // ✅ Added to prevent double payment
+//     } = useOnboardingStore();
+    
+//     const [selectedPlanId, setSelectedPlanId] = useState<string>(
+//         plans.find(p => p.popular)?.id || plans[0]?.id || ""
+//     );
+//     const [currency, setCurrency] = useState<'ngn' | 'usd'>('ngn');
+//     const isScriptLoaded = useRef(false);
+
+//     const activePlan = plans.find(p => p.id === selectedPlanId);
+//     const hasPaid = paymentStatus === 'paid';
+
+//     // Rule: Inject Paystack Script
+//     useEffect(() => {
+//         if (typeof window !== 'undefined' && !(window as any).PaystackPop) {
+//             const script = document.createElement('script');
+//             script.src = 'https://js.paystack.co/v1/inline.js';
+//             script.async = true;
+//             script.onload = () => { isScriptLoaded.current = true; };
+//             document.head.appendChild(script);
+//         } else { isScriptLoaded.current = true; }
+//     }, []);
+
+//     const getPlanIcon = (slug: string) => {
+//         if (slug.includes('enterprise')) return Building2;
+//         if (slug.includes('pro')) return Shield;
+//         return Zap;
+//     };
+
+//     const handleFinalizeDeployment = useCallback(() => {
+//         // PREVENT DOUBLE PAYMENT: If user has already paid, block the gateway
+//         if (hasPaid) {
+//             toast.error("Payment already verified. Initializing secure redirect...");
+//             setProvisioned(true);
+//             return;
+//         }
+
+//         if (!adminData || !schoolData || !activePlan || !adminData.password) {
+//             setError("Registry Context Error: Identity profile or hub data incomplete.");
+//             return;
+//         }
+        
+//         const amount = currency === 'ngn' ? activePlan.priceKobo : activePlan.priceUSD * 100;
+
+//         setLoading(true);
+//         setError(null);
+
+//         try {
+//             const handler = (window as any).PaystackPop.setup({
+//                 key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+//                 email: adminData.email,
+//                 amount: amount, 
+//                 currency: currency.toUpperCase(),
+//                 metadata: { 
+//                     plan: activePlan.slug, 
+//                     schoolName: schoolData.schoolName,
+//                     adminName: adminData.name 
+//                 },
+//                 callback: (response: { reference: string }) => {
+//                     const executeFinalSync = async () => {
+//                         try {
+//                             // 1. VERIFY PAYMENT (SERVER-SIDE)
+//                             const verification = await verifyPaystackPayment(response.reference);
+//                             if (!verification.success) throw new Error("Payment Verification Failed.");
+
+//                             // 2. ONLY AFTER VERIFICATION: Populate Profile and School Tables
+//                             // This ensures the DB is only touched if the money has moved.
+//                             const result = await completeOnboarding(
+//                                 {
+//                                     ...adminData,
+//                                     name: toTitleCase(adminData.name),
+//                                 },
+//                                 schoolData,
+//                                 response.reference,
+//                                 activePlan.slug as PlanType
+//                             );
+
+//                             if (!result.success) throw new Error(result.error);
+
+//                             // 3. UPDATE STORE STATUS
+//                             setPaymentData({ 
+//                                 provider: 'paystack', 
+//                                 plan: activePlan.slug as PlanType, 
+//                                 reference: response.reference, 
+//                                 verified: true 
+//                             });
+                            
+//                             setConfirmedEmail(adminData.email);
+//                             setProvisioned(true);
+//                             toast.success("Institutional Hub Synchronized.");
+                            
+//                         } catch (err: any) { 
+//                             setError(err.message || "Final synchronization protocol failed."); 
+//                         } finally { 
+//                             setLoading(false); 
+//                         }
+//                     };
+//                     executeFinalSync();
+//                 },
+//                 onClose: () => setLoading(false),
+//             });
+//             handler.openIframe();
+//         } catch (err) { 
+//             setLoading(false); 
+//             toast.error("Gateway connection breach.");
+//         }
+//     }, [adminData, schoolData, currency, activePlan, setPaymentData, setLoading, setError, setProvisioned, setConfirmedEmail, hasPaid]);
+
+//     // PREVENT UI VIEW FOR PAID USERS
+//     if (hasPaid) {
+//         return (
+//             <div className="flex flex-col items-center justify-center p-20 space-y-6 animate-pulse">
+//                 <ShieldCheck className="h-16 w-16 text-emerald-500" />
+//                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">
+//                     Transaction Active | Registry Synchronized
+//                 </p>
+//                 <Button onClick={() => setProvisioned(true)} className="bg-emerald-600">Continue to Dashboard</Button>
+//             </div>
+//         );
+//     }
+
+//     if (!activePlan) return <div className="p-20 text-center italic opacity-40">Synchronizing Tiers...</div>;
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
+            
+//             <div className="text-center space-y-2">
+//                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                     License Tier
+//                 </h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
+//                     Finalize institutional registry capacity
+//                 </p>
+//             </div>
+
+//             <div className="flex justify-center">
+//                 <div className="flex bg-surface border border-border rounded-2xl p-1.5 gap-1.5 shadow-inner">
+//                     {(['ngn', 'usd'] as const).map((c) => (
+//                         <button 
+//                             key={c} 
+//                             onClick={() => setCurrency(c)} 
+//                             className={cn(
+//                                 'px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all', 
+//                                 currency === c 
+//                                     ? 'bg-school-primary text-on-school-primary shadow-lg shadow-school-primary-200' 
+//                                     : 'text-muted-foreground hover:text-foreground'
+//                             )}
+//                         >
+//                             {c === 'ngn' ? '₦ NGN Sync' : '$ USD Global'}
+//                         </button>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             <div className="space-y-4">
+//                 {plans.map((p) => {
+//                     const isSelected = selectedPlanId === p.id;
+//                     const Icon = getPlanIcon(p.slug);
+//                     const price = currency === 'ngn' ? p.priceNGN : p.priceUSD;
+                    
+//                     return (
+//                         <button
+//                             key={p.id}
+//                             onClick={() => setSelectedPlanId(p.id)}
+//                             className={cn(
+//                                 'w-full text-left rounded-[2rem] border-2 p-6 md:p-8 transition-all duration-500 group relative overflow-hidden', 
+//                                 isSelected 
+//                                     ? 'bg-card border-school-primary shadow-xl scale-[1.02]' 
+//                                     : 'bg-surface border-border hover:border-school-primary-200'
+//                             )}
+//                         >
+//                             <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
+//                                 <div className="flex items-start gap-6">
+//                                     <div className={cn(
+//                                         'h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-inner', 
+//                                         isSelected ? 'bg-school-primary text-on-school-primary' : 'bg-card border border-border text-muted-foreground'
+//                                     )}>
+//                                         <Icon className="h-6 w-6" strokeWidth={2.5} />
+//                                     </div>
+//                                     <div className="space-y-2">
+//                                         <span className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                                             {p.name}
+//                                         </span>
+//                                         <ul className="mt-4 space-y-2">
+//                                             {p.features.slice(0, 3).map((f) => (
+//                                                 <li key={f} className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
+//                                                     <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded bg-school-primary-50 border border-school-primary-200">
+//                                                         <Check className="h-3 w-3 text-school-primary" strokeWidth={4} />
+//                                                     </div>
+//                                                     {f}
+//                                                 </li>
+//                                             ))}
+//                                         </ul>
+//                                     </div>
+//                                 </div>
+//                                 <div className="text-right self-end md:self-start">
+//                                     <p className="text-2xl font-extrabold text-foreground italic tracking-tighter tabular-nums">
+//                                         {currency === 'ngn' ? '₦' : '$'}{price.toLocaleString()}
+//                                     </p>
+//                                 </div>
+//                             </div>
+//                         </button>
+//                     );
+//                 })}
+//             </div>
+
+//             {typeof error === 'string' && error.length > 0 && (
+//                 <div className="p-5 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-extrabold uppercase tracking-widest italic animate-in shake duration-500">
+//                     <div className="flex items-center gap-3">
+//                         <ShieldAlert className="h-4 w-4 shrink-0" />
+//                         <span>Protocol Breach: {error}</span>
+//                     </div>
+//                 </div>
+//             )}
+
+//             <div className="flex items-center gap-4 pt-4">
+//                 <Button 
+//                     variant="outline" 
+//                     type="button"
+//                     onClick={prevStep} 
+//                     className="h-16 px-8 rounded-2xl border-border bg-surface text-muted-foreground transition-all hover:bg-background"
+//                 >
+//                     <ArrowLeft className="h-5 w-5" strokeWidth={3} />
+//                 </Button>
+                
+//                 <Button 
+//                     onClick={handleFinalizeDeployment} 
+//                     disabled={isLoading} 
+//                     className={cn(
+//                         "flex-1 h-16 rounded-2xl shadow-xl transition-all active:scale-95 group",
+//                         "bg-school-primary text-on-school-primary font-extrabold text-[11px] uppercase tracking-widest",
+//                         "hover:brightness-110 shadow-school-primary-200 disabled:opacity-30"
+//                     )}
+//                 >
+//                     {isLoading ? (
+//                         <Loader2 className="h-5 w-5 animate-spin mx-auto" />
+//                     ) : (
+//                         <div className="flex items-center justify-center gap-3">
+//                             <CreditCard className="h-4 w-4" />
+//                             Finalize Hub Synchronization
+//                         </div>
+//                     )}
+//                 </Button>
+//             </div>
+            
+//             {/* SECURITY FOOTER */}
+//             <div className="flex items-center justify-center gap-4 pt-6 opacity-30 grayscale">
+//                 <div className="flex items-center gap-2">
+//                     <Lock className="h-3 w-3" />
+//                     <span className="text-[8px] font-bold uppercase tracking-widest">SSL 256-BIT ENCRYPTION</span>
+//                 </div>
+//                 <div className="flex items-center gap-2">
+//                     <Shield className="h-3 w-3" />
+//                     <span className="text-[8px] font-bold uppercase tracking-widest">PCI-DSS COMPLIANT GATEWAY</span>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+
+// 'use client';
+
+// import React, { useState, useEffect, useCallback, useRef } from 'react';
+// import { useOnboardingStore, type PlanType } from '@/store/onboardingStore';
+// import { completeOnboarding, verifyPaystackPayment } from '@/app/actions/onboarding';
+// import { 
+//     Check, ArrowLeft, Loader2, CreditCard,
+//     Lock, ShieldAlert, ShieldCheck, Shield, Zap, Building2
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+// import { toast } from 'sonner';
+// import { Button } from '@/components/ui/button';
+// import { toTitleCase } from '@/lib/utils/formatters';
+
+// export function PaymentStep() {
+//     const { 
+//         plans, prevStep, adminData, schoolData, 
+//         setPaymentData, setLoading, setError, 
+//         isLoading, error, setProvisioned, setConfirmedEmail,
+//         paymentStatus 
+//     } = useOnboardingStore();
+    
+//     const [selectedPlanId, setSelectedPlanId] = useState<string>(
+//         plans.find(p => p.popular)?.id || plans[0]?.id || ""
+//     );
+//     const [currency, setCurrency] = useState<'ngn' | 'usd'>('ngn');
+//     const [isGateOpening, setIsGateOpening] = useState(false); // New: Local lock
+
+//     const activePlan = plans.find(p => p.id === selectedPlanId);
+//     const hasPaid = paymentStatus === 'paid';
+
+//     useEffect(() => {
+//         if (typeof window !== 'undefined' && !(window as any).PaystackPop) {
+//             const script = document.createElement('script');
+//             script.src = 'https://js.paystack.co/v1/inline.js';
+//             script.async = true;
+//             document.head.appendChild(script);
+//         }
+//     }, []);
+
+//     const handleFinalizeDeployment = useCallback(() => {
+//         if (hasPaid || isGateOpening || isLoading) return;
+
+//         if (!adminData || !schoolData || !activePlan || !adminData.password) {
+//             setError("Registry Context Error: Data incomplete.");
+//             return;
+//         }
+        
+//         setIsGateOpening(true); // Lock the button immediately
+//         setLoading(true);
+
+//         const amount = currency === 'ngn' ? activePlan.priceKobo : activePlan.priceUSD * 100;
+
+//         try {
+//             const handler = (window as any).PaystackPop.setup({
+//                 key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+//                 email: adminData.email,
+//                 amount: amount, 
+//                 currency: currency.toUpperCase(),
+//                 metadata: { 
+//                     plan: activePlan.slug, 
+//                     schoolName: schoolData.schoolName 
+//                 },
+//                 callback: (response: { reference: string }) => {
+//                     const executeFinalSync = async () => {
+//                         try {
+//                             const verification = await verifyPaystackPayment(response.reference);
+//                             if (!verification.success) throw new Error("Payment Verification Failed.");
+
+//                             const result = await completeOnboarding(
+//                                 { ...adminData, name: toTitleCase(adminData.name) },
+//                                 schoolData,
+//                                 response.reference,
+//                                 activePlan.slug as PlanType
+//                             );
+
+//                             if (!result.success) throw new Error(result.error);
+
+//                             // ── CRITICAL STATE UPDATE ORDER ──
+//                             // 1. Set data and verified status
+//                             setPaymentData({ 
+//                                 provider: 'paystack', 
+//                                 plan: activePlan.slug as PlanType, 
+//                                 reference: response.reference, 
+//                                 verified: true 
+//                             });
+//                             // 2. Set confirmed email
+//                             setConfirmedEmail(adminData.email);
+//                             // 3. Set provisioned (This should trigger the Shell redirect)
+//                             setProvisioned(true);
+                            
+//                             toast.success("Institutional Hub Synchronized.");
+//                         } catch (err: any) { 
+//                             setError(err.message || "Synchronization failed."); 
+//                             setIsGateOpening(false);
+//                             setLoading(false);
+//                         }
+//                     };
+//                     executeFinalSync();
+//                 },
+//                 onClose: () => {
+//                     setIsGateOpening(false);
+//                     setLoading(false);
+//                 },
+//             });
+//             handler.openIframe();
+//         } catch (err) { 
+//             setIsGateOpening(false);
+//             setLoading(false); 
+//             toast.error("Gateway connection breach.");
+//         }
+//     }, [adminData, schoolData, currency, activePlan, hasPaid, isGateOpening, isLoading]);
+
+//     if (hasPaid) {
+//         return (
+//             <div className="flex flex-col items-center justify-center p-20 space-y-6 animate-in fade-in">
+//                 <div className="h-20 w-20 rounded-[2rem] bg-emerald-50 flex items-center justify-center border-4 border-emerald-100 shadow-xl shadow-emerald-50">
+//                     <ShieldCheck className="h-10 w-10 text-emerald-600" />
+//                 </div>
+//                 <div className="text-center space-y-2">
+//                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">
+//                         Transaction Verified
+//                     </p>
+//                     <p className="text-sm font-bold italic text-muted-foreground">Initializing Security Protocol...</p>
+//                 </div>
+//                 <Loader2 className="h-5 w-5 animate-spin text-emerald-500" />
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
+//             <div className="text-center space-y-2">
+//                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                     License Tier
+//                 </h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
+//                     Finalize institutional registry capacity
+//                 </p>
+//             </div>
+
+//             {/* CURRENCY TOGGLE */}
+//             <div className="flex justify-center">
+//                 <div className="flex bg-surface border border-border rounded-2xl p-1.5 gap-1.5 shadow-inner">
+//                     {(['ngn', 'usd'] as const).map((c) => (
+//                         <button 
+//                             key={c} 
+//                             disabled={isLoading || isGateOpening}
+//                             onClick={() => setCurrency(c)} 
+//                             className={cn(
+//                                 'px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all', 
+//                                 currency === c 
+//                                     ? 'bg-school-primary text-on-school-primary shadow-lg shadow-school-primary-200' 
+//                                     : 'text-muted-foreground hover:text-foreground disabled:opacity-20'
+//                             )}
+//                         >
+//                             {c === 'ngn' ? '₦ NGN' : '$ USD'}
+//                         </button>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             {/* PLANS LIST */}
+//             <div className="space-y-4">
+//                 {plans.map((p) => {
+//                     const isSelected = selectedPlanId === p.id;
+//                     const price = currency === 'ngn' ? p.priceNGN : p.priceUSD;
+//                     return (
+//                         <button
+//                             key={p.id}
+//                             disabled={isLoading || isGateOpening}
+//                             onClick={() => setSelectedPlanId(p.id)}
+//                             className={cn(
+//                                 'w-full text-left rounded-[2rem] border-2 p-6 transition-all duration-500 relative overflow-hidden', 
+//                                 isSelected 
+//                                     ? 'bg-card border-school-primary shadow-xl scale-[1.01]' 
+//                                     : 'bg-surface border-border hover:border-school-primary-200 disabled:opacity-50'
+//                             )}
+//                         >
+//                             <div className="flex items-center justify-between">
+//                                 <div className="flex items-center gap-5">
+//                                     <div className={cn(
+//                                         'h-12 w-12 rounded-xl flex items-center justify-center shrink-0', 
+//                                         isSelected ? 'bg-school-primary text-white' : 'bg-muted text-muted-foreground'
+//                                     )}>
+//                                         <Zap className="h-5 w-5" />
+//                                     </div>
+//                                     <div>
+//                                         <p className="text-lg font-extrabold text-foreground uppercase italic tracking-tight">{p.name}</p>
+//                                         <p className="text-[10px] font-bold text-muted-foreground uppercase">{p.slug}</p>
+//                                     </div>
+//                                 </div>
+//                                 <p className="text-xl font-black italic tracking-tighter tabular-nums">
+//                                     {currency === 'ngn' ? '₦' : '$'}{price.toLocaleString()}
+//                                 </p>
+//                             </div>
+//                         </button>
+//                     );
+//                 })}
+//             </div>
+
+//             {error && (
+//                 <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-black uppercase tracking-widest italic animate-bounce">
+//                     {error}
+//                 </div>
+//             )}
+
+//             {/* ACTION BUTTONS */}
+//             <div className="flex items-center gap-4 pt-4">
+//                 <Button 
+//                     variant="outline" 
+//                     type="button"
+//                     disabled={isLoading || isGateOpening}
+//                     onClick={prevStep} 
+//                     className="h-16 px-8 rounded-2xl border-border bg-surface text-muted-foreground"
+//                 >
+//                     <ArrowLeft className="h-5 w-5" />
+//                 </Button>
+                
+//                 <Button 
+//                     onClick={handleFinalizeDeployment} 
+//                     disabled={isLoading || isGateOpening || !activePlan} 
+//                     className={cn(
+//                         "flex-1 h-16 rounded-2xl shadow-xl transition-all group",
+//                         "bg-school-primary text-on-school-primary font-extrabold text-[11px] uppercase tracking-widest",
+//                         "hover:brightness-110 shadow-school-primary-200 disabled:opacity-40"
+//                     )}
+//                 >
+//                     {isLoading || isGateOpening ? (
+//                         <div className="flex items-center gap-3">
+//                             <Loader2 className="h-4 w-4 animate-spin" />
+//                             SECURE PROTOCOL ACTIVE...
+//                         </div>
+//                     ) : (
+//                         <div className="flex items-center justify-center gap-3">
+//                             <CreditCard className="h-4 w-4" />
+//                             Finalize Hub Synchronization
+//                         </div>
+//                     )}
+//                 </Button>
+//             </div>
+            
+//             <div className="flex items-center justify-center gap-6 opacity-20 grayscale pointer-events-none">
+//                 <div className="flex items-center gap-2">
+//                     <Lock className="h-3 w-3" />
+//                     <span className="text-[8px] font-bold uppercase tracking-widest">SSL SECURED</span>
+//                 </div>
+//                 <div className="flex items-center gap-2">
+//                     <Shield className="h-3 w-3" />
+//                     <span className="text-[8px] font-bold uppercase tracking-widest">PCI COMPLIANT</span>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+
+
+// 'use client';
+
+// import React, { useState, useEffect, useCallback } from 'react';
+// import { useOnboardingStore, type PlanType } from '@/store/onboardingStore';
+// import { completeOnboarding, verifyPaystackPayment } from '@/app/actions/onboarding';
+// import { 
+//     Check, ArrowLeft, Loader2, CreditCard,
+//     Lock, ShieldAlert, ShieldCheck, Shield, Zap, Building2
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+// import { toast } from 'sonner';
+// import { Button } from '@/components/ui/button';
+// import { toTitleCase } from '@/lib/utils/formatters';
+
+// export function PaymentStep({ plans: initialPlans }: { plans: any[] }) {
+//     const { 
+//         adminData, schoolData, setPaymentData, setLoading, 
+//         setError, isLoading, error, setProvisioned, 
+//         setConfirmedEmail, paymentStatus, prevStep 
+//     } = useOnboardingStore();
+    
+//     const [selectedPlanId, setSelectedPlanId] = useState<string>(
+//         initialPlans.find(p => p.popular)?.id || initialPlans[0]?.id || ""
+//     );
+//     const [currency, setCurrency] = useState<'ngn' | 'usd'>('ngn');
+//     const [isGateOpening, setIsGateOpening] = useState(false);
+
+//     const activePlan = initialPlans.find(p => p.id === selectedPlanId);
+//     const hasPaid = paymentStatus === 'paid';
+
+//     useEffect(() => {
+//         if (typeof window !== 'undefined' && !(window as any).PaystackPop) {
+//             const script = document.createElement('script');
+//             script.src = 'https://js.paystack.co/v1/inline.js';
+//             script.async = true;
+//             document.head.appendChild(script);
+//         }
+//     }, []);
+
+//     const getPlanIcon = (slug: string) => {
+//         if (slug.includes('enterprise')) return Building2;
+//         if (slug.includes('pro')) return Shield;
+//         return Zap;
+//     };
+
+//     const handleFinalizeDeployment = useCallback(() => {
+//         if (hasPaid || isGateOpening || isLoading) return;
+//         if (!adminData || !schoolData || !activePlan) {
+//             setError("Registry Context Error: Data incomplete.");
+//             return;
+//         }
+        
+//         setIsGateOpening(true);
+//         setLoading(true);
+
+//         const amount = currency === 'ngn' ? activePlan.priceKobo : activePlan.priceUSD * 100;
+
+//         try {
+//             const handler = (window as any).PaystackPop.setup({
+//                 key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+//                 email: adminData.email,
+//                 amount: amount, 
+//                 currency: currency.toUpperCase(),
+//                 metadata: { plan: activePlan.slug, schoolName: schoolData.schoolName },
+//                 callback: (response: { reference: string }) => {
+//                     const executeFinalSync = async () => {
+//                         try {
+//                             const verification = await verifyPaystackPayment(response.reference);
+//                             if (!verification.success) throw new Error("Payment Verification Failed.");
+
+//                             const result = await completeOnboarding(
+//                                 { ...adminData, name: toTitleCase(adminData.name) },
+//                                 schoolData,
+//                                 response.reference,
+//                                 activePlan.slug as PlanType
+//                             );
+
+//                             if (!result.success) throw new Error(result.error);
+
+//                             setPaymentData({ 
+//                                 provider: 'paystack', 
+//                                 plan: activePlan.slug as PlanType, 
+//                                 reference: response.reference, 
+//                                 verified: true 
+//                             });
+//                             setConfirmedEmail(adminData.email);
+//                             setProvisioned(true);
+//                             toast.success("Institutional Hub Synchronized.");
+//                         } catch (err: any) { 
+//                             setError(err.message || "Synchronization failed."); 
+//                             setIsGateOpening(false);
+//                             setLoading(false);
+//                         }
+//                     };
+//                     executeFinalSync();
+//                 },
+//                 onClose: () => {
+//                     setIsGateOpening(false);
+//                     setLoading(false);
+//                 },
+//             });
+//             handler.openIframe();
+//         } catch (err) { 
+//             setIsGateOpening(false);
+//             setLoading(false); 
+//             toast.error("Gateway connection breach.");
+//         }
+//     }, [adminData, schoolData, currency, activePlan, hasPaid, isGateOpening, isLoading]);
+
+//     if (hasPaid) {
+//         return (
+//             <div className="flex flex-col items-center justify-center p-20 space-y-6">
+//                 <ShieldCheck className="h-16 w-16 text-emerald-500 animate-bounce" />
+//                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">Verified. Dispatching Registry...</p>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
+//             {/* ... Header ... */}
+//             <div className="text-center space-y-2">
+//                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">License Tier</h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">Finalize registry capacity</p>
+//             </div>
+
+//             {/* CURRENCY TOGGLE */}
+//             <div className="flex justify-center">
+//                 <div className="flex bg-surface border border-border rounded-2xl p-1.5 gap-1.5 shadow-inner">
+//                     {(['ngn', 'usd'] as const).map((c) => (
+//                         <button key={c} onClick={() => setCurrency(c)} className={cn('px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all', currency === c ? 'bg-school-primary text-on-school-primary shadow-lg shadow-school-primary-200' : 'text-muted-foreground')}>
+//                             {c === 'ngn' ? '₦ NGN' : '$ USD'}
+//                         </button>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             {/* PLANS LIST */}
+//             <div className="space-y-4">
+//                 {initialPlans.map((p) => {
+//                     const isSelected = selectedPlanId === p.id;
+//                     const Icon = getPlanIcon(p.slug);
+//                     const price = currency === 'ngn' ? p.priceNGN : p.priceUSD;
+//                     return (
+//                         <button
+//                             key={p.id}
+//                             onClick={() => setSelectedPlanId(p.id)}
+//                             className={cn(
+//                                 'w-full text-left rounded-[2rem] border-2 p-6 md:p-8 transition-all duration-500 group relative overflow-hidden', 
+//                                 isSelected ? 'bg-card border-school-primary shadow-xl scale-[1.01]' : 'bg-surface border-border hover:border-school-primary-200'
+//                             )}
+//                         >
+//                             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+//                                 <div className="flex items-start gap-6">
+//                                     <div className={cn('h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-inner', isSelected ? 'bg-school-primary text-white' : 'bg-card border border-border text-muted-foreground')}>
+//                                         <Icon className="h-6 w-6" strokeWidth={2.5} />
+//                                     </div>
+//                                     <div className="space-y-2">
+//                                         <span className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter">{p.name}</span>
+//                                         {/* FEATURES RE-ADDED HERE */}
+//                                         <ul className="mt-4 space-y-2">
+//                                             {p.features?.map((f: string) => (
+//                                                 <li key={f} className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
+//                                                     <Check className="h-3 w-3 text-school-primary stroke-[4]" />
+//                                                     {f}
+//                                                 </li>
+//                                             ))}
+//                                         </ul>
+//                                     </div>
+//                                 </div>
+//                                 <p className="text-2xl font-extrabold text-foreground italic tracking-tighter tabular-nums">
+//                                     {currency === 'ngn' ? '₦' : '$'}{price.toLocaleString()}
+//                                 </p>
+//                             </div>
+//                         </button>
+//                     );
+//                 })}
+//             </div>
+
+//             {/* ACTION BUTTONS */}
+//             <div className="flex items-center gap-4 pt-4">
+//                 <Button variant="outline" onClick={prevStep} className="h-16 px-8 rounded-2xl border-border bg-surface text-muted-foreground"><ArrowLeft className="h-5 w-5" /></Button>
+//                 <Button onClick={handleFinalizeDeployment} disabled={isLoading || isGateOpening} className="flex-1 h-16 rounded-2xl bg-school-primary text-on-school-primary font-extrabold text-[11px] uppercase tracking-widest shadow-xl shadow-school-primary-200 active:scale-95">
+//                     {isLoading || isGateOpening ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : "Finalize Hub Synchronization"}
+//                 </Button>
+//             </div>
+//         </div>
+//     );
+// }
+
+
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useOnboardingStore, type PlanType, type PaymentProvider } from '@/store/onboardingStore';
-import { verifyPaystackPayment } from '@/app/actions/onboarding';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useOnboardingStore, type PlanType } from '@/store/onboardingStore';
+import { completeOnboarding, verifyPaystackPayment } from '@/app/actions/onboarding';
 import { 
-    Check, ArrowRight, ArrowLeft, Zap, Shield, 
-    Building2, Loader2
+    Check, ArrowLeft, Loader2, CreditCard,
+    ShieldCheck, Shield, Zap, Building2, ShieldAlert
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { toTitleCase } from '@/lib/utils/formatters';
 
-/**
- * ONBOARDING PHASE 02: LICENSE PROVISIONING
- * Rule 17: Pulls plans directly from the Onboarding Store (Hydrated by Shell).
- * Rule 11: Real-time DB Plans (System Truth).
- */
-export function PaymentStep() {
+export function PaymentStep({ plans: initialPlans }: { plans: any[] }) {
     const { 
-        plans, nextStep, prevStep, adminData, setPaymentData, 
-        setLoading, setError, isLoading, error 
+        adminData, schoolData, setPaymentData, setLoading, 
+        setError, isLoading, error, setProvisioned, 
+        setConfirmedEmail, paymentStatus, prevStep 
     } = useOnboardingStore();
     
     const [selectedPlanId, setSelectedPlanId] = useState<string>(
-        plans.find(p => p.popular)?.id || plans[0]?.id || ""
+        initialPlans.find(p => p.popular)?.id || initialPlans[0]?.id || ""
     );
-    const [selectedProvider, setSelectedProvider] = useState<PaymentProvider>('paystack');
     const [currency, setCurrency] = useState<'ngn' | 'usd'>('ngn');
-    const isScriptLoaded = useRef(false);
+    const [isGateOpening, setIsGateOpening] = useState(false);
 
-    const activePlan = plans.find(p => p.id === selectedPlanId);
+    const activePlan = initialPlans.find(p => p.id === selectedPlanId);
+    const hasPaid = paymentStatus === 'paid';
 
     useEffect(() => {
         if (typeof window !== 'undefined' && !(window as any).PaystackPop) {
             const script = document.createElement('script');
             script.src = 'https://js.paystack.co/v1/inline.js';
             script.async = true;
-            script.onload = () => { isScriptLoaded.current = true; };
             document.head.appendChild(script);
-        } else { isScriptLoaded.current = true; }
+        }
     }, []);
 
-    const getPlanIcon = (slug: string) => {
-        if (slug.includes('enterprise')) return Building2;
-        if (slug.includes('pro')) return Shield;
-        return Zap;
-    };
-
-    const handlePaystack = useCallback(() => {
-        if (!adminData || !activePlan) return setError("Protocol error: Logic context missing.");
+    const handleFinalizeDeployment = useCallback(() => {
+        if (hasPaid || isGateOpening || isLoading) return;
         
+        setIsGateOpening(true);
+        setLoading(true);
+
         const amount = currency === 'ngn' ? activePlan.priceKobo : activePlan.priceUSD * 100;
 
-        setLoading(true);
         try {
             const handler = (window as any).PaystackPop.setup({
                 key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
                 email: adminData.email,
                 amount: amount, 
                 currency: currency.toUpperCase(),
-                metadata: { plan: activePlan.slug, name: adminData.name },
+                metadata: { plan: activePlan.slug, schoolName: schoolData.schoolName },
                 callback: (response: { reference: string }) => {
-                    const verify = async () => {
+                    const executeFinalSync = async () => {
                         try {
-                            const result = await verifyPaystackPayment(response.reference);
+                            const verification = await verifyPaystackPayment(response.reference);
+                            if (!verification.success) throw new Error("Payment Verification Failed.");
+
+                            const result = await completeOnboarding(
+                                { ...adminData, password: adminData.password },
+                                schoolData,
+                                response.reference,
+                                activePlan.slug as PlanType
+                            );
+
                             if (!result.success) throw new Error(result.error);
+
+                            // UPDATE STORE STATUS (Triggers Redirect)
                             setPaymentData({ 
                                 provider: 'paystack', 
                                 plan: activePlan.slug as PlanType, 
                                 reference: response.reference, 
                                 verified: true 
                             });
-                            nextStep();
-                        } catch (err: any) { setError(err.message); } finally { setLoading(false); }
+                            setConfirmedEmail(adminData.email);
+                            setProvisioned(true);
+                            toast.success("Institutional Hub Synchronized.");
+                        } catch (err: any) { 
+                            setError(err.message || "Synchronization failed."); 
+                            setIsGateOpening(false);
+                            setLoading(false);
+                        }
                     };
-                    verify();
+                    executeFinalSync();
                 },
-                onClose: () => setLoading(false),
+                onClose: () => {
+                    setIsGateOpening(false);
+                    setLoading(false);
+                },
             });
             handler.openIframe();
-        } catch (err) { setLoading(false); }
-    }, [adminData, currency, activePlan, setPaymentData, nextStep, setLoading, setError]);
+        } catch (err) { 
+            setIsGateOpening(false);
+            setLoading(false); 
+        }
+    }, [adminData, schoolData, currency, activePlan, hasPaid, isGateOpening, isLoading]);
 
-    if (!activePlan) return <div className="p-20 text-center animate-pulse">Initializing Tiers...</div>;
+    if (hasPaid) return <div className="p-20 text-center"><Loader2 className="animate-spin mx-auto" /></div>;
 
     return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-10">
+        <div className="space-y-10 animate-in fade-in slide-in-from-right-6 duration-700">
             <div className="text-center space-y-2">
-                <h1 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none">License Tier</h1>
-                <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">Institutional Node Scaling</p>
+                <h1 className="text-2xl font-extrabold uppercase italic">License Tier</h1>
+                <p className="text-muted-foreground text-[10px] font-bold uppercase">Choose your registry capacity</p>
             </div>
 
-            {/* Currency */}
-            <div className="flex justify-center">
-                <div className="flex bg-slate-900 border border-white/5 rounded-2xl p-1.5 gap-1.5 shadow-inner">
-                    {(['ngn', 'usd'] as const).map((c) => (
-                        <button key={c} onClick={() => setCurrency(c)} className={cn('px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all', currency === c ? 'bg-school-primary text-slate-950 shadow-xl' : 'text-slate-500 hover:text-white')}>
-                            {c === 'ngn' ? '₦ NGN Sync' : '$ USD Sync'}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Plans */}
             <div className="space-y-4">
-                {plans.map((p) => {
-                    const isSelected = selectedPlanId === p.id;
-                    const Icon = getPlanIcon(p.slug);
-                    const price = currency === 'ngn' ? p.priceNGN : p.priceUSD;
-                    return (
-                        <button
-                            key={p.id}
-                            onClick={() => setSelectedPlanId(p.id)}
-                            className={cn('w-full text-left rounded-[2rem] border-2 p-8 transition-all duration-500 group relative', isSelected ? 'bg-slate-900 border-school-primary shadow-2xl' : 'bg-slate-950 border-white/5 hover:border-white/10')}
-                        >
-                            <div className="relative z-10 flex items-start justify-between gap-6">
-                                <div className="flex items-start gap-6">
-                                    <div className={cn('h-12 w-12 rounded-xl flex items-center justify-center shrink-0 mt-1 transition-colors', isSelected ? 'bg-slate-950 border-white/10 border' : 'bg-slate-900')}>
-                                        <Icon className="h-6 w-6 text-slate-600 group-hover:text-school-primary" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <span className="text-xl font-black text-white uppercase italic tracking-tight">{p.name}</span>
-                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">{p.description}</p>
-                                        {isSelected && (
-                                            <ul className="mt-6 grid grid-cols-1 gap-3 animate-in slide-in-from-top-2">
-                                                {p.features.map((f) => (
-                                                    <li key={f} className="flex items-center gap-2 text-[9px] font-black text-slate-400 uppercase">
-                                                        <Check className="h-3 w-3 text-school-primary shrink-0" /> {f}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-2xl font-black text-white italic">
-                                        {currency === 'ngn' ? '₦' : '$'}{price.toLocaleString()}
-                                    </p>
-                                </div>
+                {initialPlans.map((p) => (
+                    <button
+                        key={p.id}
+                        onClick={() => setSelectedPlanId(p.id)}
+                        className={cn(
+                            "w-full text-left rounded-[2rem] border-2 p-8 transition-all",
+                            selectedPlanId === p.id ? "border-school-primary bg-card shadow-xl" : "border-border bg-surface"
+                        )}
+                    >
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <p className="text-xl font-extrabold uppercase italic">{p.name}</p>
+                                <ul className="mt-4 space-y-2">
+                                    {p.features?.map((f: string) => (
+                                        <li key={f} className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase">
+                                            <Check className="h-3 w-3 text-school-primary stroke-[4]" /> {f}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                        </button>
-                    );
-                })}
+                            <p className="text-2xl font-black italic">
+                                {currency === 'ngn' ? '₦' : '$'}{(currency === 'ngn' ? p.priceNGN : p.priceUSD).toLocaleString()}
+                            </p>
+                        </div>
+                    </button>
+                ))}
             </div>
 
             <div className="flex gap-4">
-                <Button variant="outline" onClick={prevStep} className="h-16 px-8 rounded-2xl border-white/5 bg-slate-900 text-slate-500"><ArrowLeft /></Button>
-                <Button onClick={handlePaystack} disabled={isLoading} className="flex-1 bg-school-primary text-slate-950 font-black h-16 rounded-2xl shadow-xl uppercase text-[11px] tracking-[0.2em]">
-                    {isLoading ? <Loader2 className="animate-spin" /> : "Initialize Registry License"}
+                <Button variant="outline" onClick={prevStep} className="h-16 px-8 rounded-2xl"><ArrowLeft /></Button>
+                <Button 
+                    onClick={handleFinalizeDeployment} 
+                    disabled={isLoading || isGateOpening} 
+                    className="flex-1 h-16 rounded-2xl bg-school-primary font-bold uppercase"
+                >
+                    {isLoading || isGateOpening ? <Loader2 className="animate-spin" /> : "Finalize Hub Sync"}
                 </Button>
             </div>
         </div>

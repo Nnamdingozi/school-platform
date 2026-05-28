@@ -210,7 +210,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { CheckCircle2, XCircle, Loader2, Zap, ArrowRight } from 'lucide-react'
+import { CheckCircle2, XCircle, Zap, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useProfileStore } from '@/store/profileStore'
 

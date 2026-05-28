@@ -656,6 +656,62 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getCreditPackages } from "@/app/actions/credits";
+// import { CreditAcquisitionClient } from "@/components/credit/creditAcquisitionClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Dynamic SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Acquire Credits | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         include: { school: { select: { name: true } } }
+//     });
+
+//     return {
+//         title: `Buy Credits | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
+//         description: "Replenish WhatsApp units for institutional automated reporting."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Fetching
+//  */
+// export default async function Page() {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     // Rule 10 & 13: Institutional Gate
+//     if (!profile?.schoolId || profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN) {
+//         redirect("/teacher?error=unauthorized_billing");
+//     }
+
+//     // Fetch Tier-1 Global Packages on Server
+//     const res = await getCreditPackages();
+
+//     return (
+//         <CreditAcquisitionClient 
+//             initialPackages={res.success ? (res.data as any) : []} 
+//         />
+//     );
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -664,49 +720,85 @@ import { getCreditPackages } from "@/app/actions/credits";
 import { CreditAcquisitionClient } from "@/components/credit/creditAcquisitionClient";
 import { Role } from "@prisma/client";
 
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
 /**
- * Rule 16: Dynamic SEO
+ * Interface representing the Global Tier-1 Credit Packages.
+ */
+interface CreditPackage {
+    id: string;
+    name: string;
+    credits: number;
+    priceNGN: number;
+    priceUSD: number;
+    description: string;
+    popular: boolean;
+}
+
+/**
+ * CREDIT ACQUISITION | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO - Syncs institutional identity with search metadata.
  */
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { title: "Acquire Credits | SchoolPaaS" };
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+    if (!authUser) return { title: "Acquire Credits | SchoolPaaS" };
 
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         include: { school: { select: { name: true } } }
     });
 
+    const hubName = profile?.school?.name || "Institution";
+
     return {
-        title: `Buy Credits | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
-        description: "Replenish WhatsApp units for institutional automated reporting."
+        title: `Resource Provisioning | ${hubName} | SchoolPaaS`,
+        description: "Replenish communication hub units for institutional automated reporting."
     };
 }
 
 /**
- * Rule 12: Server-First Fetching
+ * CREDIT ACQUISITION PAGE (Tier 2)
+ * Rule 12: Server-First Fetching. Handles authentication and data hydration.
+ * Rule 5/6: Institutional isolation gate.
+ * Rule 15: Pure TypeScript - Zero 'any' types in the financial pipeline.
  */
-export default async function Page() {
+export default async function CreditAcquisitionPage() {
+    // 1. Resolve Identity & Security (Rule 10)
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) redirect("/login");
 
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         select: { id: true, schoolId: true, role: true }
     });
 
-    // Rule 10 & 13: Institutional Gate
-    if (!profile?.schoolId || profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN) {
-        redirect("/teacher?error=unauthorized_billing");
+    // 2. Authorization Security Gate (Rule 6)
+    // Access strictly limited to Tier-2 Hub Administrators.
+    if (
+        !profile?.schoolId || 
+        (profile.role !== Role.SCHOOL_ADMIN && profile.role !== Role.SUPER_ADMIN)
+    ) {
+        redirect("/dashboard?error=unauthorized_billing_access");
     }
 
-    // Fetch Tier-1 Global Packages on Server
+    // 3. Authoritative Data Hydration (Rule 11)
+    // Fetch Global Tier-1 Packages from the core registry.
     const res = await getCreditPackages();
 
+    // 4. Client-Side Protocol Handoff (Rule 15)
+    // Normalized casting to ensure strict type synchronization.
+    const initialPackages = res.success 
+        ? (res.data as unknown as CreditPackage[]) 
+        : [];
+
     return (
-        <CreditAcquisitionClient 
-            initialPackages={res.success ? (res.data as any) : []} 
-        />
+        <main className="min-h-screen bg-background">
+            <CreditAcquisitionClient 
+                initialPackages={initialPackages} 
+            />
+        </main>
     );
 }

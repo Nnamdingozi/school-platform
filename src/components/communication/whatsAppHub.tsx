@@ -245,93 +245,361 @@
 // }
 
 
+// 'use client'
+
+// import { useState } from 'react'
+// import { Card, CardContent, CardHeader } from '@/components/ui/card'
+// import { useRouter } from 'next/navigation'
+// import {
+//     MessageCircle, Zap, History, ShoppingCart,
+//     Clock, BarChart3, 
+//     TrendingDown
+// } from 'lucide-react'
+// import {
+//     type CommunicationStats,
+// } from '@/app/actions/communication.action'
+// import { format } from 'date-fns'
+// import { useProfileStore } from '@/store/profileStore'
+// import { cn } from '@/lib/utils'
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// interface WhatsAppHubProps {
+//     initialStats: CommunicationStats;
+// }
+
+// // ── Helpers ────────────────────────────────────────────────────────────────────
+
+// function timeAgo(date: Date): string {
+//     const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
+//     if (seconds < 60)     return 'just now'
+//     if (seconds < 3600)   return `${Math.floor(seconds / 60)}m ago`
+//     if (seconds < 86400)  return `${Math.floor(seconds / 3600)}h ago`
+//     if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`
+//     return format(new Date(date), 'dd MMM yyyy')
+// }
+
+// function getRoleColor(role: string | null): string {
+//     switch (role?.toUpperCase()) {
+//         case 'SCHOOL_ADMIN': return 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+//         case 'SUPER_ADMIN':  return 'text-purple-400 bg-purple-500/10 border-purple-500/20'
+//         case 'TEACHER':      return 'text-blue-400 bg-blue-500/10 border-blue-500/20'
+//         default:             return 'text-slate-400 bg-slate-800 border-slate-700'
+//     }
+// }
+
+// function formatRole(role: string | null): string {
+//     if (!role) return 'Registry'
+//     return role.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+// }
+
+// // ── Shared Stat Card (Rule 17: Local Styling) ──────────────────────────────────
+
+// function StatCard({
+//     label,
+//     value,
+//     sub,
+//     icon: Icon,
+//     color,
+//     primaryColor
+// }: {
+//     label:  string
+//     value:  number | string
+//     sub?:   string
+//     icon:   any
+//     color: string
+//     primaryColor?: string
+// }) {
+//     return (
+//         <Card className="bg-slate-900 border-white/5 rounded-[2rem] p-6 shadow-xl hover:border-white/10 transition-all">
+//             <CardContent className="p-0">
+//                 <div className="flex items-start justify-between gap-3">
+//                     <div className="space-y-1">
+//                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+//                             {label}
+//                         </p>
+//                         <p className="text-3xl font-black text-white leading-none italic tracking-tighter">
+//                             {value}
+//                         </p>
+//                         {sub && (
+//                             <p className="text-[10px] text-slate-400 font-bold uppercase mt-2">
+//                                 {sub}
+//                             </p>
+//                         )}
+//                     </div>
+//                     <div 
+//                         className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border", color)}
+//                         style={color.includes('school-primary') ? { borderColor: `${primaryColor}40`, backgroundColor: `${primaryColor}15`, color: primaryColor } : {}}
+//                     >
+//                         <Icon className="h-5 w-5" />
+//                     </div>
+//                 </div>
+//             </CardContent>
+//         </Card>
+//     )
+// }
+
+// // ── Main Component ─────────────────────────────────────────────────────────────
+
+// /**
+//  * INSTITUTIONAL COMMUNICATION HUB (Tier 2)
+//  * Rule 12: Receives Server-Fetched stats as props.
+//  * Rule 17: Injects school branding from Zustand store.
+//  */
+// export function WhatsAppHub({ initialStats }: WhatsAppHubProps) {
+//     const { profile } = useProfileStore();
+//     const router = useRouter();
+
+//     const stats = initialStats;
+//     const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//     const creditStatus =
+//         stats.totalRemaining > 20
+//             ? { label: 'Healthy',  color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', bar: 'bg-emerald-500'  }
+//             : stats.totalRemaining > 5
+//             ? { label: 'Low',      color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', bar: 'bg-amber-500'  }
+//             : { label: 'Critical', color: 'text-red-400',   bg: 'bg-red-500/10',   border: 'border-red-500/20',   bar: 'bg-red-500'    }
+
+//     return (
+//         <div className="space-y-6 animate-in fade-in duration-700">
+            
+//             {/* ── Grid: Stats ── */}
+//             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+//                 <StatCard 
+//                     label="Total Purchased" 
+//                     value={stats.totalPurchased} 
+//                     sub="Lifetime Registry" 
+//                     icon={ShoppingCart} 
+//                     color="border-school-primary/20 text-school-primary" 
+//                     primaryColor={primaryColor}
+//                 />
+//                 <StatCard 
+//                     label="Active Balance" 
+//                     value={stats.totalRemaining} 
+//                     sub={`Status: ${creditStatus.label}`} 
+//                     icon={Zap} 
+//                     color={`${creditStatus.border} ${creditStatus.color}`} 
+//                 />
+//                 <StatCard 
+//                     label="Transmissions" 
+//                     value={stats.totalUsed} 
+//                     sub="Messages Outbound" 
+//                     icon={TrendingDown} 
+//                     color="bg-blue-500/10 border-blue-500/20 text-blue-400" 
+//                 />
+//                 <StatCard 
+//                     label="Usage Velocity" 
+//                     value={`${stats.usagePercent}%`} 
+//                     sub="Consumption Rate" 
+//                     icon={BarChart3} 
+//                     color="bg-purple-500/10 border-purple-500/20 text-purple-400" 
+//                 />
+//             </div>
+
+//             {/* ── Credit Health Bar ── */}
+//             <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
+//                 <CardContent className="p-8 space-y-6">
+//                     <div className="flex items-center justify-between gap-4 flex-wrap">
+//                         <div className="flex items-center gap-4">
+//                             <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${creditStatus.bg} ${creditStatus.border}`}>
+//                                 <MessageCircle className={`h-6 w-6 ${creditStatus.color}`} />
+//                             </div>
+//                             <div>
+//                                 <p className="text-sm font-black text-white uppercase italic tracking-tighter">Institutional Credit Reserve</p>
+//                                 <p className={`text-[10px] font-black uppercase tracking-widest ${creditStatus.color}`}>
+//                                     {creditStatus.label} • {stats.totalRemaining} Units Verified
+//                                 </p>
+//                             </div>
+//                         </div>
+
+//                         <button
+//                             onClick={() => router.push('/admin/credits')}
+//                             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-school-primary text-slate-950 text-xs font-black uppercase tracking-widest transition-all hover:scale-105"
+//                             style={{ backgroundColor: primaryColor }}
+//                         >
+//                             <ShoppingCart className="h-4 w-4" />
+//                             Acquire Credits
+//                         </button>
+//                     </div>
+
+//                     <div className="space-y-3">
+//                         <div className="flex items-center justify-between text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">
+//                             <span>{stats.totalUsed} Dispatched</span>
+//                             <span>{stats.totalPurchased} Provisioned</span>
+//                         </div>
+//                         <div className="h-2.5 w-full rounded-full bg-slate-950 border border-white/5 overflow-hidden">
+//                             <div 
+//                                 className={`h-full transition-all duration-1000 ${creditStatus.bar}`} 
+//                                 style={{ width: `${Math.min(stats.usagePercent, 100)}%` }} 
+//                             />
+//                         </div>
+//                     </div>
+//                 </CardContent>
+//             </Card>
+
+//             <div className="grid gap-6 lg:grid-cols-2">
+//                 {/* ── Top Consumers ── */}
+//                 <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
+//                     <CardHeader className="pb-4 border-b border-white/5 bg-slate-950/40 p-8">
+//                         <div className="flex items-center gap-3 font-black uppercase tracking-widest text-xs text-white italic">
+//                             <BarChart3 className="h-4 w-4 text-school-primary" style={{ color: primaryColor }} />
+//                             Top Resource Consumers
+//                         </div>
+//                     </CardHeader>
+//                     <CardContent className="p-0">
+//                         {stats.topUsers.length === 0 ? (
+//                             <div className="py-20 text-center text-[10px] text-slate-600 font-black uppercase tracking-widest">No consumption history detected.</div>
+//                         ) : (
+//                             <div className="divide-y divide-white/5">
+//                                 {stats.topUsers.map((user, i) => (
+//                                     <div key={i} className="flex items-center gap-4 px-8 py-6 hover:bg-white/[0.02] transition-colors">
+//                                         <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-[10px] font-black ${i === 0 ? 'bg-school-primary text-slate-950' : 'bg-slate-800 text-slate-400'}`} style={i === 0 ? { backgroundColor: primaryColor } : {}}>{i + 1}</div>
+//                                         <div className="flex-1 min-w-0">
+//                                             <p className="text-sm font-black text-white uppercase italic truncate">{user.name || 'Registry System'}</p>
+//                                             <span className={cn("inline-flex px-2 py-0.5 rounded-md text-[8px] font-black uppercase border mt-2", getRoleColor(user.role))}>
+//                                                 {formatRole(user.role)}
+//                                             </span>
+//                                         </div>
+//                                         <div className="text-right">
+//                                             <p className="text-lg font-black text-white leading-none">{user.total}</p>
+//                                             <p className="text-[8px] text-slate-500 uppercase font-black tracking-widest mt-1">Units</p>
+//                                         </div>
+//                                     </div>
+//                                 ))}
+//                             </div>
+//                         )}
+//                     </CardContent>
+//                 </Card>
+
+//                 {/* ── Transmission History ── */}
+//                 <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
+//                     <CardHeader className="pb-4 border-b border-white/5 bg-slate-950/40 p-8">
+//                         <div className="flex items-center gap-3 font-black uppercase tracking-widest text-xs text-white italic">
+//                             <History className="h-4 w-4 text-blue-400" />
+//                             Transmission Registry
+//                         </div>
+//                     </CardHeader>
+//                     <CardContent className="p-0">
+//                         {stats.recentLogs.length === 0 ? (
+//                             <div className="py-20 text-center text-[10px] text-slate-600 font-black uppercase tracking-widest">Registry ledger empty.</div>
+//                         ) : (
+//                             <div className="divide-y divide-white/5 max-h-[450px] overflow-y-auto no-scrollbar">
+//                                 {stats.recentLogs.map(log => (
+//                                     <div key={log.id} className="flex items-start gap-4 px-8 py-6 hover:bg-white/[0.02] transition-colors group">
+//                                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-950 border border-white/5 group-hover:border-school-primary/20 transition-all">
+//                                             <MessageCircle className="h-4 w-4 text-slate-600 group-hover:text-school-primary" style={{ color: primaryColor }} />
+//                                         </div>
+//                                         <div className="flex-1 min-w-0">
+//                                             <p className="text-sm font-black text-white uppercase italic truncate">{log.actorName || 'Automation'}</p>
+//                                             <div className="flex items-center gap-2 mt-2 text-[9px] text-slate-500 font-bold uppercase tracking-widest">
+//                                                 <Clock className="h-3 w-3" />{timeAgo(log.createdAt)}
+//                                             </div>
+//                                         </div>
+//                                         <div className="text-right">
+//                                             <span className="text-[10px] font-black text-amber-500 uppercase">-{log.credits} Unit</span>
+//                                             <p className="text-[8px] text-slate-600 uppercase font-black mt-1">Settled</p>
+//                                         </div>
+//                                     </div>
+//                                 ))}
+//                             </div>
+//                         )}
+//                     </CardContent>
+//                 </Card>
+//             </div>
+//         </div>
+//     )
+// }
+
+
 'use client'
 
-import { useState } from 'react'
+import React from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
 import {
     MessageCircle, Zap, History, ShoppingCart,
-    Clock, BarChart3, AlertCircle,
+    Clock, BarChart3, 
     TrendingDown
 } from 'lucide-react'
-import {
-    type CommunicationStats,
-} from '@/app/actions/communication.action'
+import { type CommunicationStats } from '@/app/actions/communication.action'
 import { format } from 'date-fns'
 import { useProfileStore } from '@/store/profileStore'
 import { cn } from '@/lib/utils'
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface WhatsAppHubProps {
     initialStats: CommunicationStats;
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-function timeAgo(date: Date): string {
-    const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
+function timeAgo(date: Date | string): string {
+    const d = typeof date === 'string' ? new Date(date) : date;
+    const seconds = Math.floor((Date.now() - d.getTime()) / 1000)
     if (seconds < 60)     return 'just now'
     if (seconds < 3600)   return `${Math.floor(seconds / 60)}m ago`
     if (seconds < 86400)  return `${Math.floor(seconds / 3600)}h ago`
     if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`
-    return format(new Date(date), 'dd MMM yyyy')
+    return format(d, 'dd MMM yyyy')
 }
 
-function getRoleColor(role: string | null): string {
+function getRoleBadgeStyles(role: string | null): string {
     switch (role?.toUpperCase()) {
-        case 'SCHOOL_ADMIN': return 'text-amber-400 bg-amber-500/10 border-amber-500/20'
-        case 'SUPER_ADMIN':  return 'text-purple-400 bg-purple-500/10 border-purple-500/20'
-        case 'TEACHER':      return 'text-blue-400 bg-blue-500/10 border-blue-500/20'
-        default:             return 'text-slate-400 bg-slate-800 border-slate-700'
+        case 'SCHOOL_ADMIN': return 'text-amber-600 bg-amber-50 border-amber-200'
+        case 'SUPER_ADMIN':  return 'text-purple-600 bg-purple-50 border-purple-200'
+        case 'TEACHER':      return 'text-blue-600 bg-blue-50 border-blue-200'
+        default:             return 'text-muted-foreground bg-surface border-border'
     }
 }
 
 function formatRole(role: string | null): string {
-    if (!role) return 'Registry'
-    return role.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    if (!role) return 'Registry System'
+    return role.replace(/_/g, ' ').toLowerCase()
 }
 
-// ── Shared Stat Card (Rule 17: Local Styling) ──────────────────────────────────
+// ── Shared Stat Card (Rule 18/19/21) ─────────────────────────────────────────
 
 function StatCard({
     label,
     value,
     sub,
     icon: Icon,
-    color,
-    primaryColor
+    variant = 'primary'
 }: {
-    label:  string
-    value:  number | string
-    sub?:   string
-    icon:   any
-    color: string
-    primaryColor?: string
+    label:   string
+    value:   number | string
+    sub?:    string
+    icon:    any
+    variant?: 'primary' | 'success' | 'info' | 'purple'
 }) {
+    const variants = {
+        primary: "bg-school-primary-50 border-school-primary-200 text-school-primary",
+        success: "bg-emerald-50 border-emerald-200 text-emerald-600",
+        info:    "bg-blue-50 border-blue-200 text-blue-600",
+        purple:  "bg-purple-50 border-purple-200 text-purple-600"
+    }
+
     return (
-        <Card className="bg-slate-900 border-white/5 rounded-[2rem] p-6 shadow-xl hover:border-white/10 transition-all">
+        <Card className="bg-card border-border rounded-[2rem] p-6 shadow-xl hover:border-school-primary-200 transition-all group">
             <CardContent className="p-0">
-                <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-2">
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
                             {label}
                         </p>
-                        <p className="text-3xl font-black text-white leading-none italic tracking-tighter">
+                        <p className="text-3xl font-extrabold text-foreground leading-none italic tracking-tighter">
                             {value}
                         </p>
                         {sub && (
-                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-2">
+                            <p className="text-[10px] text-muted-foreground/60 font-bold uppercase mt-3 italic">
                                 {sub}
                             </p>
                         )}
                     </div>
-                    <div 
-                        className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border", color)}
-                        style={color.includes('school-primary') ? { borderColor: `${primaryColor}40`, backgroundColor: `${primaryColor}15`, color: primaryColor } : {}}
-                    >
-                        <Icon className="h-5 w-5" />
+                    {/* Rule 21: Scale Protocol Applied */}
+                    <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border shadow-inner transition-transform group-hover:scale-110", variants[variant])}>
+                        <Icon className="h-6 w-6" />
                     </div>
                 </div>
             </CardContent>
@@ -339,74 +607,75 @@ function StatCard({
     )
 }
 
-// ── Main Component ─────────────────────────────────────────────────────────────
+// ── Main Component ───────────────────────────────────────────────────────────
 
 /**
  * INSTITUTIONAL COMMUNICATION HUB (Tier 2)
- * Rule 12: Receives Server-Fetched stats as props.
- * Rule 17: Injects school branding from Zustand store.
+ * Rule 11: High-fidelity Registry Typography.
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function WhatsAppHub({ initialStats }: WhatsAppHubProps) {
-    const { profile } = useProfileStore();
     const router = useRouter();
-
     const stats = initialStats;
-    const primaryColor = profile?.primaryColor || "#f59e0b";
 
     const creditStatus =
         stats.totalRemaining > 20
-            ? { label: 'Healthy',  color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', bar: 'bg-emerald-500'  }
+            ? { label: 'Optimal',  variant: 'success' as const, color: 'text-emerald-600', bar: 'bg-emerald-500'  }
             : stats.totalRemaining > 5
-            ? { label: 'Low',      color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', bar: 'bg-amber-500'  }
-            : { label: 'Critical', color: 'text-red-400',   bg: 'bg-red-500/10',   border: 'border-red-500/20',   bar: 'bg-red-500'    }
+            ? { label: 'Low',      variant: 'primary' as const, color: 'text-school-primary', bar: 'bg-school-primary'  }
+            : { label: 'Critical', variant: 'primary' as const, color: 'text-destructive',   bar: 'bg-destructive'    }
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-700">
+        <div className="space-y-8 animate-in fade-in duration-700">
             
-            {/* ── Grid: Stats ── */}
+            {/* ── GRID: TELEMETRY ── */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard 
-                    label="Total Purchased" 
+                    label="Resource Provision" 
                     value={stats.totalPurchased} 
-                    sub="Lifetime Registry" 
+                    sub="Lifetime Purchases" 
                     icon={ShoppingCart} 
-                    color="border-school-primary/20 text-school-primary" 
-                    primaryColor={primaryColor}
+                    variant="primary"
                 />
                 <StatCard 
-                    label="Active Balance" 
+                    label="Current Balance" 
                     value={stats.totalRemaining} 
                     sub={`Status: ${creditStatus.label}`} 
                     icon={Zap} 
-                    color={`${creditStatus.border} ${creditStatus.color}`} 
+                    variant={creditStatus.variant} 
                 />
                 <StatCard 
-                    label="Transmissions" 
+                    label="Outbound Transmissions" 
                     value={stats.totalUsed} 
-                    sub="Messages Outbound" 
+                    sub="Dispatched Nodes" 
                     icon={TrendingDown} 
-                    color="bg-blue-500/10 border-blue-500/20 text-blue-400" 
+                    variant="info" 
                 />
                 <StatCard 
-                    label="Usage Velocity" 
+                    label="Resource Velocity" 
                     value={`${stats.usagePercent}%`} 
-                    sub="Consumption Rate" 
+                    sub="Consumption Index" 
                     icon={BarChart3} 
-                    color="bg-purple-500/10 border-purple-500/20 text-purple-400" 
+                    variant="purple" 
                 />
             </div>
 
-            {/* ── Credit Health Bar ── */}
-            <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                <CardContent className="p-8 space-y-6">
-                    <div className="flex items-center justify-between gap-4 flex-wrap">
-                        <div className="flex items-center gap-4">
-                            <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${creditStatus.bg} ${creditStatus.border}`}>
-                                <MessageCircle className={`h-6 w-6 ${creditStatus.color}`} />
+            {/* ── CREDIT HEALTH BAR (Rule 18/19) ── */}
+            <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-2xl">
+                <CardContent className="p-6 md:p-8 space-y-8">
+                    <div className="flex items-center justify-between gap-6 flex-wrap">
+                        <div className="flex items-center gap-5">
+                            <div className={cn(
+                                "flex h-14 w-14 items-center justify-center rounded-2xl border shadow-inner",
+                                creditStatus.variant === 'success' ? "bg-emerald-50 border-emerald-200 text-emerald-600" : "bg-school-primary-50 border-school-primary-200 text-school-primary"
+                            )}>
+                                <MessageCircle className="h-7 w-7" />
                             </div>
-                            <div>
-                                <p className="text-sm font-black text-white uppercase italic tracking-tighter">Institutional Credit Reserve</p>
-                                <p className={`text-[10px] font-black uppercase tracking-widest ${creditStatus.color}`}>
+                            <div className="space-y-1">
+                                <p className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter">Institutional Credit Reserve</p>
+                                <p className={cn("text-[10px] font-bold uppercase tracking-widest", creditStatus.color)}>
                                     {creditStatus.label} • {stats.totalRemaining} Units Verified
                                 </p>
                             </div>
@@ -414,22 +683,22 @@ export function WhatsAppHub({ initialStats }: WhatsAppHubProps) {
 
                         <button
                             onClick={() => router.push('/admin/credits')}
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-school-primary text-slate-950 text-xs font-black uppercase tracking-widest transition-all hover:scale-105"
-                            style={{ backgroundColor: primaryColor }}
+                            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-school-primary text-on-school-primary text-[10px] font-extrabold uppercase tracking-widest transition-all hover:brightness-110 active:scale-95 shadow-xl shadow-school-primary-200"
                         >
                             <ShoppingCart className="h-4 w-4" />
                             Acquire Credits
                         </button>
                     </div>
 
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between text-[10px] text-muted-foreground font-bold uppercase tracking-widest px-1">
                             <span>{stats.totalUsed} Dispatched</span>
                             <span>{stats.totalPurchased} Provisioned</span>
                         </div>
-                        <div className="h-2.5 w-full rounded-full bg-slate-950 border border-white/5 overflow-hidden">
+                        {/* Rule 21: Track Scale */}
+                        <div className="h-2.5 w-full rounded-full bg-surface border border-border overflow-hidden">
                             <div 
-                                className={`h-full transition-all duration-1000 ${creditStatus.bar}`} 
+                                className={cn("h-full transition-all duration-1000 ease-out", creditStatus.bar)}
                                 style={{ width: `${Math.min(stats.usagePercent, 100)}%` }} 
                             />
                         </div>
@@ -438,31 +707,34 @@ export function WhatsAppHub({ initialStats }: WhatsAppHubProps) {
             </Card>
 
             <div className="grid gap-6 lg:grid-cols-2">
-                {/* ── Top Consumers ── */}
-                <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                    <CardHeader className="pb-4 border-b border-white/5 bg-slate-950/40 p-8">
-                        <div className="flex items-center gap-3 font-black uppercase tracking-widest text-xs text-white italic">
-                            <BarChart3 className="h-4 w-4 text-school-primary" style={{ color: primaryColor }} />
+                {/* ── TOP CONSUMERS (Rule 11) ── */}
+                <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl">
+                    <CardHeader className="p-6 md:p-8 border-b border-border bg-surface/50">
+                        <div className="flex items-center gap-3 font-extrabold uppercase tracking-widest text-xs text-foreground italic">
+                            <BarChart3 className="h-4 w-4 text-school-primary" />
                             Top Resource Consumers
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
                         {stats.topUsers.length === 0 ? (
-                            <div className="py-20 text-center text-[10px] text-slate-600 font-black uppercase tracking-widest">No consumption history detected.</div>
+                            <div className="py-24 text-center text-[10px] text-muted-foreground font-bold uppercase tracking-widest italic opacity-40">No consumption history detected.</div>
                         ) : (
-                            <div className="divide-y divide-white/5">
+                            <div className="divide-y divide-border">
                                 {stats.topUsers.map((user, i) => (
-                                    <div key={i} className="flex items-center gap-4 px-8 py-6 hover:bg-white/[0.02] transition-colors">
-                                        <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-[10px] font-black ${i === 0 ? 'bg-school-primary text-slate-950' : 'bg-slate-800 text-slate-400'}`} style={i === 0 ? { backgroundColor: primaryColor } : {}}>{i + 1}</div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-black text-white uppercase italic truncate">{user.name || 'Registry System'}</p>
-                                            <span className={cn("inline-flex px-2 py-0.5 rounded-md text-[8px] font-black uppercase border mt-2", getRoleColor(user.role))}>
+                                    <div key={i} className="flex items-center gap-5 px-8 py-6 hover:bg-muted/30 transition-all group">
+                                        <div className={cn(
+                                            "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold shadow-inner transition-colors",
+                                            i === 0 ? 'bg-school-primary text-on-school-primary' : 'bg-surface border border-border text-muted-foreground'
+                                        )}>{i + 1}</div>
+                                        <div className="flex-1 min-w-0 space-y-2">
+                                            <p className="text-sm font-extrabold text-foreground uppercase italic truncate group-hover:text-school-primary transition-colors">{user.name || 'Registry System'}</p>
+                                            <span className={cn("inline-flex px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-widest border", getRoleBadgeStyles(user.role))}>
                                                 {formatRole(user.role)}
                                             </span>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-lg font-black text-white leading-none">{user.total}</p>
-                                            <p className="text-[8px] text-slate-500 uppercase font-black tracking-widest mt-1">Units</p>
+                                        <div className="text-right space-y-1">
+                                            <p className="text-xl font-extrabold text-foreground italic tracking-tighter tabular-nums">{user.total}</p>
+                                            <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-widest">Units</p>
                                         </div>
                                     </div>
                                 ))}
@@ -471,33 +743,33 @@ export function WhatsAppHub({ initialStats }: WhatsAppHubProps) {
                     </CardContent>
                 </Card>
 
-                {/* ── Transmission History ── */}
-                <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                    <CardHeader className="pb-4 border-b border-white/5 bg-slate-950/40 p-8">
-                        <div className="flex items-center gap-3 font-black uppercase tracking-widest text-xs text-white italic">
-                            <History className="h-4 w-4 text-blue-400" />
+                {/* ── TRANSMISSION REGISTRY (Rule 20) ── */}
+                <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl">
+                    <CardHeader className="p-6 md:p-8 border-b border-border bg-surface/50">
+                        <div className="flex items-center gap-3 font-extrabold uppercase tracking-widest text-xs text-foreground italic">
+                            <History className="h-4 w-4 text-blue-500" />
                             Transmission Registry
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
                         {stats.recentLogs.length === 0 ? (
-                            <div className="py-20 text-center text-[10px] text-slate-600 font-black uppercase tracking-widest">Registry ledger empty.</div>
+                            <div className="py-24 text-center text-[10px] text-muted-foreground font-bold uppercase tracking-widest italic opacity-40">Registry ledger empty.</div>
                         ) : (
-                            <div className="divide-y divide-white/5 max-h-[450px] overflow-y-auto no-scrollbar">
+                            <div className="divide-y divide-border max-h-[480px] overflow-y-auto custom-scrollbar">
                                 {stats.recentLogs.map(log => (
-                                    <div key={log.id} className="flex items-start gap-4 px-8 py-6 hover:bg-white/[0.02] transition-colors group">
-                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-950 border border-white/5 group-hover:border-school-primary/20 transition-all">
-                                            <MessageCircle className="h-4 w-4 text-slate-600 group-hover:text-school-primary" style={{ color: primaryColor }} />
+                                    <div key={log.id} className="flex items-start gap-5 px-8 py-6 hover:bg-muted/30 transition-all group">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-surface border border-border group-hover:border-school-primary-200 transition-all shadow-sm">
+                                            <MessageCircle className="h-5 w-5 text-muted-foreground group-hover:text-school-primary transition-colors" />
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-black text-white uppercase italic truncate">{log.actorName || 'Automation'}</p>
-                                            <div className="flex items-center gap-2 mt-2 text-[9px] text-slate-500 font-bold uppercase tracking-widest">
-                                                <Clock className="h-3 w-3" />{timeAgo(log.createdAt)}
+                                        <div className="flex-1 min-w-0 space-y-2">
+                                            <p className="text-sm font-extrabold text-foreground uppercase italic truncate">{log.actorName || 'Automated Node'}</p>
+                                            <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-semibold uppercase tracking-widest">
+                                                <Clock className="h-3.5 w-3.5 text-school-primary/60" />{timeAgo(log.createdAt)}
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <span className="text-[10px] font-black text-amber-500 uppercase">-{log.credits} Unit</span>
-                                            <p className="text-[8px] text-slate-600 uppercase font-black mt-1">Settled</p>
+                                        <div className="text-right space-y-1">
+                                            <span className="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest">-{log.credits} Unit</span>
+                                            <p className="text-[9px] text-muted-foreground uppercase font-bold opacity-60">Settled</p>
                                         </div>
                                     </div>
                                 ))}

@@ -2782,3 +2782,41 @@ export async function submitSeniorSubjects(
         return { success: false, error: getErrorMessage(err) };
     }
 }
+
+
+
+
+export async function getClassAllocationData(classId: string, schoolId: string) {
+    try {
+        const [targetClass, enrollments, existingAllocations] = await Promise.all([
+            prisma.class.findUnique({
+                where: { id: classId },
+                include: { grade: { include: { gradeSubjects: { include: { subject: true } } } } }
+            }),
+            prisma.classEnrollment.findMany({
+                where: { classId, schoolId },
+                include: { student: { select: { id: true, name: true, email: true } } }
+            }),
+            prisma.studentSubject.findMany({
+                where: { schoolId, student: { classEnrollments: { some: { classId } } } },
+                select: { studentId: true, gradeSubjectId: true }
+            })
+        ]);
+
+        if (!targetClass) throw new Error("Classroom not found.");
+
+        return {
+            success: true,
+            data: {
+                className: targetClass.name,
+                gradeName: targetClass.grade.displayName,
+                gradeLevel: targetClass.grade.level,
+                subjects: targetClass.grade.gradeSubjects.map(gs => ({ id: gs.id, name: gs.subject.name })),
+                students: enrollments.map(e => e.student),
+                existingMap: existingAllocations
+            }
+        };
+    } catch (err) {
+        return { success: false, error: getErrorMessage(err) };
+    }
+}

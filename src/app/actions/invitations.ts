@@ -1031,7 +1031,7 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { supabase as supabaseAdmin } from '@/lib/supabase/admin'
+import {  supabaseAdmin } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { Role, ActivityType } from '@prisma/client'
 import { randomBytes } from 'crypto'

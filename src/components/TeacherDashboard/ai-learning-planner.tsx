@@ -4927,15 +4927,699 @@
 
 
 
+// "use client";
+
+// import { useState, useEffect, useTransition } from "react";
+// import ReactMarkdown from "react-markdown";
+// import Image from "next/image";
+// import { 
+//     Sparkles, ImageIcon, FileText, HelpCircle, Zap, 
+//     Loader2, Edit3, Save, Layout, ListChecks, 
+//     GraduationCap, History, type LucideIcon, ChevronRight
+// } from "lucide-react";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { Badge } from "@/components/ui/badge";
+// import { toast } from "sonner";
+// import { cn } from "@/lib/utils";
+// import { Question, Role } from "@prisma/client";
+
+// // Store & Actions
+// import { useTeacherStore } from "@/store/teacherDataStore";
+// import { useProfileStore } from "@/store/profileStore";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { EnhancedLessonContent, generateTopicContent } from "@/app/actions/ai-generator" 
+// import { generateDiagramImage } from "@/app/actions/generate-diagram" 
+// import { saveGeneratedImageUrlToLesson } from "@/app/actions/lesson-image-action" 
+// import { publishLesson } from "@/app/actions/lesson.actions"
+// import { ScannedQuestionRegistry } from "../scan/scannedQuestionRegistry"
+// import { PracticeHub } from "../individual-student/exam/practicehub"
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface AILessonPlannerProps {
+//   topicId: string;
+//   lessonId: string; 
+//   topicTitle: string;
+//   schoolId: string | null;
+//   userId: string;
+//   userRole: Role;
+//   initialData: EnhancedLessonContent | null;
+//   initialScannedQuestions?: Question[]; 
+//   mode?: "teacher" | "student";
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// /**
+//  * AI SYLLABUS PLANNER & REGISTRY HUB
+//  * Rule 18: Semantic Color Tokens (bg-background, bg-card, border-border).
+//  * Rule 19: Refined Typography (font-extrabold, font-semibold).
+//  * Rule 20: Responsive padding and grid distribution.
+//  */
+// export function AILessonPlanner({ 
+//     topicId, 
+//     lessonId, 
+//     topicTitle, 
+//     schoolId, 
+//     userId,
+//     userRole,
+//     initialData,
+//     initialScannedQuestions = [],
+//     mode = "teacher" 
+// }: AILessonPlannerProps) {
+  
+//   const { profile } = useProfileStore();
+//   const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//   // Rule 6: Identity Context logic
+//   const canModify = mode === "teacher" && schoolId !== null && userRole !== Role.INDIVIDUAL_LEARNER;
+//   const isIndependent = userRole === Role.INDIVIDUAL_LEARNER && schoolId === null;
+
+//   const [activeTab, setActiveTab] = useState<string>("explanation");
+//   const [isGenerating, setIsGenerating] = useState(false);
+//   const [isEditing, setIsEditing] = useState(false);
+//   const [isPending, startTransition] = useTransition();
+  
+//   const [data, setData] = useState<EnhancedLessonContent | null>(initialData);
+//   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({});
+
+//   const { setActiveTopic } = useTeacherStore();
+
+//   useEffect(() => {
+//     setData(initialData);
+//     setIsEditing(false);
+//   }, [topicId, initialData]);
+
+//   // ── Handlers ──
+
+//   const handleGenerate = async () => {
+//     if (!canModify && !isIndependent) return;
+
+//     setIsGenerating(true);
+//     try {
+//       const res = await generateTopicContent({ topicId, userId, schoolId, userRole });
+//       if (!res.success) {
+//         toast.error(res.error ?? "Synthesis failed");
+//         return;
+//       }
+//       toast.success("AI Synthesis Complete. Re-syncing Registry...");
+//     } catch (err: unknown) {
+//       toast.error(getErrorMessage(err));
+//     } finally {
+//       setIsGenerating(false);
+//     }
+//   };
+
+//   const handleManualSave = () => {
+//     if (!data || !canModify || !schoolId) return;
+    
+//     startTransition(async () => {
+//       try {
+//           const res = await publishLesson({ topicId, schoolId, content: data, userId, userRole });
+//           if (res.success) {
+//             toast.success("Institutional customization synchronized.");
+//             setIsEditing(false);
+//             setActiveTopic(topicId); 
+//           }
+//       } catch (err: unknown) {
+//           toast.error(getErrorMessage(err));
+//       }
+//     });
+//   };
+  
+//   const handleGenerateImage = async (index: number, prompt: string) => {
+//     if ((!canModify && !isIndependent) || loadingImages[index] || (data?.studentContent.visualAids[index]?.url)) return;
+    
+//     setLoadingImages(prev => ({ ...prev, [index]: true }));
+//     try {
+//       const result = await generateDiagramImage({ prompt, schoolId, userId, userRole });
+//       if (result.success && result.url) {
+//         setData(current => {
+//           if (!current) return null;
+//           const updated = [...current.studentContent.visualAids];
+//           updated[index] = { ...updated[index], url: result.url };
+//           return { ...current, studentContent: { ...current.studentContent, visualAids: updated } };
+//         });
+
+//         await saveGeneratedImageUrlToLesson({ lessonId, visualAidIndex: index, imageUrl: result.url, userId, userRole, schoolId });
+//         toast.success("Visual asset bound to registry.");
+//       }
+//     } catch (err: unknown) {
+//         toast.error(getErrorMessage(err));
+//     } finally {
+//       setLoadingImages(prev => ({ ...prev, [index]: false }));
+//     }
+//   };
+
+//   // ── Render States ──
+
+//   if (!data) {
+//     return (
+//       <div className="py-24 text-center bg-card rounded-[2rem] border border-border space-y-8 shadow-2xl">
+//         <div 
+//             className="h-24 w-24 rounded-2xl flex items-center justify-center mx-auto border border-border bg-background shadow-inner"
+//         >
+//           <Sparkles className="h-10 w-10 animate-pulse" style={{ color: primaryColor }} />
+//         </div>
+//         <div className="space-y-3 px-6">
+//             <h3 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">Registry Standby</h3>
+//             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest italic">{topicTitle}</p>
+//         </div>
+//         {(canModify || isIndependent) && (
+//           <Button 
+//             onClick={handleGenerate} 
+//             disabled={isGenerating} 
+//             className="text-on-school-primary font-bold px-12 py-8 rounded-2xl text-[10px] tracking-[0.2em] uppercase transition-all shadow-xl"
+//             style={{ backgroundColor: primaryColor }}
+//           >
+//             {isGenerating ? <Loader2 className="animate-spin h-5 w-5" /> : "Initialize Synthesis Engine"}
+//           </Button>
+//         )}
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <Card className="border-border bg-background shadow-2xl overflow-hidden rounded-[2rem] flex flex-col">
+//       <CardHeader className="bg-card border-b border-border p-6 md:p-8">
+//         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+//           <div className="flex-1 min-w-0">
+//              <div className="flex items-center gap-4 mb-2">
+//                 <div className="p-2.5 bg-background border border-border rounded-xl shadow-inner">
+//                     <Layout className="h-5 w-5" style={{ color: primaryColor }} />
+//                 </div>
+//                 <CardTitle className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter truncate leading-none">
+//                     {data.studentContent.title}
+//                 </CardTitle>
+//                 <Badge variant="outline" className="text-[9px] font-bold uppercase border-border text-muted-foreground">
+//                     LEVEL {data.metadata.difficultyLevel}
+//                 </Badge>
+//              </div>
+//              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.3em] ml-14">{topicTitle}</p>
+//           </div>
+          
+//           {canModify && (
+//             <div className="flex items-center gap-3 shrink-0">
+//               {!isEditing ? (
+//                   <Button variant="outline" onClick={() => setIsEditing(true)} className="border-border bg-background text-muted-foreground rounded-xl text-[10px] font-bold uppercase tracking-widest px-6 h-12 hover:text-foreground">
+//                       <Edit3 className="h-4 w-4 mr-2" /> Modify Node
+//                   </Button>
+//               ) : (
+//                   <div className="flex gap-2">
+//                       <Button variant="ghost" onClick={() => setIsEditing(false)} className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest px-4 h-12">Cancel</Button>
+//                       <Button 
+//                         onClick={handleManualSave} 
+//                         disabled={isPending} 
+//                         className="text-on-school-primary font-bold rounded-xl px-8 h-12 text-[10px] uppercase tracking-widest shadow-xl"
+//                         style={{ backgroundColor: primaryColor }}
+//                       >
+//                           {isPending ? <Loader2 className="animate-spin" /> : <><Save className="h-4 w-4 mr-2" /> Persist Logic</>}
+//                       </Button>
+//                   </div>
+//               )}
+//             </div>
+//           )}
+//         </div>
+//       </CardHeader>
+      
+//       <CardContent className="p-6 md:p-10 flex-1 bg-surface">
+//         {/* TABS SELECTOR */}
+//         <div className="flex flex-wrap gap-2 mb-10 bg-card p-1.5 rounded-2xl w-fit border border-border shadow-inner">
+//             <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Notes" primaryColor={primaryColor} />
+//             <TabButton active={activeTab === "syllabus"} onClick={() => setActiveTab("syllabus")} icon={ListChecks} label="Syllabus" primaryColor={primaryColor} />
+//             <TabButton active={activeTab === "visuals"} onClick={() => setActiveTab("visuals")} icon={ImageIcon} label="Visuals" primaryColor={primaryColor} />
+//             <TabButton active={activeTab === "quiz"} onClick={() => setActiveTab("quiz")} icon={HelpCircle} label="Quiz" primaryColor={primaryColor} />
+//             <TabButton active={activeTab === "past-papers"} onClick={() => setActiveTab("past-papers")} icon={History} label="Past Papers" primaryColor={primaryColor} />
+            
+//             {isIndependent && (
+//                 <TabButton active={activeTab === "interactive-quiz"} onClick={() => setActiveTab("interactive-quiz")} icon={Zap} label="Practice Hub" primaryColor={primaryColor} />
+//             )}
+//         </div>
+
+//         <div className="min-h-[500px]">
+//             {/* ── NOTES VIEW ── */}
+//             {activeTab === "explanation" && (
+//                 <div className="space-y-6">
+//                     {isEditing ? (
+//                         <textarea 
+//                             className="w-full h-[600px] bg-card border border-border rounded-[2rem] p-10 text-foreground outline-none font-medium text-lg leading-relaxed shadow-inner"
+//                             value={data.studentContent.explanation}
+//                             onChange={(e) => setData({...data, studentContent: {...data.studentContent, explanation: e.target.value}})}
+//                         />
+//                     ) : (
+//                         <div className="prose prose-invert max-w-none animate-in fade-in duration-500 bg-card p-8 md:p-12 rounded-[2.5rem] border border-border shadow-2xl">
+//                             <ReactMarkdown
+//                                 components={{
+//                                     h1: ({ ...props }) => <h1 className="text-3xl font-extrabold text-foreground uppercase italic border-b border-border pb-6 mb-8" {...props} />,
+//                                     h2: ({ ...props }) => <h2 className="text-xl font-bold uppercase tracking-tight mt-12 mb-6" style={{ color: primaryColor }} {...props} />,
+//                                     p: ({ ...props }) => <p className="text-muted-foreground leading-loose mb-6 text-lg font-medium" {...props} />,
+//                                     li: ({ ...props }) => <li className="text-muted-foreground mb-3 font-medium" {...props} />,
+//                                 }}
+//                             >
+//                                 {data.studentContent.explanation}
+//                             </ReactMarkdown>
+//                         </div>
+//                     )}
+//                 </div>
+//             )}
+
+//             {/* ── SYLLABUS VIEW ── */}
+//             {activeTab === "syllabus" && (
+//                 <div className="space-y-10 animate-in fade-in duration-500">
+//                     <Card className="bg-card border-border p-8 md:p-12 rounded-[2.5rem] shadow-xl">
+//                         <h4 className="text-xs font-black uppercase tracking-widest mb-10 flex items-center gap-4" style={{ color: primaryColor }}>
+//                             <GraduationCap className="h-6 w-6" /> Learning Objectives
+//                         </h4>
+//                         <ul className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//                             {data.studentContent.learningObjectives.map((obj, i) => (
+//                                 <li key={i} className="flex items-start gap-4 text-foreground text-sm font-bold italic uppercase tracking-tight">
+//                                     <span className="opacity-30" style={{ color: primaryColor }}>0{i+1}.</span> {obj}
+//                                 </li>
+//                             ))}
+//                         </ul>
+//                     </Card>
+
+//                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+//                         <section className="space-y-4">
+//                             <h4 className="text-muted-foreground text-[10px] font-black uppercase tracking-widest ml-8 italic">Registry Summary</h4>
+//                             <div className="bg-card p-10 rounded-[2.5rem] border border-border text-muted-foreground text-sm leading-loose italic font-medium shadow-inner">
+//                                 {data.studentContent.summary}
+//                             </div>
+//                         </section>
+
+//                         <section className="space-y-4">
+//                             <h4 className="text-muted-foreground text-[10px] font-black uppercase tracking-widest ml-8 italic">Keyword Index</h4>
+//                             <div className="flex flex-wrap gap-3">
+//                                 {data.studentContent.vocabulary.map((word, i) => (
+//                                     <Badge key={i} variant="outline" className="px-5 py-3 border-border bg-background text-foreground rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-sm">
+//                                         {word}
+//                                     </Badge>
+//                                 ))}
+//                             </div>
+//                         </section>
+//                     </div>
+//                 </div>
+//             )}
+
+//             {/* ── VISUALS VIEW ── */}
+//             {activeTab === "visuals" && (
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
+//                     {data.studentContent.visualAids.map((aid, idx) => (
+//                         <Card key={idx} className="bg-card border-border rounded-[2.5rem] overflow-hidden group shadow-2xl">
+//                             <div className="p-8 border-b border-border bg-background/50">
+//                                 <h4 className="text-sm font-extrabold text-foreground uppercase italic">{aid.title}</h4>
+//                                 <p className="text-[9px] text-muted-foreground font-semibold uppercase tracking-widest mt-1">{aid.description}</p>
+//                             </div>
+//                             <div className="relative aspect-video flex flex-col items-center justify-center p-4 bg-background shadow-inner">
+//                                 {aid.url ? (
+//                                     <Image src={aid.url} alt={aid.title} fill className="object-cover opacity-60 transition-opacity group-hover:opacity-100" unoptimized />
+//                                 ) : (
+//                                     <div className="text-center space-y-6">
+//                                         <ImageIcon className="h-12 w-12 text-slate-800 mx-auto" />
+//                                         {(canModify || isIndependent) && (
+//                                             <Button 
+//                                                 onClick={() => handleGenerateImage(idx, aid.imagePrompt)} 
+//                                                 disabled={loadingImages[idx]} 
+//                                                 className="bg-card border border-border text-foreground font-black rounded-xl text-[9px] uppercase tracking-widest h-12 px-8 hover:bg-school-primary hover:text-slate-950 transition-all"
+//                                             >
+//                                                 {loadingImages[idx] ? <Loader2 className="animate-spin h-4 w-4" /> : "Synthesize Asset"}
+//                                             </Button>
+//                                         )}
+//                                     </div>
+//                                 )}
+//                             </div>
+//                         </Card>
+//                     ))}
+//                 </div>
+//             )}
+
+//             {/* ── PAST PAPERS VIEW ── */}
+//             {activeTab === "past-papers" && (
+//                 <div className="animate-in fade-in duration-500 space-y-10">
+//                     <div className="p-8 bg-school-primary/5 border border-school-primary/20 rounded-[2.5rem] flex items-center gap-6 shadow-xl">
+//                         <History className="h-8 w-8 text-school-primary" />
+//                         <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic leading-relaxed">
+//                             Displaying AI-digitized nodes from historical examination papers matching this topic context.
+//                         </p>
+//                     </div>
+//                     {/* ✅ FIXED: Map Prisma 'Question[]' to component 'ScannedQuestion[]' */}
+//                     <ScannedQuestionRegistry 
+//                         questions={initialScannedQuestions
+//                             .filter(q => q.topicId === topicId)
+//                             .map(q => ({
+//                                 text: q.text,
+//                                 answer: q.correctAnswer,
+//                                 explanation: q.explanation || "Registry rationale pending.",
+//                                 marks: q.points,
+//                                 year: q.year || undefined,
+//                                 examBody: q.examBody || undefined
+//                             }))
+//                         }
+//                         userRole={userRole}
+//                     />
+//                 </div>
+//             )}
+
+//             {/* ── INTERACTIVE PRACTICE (Tier 3) ── */}
+//             {activeTab === "interactive-quiz" && isIndependent && (
+//                 <PracticeHub 
+//                     userId={userId} 
+//                     gradeSubjectId={data.metadata.topicContext} 
+//                 />
+//             )}
+
+//             {/* ── STANDARD AI QUIZ ── */}
+//             {activeTab === "quiz" && (
+//                 <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
+//                     {data.studentContent.quiz.map((q, i) => (
+//                         <Card key={i} className="p-8 md:p-12 bg-card border-border rounded-[2.5rem] space-y-10 shadow-2xl">
+//                             <div className="flex items-start gap-6">
+//                                 <span className="text-4xl font-black italic opacity-10" style={{ color: primaryColor }}>0{i+1}</span>
+//                                 <p className="text-xl font-bold text-foreground leading-snug tracking-tight italic uppercase">{q.question}</p>
+//                             </div>
+//                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-14">
+//                                 {q.options.map(opt => (
+//                                     <div key={opt} className={cn(
+//                                         "p-6 rounded-2xl border text-[10px] font-black uppercase tracking-widest transition-all",
+//                                         opt === q.answer ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-500 shadow-lg" : "border-border bg-background text-muted-foreground"
+//                                     )}>
+//                                         {opt}
+//                                     </div>
+//                                 ))}
+//                             </div>
+//                             <div className="pt-8 border-t border-border px-14 flex items-center justify-between">
+//                                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest italic">Rationale: {q.explanation}</p>
+//                                 <ChevronRight className="h-4 w-4 text-slate-800" />
+//                             </div>
+//                         </Card>
+//                     ))}
+//                 </div>
+//             )}
+//         </div>
+//       </CardContent>
+//     </Card>
+//   );
+// }
+
+// /**
+//  * ── INTERNAL UI HELPER: TAB BUTTON ──
+//  */
+// function TabButton({ active, onClick, icon: Icon, label, primaryColor }: { active: boolean, onClick: () => void, icon: LucideIcon | any, label: string, primaryColor: string }) {
+//   return (
+//     <Button 
+//         variant="ghost" 
+//         onClick={onClick} 
+//         className={cn(
+//           "gap-3 px-8 h-12 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all",
+//           active ? "bg-background text-foreground shadow-lg border border-border" : "text-muted-foreground hover:text-foreground"
+//         )}
+//     >
+//       <Icon className="h-4 w-4" style={active ? { color: primaryColor } : {}} /> {label}
+//     </Button>
+//   );
+// }
+
+
+// "use client";
+
+// import React, { useState, useEffect, useTransition } from "react";
+// import ReactMarkdown from "react-markdown";
+// import Image from "next/image";
+// import { 
+//     Sparkles, ImageIcon, FileText, HelpCircle, Zap, 
+//     Loader2, Edit3, Save, Layout, ListChecks, 
+//     GraduationCap, History, type LucideIcon, ChevronRight,
+//     ShieldCheck, Target, Box
+// } from "lucide-react";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { Badge } from "@/components/ui/badge";
+// import { toast } from "sonner";
+// import { cn } from "@/lib/utils";
+// import { Question, Role } from "@prisma/client";
+
+// // Store & Actions
+// import { useTeacherStore } from "@/store/teacherDataStore";
+// import { useProfileStore } from "@/store/profileStore";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { type EnhancedLessonContent, generateTopicContent } from "@/app/actions/ai-generator" 
+// import { generateDiagramImage } from "@/app/actions/generate-diagram" 
+// import { saveGeneratedImageUrlToLesson } from "@/app/actions/lesson-image-action" 
+// import { publishLesson } from "@/app/actions/lesson.actions"
+// import { ScannedQuestionRegistry, type ScannedQuestion } from "../scan/scannedQuestionRegistry"
+// import { PracticeHub } from "../individual-student/exam/practicehub"
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// interface AILessonPlannerProps {
+//   topicId: string;
+//   lessonId: string; 
+//   topicTitle: string;
+//   schoolId: string | null;
+//   userId: string;
+//   userRole: Role;
+//   initialData: EnhancedLessonContent | null;
+//   initialScannedQuestions?: Question[]; 
+//   mode?: "teacher" | "student";
+// }
+
+// /**
+//  * AI SYLLABUS PLANNER & REGISTRY HUB
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+//  * Rule 19: Standardized Geometry [2rem].
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  */
+// export function AILessonPlanner({ 
+//     topicId, 
+//     lessonId, 
+//     topicTitle, 
+//     schoolId, 
+//     userId,
+//     userRole,
+//     initialData,
+//     initialScannedQuestions = [],
+//     mode = "teacher" 
+// }: AILessonPlannerProps) {
+//   const { profile } = useProfileStore();
+  
+//   const canModify = mode === "teacher" && schoolId !== null && userRole !== Role.INDIVIDUAL_LEARNER;
+//   const isIndependent = userRole === Role.INDIVIDUAL_LEARNER && schoolId === null;
+
+//   const [activeTab, setActiveTab] = useState<string>("explanation");
+//   const [isGenerating, setIsGenerating] = useState(false);
+//   const [isEditing, setIsEditing] = useState(false);
+//   const [isPending, startTransition] = useTransition();
+  
+//   const [data, setData] = useState<EnhancedLessonContent | null>(initialData);
+//   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({});
+
+//   const { setActiveTopic } = useTeacherStore();
+
+//   useEffect(() => {
+//     setData(initialData);
+//     setIsEditing(false);
+//   }, [topicId, initialData]);
+
+//   // ── Handlers ──
+
+//   const handleGenerate = async () => {
+//     if (!canModify && !isIndependent) return;
+//     setIsGenerating(true);
+//     try {
+//       const res = await generateTopicContent({ topicId, userId, schoolId, userRole });
+//       if (!res.success) {
+//         toast.error("Synthesis protocol failed.");
+//         return;
+//       }
+//       toast.success("AI Synthesis Complete. Synchronizing Registry...");
+//     } catch (err: unknown) {
+//       toast.error(getErrorMessage(err));
+//     } finally {
+//       setIsGenerating(false);
+//     }
+//   };
+
+//   const handleManualSave = () => {
+//     if (!data || !canModify || !schoolId) return;
+//     startTransition(async () => {
+//       try {
+//           const res = await publishLesson({ topicId, schoolId, content: data, userId, userRole });
+//           if (res.success) {
+//             toast.success("Institutional Hub synchronized.");
+//             setIsEditing(false);
+//             setActiveTopic(topicId); 
+//           }
+//       } catch (err: unknown) {
+//           toast.error(getErrorMessage(err));
+//       }
+//     });
+//   };
+
+//   // ── Render States ──
+
+//   if (!data) {
+//     return (
+//       <div className="py-24 text-center bg-card rounded-[2rem] border border-border space-y-10 shadow-2xl animate-in fade-in duration-700">
+//         <div className="h-24 w-24 rounded-2xl flex items-center justify-center mx-auto border border-school-primary-200 bg-school-primary-50 shadow-inner">
+//           <Sparkles className="h-10 w-10 text-school-primary animate-pulse" />
+//         </div>
+//         <div className="space-y-4 px-6">
+//             <h3 className="text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">Registry Standby</h3>
+//             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest italic">{topicTitle}</p>
+//         </div>
+//         {(canModify || isIndependent) && (
+//           <Button 
+//             onClick={handleGenerate} 
+//             disabled={isGenerating} 
+//             className="h-16 px-12 bg-school-primary text-on-school-primary font-extrabold rounded-2xl shadow-xl shadow-school-primary-200 hover:brightness-110 active:scale-95 transition-all text-[11px] uppercase tracking-widest"
+//           >
+//             {isGenerating ? <Loader2 className="animate-spin h-5 w-5" /> : "Initialize Synthesis Hub"}
+//           </Button>
+//         )}
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <Card className="border-border bg-background shadow-2xl overflow-hidden rounded-[2rem] flex flex-col animate-in fade-in duration-700">
+//       <CardHeader className="bg-surface/50 border-b border-border p-6 md:p-10 backdrop-blur-md">
+//         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+//           <div className="flex-1 min-w-0">
+//              <div className="flex flex-wrap items-center gap-4 mb-3">
+//                 <div className="p-3 bg-school-primary-50 border border-school-primary-200 rounded-xl shadow-sm">
+//                     <Box className="h-5 w-5 text-school-primary" />
+//                 </div>
+//                 <CardTitle className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter truncate leading-none">
+//                     {data.studentContent.title}
+//                 </CardTitle>
+//                 <Badge variant="outline" className="bg-surface border-border text-muted-foreground text-[10px] font-extrabold px-3 py-1 rounded-lg">
+//                     HUB LEVEL {data.metadata.difficultyLevel}
+//                 </Badge>
+//              </div>
+//              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1 lg:ml-16 italic opacity-60">Syllabus Path: {topicTitle}</p>
+//           </div>
+          
+//           {canModify && (
+//             <div className="flex items-center gap-3 shrink-0">
+//               {!isEditing ? (
+//                   <Button variant="outline" onClick={() => setIsEditing(true)} className="h-12 px-6 rounded-xl border-border bg-surface text-muted-foreground hover:text-foreground font-extrabold text-[10px] uppercase tracking-widest transition-all shadow-sm">
+//                       <Edit3 className="h-4 w-4 mr-2" /> Modify Module
+//                   </Button>
+//               ) : (
+//                   <div className="flex gap-3">
+//                       <button onClick={() => setIsEditing(false)} className="px-6 h-12 rounded-xl text-muted-foreground hover:text-foreground text-[10px] font-extrabold uppercase tracking-widest transition-all">Discard</button>
+//                       <Button 
+//                         onClick={handleManualSave} 
+//                         disabled={isPending} 
+//                         className="h-12 px-8 bg-school-primary text-on-school-primary font-extrabold rounded-xl text-[10px] uppercase tracking-widest shadow-lg shadow-school-primary-200 hover:brightness-110 active:scale-95 transition-all"
+//                       >
+//                           {isPending ? <Loader2 className="animate-spin h-4 w-4" /> : <><Save className="h-4 w-4 mr-2" /> Persist Hub</>}
+//                       </Button>
+//                   </div>
+//               )}
+//             </div>
+//           )}
+//         </div>
+//       </CardHeader>
+      
+//       <CardContent className="p-6 md:p-10 flex-1">
+//         {/* TABS SELECTOR */}
+//         <div className="flex overflow-x-auto pb-4 lg:pb-0 scrollbar-hide mb-10">
+//             <div className="flex gap-2 bg-surface p-1.5 rounded-2xl border border-border shadow-inner whitespace-nowrap">
+//                 <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Study Notes" />
+//                 <TabButton active={activeTab === "syllabus"} onClick={() => setActiveTab("syllabus")} icon={ListChecks} label="Roadmap" />
+//                 <TabButton active={activeTab === "visuals"} onClick={() => setActiveTab("visuals")} icon={ImageIcon} label="Visual Hub" />
+//                 <TabButton active={activeTab === "quiz"} onClick={() => setActiveTab("quiz")} icon={HelpCircle} label="Module Quiz" />
+//                 <TabButton active={activeTab === "past-papers"} onClick={() => setActiveTab("past-papers")} icon={History} label="Archive Ledger" />
+                
+//                 {isIndependent && (
+//                     <TabButton active={activeTab === "interactive-quiz"} onClick={() => setActiveTab("interactive-quiz")} icon={Zap} label="Practice Hub" />
+//                 )}
+//             </div>
+//         </div>
+
+//         <div className="min-h-[500px]">
+//             {/* ── ARCHIVE LEDGER VIEW (Rule 15/21) ── */}
+//             {activeTab === "past-papers" && (
+//                 <div className="animate-in fade-in duration-500 space-y-10">
+//                     <div className="p-8 bg-school-primary-50 border border-school-primary-200 rounded-[2.5rem] flex items-center gap-6 shadow-xl">
+//                         <div className="p-3 bg-school-primary rounded-xl text-on-school-primary shadow-lg">
+//                           <History className="h-6 w-6" />
+//                         </div>
+//                         <p className="text-xs font-bold uppercase tracking-widest text-school-primary italic leading-relaxed">
+//                             Synchronizing AI-digitized Hubs from historical examination ledgers matching this syllabus module.
+//                         </p>
+//                     </div>
+                    
+//                     {/* ✅ RESOLVED TS2322: Normalizing Prisma Nulls to ScannedQuestion Registry Expectations */}
+//                     <ScannedQuestionRegistry 
+//                         questions={initialScannedQuestions
+//                             .filter(q => q.topicId === topicId)
+//                             .map(q => ({
+//                                 text: q.text,
+//                                 answer: q.correctAnswer, // Hub mapping
+//                                 explanation: q.explanation ?? "Registry rationale pending sync.", // Safe mandatory string
+//                                 marks: q.points,
+//                                 year: q.year ?? undefined, // Type normalization
+//                                 examBody: q.examBody ?? undefined // Type normalization
+//                             }))
+//                         }
+//                         userRole={userRole}
+//                     />
+//                 </div>
+//             )}
+
+//             {/* Other activeTab conditions... (Explanation, Syllabus, Visuals, etc.) */}
+//             {activeTab === "explanation" && (
+//                  <div className="prose prose-invert max-w-none bg-card p-8 md:p-16 rounded-[2.5rem] border border-border shadow-2xl relative overflow-hidden">
+//                     <ReactMarkdown
+//                         components={{
+//                             h1: ({ ...props }) => <h1 className="text-3xl md:text-4xl font-extrabold text-foreground uppercase italic border-b border-border pb-8 mb-10 tracking-tighter" {...props} />,
+//                             h2: ({ ...props }) => <h2 className="text-2xl font-extrabold text-school-primary uppercase italic tracking-tight mt-12 mb-6" {...props} />,
+//                             p: ({ ...props }) => <p className="text-foreground/80 leading-loose mb-8 text-base md:text-lg font-medium italic" {...props} />,
+//                             strong: ({ ...props }) => <strong className="text-school-primary font-extrabold" {...props} />,
+//                         }}
+//                     >
+//                         {data.studentContent.explanation}
+//                     </ReactMarkdown>
+//                 </div>
+//             )}
+//         </div>
+//       </CardContent>
+//     </Card>
+//   );
+// }
+
+// // ── Internal Helper: Tab Hub Trigger (Rule 18/21) ──
+// function TabButton({ active, onClick, icon: Icon, label }: { active: boolean, onClick: () => void, icon: any, label: string }) {
+//   return (
+//     <button 
+//         onClick={onClick} 
+//         className={cn(
+//           "flex items-center gap-3 px-6 h-12 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all active:scale-95 shadow-sm",
+//           active 
+//             ? "bg-school-primary text-on-school-primary shadow-school-primary-200" 
+//             : "bg-background border border-border text-muted-foreground hover:text-foreground hover:bg-surface"
+//         )}
+//     >
+//       <Icon className={cn("h-4 w-4", active ? "text-on-school-primary" : "text-school-primary/60")} /> 
+//       <span className="italic">{label}</span>
+//     </button>
+//   );
+// }
+
+
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import ReactMarkdown from "react-markdown";
 import Image from "next/image";
 import { 
     Sparkles, ImageIcon, FileText, HelpCircle, Zap, 
     Loader2, Edit3, Save, Layout, ListChecks, 
-    GraduationCap, History, type LucideIcon, ChevronRight
+    GraduationCap, History, type LucideIcon, ChevronRight,
+    ShieldCheck, Target, Box
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -4948,13 +5632,14 @@ import { Question, Role } from "@prisma/client";
 import { useTeacherStore } from "@/store/teacherDataStore";
 import { useProfileStore } from "@/store/profileStore";
 import { getErrorMessage } from "@/lib/error-handler";
-import { EnhancedLessonContent, generateTopicContent } from "@/app/actions/ai-generator" 
+import { type EnhancedLessonContent, generateTopicContent } from "@/app/actions/ai-generator" 
 import { generateDiagramImage } from "@/app/actions/generate-diagram" 
 import { saveGeneratedImageUrlToLesson } from "@/app/actions/lesson-image-action" 
 import { publishLesson } from "@/app/actions/lesson.actions"
 import { ScannedQuestionRegistry } from "../scan/scannedQuestionRegistry"
 import { PracticeHub } from "../individual-student/exam/practicehub"
-// ── Types ───────────────────────────────────────────────────────────────────
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface AILessonPlannerProps {
   topicId: string;
@@ -4968,13 +5653,11 @@ interface AILessonPlannerProps {
   mode?: "teacher" | "student";
 }
 
-// ── Main Component ──────────────────────────────────────────────────────────
-
 /**
  * AI SYLLABUS PLANNER & REGISTRY HUB
- * Rule 18: Semantic Color Tokens (bg-background, bg-card, border-border).
- * Rule 19: Refined Typography (font-extrabold, font-semibold).
- * Rule 20: Responsive padding and grid distribution.
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18/21: Semantic Flip & Scale Protocol.
+ * Rule 19: Standardized Geometry [2rem].
  */
 export function AILessonPlanner({ 
     topicId, 
@@ -4988,10 +5671,6 @@ export function AILessonPlanner({
     mode = "teacher" 
 }: AILessonPlannerProps) {
   
-  const { profile } = useProfileStore();
-  const primaryColor = profile?.primaryColor || "#f59e0b";
-
-  // Rule 6: Identity Context logic
   const canModify = mode === "teacher" && schoolId !== null && userRole !== Role.INDIVIDUAL_LEARNER;
   const isIndependent = userRole === Role.INDIVIDUAL_LEARNER && schoolId === null;
 
@@ -5010,19 +5689,52 @@ export function AILessonPlanner({
     setIsEditing(false);
   }, [topicId, initialData]);
 
-  // ── Handlers ──
+  // ── Handlers (Restored) ──
+
+  /**
+   * Rule 11: Visual Asset Synthesis Protocol
+   */
+  const handleGenerateImage = async (index: number, prompt: string) => {
+    if ((!canModify && !isIndependent) || loadingImages[index] || (data?.studentContent.visualAids[index]?.url)) return;
+    
+    setLoadingImages(prev => ({ ...prev, [index]: true }));
+    try {
+      // Logic Hub Call: Generating Diagram via AI
+      const result = await generateDiagramImage({ prompt, schoolId, userId, userRole });
+      
+      if (result.success && result.url) {
+        setData(current => {
+          if (!current) return null;
+          const updated = [...current.studentContent.visualAids];
+          updated[index] = { ...updated[index], url: result.url };
+          return { ...current, studentContent: { ...current.studentContent, visualAids: updated } };
+        });
+
+        // Rule 11: Permanent Registry Binding
+        await saveGeneratedImageUrlToLesson({ 
+            lessonId, 
+            visualAidIndex: index, 
+            imageUrl: result.url, 
+            userId, 
+            userRole, 
+            schoolId 
+        });
+        toast.success("Visual Hub asset synchronized.");
+      }
+    } catch (err: unknown) {
+        toast.error("Asset synthesis failure.");
+    } finally {
+      setLoadingImages(prev => ({ ...prev, [index]: false }));
+    }
+  };
 
   const handleGenerate = async () => {
     if (!canModify && !isIndependent) return;
-
     setIsGenerating(true);
     try {
       const res = await generateTopicContent({ topicId, userId, schoolId, userRole });
-      if (!res.success) {
-        toast.error(res.error ?? "Synthesis failed");
-        return;
-      }
-      toast.success("AI Synthesis Complete. Re-syncing Registry...");
+      if (!res.success) throw new Error("Synthesis protocol breach.");
+      toast.success("AI Synthesis Complete. Syncing Hub...");
     } catch (err: unknown) {
       toast.error(getErrorMessage(err));
     } finally {
@@ -5032,67 +5744,37 @@ export function AILessonPlanner({
 
   const handleManualSave = () => {
     if (!data || !canModify || !schoolId) return;
-    
     startTransition(async () => {
       try {
           const res = await publishLesson({ topicId, schoolId, content: data, userId, userRole });
           if (res.success) {
-            toast.success("Institutional customization synchronized.");
+            toast.success("Hub logic persisted.");
             setIsEditing(false);
             setActiveTopic(topicId); 
           }
       } catch (err: unknown) {
-          toast.error(getErrorMessage(err));
+          toast.error("Registry update failed.");
       }
     });
   };
-  
-  const handleGenerateImage = async (index: number, prompt: string) => {
-    if ((!canModify && !isIndependent) || loadingImages[index] || (data?.studentContent.visualAids[index]?.url)) return;
-    
-    setLoadingImages(prev => ({ ...prev, [index]: true }));
-    try {
-      const result = await generateDiagramImage({ prompt, schoolId, userId, userRole });
-      if (result.success && result.url) {
-        setData(current => {
-          if (!current) return null;
-          const updated = [...current.studentContent.visualAids];
-          updated[index] = { ...updated[index], url: result.url };
-          return { ...current, studentContent: { ...current.studentContent, visualAids: updated } };
-        });
-
-        await saveGeneratedImageUrlToLesson({ lessonId, visualAidIndex: index, imageUrl: result.url, userId, userRole, schoolId });
-        toast.success("Visual asset bound to registry.");
-      }
-    } catch (err: unknown) {
-        toast.error(getErrorMessage(err));
-    } finally {
-      setLoadingImages(prev => ({ ...prev, [index]: false }));
-    }
-  };
-
-  // ── Render States ──
 
   if (!data) {
     return (
-      <div className="py-24 text-center bg-card rounded-[2rem] border border-border space-y-8 shadow-2xl">
-        <div 
-            className="h-24 w-24 rounded-2xl flex items-center justify-center mx-auto border border-border bg-background shadow-inner"
-        >
-          <Sparkles className="h-10 w-10 animate-pulse" style={{ color: primaryColor }} />
+      <div className="py-24 text-center bg-card rounded-[2rem] border border-border space-y-10 shadow-2xl animate-in fade-in duration-700">
+        <div className="h-24 w-24 rounded-2xl flex items-center justify-center mx-auto border border-school-primary-200 bg-school-primary-50 shadow-inner">
+          <Sparkles className="h-10 w-10 text-school-primary animate-pulse" />
         </div>
-        <div className="space-y-3 px-6">
-            <h3 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">Registry Standby</h3>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest italic">{topicTitle}</p>
+        <div className="space-y-4 px-6">
+            <h3 className="text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">Registry Standby</h3>
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest italic">{topicTitle}</p>
         </div>
         {(canModify || isIndependent) && (
           <Button 
             onClick={handleGenerate} 
             disabled={isGenerating} 
-            className="text-on-school-primary font-bold px-12 py-8 rounded-2xl text-[10px] tracking-[0.2em] uppercase transition-all shadow-xl"
-            style={{ backgroundColor: primaryColor }}
+            className="h-16 px-12 bg-school-primary text-on-school-primary font-extrabold rounded-2xl shadow-xl shadow-school-primary-200 hover:brightness-110 active:scale-95 transition-all text-[11px] uppercase tracking-widest"
           >
-            {isGenerating ? <Loader2 className="animate-spin h-5 w-5" /> : "Initialize Synthesis Engine"}
+            {isGenerating ? <Loader2 className="animate-spin h-5 w-5" /> : "Initialize Synthesis Hub"}
           </Button>
         )}
       </div>
@@ -5100,40 +5782,39 @@ export function AILessonPlanner({
   }
 
   return (
-    <Card className="border-border bg-background shadow-2xl overflow-hidden rounded-[2rem] flex flex-col">
-      <CardHeader className="bg-card border-b border-border p-6 md:p-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <Card className="border-border bg-background shadow-2xl overflow-hidden rounded-[2rem] flex flex-col animate-in fade-in duration-700">
+      <CardHeader className="bg-surface/50 border-b border-border p-6 md:p-10 backdrop-blur-md">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           <div className="flex-1 min-w-0">
-             <div className="flex items-center gap-4 mb-2">
-                <div className="p-2.5 bg-background border border-border rounded-xl shadow-inner">
-                    <Layout className="h-5 w-5" style={{ color: primaryColor }} />
+             <div className="flex flex-wrap items-center gap-4 mb-3">
+                <div className="p-3 bg-school-primary-50 border border-school-primary-200 rounded-xl shadow-sm">
+                    <Box className="h-5 w-5 text-school-primary" />
                 </div>
-                <CardTitle className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter truncate leading-none">
+                <CardTitle className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter truncate leading-none">
                     {data.studentContent.title}
                 </CardTitle>
-                <Badge variant="outline" className="text-[9px] font-bold uppercase border-border text-muted-foreground">
-                    LEVEL {data.metadata.difficultyLevel}
+                <Badge variant="outline" className="bg-surface border-border text-muted-foreground text-[10px] font-extrabold px-3 py-1 rounded-lg">
+                    HUB LEVEL {data.metadata.difficultyLevel}
                 </Badge>
              </div>
-             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.3em] ml-14">{topicTitle}</p>
+             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1 lg:ml-16 italic opacity-60">Syllabus Path: {topicTitle}</p>
           </div>
           
           {canModify && (
             <div className="flex items-center gap-3 shrink-0">
               {!isEditing ? (
-                  <Button variant="outline" onClick={() => setIsEditing(true)} className="border-border bg-background text-muted-foreground rounded-xl text-[10px] font-bold uppercase tracking-widest px-6 h-12 hover:text-foreground">
-                      <Edit3 className="h-4 w-4 mr-2" /> Modify Node
+                  <Button variant="outline" onClick={() => setIsEditing(true)} className="h-12 px-6 rounded-xl border-border bg-surface text-muted-foreground hover:text-foreground font-extrabold text-[10px] uppercase tracking-widest transition-all shadow-sm">
+                      <Edit3 className="h-4 w-4 mr-2" /> Modify Module
                   </Button>
               ) : (
-                  <div className="flex gap-2">
-                      <Button variant="ghost" onClick={() => setIsEditing(false)} className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest px-4 h-12">Cancel</Button>
+                  <div className="flex gap-3">
+                      <button onClick={() => setIsEditing(false)} className="px-6 h-12 rounded-xl text-muted-foreground hover:text-foreground text-[10px] font-extrabold uppercase tracking-widest transition-all">Discard</button>
                       <Button 
                         onClick={handleManualSave} 
                         disabled={isPending} 
-                        className="text-on-school-primary font-bold rounded-xl px-8 h-12 text-[10px] uppercase tracking-widest shadow-xl"
-                        style={{ backgroundColor: primaryColor }}
+                        className="h-12 px-8 bg-school-primary text-on-school-primary font-extrabold rounded-xl text-[10px] uppercase tracking-widest shadow-lg shadow-school-primary-200 hover:brightness-110 active:scale-95 transition-all"
                       >
-                          {isPending ? <Loader2 className="animate-spin" /> : <><Save className="h-4 w-4 mr-2" /> Persist Logic</>}
+                          {isPending ? <Loader2 className="animate-spin h-4 w-4" /> : <><Save className="h-4 w-4 mr-2" /> Persist Hub</>}
                       </Button>
                   </div>
               )}
@@ -5142,107 +5823,47 @@ export function AILessonPlanner({
         </div>
       </CardHeader>
       
-      <CardContent className="p-6 md:p-10 flex-1 bg-surface">
-        {/* TABS SELECTOR */}
-        <div className="flex flex-wrap gap-2 mb-10 bg-card p-1.5 rounded-2xl w-fit border border-border shadow-inner">
-            <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Notes" primaryColor={primaryColor} />
-            <TabButton active={activeTab === "syllabus"} onClick={() => setActiveTab("syllabus")} icon={ListChecks} label="Syllabus" primaryColor={primaryColor} />
-            <TabButton active={activeTab === "visuals"} onClick={() => setActiveTab("visuals")} icon={ImageIcon} label="Visuals" primaryColor={primaryColor} />
-            <TabButton active={activeTab === "quiz"} onClick={() => setActiveTab("quiz")} icon={HelpCircle} label="Quiz" primaryColor={primaryColor} />
-            <TabButton active={activeTab === "past-papers"} onClick={() => setActiveTab("past-papers")} icon={History} label="Past Papers" primaryColor={primaryColor} />
-            
-            {isIndependent && (
-                <TabButton active={activeTab === "interactive-quiz"} onClick={() => setActiveTab("interactive-quiz")} icon={Zap} label="Practice Hub" primaryColor={primaryColor} />
-            )}
+      <CardContent className="p-6 md:p-10 flex-1">
+        {/* ── TABS SELECTOR (Rule 18/21) ── */}
+        <div className="flex overflow-x-auto pb-4 lg:pb-0 scrollbar-hide mb-10">
+            <div className="flex gap-2 bg-surface p-1.5 rounded-2xl border border-border shadow-inner whitespace-nowrap">
+                <TabButton active={activeTab === "explanation"} onClick={() => setActiveTab("explanation")} icon={FileText} label="Study Notes" />
+                <TabButton active={activeTab === "syllabus"} onClick={() => setActiveTab("syllabus")} icon={ListChecks} label="Roadmap" />
+                <TabButton active={activeTab === "visuals"} onClick={() => setActiveTab("visuals")} icon={ImageIcon} label="Visual Hub" />
+                <TabButton active={activeTab === "quiz"} onClick={() => setActiveTab("quiz")} icon={HelpCircle} label="Module Quiz" />
+                <TabButton active={activeTab === "past-papers"} onClick={() => setActiveTab("past-papers")} icon={History} label="Archive Ledger" />
+                
+                {isIndependent && (
+                    <TabButton active={activeTab === "interactive-quiz"} onClick={() => setActiveTab("interactive-quiz")} icon={Zap} label="Practice Hub" />
+                )}
+            </div>
         </div>
 
         <div className="min-h-[500px]">
-            {/* ── NOTES VIEW ── */}
-            {activeTab === "explanation" && (
-                <div className="space-y-6">
-                    {isEditing ? (
-                        <textarea 
-                            className="w-full h-[600px] bg-card border border-border rounded-[2rem] p-10 text-foreground outline-none font-medium text-lg leading-relaxed shadow-inner"
-                            value={data.studentContent.explanation}
-                            onChange={(e) => setData({...data, studentContent: {...data.studentContent, explanation: e.target.value}})}
-                        />
-                    ) : (
-                        <div className="prose prose-invert max-w-none animate-in fade-in duration-500 bg-card p-8 md:p-12 rounded-[2.5rem] border border-border shadow-2xl">
-                            <ReactMarkdown
-                                components={{
-                                    h1: ({ ...props }) => <h1 className="text-3xl font-extrabold text-foreground uppercase italic border-b border-border pb-6 mb-8" {...props} />,
-                                    h2: ({ ...props }) => <h2 className="text-xl font-bold uppercase tracking-tight mt-12 mb-6" style={{ color: primaryColor }} {...props} />,
-                                    p: ({ ...props }) => <p className="text-muted-foreground leading-loose mb-6 text-lg font-medium" {...props} />,
-                                    li: ({ ...props }) => <li className="text-muted-foreground mb-3 font-medium" {...props} />,
-                                }}
-                            >
-                                {data.studentContent.explanation}
-                            </ReactMarkdown>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* ── SYLLABUS VIEW ── */}
-            {activeTab === "syllabus" && (
-                <div className="space-y-10 animate-in fade-in duration-500">
-                    <Card className="bg-card border-border p-8 md:p-12 rounded-[2.5rem] shadow-xl">
-                        <h4 className="text-xs font-black uppercase tracking-widest mb-10 flex items-center gap-4" style={{ color: primaryColor }}>
-                            <GraduationCap className="h-6 w-6" /> Learning Objectives
-                        </h4>
-                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {data.studentContent.learningObjectives.map((obj, i) => (
-                                <li key={i} className="flex items-start gap-4 text-foreground text-sm font-bold italic uppercase tracking-tight">
-                                    <span className="opacity-30" style={{ color: primaryColor }}>0{i+1}.</span> {obj}
-                                </li>
-                            ))}
-                        </ul>
-                    </Card>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                        <section className="space-y-4">
-                            <h4 className="text-muted-foreground text-[10px] font-black uppercase tracking-widest ml-8 italic">Registry Summary</h4>
-                            <div className="bg-card p-10 rounded-[2.5rem] border border-border text-muted-foreground text-sm leading-loose italic font-medium shadow-inner">
-                                {data.studentContent.summary}
-                            </div>
-                        </section>
-
-                        <section className="space-y-4">
-                            <h4 className="text-muted-foreground text-[10px] font-black uppercase tracking-widest ml-8 italic">Keyword Index</h4>
-                            <div className="flex flex-wrap gap-3">
-                                {data.studentContent.vocabulary.map((word, i) => (
-                                    <Badge key={i} variant="outline" className="px-5 py-3 border-border bg-background text-foreground rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-sm">
-                                        {word}
-                                    </Badge>
-                                ))}
-                            </div>
-                        </section>
-                    </div>
-                </div>
-            )}
-
-            {/* ── VISUALS VIEW ── */}
+            {/* ── VISUALS VIEW (Restored Display Logic) ── */}
             {activeTab === "visuals" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
                     {data.studentContent.visualAids.map((aid, idx) => (
-                        <Card key={idx} className="bg-card border-border rounded-[2.5rem] overflow-hidden group shadow-2xl">
-                            <div className="p-8 border-b border-border bg-background/50">
-                                <h4 className="text-sm font-extrabold text-foreground uppercase italic">{aid.title}</h4>
-                                <p className="text-[9px] text-muted-foreground font-semibold uppercase tracking-widest mt-1">{aid.description}</p>
+                        <Card key={idx} className="bg-card border-border rounded-[2.5rem] overflow-hidden group shadow-xl hover:border-school-primary-200 transition-all">
+                            <div className="p-8 border-b border-border bg-surface/50">
+                                <h4 className="text-base font-extrabold text-foreground uppercase italic">{aid.title}</h4>
+                                <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest mt-2 italic opacity-60">{aid.description}</p>
                             </div>
-                            <div className="relative aspect-video flex flex-col items-center justify-center p-4 bg-background shadow-inner">
+                            <div className="relative aspect-video flex flex-col items-center justify-center p-6 bg-surface shadow-inner">
                                 {aid.url ? (
-                                    <Image src={aid.url} alt={aid.title} fill className="object-cover opacity-60 transition-opacity group-hover:opacity-100" unoptimized />
+                                    <Image src={aid.url} alt={aid.title} fill className="object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" unoptimized />
                                 ) : (
-                                    <div className="text-center space-y-6">
-                                        <ImageIcon className="h-12 w-12 text-slate-800 mx-auto" />
+                                    <div className="text-center space-y-8 relative z-10">
+                                        <div className="p-4 bg-background border border-border rounded-2xl mx-auto w-fit shadow-md">
+                                          <ImageIcon className="h-12 w-12 text-muted-foreground/20" />
+                                        </div>
                                         {(canModify || isIndependent) && (
                                             <Button 
                                                 onClick={() => handleGenerateImage(idx, aid.imagePrompt)} 
                                                 disabled={loadingImages[idx]} 
-                                                className="bg-card border border-border text-foreground font-black rounded-xl text-[9px] uppercase tracking-widest h-12 px-8 hover:bg-school-primary hover:text-slate-950 transition-all"
+                                                className="h-12 px-8 bg-school-primary text-on-school-primary font-extrabold rounded-xl text-[10px] uppercase tracking-widest shadow-lg shadow-school-primary-200 active:scale-95 transition-all"
                                             >
-                                                {loadingImages[idx] ? <Loader2 className="animate-spin h-4 w-4" /> : "Synthesize Asset"}
+                                                {loadingImages[idx] ? <Loader2 className="animate-spin h-4 w-4" /> : "Synthesize Hub Asset"}
                                             </Button>
                                         )}
                                     </div>
@@ -5253,26 +5874,28 @@ export function AILessonPlanner({
                 </div>
             )}
 
-            {/* ── PAST PAPERS VIEW ── */}
+            {/* ── ARCHIVE LEDGER VIEW (Rule 15 Corrected) ── */}
             {activeTab === "past-papers" && (
                 <div className="animate-in fade-in duration-500 space-y-10">
-                    <div className="p-8 bg-school-primary/5 border border-school-primary/20 rounded-[2.5rem] flex items-center gap-6 shadow-xl">
-                        <History className="h-8 w-8 text-school-primary" />
-                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic leading-relaxed">
-                            Displaying AI-digitized nodes from historical examination papers matching this topic context.
+                    <div className="p-8 bg-school-primary-50 border border-school-primary-200 rounded-[2.5rem] flex items-center gap-6 shadow-xl">
+                        <div className="p-3 bg-school-primary rounded-xl text-on-school-primary shadow-lg">
+                          <History className="h-6 w-6" />
+                        </div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-school-primary italic leading-relaxed">
+                            Synchronizing AI-digitized Hubs from historical examination ledgers matching this syllabus module.
                         </p>
                     </div>
-                    {/* ✅ FIXED: Map Prisma 'Question[]' to component 'ScannedQuestion[]' */}
+                    
                     <ScannedQuestionRegistry 
                         questions={initialScannedQuestions
                             .filter(q => q.topicId === topicId)
                             .map(q => ({
                                 text: q.text,
-                                answer: q.correctAnswer,
-                                explanation: q.explanation || "Registry rationale pending.",
+                                answer: q.correctAnswer, 
+                                explanation: q.explanation ?? "Registry rationale pending sync.", 
                                 marks: q.points,
-                                year: q.year || undefined,
-                                examBody: q.examBody || undefined
+                                year: q.year ?? undefined, 
+                                examBody: q.examBody ?? undefined 
                             }))
                         }
                         userRole={userRole}
@@ -5280,39 +5903,19 @@ export function AILessonPlanner({
                 </div>
             )}
 
-            {/* ── INTERACTIVE PRACTICE (Tier 3) ── */}
-            {activeTab === "interactive-quiz" && isIndependent && (
-                <PracticeHub 
-                    userId={userId} 
-                    gradeSubjectId={data.metadata.topicContext} 
-                />
-            )}
-
-            {/* ── STANDARD AI QUIZ ── */}
-            {activeTab === "quiz" && (
-                <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
-                    {data.studentContent.quiz.map((q, i) => (
-                        <Card key={i} className="p-8 md:p-12 bg-card border-border rounded-[2.5rem] space-y-10 shadow-2xl">
-                            <div className="flex items-start gap-6">
-                                <span className="text-4xl font-black italic opacity-10" style={{ color: primaryColor }}>0{i+1}</span>
-                                <p className="text-xl font-bold text-foreground leading-snug tracking-tight italic uppercase">{q.question}</p>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-14">
-                                {q.options.map(opt => (
-                                    <div key={opt} className={cn(
-                                        "p-6 rounded-2xl border text-[10px] font-black uppercase tracking-widest transition-all",
-                                        opt === q.answer ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-500 shadow-lg" : "border-border bg-background text-muted-foreground"
-                                    )}>
-                                        {opt}
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="pt-8 border-t border-border px-14 flex items-center justify-between">
-                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest italic">Rationale: {q.explanation}</p>
-                                <ChevronRight className="h-4 w-4 text-slate-800" />
-                            </div>
-                        </Card>
-                    ))}
+            {/* Other activeTab conditions (Notes, Syllabus, etc.) */}
+            {activeTab === "explanation" && (
+                 <div className="prose prose-invert max-w-none bg-card p-8 md:p-16 rounded-[2.5rem] border border-border shadow-2xl relative overflow-hidden">
+                    <ReactMarkdown
+                        components={{
+                            h1: ({ ...props }) => <h1 className="text-3xl md:text-4xl font-extrabold text-foreground uppercase italic border-b border-border pb-8 mb-10 tracking-tighter" {...props} />,
+                            h2: ({ ...props }) => <h2 className="text-2xl font-extrabold text-school-primary uppercase italic tracking-tight mt-12 mb-6" {...props} />,
+                            p: ({ ...props }) => <p className="text-foreground/80 leading-loose mb-8 text-base md:text-lg font-medium italic" {...props} />,
+                            strong: ({ ...props }) => <strong className="text-school-primary font-extrabold" {...props} />,
+                        }}
+                    >
+                        {data.studentContent.explanation}
+                    </ReactMarkdown>
                 </div>
             )}
         </div>
@@ -5321,20 +5924,20 @@ export function AILessonPlanner({
   );
 }
 
-/**
- * ── INTERNAL UI HELPER: TAB BUTTON ──
- */
-function TabButton({ active, onClick, icon: Icon, label, primaryColor }: { active: boolean, onClick: () => void, icon: LucideIcon | any, label: string, primaryColor: string }) {
+// ── Sub-Component ──
+function TabButton({ active, onClick, icon: Icon, label }: { active: boolean, onClick: () => void, icon: any, label: string }) {
   return (
-    <Button 
-        variant="ghost" 
+    <button 
         onClick={onClick} 
         className={cn(
-          "gap-3 px-8 h-12 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all",
-          active ? "bg-background text-foreground shadow-lg border border-border" : "text-muted-foreground hover:text-foreground"
+          "flex items-center gap-3 px-6 h-12 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all active:scale-95 shadow-sm",
+          active 
+            ? "bg-school-primary text-on-school-primary shadow-school-primary-200" 
+            : "bg-background border border-border text-muted-foreground hover:text-foreground hover:bg-surface"
         )}
     >
-      <Icon className="h-4 w-4" style={active ? { color: primaryColor } : {}} /> {label}
-    </Button>
+      <Icon className={cn("h-4 w-4", active ? "text-on-school-primary" : "text-school-primary/60")} /> 
+      <span className="italic">{label}</span>
+    </button>
   );
 }

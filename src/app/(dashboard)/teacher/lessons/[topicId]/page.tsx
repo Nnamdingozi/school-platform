@@ -1199,7 +1199,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { getLessonForTeacher } from "@/app/actions/lesson.actions"
-import { getScannedQuestions } from "@/app/actions/scanned-question-bank";
+import { getScannedPapers } from "@/app/actions/scanned-question-bank";
 import { LessonStudioClient } from "@/components/TeacherDashboard/lessonClient";
 
 interface PageProps {
@@ -1247,11 +1247,8 @@ export default async function Page({ params }: PageProps) {
     // Fetches institutional customization or global blueprint
     getLessonForTeacher(topicId, profile.schoolId ?? ""),
     // Fetches past paper questions linked to this topic
-    getScannedQuestions({
-        topicId,
-        schoolId: profile.schoolId,
-        userId: profile.id
-    })
+    getScannedPapers(
+        schoolId: profile.schoolId, userId: profile.id)
   ]);
 
   if (!lessonRes.success) return notFound();

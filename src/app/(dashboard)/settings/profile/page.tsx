@@ -340,43 +340,116 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { ProfileSettingsClient } from "@/components/settings/profileSettingsClient";
+
+// /**
+//  * Rule 16: Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Profile Settings | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { name: true, email: true }
+//     });
+
+//     const displayName = profile?.name || profile?.email || "User";
+
+//     return {
+//         title: `Profile | ${displayName} | SchoolPaaS`,
+//         description: "Manage your institutional identity and contact nodes."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Fetching
+//  */
+// export default async function Page() {
+//     // 1. Authenticate (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     // 2. Fetch Registry Truth (Rule 11)
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         include: { 
+//             school: { select: { name: true } } 
+//         }
+//     });
+
+//     if (!profile) redirect("/login?error=profile_not_found");
+
+//     return (
+//         <ProfileSettingsClient 
+//             initialProfile={profile as any} 
+//         />
+//     );
+// }
+
+
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { ProfileSettingsClient } from "@/components/settings/profileSettingsClient";
+import { Profile, School } from "@prisma/client";
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 /**
- * Rule 16: Contextual SEO
+ * Interface representing a Profile hydrated with its Institutional Hub.
+ */
+interface HydratedIdentityProfile extends Profile {
+    school: {
+        name: string;
+    } | null;
+}
+
+/**
+ * IDENTITY REGISTRY | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO - Hub-specific indexing.
  */
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { title: "Profile Settings | SchoolPaaS" };
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+    if (!authUser) return { title: "Profile Settings | SchoolPaaS" };
 
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         select: { name: true, email: true }
     });
 
-    const displayName = profile?.name || profile?.email || "User";
+    const displayName = profile?.name || profile?.email || "Registry User";
 
     return {
-        title: `Profile | ${displayName} | SchoolPaaS`,
-        description: "Manage your institutional identity and contact nodes."
+        title: `Identity Hub | ${displayName} | SchoolPaaS`,
+        description: "Manage your institutional identity records and communication hubs."
     };
 }
 
 /**
- * Rule 12: Server-First Fetching
+ * PROFILE SETTINGS PAGE (Tier 3)
+ * Rule 12: Server-First Execution. Handles identity verification and registry hydration.
+ * Rule 15: Pure TypeScript - Zero 'any' types in the identity pipeline.
  */
-export default async function Page() {
-    // 1. Authenticate (Rule 10)
+export default async function ProfileSettingsPage() {
+    // 1. Resolve Identity Hub & Verification (Rule 10)
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) redirect("/login");
 
-    // 2. Fetch Registry Truth (Rule 11)
+    // 2. Authoritative Data Hydration (Rule 11)
+    // We fetch the full profile record including the linked school name.
     const profile = await prisma.profile.findUnique({
         where: { id: authUser.id },
         include: { 
@@ -384,11 +457,19 @@ export default async function Page() {
         }
     });
 
-    if (!profile) redirect("/login?error=profile_not_found");
+    if (!profile) {
+        redirect("/login?error=identity_not_discovered");
+    }
+
+    // 3. Client-Side Protocol Handoff (Rule 15)
+    // Normalized casting to ensure strict type synchronization with the client console.
+    const initialProfile = profile as HydratedIdentityProfile;
 
     return (
-        <ProfileSettingsClient 
-            initialProfile={profile as any} 
-        />
+        <main className="min-h-screen bg-background">
+            <ProfileSettingsClient 
+                initialProfile={initialProfile} 
+            />
+        </main>
     );
 }

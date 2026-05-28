@@ -53,7 +53,7 @@ export function UnassignedStudentsAlert({ initialData }: UnassignedStudentsAlert
     if (!initialData || remainingCount === 0) {
         return (
             <Card className="bg-card border-border rounded-[2.5rem] p-10 flex flex-col items-center justify-center text-center space-y-4 shadow-2xl">
-                <div className="h-14 w-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-xl">
+                <div className="h-14 w-14 rounded-2xl bg-emerald-500/70 flex items-center justify-center border border-emerald-500/20 shadow-xl">
                     <UserCheck className="h-6 w-6 text-emerald-500" />
                 </div>
                 <h3 className="text-xl font-black text-foreground uppercase italic tracking-tighter">

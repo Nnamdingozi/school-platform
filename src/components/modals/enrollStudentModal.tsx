@@ -327,17 +327,260 @@
 
 
 
+// "use client"
+
+// import { useState, useEffect, useTransition, useCallback } from "react"
+// import { X, Search, Loader2, CheckCircle2, GraduationCap } from "lucide-react"
+// import { enrollSingleStudent, searchStudents } from "@/app/actions/class-management"
+// import { useProfileStore } from "@/store/profileStore"
+// import { toast } from "sonner"
+// import { Role } from "@prisma/client"
+// import { cn } from "@/lib/utils"
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface StudentSearchResult {
+//   id: string
+//   name: string | null
+//   email: string
+// }
+
+// interface ClassroomOption {
+//   id: string
+//   name: string
+// }
+
+// interface EnrollStudentModalProps {
+//   isOpen: boolean
+//   onClose: () => void
+//   classes: ClassroomOption[]
+//   onRefresh: () => Promise<void>
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// /**
+//  * INSTITUTIONAL STUDENT PLACEMENT MODAL (Tier 2)
+//  * Rule 17: Decoupled from parent props; fetches identity/branding from Zustand.
+//  * Rule 15: Synced with refactored 'enrollSingleStudent' parameters.
+//  */
+// export function EnrollStudentModal({ 
+//   isOpen, 
+//   onClose, 
+//   classes, 
+//   onRefresh 
+// }: EnrollStudentModalProps) {
+//   const { profile } = useProfileStore();
+//   const [isPending, startTransition] = useTransition()
+  
+//   // Local State
+//   const [studentQuery, setStudentQuery] = useState<string>("")
+//   const [searchResults, setSearchResults] = useState<StudentSearchResult[]>([])
+//   const [isSearching, setIsSearching] = useState<boolean>(false)
+//   const [formData, setFormData] = useState({ studentId: "", classId: "" })
+
+//   const schoolId = profile?.schoolId ?? "";
+//   const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//   // ── Registry Search Logic ──
+//   const performSearch = useCallback(async () => {
+//     if (studentQuery.length < 2 || formData.studentId || !schoolId) {
+//       setSearchResults([])
+//       return
+//     }
+
+//     setIsSearching(true)
+//     try {
+//       // Rule 5: Search is strictly limited to the current schoolId
+//       const results = await searchStudents(schoolId, studentQuery)
+//       setSearchResults(results as StudentSearchResult[])
+//     } catch (error) {
+//       console.error("Registry search failure:", error)
+//     } finally {
+//       setIsSearching(false)
+//     }
+//   }, [studentQuery, schoolId, formData.studentId])
+
+//   useEffect(() => {
+//     const delayDebounceFn = setTimeout(() => {
+//       performSearch()
+//     }, 400)
+//     return () => clearTimeout(delayDebounceFn)
+//   }, [performSearch])
+
+//   if (!isOpen) return null
+
+//   // ── Placement Handler ──
+//   const handleSubmit = (e: React.FormEvent) => {
+//     e.preventDefault()
+    
+//     if (!schoolId || !profile) {
+//         toast.error("Institutional session synchronization error.");
+//         return
+//     }
+
+//     startTransition(async () => {
+//       // Rule 15: Passing actor context to the server action
+//       const res = await enrollSingleStudent(
+//         schoolId, 
+//         profile.id, 
+//         profile.name ?? "System Admin", 
+//         profile.role as Role, 
+//         formData
+//       )
+
+//       if (res.success) {
+//         toast.success("Student successfully synchronized with classroom.");
+//         setStudentQuery("")
+//         setFormData({ studentId: "", classId: "" })
+//         await onRefresh()
+//         onClose()
+//       } else {
+//         toast.error(res.error || "Placement procedure failed.");
+//       }
+//     })
+//   }
+
+//   return (
+//     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md animate-in fade-in duration-300">
+//       <div className="bg-slate-900 border border-white/5 rounded-[3rem] w-full max-w-md p-10 shadow-2xl scale-in-center">
+        
+//         <div className="flex justify-between items-start mb-10">
+//           <div>
+//             <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">
+//                 Placement Hub
+//             </h2>
+//             <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-3">
+//                 Bind identity to institutional classroom
+//             </p>
+//           </div>
+//           <button 
+//             onClick={onClose} 
+//             className="p-2 hover:bg-white/5 rounded-xl transition-colors text-slate-600 hover:text-white"
+//           >
+//             <X className="h-6 w-6" />
+//           </button>
+//         </div>
+
+//         <form onSubmit={handleSubmit} className="space-y-8">
+//           {/* SEARCH FIELD */}
+//           <div className="space-y-3 relative">
+//             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+//                 Student Registry Lookup
+//             </label>
+//             <div className="relative group">
+//               <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within:text-school-primary transition-colors" style={{ color: primaryColor }} />
+//               <input 
+//                 type="text"
+//                 autoComplete="off"
+//                 className="w-full bg-slate-950 border border-white/5 rounded-2xl pl-14 pr-6 py-5 text-sm text-white outline-none focus:border-school-primary transition-all placeholder:text-slate-800 font-bold uppercase italic"
+//                 placeholder="Name or Email..."
+//                 value={studentQuery}
+//                 onChange={(e) => {
+//                     setStudentQuery(e.target.value)
+//                     if (formData.studentId) setFormData({ ...formData, studentId: "" })
+//                 }}
+//               />
+//             </div>
+
+//             {/* RESULTS DROPDOWN */}
+//             {(isSearching || searchResults.length > 0) && (
+//               <div className="absolute top-full left-0 right-0 mt-3 bg-slate-950 border border-white/10 rounded-2xl overflow-hidden z-[110] shadow-2xl max-h-64 overflow-y-auto no-scrollbar">
+//                 {isSearching ? (
+//                   <div className="p-6 text-[10px] text-slate-500 flex items-center gap-3 font-black uppercase tracking-widest italic">
+//                     <Loader2 className="h-4 w-4 animate-spin" style={{ color: primaryColor }} /> Querying_Registry...
+//                   </div>
+//                 ) : (
+//                   searchResults.map(s => (
+//                     <button 
+//                       key={s.id} 
+//                       type="button" 
+//                       onClick={() => { 
+//                         setFormData({...formData, studentId: s.id}); 
+//                         setStudentQuery(s.name || s.email); 
+//                         setSearchResults([]); 
+//                       }}
+//                       className="w-full text-left px-6 py-5 hover:bg-white/[0.03] transition-colors border-b border-white/5 last:border-0 group"
+//                     >
+//                       <p className="font-black uppercase italic text-white group-hover:text-school-primary transition-colors" style={{ color: primaryColor }}>{s.name || 'Identity Unknown'}</p>
+//                       <p className="text-[9px] text-slate-600 font-bold uppercase tracking-tighter mt-1">{s.email}</p>
+//                     </button>
+//                   ))
+//                 )}
+//               </div>
+//             )}
+
+//             {formData.studentId && (
+//                 <div className="flex items-center gap-2 mt-3 ml-2 text-emerald-500 animate-in slide-in-from-left-2">
+//                     <CheckCircle2 className="h-4 w-4" />
+//                     <span className="text-[10px] font-black uppercase tracking-[0.2em]">Verified Registry Entry</span>
+//                 </div>
+//             )}
+//           </div>
+
+//           {/* DESTINATION SELECTION */}
+//           <div className="space-y-3">
+//             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+//                 Target Classroom Node
+//             </label>
+//             <div className="relative">
+//                 <select 
+//                 required 
+//                 className="w-full bg-slate-950 border border-white/5 rounded-2xl px-6 py-5 text-white focus:border-school-primary outline-none appearance-none font-black uppercase italic text-sm cursor-pointer"
+//                 value={formData.classId} 
+//                 onChange={e => setFormData({...formData, classId: e.target.value})}
+//                 >
+//                 <option value="">Choose Destination...</option>
+//                 {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+//                 </select>
+//                 <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-20">
+//                     <GraduationCap className="h-5 w-5 text-white" />
+//                 </div>
+//             </div>
+//           </div>
+
+//           {/* ACTION BUTTON */}
+//           <button 
+//             type="submit" 
+//             disabled={isPending || !formData.studentId || !formData.classId} 
+//             className="w-full bg-school-primary text-slate-950 font-black py-6 rounded-2xl mt-6 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-20 disabled:grayscale shadow-xl shadow-school-primary/10 flex items-center justify-center gap-3 uppercase text-[10px] tracking-[0.3em]"
+//             style={{ backgroundColor: primaryColor }}
+//           >
+//             {isPending ? (
+//                 <>
+//                     <Loader2 className="h-4 w-4 animate-spin" />
+//                     Synchronizing...
+//                 </>
+//             ) : (
+//                 <>
+//                     Confirm Placement <ArrowRight className="h-4 w-4" />
+//                 </>
+//             )}
+//           </button>
+//         </form>
+//       </div>
+//     </div>
+//   )
+// }
+
+// function ArrowRight({ className }: { className?: string }) {
+//     return (
+//         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+//     )
+// }
+
+
 "use client"
 
-import { useState, useEffect, useTransition, useCallback } from "react"
-import { X, Search, Loader2, CheckCircle2, GraduationCap } from "lucide-react"
+import React, { useState, useEffect, useTransition, useCallback } from "react"
+import { X, Search, Loader2, CheckCircle2, GraduationCap, ChevronDown, ArrowRight } from "lucide-react"
 import { enrollSingleStudent, searchStudents } from "@/app/actions/class-management"
 import { useProfileStore } from "@/store/profileStore"
 import { toast } from "sonner"
 import { Role } from "@prisma/client"
 import { cn } from "@/lib/utils"
 
-// ── Types ───────────────────────────────────────────────────────────────────
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface StudentSearchResult {
   id: string
@@ -360,9 +603,11 @@ interface EnrollStudentModalProps {
 // ── Main Component ──────────────────────────────────────────────────────────
 
 /**
- * INSTITUTIONAL STUDENT PLACEMENT MODAL (Tier 2)
- * Rule 17: Decoupled from parent props; fetches identity/branding from Zustand.
- * Rule 15: Synced with refactored 'enrollSingleStudent' parameters.
+ * INSTITUTIONAL STUDENT PLACEMENT MODAL
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function EnrollStudentModal({ 
   isOpen, 
@@ -373,14 +618,12 @@ export function EnrollStudentModal({
   const { profile } = useProfileStore();
   const [isPending, startTransition] = useTransition()
   
-  // Local State
   const [studentQuery, setStudentQuery] = useState<string>("")
   const [searchResults, setSearchResults] = useState<StudentSearchResult[]>([])
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [formData, setFormData] = useState({ studentId: "", classId: "" })
 
   const schoolId = profile?.schoolId ?? "";
-  const primaryColor = profile?.primaryColor || "#f59e0b";
 
   // ── Registry Search Logic ──
   const performSearch = useCallback(async () => {
@@ -391,11 +634,11 @@ export function EnrollStudentModal({
 
     setIsSearching(true)
     try {
-      // Rule 5: Search is strictly limited to the current schoolId
+      // Rule 5: Scoped institutional lookup
       const results = await searchStudents(schoolId, studentQuery)
       setSearchResults(results as StudentSearchResult[])
     } catch (error) {
-      console.error("Registry search failure:", error)
+      console.error("[REGISTRY_SEARCH_FAULT]:", error)
     } finally {
       setIsSearching(false)
     }
@@ -420,7 +663,6 @@ export function EnrollStudentModal({
     }
 
     startTransition(async () => {
-      // Rule 15: Passing actor context to the server action
       const res = await enrollSingleStudent(
         schoolId, 
         profile.id, 
@@ -430,7 +672,7 @@ export function EnrollStudentModal({
       )
 
       if (res.success) {
-        toast.success("Student successfully synchronized with classroom.");
+        toast.success("Identity synchronization complete.");
         setStudentQuery("")
         setFormData({ studentId: "", classId: "" })
         await onRefresh()
@@ -442,39 +684,45 @@ export function EnrollStudentModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="bg-slate-900 border border-white/5 rounded-[3rem] w-full max-w-md p-10 shadow-2xl scale-in-center">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-in fade-in duration-300">
+      {/* Rule 19: Modal standardized to rounded-[2rem] */}
+      <div className="bg-card border border-border rounded-[2rem] w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.1)] animate-in zoom-in-95 duration-300">
         
-        <div className="flex justify-between items-start mb-10">
-          <div>
-            <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">
-                Placement Hub
-            </h2>
-            <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-3">
-                Bind identity to institutional classroom
-            </p>
+        {/* ── HEADER ── */}
+        <div className="p-8 md:p-10 pb-0">
+          <div className="flex justify-between items-start">
+            <div className="space-y-1">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-foreground italic uppercase tracking-tighter leading-none">
+                  Placement Hub
+              </h2>
+              <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest mt-2 flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-school-primary animate-pulse" />
+                  Bind identity to institutional classroom
+              </p>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-surface rounded-xl transition-all"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
-          <button 
-            onClick={onClose} 
-            className="p-2 hover:bg-white/5 rounded-xl transition-colors text-slate-600 hover:text-white"
-          >
-            <X className="h-6 w-6" />
-          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        {/* ── FORM ── */}
+        <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-8">
           {/* SEARCH FIELD */}
           <div className="space-y-3 relative">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">
                 Student Registry Lookup
             </label>
             <div className="relative group">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within:text-school-primary transition-colors" style={{ color: primaryColor }} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
               <input 
                 type="text"
                 autoComplete="off"
-                className="w-full bg-slate-950 border border-white/5 rounded-2xl pl-14 pr-6 py-5 text-sm text-white outline-none focus:border-school-primary transition-all placeholder:text-slate-800 font-bold uppercase italic"
-                placeholder="Name or Email..."
+                className="w-full bg-surface border border-border rounded-xl pl-11 pr-6 py-4 text-sm text-foreground outline-none focus:ring-2 focus:ring-school-primary-200 transition-all placeholder:text-muted-foreground/30 font-semibold uppercase italic"
+                placeholder="Identity Name or Email..."
                 value={studentQuery}
                 onChange={(e) => {
                     setStudentQuery(e.target.value)
@@ -483,12 +731,12 @@ export function EnrollStudentModal({
               />
             </div>
 
-            {/* RESULTS DROPDOWN */}
+            {/* RESULTS DROPDOWN (Rule 18/19) */}
             {(isSearching || searchResults.length > 0) && (
-              <div className="absolute top-full left-0 right-0 mt-3 bg-slate-950 border border-white/10 rounded-2xl overflow-hidden z-[110] shadow-2xl max-h-64 overflow-y-auto no-scrollbar">
+              <div className="absolute top-full left-0 right-0 mt-3 bg-card border border-border rounded-2xl overflow-hidden z-[110] shadow-2xl max-h-64 overflow-y-auto custom-scrollbar animate-in slide-in-from-top-2 duration-200">
                 {isSearching ? (
-                  <div className="p-6 text-[10px] text-slate-500 flex items-center gap-3 font-black uppercase tracking-widest italic">
-                    <Loader2 className="h-4 w-4 animate-spin" style={{ color: primaryColor }} /> Querying_Registry...
+                  <div className="p-6 text-[10px] text-muted-foreground flex items-center gap-3 font-bold uppercase tracking-widest italic">
+                    <Loader2 className="h-4 w-4 animate-spin text-school-primary" /> Synchronizing_Query...
                   </div>
                 ) : (
                   searchResults.map(s => (
@@ -500,10 +748,10 @@ export function EnrollStudentModal({
                         setStudentQuery(s.name || s.email); 
                         setSearchResults([]); 
                       }}
-                      className="w-full text-left px-6 py-5 hover:bg-white/[0.03] transition-colors border-b border-white/5 last:border-0 group"
+                      className="w-full text-left px-6 py-4 hover:bg-school-primary hover:text-on-school-primary transition-all border-b border-border last:border-0 group"
                     >
-                      <p className="font-black uppercase italic text-white group-hover:text-school-primary transition-colors" style={{ color: primaryColor }}>{s.name || 'Identity Unknown'}</p>
-                      <p className="text-[9px] text-slate-600 font-bold uppercase tracking-tighter mt-1">{s.email}</p>
+                      <p className="font-extrabold uppercase italic text-sm truncate">{s.name || 'Anonymous Node'}</p>
+                      <p className="text-[9px] font-bold uppercase tracking-tighter opacity-70 mt-1">{s.email}</p>
                     </button>
                   ))
                 )}
@@ -512,39 +760,36 @@ export function EnrollStudentModal({
 
             {formData.studentId && (
                 <div className="flex items-center gap-2 mt-3 ml-2 text-emerald-500 animate-in slide-in-from-left-2">
-                    <CheckCircle2 className="h-4 w-4" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Verified Registry Entry</span>
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <span className="text-[9px] font-bold uppercase tracking-widest italic">Verified Registry Entry</span>
                 </div>
             )}
           </div>
 
-          {/* DESTINATION SELECTION */}
+          {/* DESTINATION SELECTION (Rule 18) */}
           <div className="space-y-3">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">
                 Target Classroom Node
             </label>
-            <div className="relative">
+            <div className="relative group">
                 <select 
                 required 
-                className="w-full bg-slate-950 border border-white/5 rounded-2xl px-6 py-5 text-white focus:border-school-primary outline-none appearance-none font-black uppercase italic text-sm cursor-pointer"
+                className="w-full bg-surface border border-border rounded-xl px-5 py-4 text-foreground focus:ring-2 focus:ring-school-primary-200 outline-none appearance-none font-bold uppercase italic text-xs cursor-pointer transition-all"
                 value={formData.classId} 
                 onChange={e => setFormData({...formData, classId: e.target.value})}
                 >
-                <option value="">Choose Destination...</option>
-                {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                <option value="" className="bg-card">Choose Destination...</option>
+                {classes.map(c => <option key={c.id} value={c.id} className="bg-card">{c.name}</option>)}
                 </select>
-                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-20">
-                    <GraduationCap className="h-5 w-5 text-white" />
-                </div>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none group-hover:text-school-primary transition-colors" />
             </div>
           </div>
 
-          {/* ACTION BUTTON */}
+          {/* ACTION BUTTON (Rule 21 Scale Protocol) */}
           <button 
             type="submit" 
             disabled={isPending || !formData.studentId || !formData.classId} 
-            className="w-full bg-school-primary text-slate-950 font-black py-6 rounded-2xl mt-6 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-20 disabled:grayscale shadow-xl shadow-school-primary/10 flex items-center justify-center gap-3 uppercase text-[10px] tracking-[0.3em]"
-            style={{ backgroundColor: primaryColor }}
+            className="w-full bg-school-primary text-on-school-primary font-extrabold py-5 rounded-2xl mt-4 hover:brightness-110 active:scale-95 transition-all disabled:opacity-20 shadow-xl shadow-school-primary-200 flex items-center justify-center gap-3 uppercase text-[10px] tracking-widest"
           >
             {isPending ? (
                 <>
@@ -561,10 +806,4 @@ export function EnrollStudentModal({
       </div>
     </div>
   )
-}
-
-function ArrowRight({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-    )
 }

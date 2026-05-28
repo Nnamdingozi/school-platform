@@ -92,6 +92,24 @@ export interface LogActivityInput {
     metadata?:   Record<string, unknown>
 }
 
+export interface ActivityItem {
+    id:          string
+    type:        ActivityType
+    title:       string
+    description: string
+    actorName:   string | null
+    actorRole:   string | null
+    actorId:     string
+    createdAt:   Date
+}
+
+export interface ActivityFeedData {
+    myActivity:     ActivityItem[]
+    schoolActivity: ActivityItem[]
+}
+
+
+
 /**
  * GLOBAL ACTIVITY LOGGER
  * Adheres to Rule 11: System truth - tracks actions across all 3 tiers.
@@ -178,5 +196,59 @@ export async function getPersonalActivityLogs(userId: string): Promise<ActivityL
     } catch (err: unknown) {
         console.error('getPersonalActivityLogs error:', getErrorMessage(err));
         return [];
+    }
+}
+
+
+
+
+// ── Get Activity Feed ──────────────────────────────────────────────────────────
+
+export async function getActivityFeed(
+    schoolId: string,
+    actorId:  string,
+): Promise<ActivityFeedData | null> {
+    try {
+        const [myActivity, schoolActivity] = await Promise.all([
+
+            // My Activity — current user's actions
+            prisma.activityLog.findMany({
+                where:   { schoolId, actorId },
+                orderBy: { createdAt: 'desc' },
+                take:    20,
+                select: {
+                    id:          true,
+                    type:        true,
+                    title:       true,
+                    description: true,
+                    actorName:   true,
+                    actorRole:   true,
+                    actorId:     true,
+                    createdAt:   true,
+                },
+            }),
+
+            // School Feed — all activity in this school
+            prisma.activityLog.findMany({
+                where:   { schoolId },
+                orderBy: { createdAt: 'desc' },
+                take:    30,
+                select: {
+                    id:          true,
+                    type:        true,
+                    title:       true,
+                    description: true,
+                    actorName:   true,
+                    actorRole:   true,
+                    actorId:     true,
+                    createdAt:   true,
+                },
+            }),
+        ])
+
+        return { myActivity, schoolActivity }
+    } catch (err) {
+        console.error('getActivityFeed error:', getErrorMessage(err))
+        return null
     }
 }

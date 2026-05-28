@@ -472,6 +472,78 @@
 
 
 
+// import { redirect } from 'next/navigation'
+// import { createClient } from '@/lib/supabase/server'
+// import { prisma } from '@/lib/prisma'
+// import { getRegistryProfile } from '@/app/actions/profileRegistry'
+// import { getParentProfile } from '@/app/actions/parentProfile'
+// import { SchoolProvider } from '@/context/schoolProvider'
+// import { checkSubscription } from '@/app/actions/subscription-guard'
+// import { AppSidebar } from '@/components/app-sidebar'
+// import { ProfileInitializer } from '@/components/profileInitializer'
+// import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
+// import { Role } from '@prisma/client'
+// import { BrandingProvider } from '@/context/brandingProvider'
+
+
+
+
+
+// export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+//     // 1. Verify Identity (Rule 10)
+//     const supabase = await createClient()
+//     const { data: { user: authUser } } = await supabase.auth.getUser()
+//     if (!authUser) redirect('/login')
+
+//     // 2. Subscription Guard (Rule 11 System Truth)
+//     const profileBase = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     if (!profileBase) redirect('/login');
+
+//     const subStatus = await checkSubscription(profileBase.id, profileBase.schoolId)
+//     if (!subStatus.isActive) redirect('/billing?status=expired')
+
+//     // 3. Hydrate Full Registry Context
+//     const profile = profileBase.role === Role.PARENT
+//         ? await getParentProfile(authUser.email!)
+//         : await getRegistryProfile(authUser.email!);
+
+//     if (!profile) redirect('/login?error=sync_failed');
+
+//     return (
+//         <SchoolProvider initialProfile={profile as any}>
+//             <ProfileInitializer profile={profile as any} />
+//             <SidebarProvider>
+//                 <div className="flex min-h-screen w-full bg-surface">
+//                     {profileBase.role !== Role.PARENT && <AppSidebar />}
+//                     <SidebarInset className="bg-background">
+//                         {/* Mobile Header (Hidden on Desktop) */}
+//                         <header className="flex h-14 items-center gap-4 px-6 border-b border-border sm:hidden bg-card/50 backdrop-blur">
+//                             <SidebarTrigger />
+//                             <div className="h-4 w-px bg-border" />
+//                             <p className="text-[10px] font-black uppercase tracking-widest italic truncate">
+//                                 {profile.school?.name || "Registry"}
+//                             </p>
+//                         </header>
+
+//                         <main className="flex-1 overflow-y-auto overflow-x-hidden">
+//                             <BrandingProvider>
+//                                 {children}
+//                             </BrandingProvider>
+
+//                         </main>
+//                     </SidebarInset>
+//                 </div>
+//             </SidebarProvider>
+//         </SchoolProvider>
+//     )
+// }
+
+
+
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
@@ -483,22 +555,26 @@ import { AppSidebar } from '@/components/app-sidebar'
 import { ProfileInitializer } from '@/components/profileInitializer'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { Role } from '@prisma/client'
-import type {
-    AnyProfile,
-    ProfileInStore,
-    ParentProfileInStore,
-} from '@/types/profile'
+import { BrandingProvider } from '@/context/brandingProvider'
+import { type AnyProfile } from '@/types/profile' // Rule 15: Strict store types
 
+// ── Main Component ──────────────────────────────────────────────────────────
 
-
-
+/**
+ * INSTITUTIONAL DASHBOARD LAYOUT
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 12: Server-First Authorization and Subscription Sentinel.
+ * Rule 18: Semantic Flip (bg-surface, bg-background, border-border).
+ * Rule 21: Scale Protocol for mathematical brand tints.
+ */
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-    // 1. Verify Identity (Rule 10)
+    // 1. Resolve Auth Identity (Rule 10)
     const supabase = await createClient()
     const { data: { user: authUser } } = await supabase.auth.getUser()
     if (!authUser) redirect('/login')
 
-    // 2. Subscription Guard (Rule 11 System Truth)
+    // 2. Subscription Sentinel (Rule 11 System Truth)
+    // We check the base profile before hydration to save cycles.
     const profileBase = await prisma.profile.findUnique({
         where: { id: authUser.id },
         select: { id: true, schoolId: true, role: true }
@@ -506,34 +582,56 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
     if (!profileBase) redirect('/login');
 
+    // Rule 11: Locked behind institutional license
     const subStatus = await checkSubscription(profileBase.id, profileBase.schoolId)
     if (!subStatus.isActive) redirect('/billing?status=expired')
 
-    // 3. Hydrate Full Registry Context
-    const profile = profileBase.role === Role.PARENT 
-        ? await getParentProfile(authUser.email!) 
+    // 3. Registry Hub Hydration (Rule 12)
+    // Contextual fetch based on identity role (Parent vs Staff/Student)
+    const profileData = profileBase.role === Role.PARENT
+        ? await getParentProfile(authUser.email!)
         : await getRegistryProfile(authUser.email!);
 
-    if (!profile) redirect('/login?error=sync_failed');
+    if (!profileData) redirect('/login?error=registry_sync_failure');
+
+    // Rule 15: Cast to unified store type for cross-tier compatibility
+    const hydratedProfile = profileData as unknown as AnyProfile;
 
     return (
-        <SchoolProvider initialProfile={profile as any}>
-            <ProfileInitializer profile={profile as any} />
+        <SchoolProvider initialProfile={hydratedProfile}>
+            {/* Rule 17: Hydrates Zustand store on the client side */}
+            <ProfileInitializer profile={hydratedProfile} />
+            
             <SidebarProvider>
                 <div className="flex min-h-screen w-full bg-surface">
+                    {/* Rule 5: Only show Sidebar for Institutional Staff/Students */}
                     {profileBase.role !== Role.PARENT && <AppSidebar />}
+                    
                     <SidebarInset className="bg-background">
-                        {/* Mobile Header (Hidden on Desktop) */}
-                        <header className="flex h-14 items-center gap-4 px-6 border-b border-border sm:hidden bg-card/50 backdrop-blur">
-                            <SidebarTrigger />
-                            <div className="h-4 w-px bg-border" />
-                            <p className="text-[10px] font-black uppercase tracking-widest italic truncate">
-                                {profile.school?.name || "Registry"}
-                            </p>
+                        {/* ── MOBILE HUD HEADER (Rule 11/18/20) ── */}
+                        <header className="flex h-16 items-center gap-4 px-4 md:px-6 border-b border-border md:hidden bg-surface/80 backdrop-blur-md sticky top-0 z-50">
+                            <div className="flex items-center gap-2">
+                                <SidebarTrigger className="h-9 w-9 rounded-lg hover:bg-school-primary-50 transition-colors" />
+                                <div className="h-4 w-px bg-border" />
+                            </div>
+                            
+                            <div className="flex-1 min-w-0">
+                                <p className="text-[10px] font-extrabold uppercase italic tracking-tighter text-foreground truncate">
+                                    {hydratedProfile.school?.name || "Registry Core"}
+                                </p>
+                            </div>
+
+                            {/* Scale Protocol Indicator */}
+                            <div className="h-2 w-2 rounded-full bg-school-primary animate-pulse" />
                         </header>
-                        
+
+                        {/* ── PRIMARY VIEWPORT ── */}
                         <main className="flex-1 overflow-y-auto overflow-x-hidden">
-                            {children}
+                            <BrandingProvider>
+                                <div className="animate-in fade-in duration-700 h-full">
+                                    {children}
+                                </div>
+                            </BrandingProvider>
                         </main>
                     </SidebarInset>
                 </div>

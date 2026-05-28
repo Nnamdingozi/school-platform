@@ -2400,9 +2400,188 @@
 
 
 
+// 'use client'
+
+// import { useEffect, useState } from 'react'
+// import Link from 'next/link'
+// import { useSearchParams } from 'next/navigation'
+// import { useSchool } from '@/context/schoolProvider'
+
+// // Components
+// import { DashboardHeader } from '@/components/TeacherDashboard/dashboard-header'
+// import { ActiveTopicCard } from '@/components/TeacherDashboard/active-topic-card'
+// import { AILessonPlanner,} from '@/components/TeacherDashboard/ai-learning-planner'
+// import { PerformanceCharts } from '@/components/TeacherDashboard/performance-charts'
+// import { WhatsAppStatus } from '@/components/TeacherDashboard/whatsapp-status'
+// import { Card, CardContent } from '@/components/ui/card'
+// import { Button } from '@/components/ui/button'
+// import { type EnhancedLessonContent } from '@/app/actions/ai-generator'
+
+// // Actions & Types
+// import { getPerformanceDashboardData } from '@/app/actions/performance-data'
+// import { PerformanceDashboardData } from '@/types/performanceData'
+// import { LayoutGrid, AlertCircle } from 'lucide-react'
+// import { useTeacherStore, type DashboardSubject, type DashboardTopic } from '@/store/teacherDataStore'
+// import { getErrorMessage } from '@/lib/error-handler'
+
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface Props {
+//   initialSubjects: DashboardSubject[];
+//   teacherName: string;
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function TeacherDashboardContent({ initialSubjects, teacherName }: Props) {
+//     const searchParams = useSearchParams();
+//     const { school } = useSchool();
+    
+//     // Pull state and actions from the Zustand Store
+//     const { 
+//         setDashboardData, 
+//         activeSubjectId, 
+//         activeTopicId, 
+//         selectedSubjects,
+//         setActiveSubject 
+//     } = useTeacherStore();
+
+//     // 1. Extract Search Params
+//     const subjectId = searchParams.get('subjectId');
+//     const termId = searchParams.get('termId');
+//     const week = searchParams.get('week');
+
+//     const [performanceResult, setPerformanceResult] = useState<{
+//         data: PerformanceDashboardData | null
+//         error: string | null
+//     }>({ data: null, error: null });
+
+//     // 2. Initial Hydration (Sync server data to store)
+//     useEffect(() => {
+//         setDashboardData(initialSubjects, teacherName);
+//     }, [initialSubjects, teacherName, setDashboardData]);
+
+//     // 3. URL Param Sync (Update store if URL changes)
+//     useEffect(() => {
+//         if (subjectId && subjectId !== activeSubjectId) {
+//             setActiveSubject(subjectId);
+//         }
+//     }, [subjectId, activeSubjectId, setActiveSubject]);
+
+//     // 4. Resolve Active Models (Using imported types to resolve warnings)
+//     const activeSubject: DashboardSubject | null = selectedSubjects.find(s => s.id === activeSubjectId) || null;
+    
+//     // FIXED: Explicitly typed activeTopic as DashboardTopic to utilize the import
+//     const activeTopic: DashboardTopic | null = activeSubject?.topics.find(t => t.id === activeTopicId) || null;
+
+//     // 5. Load Performance Data
+//     useEffect(() => {
+//         async function load() {
+//             if (activeSubjectId && school?.id) {
+//                 try {
+//                     const result = await getPerformanceDashboardData(activeSubjectId, school.id);
+//                     setPerformanceResult(result);
+//                 } catch (err) {
+//                     // Utilizing getErrorMessage utility
+//                     setPerformanceResult({ data: null, error: getErrorMessage(err) });
+//                 }
+//             }
+//         }
+//         load();
+//     }, [activeSubjectId, school?.id]);
+
+//     return (
+//         <div className="flex flex-col w-full min-h-screen overflow-x-hidden bg-slate-950 text-slate-50">
+            
+//             <DashboardHeader
+//                 teacherName={teacherName}
+//                 subjects={selectedSubjects.map(s => ({
+//                     id: s.id,
+//                     displayName: `${s.grade.displayName} ${s.subject.name}`,
+//                     studentCount: s.studentSubjects?.length ?? 0,
+//                 }))}
+//                 activeSubjectId={activeSubjectId ?? ""}
+//             />
+
+//             <main className="flex-1 p-4 md:p-8 space-y-8 w-full max-w-7xl mx-auto overflow-x-hidden">
+                
+//                 {/* Status Bar */}
+//                 <section>
+//                     <Card className="bg-slate-900 border-white/5 rounded-[2rem] shadow-2xl overflow-hidden">
+//                         <CardContent className="flex items-center justify-between p-6 bg-slate-950/40">
+//                             <div className="flex items-center gap-4">
+//                                 <div className="p-2 bg-school-primary/10 rounded-lg">
+//                                     <LayoutGrid className="h-4 w-4 text-school-primary" />
+//                                 </div>
+//                                 <div className="min-w-0">
+//                                     <p className="text-sm font-bold text-white uppercase italic tracking-tight truncate">
+//                                         {activeSubject 
+//                                             ? <>Registry: <span className="text-school-primary">{activeSubject.grade.displayName} {activeSubject.subject.name}</span></>
+//                                             : "Institutional Workspace: Pending Selection"}
+//                                     </p>
+//                                 </div>
+//                             </div>
+//                             <Button variant="outline" size="sm" asChild className="border-white/10 text-slate-400 hover:text-school-primary rounded-xl uppercase text-[10px] font-black shrink-0">
+//                                 <Link href="/subjects/manage">Update Registry</Link>
+//                             </Button>
+//                         </CardContent>
+//                     </Card>
+//                 </section>
+
+//                 <div className="space-y-8">
+//                     {/* Active Topic Monitor */}
+//                     <section className="w-full">
+//                         <ActiveTopicCard
+//                             selectedTermId={termId || undefined}
+//                             selectedWeek={week || undefined}
+//                         />
+//                     </section>
+
+//                     {/* AI Lesson Planner Section */}
+//                     <section className="w-full scroll-mt-20" id="lesson-planner-section">
+//                         <AILessonPlanner
+//                             topicId={activeTopic?.id ?? ""}
+//                             schoolId={school?.id ?? ""}
+//                             lessonId={activeTopic?.lessons?.[0]?.id ?? ""}
+//                             topicTitle={activeTopic?.title ?? "Syllabus Module"}
+//                             initialData={
+//                                 (activeTopic?.lessons?.[0]?.aiContent as unknown as EnhancedLessonContent) || null
+//                             }
+//                         />
+//                     </section>
+
+//                     {/* Analytics Row */}
+//                     <section className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+//                         <div className="lg:col-span-2 h-full">
+//                             <PerformanceCharts
+//                                 schoolId={school?.id ?? ""}
+//                                 initialPerformanceData={performanceResult.data}
+//                                 initialPerformanceError={performanceResult.error}
+//                             />
+//                         </div>
+//                         <div className="lg:col-span-1 h-full">
+//                             <WhatsAppStatus />
+//                         </div>
+//                     </section>
+//                 </div>
+
+//                 <footer className="pt-12 flex flex-col items-center gap-2 opacity-20 border-t border-white/5">
+//                     <AlertCircle className="h-4 w-4" />
+//                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">
+//                         Institutional_Control_Environment_v2.0
+//                     </p>
+//                 </footer>
+//             </main>
+//         </div>
+//     );
+// }
+
+
+
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useSchool } from '@/context/schoolProvider'
@@ -2410,7 +2589,8 @@ import { useSchool } from '@/context/schoolProvider'
 // Components
 import { DashboardHeader } from '@/components/TeacherDashboard/dashboard-header'
 import { ActiveTopicCard } from '@/components/TeacherDashboard/active-topic-card'
-import { AILessonPlanner, type EnhancedLessonContent } from '@/components/TeacherDashboard/ai-learning-planner'
+import { AILessonPlanner } from '@/components/TeacherDashboard/ai-learning-planner'
+import { type EnhancedLessonContent } from "@/app/actions/ai-generator"
 import { PerformanceCharts } from '@/components/TeacherDashboard/performance-charts'
 import { WhatsAppStatus } from '@/components/TeacherDashboard/whatsapp-status'
 import { Card, CardContent } from '@/components/ui/card'
@@ -2419,12 +2599,14 @@ import { Button } from '@/components/ui/button'
 // Actions & Types
 import { getPerformanceDashboardData } from '@/app/actions/performance-data'
 import { PerformanceDashboardData } from '@/types/performanceData'
-import { LayoutGrid, AlertCircle } from 'lucide-react'
+import { LayoutGrid, ShieldCheck, Activity } from 'lucide-react'
 import { useTeacherStore, type DashboardSubject, type DashboardTopic } from '@/store/teacherDataStore'
+import { useProfileStore } from '@/store/profileStore'
 import { getErrorMessage } from '@/lib/error-handler'
+import { Role } from '@prisma/client'
+import { cn } from '@/lib/utils'
 
-
-// ── Types ───────────────────────────────────────────────────────────────────
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface Props {
   initialSubjects: DashboardSubject[];
@@ -2433,11 +2615,20 @@ interface Props {
 
 // ── Main Component ──────────────────────────────────────────────────────────
 
-export default function TeacherDashboardContent({ initialSubjects, teacherName }: Props) {
+/**
+ * TEACHER DASHBOARD ORCHESTRATOR (Tier 2)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 20: Compulsory Responsiveness with fluid padding and max-w-7xl.
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
+ */
+export function TeacherDashboardContent({ initialSubjects, teacherName }: Props) {
     const searchParams = useSearchParams();
     const { school } = useSchool();
+    const { profile } = useProfileStore();
     
-    // Pull state and actions from the Zustand Store
+    // Unified State Hub (Rule 17)
     const { 
         setDashboardData, 
         activeSubjectId, 
@@ -2446,7 +2637,7 @@ export default function TeacherDashboardContent({ initialSubjects, teacherName }
         setActiveSubject 
     } = useTeacherStore();
 
-    // 1. Extract Search Params
+    // 1. Extract Routing Parameters
     const subjectId = searchParams.get('subjectId');
     const termId = searchParams.get('termId');
     const week = searchParams.get('week');
@@ -2456,43 +2647,41 @@ export default function TeacherDashboardContent({ initialSubjects, teacherName }
         error: string | null
     }>({ data: null, error: null });
 
-    // 2. Initial Hydration (Sync server data to store)
+    // 2. Initial Registry Hydration (Rule 11)
     useEffect(() => {
         setDashboardData(initialSubjects, teacherName);
     }, [initialSubjects, teacherName, setDashboardData]);
 
-    // 3. URL Param Sync (Update store if URL changes)
+    // 3. Routing Synchronization
     useEffect(() => {
         if (subjectId && subjectId !== activeSubjectId) {
             setActiveSubject(subjectId);
         }
     }, [subjectId, activeSubjectId, setActiveSubject]);
 
-    // 4. Resolve Active Models (Using imported types to resolve warnings)
+    // 4. Resolve Active Modules (Rule 15)
     const activeSubject: DashboardSubject | null = selectedSubjects.find(s => s.id === activeSubjectId) || null;
-    
-    // FIXED: Explicitly typed activeTopic as DashboardTopic to utilize the import
     const activeTopic: DashboardTopic | null = activeSubject?.topics.find(t => t.id === activeTopicId) || null;
 
-    // 5. Load Performance Data
+    // 5. Analytics Synchronization
     useEffect(() => {
-        async function load() {
+        async function loadAnalytics() {
             if (activeSubjectId && school?.id) {
                 try {
                     const result = await getPerformanceDashboardData(activeSubjectId, school.id);
                     setPerformanceResult(result);
                 } catch (err) {
-                    // Utilizing getErrorMessage utility
                     setPerformanceResult({ data: null, error: getErrorMessage(err) });
                 }
             }
         }
-        load();
+        loadAnalytics();
     }, [activeSubjectId, school?.id]);
 
     return (
-        <div className="flex flex-col w-full min-h-screen overflow-x-hidden bg-slate-950 text-slate-50">
+        <div className="flex flex-col w-full min-h-screen bg-background text-foreground animate-in fade-in duration-700">
             
+            {/* ── COMMAND HUB HEADER ── */}
             <DashboardHeader
                 teacherName={teacherName}
                 subjects={selectedSubjects.map(s => ({
@@ -2503,33 +2692,38 @@ export default function TeacherDashboardContent({ initialSubjects, teacherName }
                 activeSubjectId={activeSubjectId ?? ""}
             />
 
-            <main className="flex-1 p-4 md:p-8 space-y-8 w-full max-w-7xl mx-auto overflow-x-hidden">
+            {/* ── MAIN WORKSPACE (Rule 20) ── */}
+            <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8 lg:p-12 space-y-10 md:space-y-16">
                 
-                {/* Status Bar */}
-                <section>
-                    <Card className="bg-slate-900 border-white/5 rounded-[2rem] shadow-2xl overflow-hidden">
-                        <CardContent className="flex items-center justify-between p-6 bg-slate-950/40">
-                            <div className="flex items-center gap-4">
-                                <div className="p-2 bg-school-primary/10 rounded-lg">
-                                    <LayoutGrid className="h-4 w-4 text-school-primary" />
+                {/* ── STATUS PROTOCOL BAR (Rule 18/21) ── */}
+                <section className="animate-in slide-in-from-top-4 duration-500">
+                    <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl">
+                        <CardContent className="flex items-center justify-between p-6 bg-surface/50">
+                            <div className="flex items-center gap-5">
+                                {/* Rule 21: Scale Protocol */}
+                                <div className="p-3 bg-school-primary-50 border border-school-primary-200 rounded-xl shadow-inner">
+                                    <LayoutGrid className="h-5 w-5 text-school-primary" />
                                 </div>
                                 <div className="min-w-0">
-                                    <p className="text-sm font-bold text-white uppercase italic tracking-tight truncate">
+                                    <p className="text-sm font-extrabold text-foreground uppercase italic tracking-tight truncate">
                                         {activeSubject 
-                                            ? <>Registry: <span className="text-school-primary">{activeSubject.grade.displayName} {activeSubject.subject.name}</span></>
-                                            : "Institutional Workspace: Pending Selection"}
+                                            ? <>Active Registry: <span className="text-school-primary">{activeSubject.grade.displayName} {activeSubject.subject.name}</span></>
+                                            : "Institutional Hub: Awaiting Selection"}
+                                    </p>
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mt-1 opacity-60">
+                                        Verified Faculty Node Synchronization
                                     </p>
                                 </div>
                             </div>
-                            <Button variant="outline" size="sm" asChild className="border-white/10 text-slate-400 hover:text-school-primary rounded-xl uppercase text-[10px] font-black shrink-0">
-                                <Link href="/subjects/manage">Update Registry</Link>
+                            <Button variant="outline" size="sm" asChild className="border-border bg-background text-muted-foreground hover:text-school-primary hover:border-school-primary-200 rounded-xl uppercase text-[10px] font-extrabold tracking-widest hidden sm:flex h-11 px-8 shadow-sm">
+                                <Link href="/subjects/manage">Modify Hubs</Link>
                             </Button>
                         </CardContent>
                     </Card>
                 </section>
 
-                <div className="space-y-8">
-                    {/* Active Topic Monitor */}
+                <div className="space-y-10 md:space-y-16">
+                    {/* ── TACTICAL FOCUS HUB ── */}
                     <section className="w-full">
                         <ActiveTopicCard
                             selectedTermId={termId || undefined}
@@ -2537,21 +2731,23 @@ export default function TeacherDashboardContent({ initialSubjects, teacherName }
                         />
                     </section>
 
-                    {/* AI Lesson Planner Section */}
-                    <section className="w-full scroll-mt-20" id="lesson-planner-section">
+                    {/* ── AI SYLLABUS PLANNING SECTOR ── */}
+                    <section className="w-full scroll-mt-24" id="ai-planner">
                         <AILessonPlanner
                             topicId={activeTopic?.id ?? ""}
                             schoolId={school?.id ?? ""}
                             lessonId={activeTopic?.lessons?.[0]?.id ?? ""}
-                            topicTitle={activeTopic?.title ?? "Syllabus Module"}
+                            topicTitle={activeTopic?.title ?? "Academic Module"}
+                            userId={profile?.id ?? ""}
+                            userRole={profile?.role as Role ?? Role.TEACHER}
                             initialData={
                                 (activeTopic?.lessons?.[0]?.aiContent as unknown as EnhancedLessonContent) || null
                             }
                         />
                     </section>
 
-                    {/* Analytics Row */}
-                    <section className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                    {/* ── ANALYTICS & TELEMETRY ROW (Rule 20) ── */}
+                    <section className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10 items-start">
                         <div className="lg:col-span-2 h-full">
                             <PerformanceCharts
                                 schoolId={school?.id ?? ""}
@@ -2565,10 +2761,14 @@ export default function TeacherDashboardContent({ initialSubjects, teacherName }
                     </section>
                 </div>
 
-                <footer className="pt-12 flex flex-col items-center gap-2 opacity-20 border-t border-white/5">
-                    <AlertCircle className="h-4 w-4" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">
-                        Institutional_Control_Environment_v2.0
+                {/* ── FOOTER PROTOCOL ── */}
+                <footer className="pt-16 pb-8 flex flex-col items-center gap-4 opacity-30 border-t border-border mt-12">
+                    <div className="h-10 w-10 rounded-full bg-surface border border-border flex items-center justify-center">
+                        <ShieldCheck className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <p className="text-[9px] font-bold uppercase tracking-[0.5em] text-muted-foreground text-center leading-relaxed">
+                        Institutional_Governance_Protocol_v2.4 <br/>
+                        <span className="opacity-50">Authorized Faculty Environment</span>
                     </p>
                 </footer>
             </main>

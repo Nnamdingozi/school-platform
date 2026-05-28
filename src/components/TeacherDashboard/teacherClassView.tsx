@@ -331,35 +331,181 @@
 // }
 
 
+// "use client";
+
+// import { 
+//   Table, TableBody, TableCell, TableHead, 
+//   TableHeader, TableRow 
+// } from "@/components/ui/table";
+// import { Users, GraduationCap, ArrowRight } from "lucide-react";
+// import { Card } from "@/components/ui/card";
+// import { useProfileStore } from "@/store/profileStore";
+
+// interface TeacherClassViewProps {
+//   data: any[]; // Array of classes the teacher is lead of
+// }
+
+// /**
+//  * TEACHER REGISTRY VIEW (Tier 2)
+//  * Rule 17: Branding from Zustand.
+//  */
+// export function TeacherClassView({ data }: TeacherClassViewProps) {
+//   const { profile } = useProfileStore();
+//   const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//   if (!data || data.length === 0) {
+//     return (
+//       <div className="flex flex-col items-center justify-center py-32 bg-slate-900/50 rounded-[3rem] border border-white/5 space-y-6">
+//         <Users className="h-12 w-12 text-slate-800" />
+//         <div className="text-center">
+//             <h3 className="text-xl font-black text-white uppercase italic">Registry Unassigned</h3>
+//             <p className="text-slate-500 text-xs mt-2 uppercase tracking-widest">You are not registered as a Lead Teacher.</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   const activeClass = data[0];
+
+//   return (
+//     <div className="max-w-7xl mx-auto space-y-10 p-6">
+//       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+//         <div>
+//            <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+//              {activeClass.name}
+//            </h1>
+//            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-2">
+//              {activeClass.grade.displayName} • Institutional Master Broadsheet
+//            </p>
+//         </div>
+        
+//         {data.length > 1 && (
+//            <div className="px-4 py-2 rounded-xl bg-slate-900 border border-white/5 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+//              + {data.length - 1} OTHER REGISTRIES AVAILABLE
+//            </div>
+//         )}
+//       </header>
+
+//       {/* Subject Averages */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+//         {activeClass.subjectStats?.map((stat: any) => (
+//           <Card key={stat.subjectName} className="bg-slate-900 border-white/5 p-8 rounded-[2rem] shadow-xl hover:border-white/10 transition-all">
+//             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{stat.subjectName}</p>
+//             <div className="flex items-end justify-between">
+//               <span className="text-4xl font-black text-white italic" style={{ color: primaryColor }}>{stat.average}%</span>
+//               <div className="text-right">
+//                   <p className="text-[8px] font-black text-slate-600 uppercase">Top: {stat.bestStudent}</p>
+//               </div>
+//             </div>
+//           </Card>
+//         ))}
+//       </div>
+
+//       {/* Main Registry Table */}
+//       <div className="bg-slate-900 rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
+//          <Table>
+//            <TableHeader className="bg-slate-950/50">
+//              <TableRow className="border-white/5 hover:bg-transparent">
+//                <TableHead className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Identity</TableHead>
+//                {activeClass.grade.gradeSubjects.map((gs: any) => (
+//                  <TableHead key={gs.id} className="px-6 py-8 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
+//                   {gs.subject.name}
+//                  </TableHead>
+//                ))}
+//              </TableRow>
+//            </TableHeader>
+//            <TableBody>
+//               {activeClass.students.map((student: any) => (
+//                 <TableRow key={student.id} className="border-white/5 hover:bg-white/[0.02] transition-colors">
+//                   <TableCell className="px-10 py-6 font-black uppercase text-sm text-white italic">
+//                     {student.name || "Anonymous Student"}
+//                   </TableCell>
+//                   {activeClass.grade.gradeSubjects.map((gs: any) => {
+//                      const assessment = student.assessments.find((a: any) => a.gradeSubjectId === gs.id);
+//                      return (
+//                        <TableCell key={gs.id} className="text-center text-slate-400 font-mono text-xs">
+//                          {assessment?.score ?? "-"}
+//                        </TableCell>
+//                      );
+//                   })}
+//                 </TableRow>
+//               ))}
+//            </TableBody>
+//          </Table>
+//       </div>
+//     </div>
+//   );
+// }
+
+
 "use client";
 
+import React from "react";
 import { 
   Table, TableBody, TableCell, TableHead, 
   TableHeader, TableRow 
 } from "@/components/ui/table";
-import { Users, GraduationCap, ArrowRight } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Users, GraduationCap, ArrowRight, ShieldCheck, Activity, UserCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { useProfileStore } from "@/store/profileStore";
+import { cn } from "@/lib/utils";
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+interface SubjectStat {
+    subjectName: string;
+    average: number;
+    bestStudent: string;
+}
+
+interface GradeSubject {
+    id: string;
+    subject: { name: string };
+}
+
+interface StudentRecord {
+    id: string;
+    name: string | null;
+    assessments: { score: number | null; gradeSubjectId: string }[];
+}
+
+interface ClassroomData {
+    id: string;
+    name: string;
+    grade: { 
+        displayName: string;
+        gradeSubjects: GradeSubject[];
+    };
+    students: StudentRecord[];
+    subjectStats: SubjectStat[];
+}
 
 interface TeacherClassViewProps {
-  data: any[]; // Array of classes the teacher is lead of
+  data: ClassroomData[]; 
 }
+
+// ── Main Component ──────────────────────────────────────────────────────────
 
 /**
  * TEACHER REGISTRY VIEW (Tier 2)
- * Rule 17: Branding from Zustand.
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function TeacherClassView({ data }: TeacherClassViewProps) {
-  const { profile } = useProfileStore();
-  const primaryColor = profile?.primaryColor || "#f59e0b";
-
   if (!data || data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 bg-slate-900/50 rounded-[3rem] border border-white/5 space-y-6">
-        <Users className="h-12 w-12 text-slate-800" />
-        <div className="text-center">
-            <h3 className="text-xl font-black text-white uppercase italic">Registry Unassigned</h3>
-            <p className="text-slate-500 text-xs mt-2 uppercase tracking-widest">You are not registered as a Lead Teacher.</p>
+      /* ── EMPTY REGISTRY HUB (Rule 18/19) ── */
+      <div className="flex flex-col items-center justify-center py-32 bg-surface border-2 border-dashed border-border rounded-[2rem] space-y-6 animate-in fade-in duration-700">
+        <div className="h-16 w-16 rounded-2xl bg-card border border-border flex items-center justify-center shadow-lg">
+            <Users className="h-8 w-8 text-muted-foreground/30" />
+        </div>
+        <div className="text-center space-y-2">
+            <h3 className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter">Registry Unassigned</h3>
+            <p className="text-muted-foreground text-[10px] font-semibold mt-2 uppercase tracking-widest italic opacity-60">
+                You are not registered as a lead hub instructor.
+            </p>
         </div>
       </div>
     );
@@ -368,70 +514,104 @@ export function TeacherClassView({ data }: TeacherClassViewProps) {
   const activeClass = data[0];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10 p-6">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-           <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+    <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in duration-700">
+      
+      {/* ── HUB HEADER (Rule 11/21) ── */}
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
+        <div className="space-y-3">
+           <h1 className="text-3xl md:text-5xl font-extrabold text-foreground italic uppercase tracking-tighter leading-none">
              {activeClass.name}
            </h1>
-           <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-2">
-             {activeClass.grade.displayName} • Institutional Master Broadsheet
-           </p>
+           <div className="flex items-center gap-3">
+                <div className="h-2 w-2 rounded-full bg-school-primary animate-pulse" />
+                <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest italic">
+                    {activeClass.grade.displayName} Hub • Institutional Master Broadsheet
+                </p>
+           </div>
         </div>
         
         {data.length > 1 && (
-           <div className="px-4 py-2 rounded-xl bg-slate-900 border border-white/5 text-[9px] font-black text-slate-400 uppercase tracking-widest">
-             + {data.length - 1} OTHER REGISTRIES AVAILABLE
+           <div className="px-5 py-2.5 rounded-xl bg-surface border border-border text-[9px] font-extrabold text-muted-foreground uppercase tracking-widest shadow-inner">
+             + {data.length - 1} OTHER REGISTRIES DISCOVERED
            </div>
         )}
       </header>
 
-      {/* Subject Averages */}
+      {/* ── SUBJECT PERFORMANCE TILES (Rule 20/21) ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {activeClass.subjectStats?.map((stat: any) => (
-          <Card key={stat.subjectName} className="bg-slate-900 border-white/5 p-8 rounded-[2rem] shadow-xl hover:border-white/10 transition-all">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{stat.subjectName}</p>
+        {activeClass.subjectStats?.map((stat) => (
+          <Card key={stat.subjectName} className="bg-card border-border p-6 md:p-8 rounded-[2rem] shadow-xl hover:border-school-primary-200 transition-all group">
+            <div className="flex justify-between items-start mb-6">
+                <p className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest">{stat.subjectName}</p>
+                <div className="p-2 bg-school-primary-50 border border-school-primary-100 rounded-lg">
+                    <Activity className="h-3.5 w-3.5 text-school-primary" />
+                </div>
+            </div>
             <div className="flex items-end justify-between">
-              <span className="text-4xl font-black text-white italic" style={{ color: primaryColor }}>{stat.average}%</span>
+              <span className="text-4xl font-extrabold text-school-primary italic tracking-tighter tabular-nums">{stat.average}%</span>
               <div className="text-right">
-                  <p className="text-[8px] font-black text-slate-600 uppercase">Top: {stat.bestStudent}</p>
+                  <p className="text-[8px] font-bold text-muted-foreground/40 uppercase tracking-tighter">Peak Record</p>
+                  <p className="text-[9px] font-extrabold text-foreground uppercase italic truncate max-w-[80px]">{stat.bestStudent}</p>
               </div>
             </div>
           </Card>
         ))}
       </div>
 
-      {/* Main Registry Table */}
-      <div className="bg-slate-900 rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
-         <Table>
-           <TableHeader className="bg-slate-950/50">
-             <TableRow className="border-white/5 hover:bg-transparent">
-               <TableHead className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Identity</TableHead>
-               {activeClass.grade.gradeSubjects.map((gs: any) => (
-                 <TableHead key={gs.id} className="px-6 py-8 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
-                  {gs.subject.name}
-                 </TableHead>
-               ))}
-             </TableRow>
-           </TableHeader>
-           <TableBody>
-              {activeClass.students.map((student: any) => (
-                <TableRow key={student.id} className="border-white/5 hover:bg-white/[0.02] transition-colors">
-                  <TableCell className="px-10 py-6 font-black uppercase text-sm text-white italic">
-                    {student.name || "Anonymous Student"}
-                  </TableCell>
-                  {activeClass.grade.gradeSubjects.map((gs: any) => {
-                     const assessment = student.assessments.find((a: any) => a.gradeSubjectId === gs.id);
-                     return (
-                       <TableCell key={gs.id} className="text-center text-slate-400 font-mono text-xs">
-                         {assessment?.score ?? "-"}
-                       </TableCell>
-                     );
-                  })}
+      {/* ── MASTER REGISTRY TABLE (Rule 18/20) ── */}
+      <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-2xl">
+         <div className="overflow-x-auto custom-scrollbar">
+            <Table>
+            <TableHeader className="bg-surface/50 backdrop-blur-md border-b border-border">
+                <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="px-10 py-8 text-left text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground italic">
+                    Identity Hub
+                </TableHead>
+                {activeClass.grade.gradeSubjects.map((gs) => (
+                    <TableHead key={gs.id} className="px-6 py-8 text-center text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground italic">
+                    {gs.subject.name}
+                    </TableHead>
+                ))}
                 </TableRow>
-              ))}
-           </TableBody>
-         </Table>
+            </TableHeader>
+            <TableBody>
+                {activeClass.students.map((student) => (
+                    <TableRow key={student.id} className="border-border hover:bg-muted/30 transition-colors group">
+                    <TableCell className="px-10 py-6">
+                        <div className="flex items-center gap-4">
+                            <div className="h-8 w-8 rounded-lg bg-surface border border-border flex items-center justify-center text-muted-foreground/40 group-hover:text-school-primary transition-colors">
+                                <UserCircle className="h-5 w-5" />
+                            </div>
+                            <span className="font-extrabold uppercase text-sm text-foreground italic tracking-tight">
+                                {student.name || "Anonymous_Identity"}
+                            </span>
+                        </div>
+                    </TableCell>
+                    {activeClass.grade.gradeSubjects.map((gs) => {
+                        const assessment = student.assessments.find((a) => a.gradeSubjectId === gs.id);
+                        const score = assessment?.score;
+                        const isLow = score !== null && score !== undefined && score < 50;
+
+                        return (
+                        <TableCell key={gs.id} className={cn(
+                            "text-center font-mono text-xs tabular-nums font-bold",
+                            isLow ? "text-destructive" : "text-muted-foreground/80"
+                        )}>
+                            {score ?? "—"}
+                        </TableCell>
+                        );
+                    })}
+                    </TableRow>
+                ))}
+            </TableBody>
+            </Table>
+         </div>
+      </Card>
+
+      {/* ── FOOTER PROTOCOL ── */}
+      <div className="pt-6 flex justify-center items-center gap-3 opacity-30">
+          <ShieldCheck className="h-4 w-4" />
+          <p className="text-[9px] font-bold uppercase tracking-[0.4em]">Institutional_Broadsheet_Ledger_v4.2</p>
       </div>
     </div>
   );

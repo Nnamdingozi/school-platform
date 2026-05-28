@@ -512,23 +512,294 @@
 // }
 
 
+// "use client";
+
+// import { useState, useTransition } from "react";
+// import { useExamTimer } from "@/hooks/useExamTimer";
+// import { Card, CardContent } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { 
+//   Timer, ShieldCheck, AlertCircle, 
+//   CheckCircle2, Zap, Loader2 
+// } from "lucide-react";
+// import { cn } from "@/lib/utils";
+// import { ExamStatus } from "@prisma/client";
+// import { submitExamAction, StudentAnswer } from "@/app/actions/submit-exams";
+// import { toast } from "sonner";
+// import { useRouter } from "next/navigation";
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface ExamQuestion {
+//   id: string;
+//   text: string;
+//   options: string[];
+//   points: number;
+// }
+
+// /**
+//  * Rule 11: System Truth Payload
+//  */
+// export interface StudentExamPayload {
+//   id: string;
+//   title: string;
+//   startTime: Date | null;
+//   duration: number;
+//   status: ExamStatus; // Added status field
+//   classId: string;
+//   questions: ExamQuestion[];
+// }
+
+// interface ExamClientProps {
+//   exam: StudentExamPayload;
+//   userId: string;
+//   schoolId: string;
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export default function ExamClient({ exam, userId, schoolId }: ExamClientProps) {
+//   const router = useRouter();
+//   const [isPending, startTransition] = useTransition();
+//   const [answers, setAnswers] = useState<Record<string, string>>({});
+
+//   /**
+//    * Timer Initialization
+//    */
+//   const startTimeISO = exam.startTime 
+//     ? exam.startTime.toISOString() 
+//     : new Date().toISOString();
+
+//   const { timeLeft, status: timerStatus } = useExamTimer(startTimeISO, exam.duration);
+
+//   const formatTime = (seconds: number): string => {
+//     const m = Math.floor(seconds / 60);
+//     const s = seconds % 60;
+//     return `${m}:${s.toString().padStart(2, "0")}`;
+//   };
+
+//   const handleOptionChange = (questionId: string, option: string) => {
+//     if (timerStatus !== "active") return;
+//     setAnswers((prev) => ({
+//       ...prev,
+//       [questionId]: option,
+//     }));
+//   };
+
+//   /**
+//    * Rule 11: Transactional Submission
+//    */
+//   const handleFinalSubmit = () => {
+//     if (Object.keys(answers).length < exam.questions.length) {
+//         if (!confirm("You have unanswered questions. Proceed with final submission?")) return;
+//     }
+
+//     startTransition(async () => {
+//       try {
+//         const formattedAnswers: StudentAnswer[] = Object.entries(answers).map(([qId, val]) => ({
+//             questionId: qId,
+//             selected: val
+//         }));
+
+//         const result = await submitExamAction({
+//           examId: exam.id,
+//           studentId: userId,
+//           schoolId: schoolId,
+//           classId: exam.classId,
+//           answers: formattedAnswers
+//         });
+
+//         if (result.success) {
+//           toast.success(`Exam submitted. Score: ${result.score}/${result.total}`);
+//           router.push("/student/dashboard");
+//         } else {
+//           toast.error(result.error || "Submission failed.");
+//         }
+//       } catch (error: unknown) {
+//         toast.error("A critical registry error occurred during submission.");
+//       }
+//     });
+//   };
+
+//   // ── Access Control: Status-Based Guard ──
+//   if (exam.status === ExamStatus.COMPLETED) {
+//       return (
+//         <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 p-6 text-center">
+//             <CheckCircle2 className="h-16 w-16 text-emerald-500 mb-6" />
+//             <h1 className="text-2xl font-black text-white uppercase italic">Assessment Concluded</h1>
+//             <p className="text-slate-500 text-xs mt-2 uppercase tracking-widest">
+//                 This examination window has been closed by the institution.
+//             </p>
+//             <Button onClick={() => router.push("/student/dashboard")} className="mt-8 bg-slate-900 border border-white/10 rounded-xl px-10">
+//                 Return to Dashboard
+//             </Button>
+//         </div>
+//       );
+//   }
+
+//   // ── Access Control: Waiting State ──
+//   if (timerStatus === "waiting") {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 p-6 text-center">
+//         <div className="h-20 w-20 bg-slate-900 rounded-3xl flex items-center justify-center mb-8 border border-white/5 animate-pulse">
+//             <Timer className="h-10 w-10 text-school-primary" />
+//         </div>
+//         <h1 className="text-3xl font-black text-white uppercase italic tracking-tighter">
+//             Session Locked
+//         </h1>
+//         <p className="text-slate-500 text-sm mt-2 max-w-xs uppercase tracking-widest leading-relaxed">
+//             The assessment is scheduled to begin at: <br/>
+//             <span className="text-school-primary font-bold">
+//                 {exam.startTime ? exam.startTime.toLocaleString() : "Institutional Schedule"}
+//             </span>
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   // ── Access Control: Ended State ──
+//   if (timerStatus === "ended") {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 p-6 text-center">
+//         <AlertCircle className="h-16 w-16 text-red-500/20 mb-6" />
+//         <h1 className="text-2xl font-black text-white uppercase italic">Session Terminated</h1>
+//         <p className="text-slate-500 text-xs mt-2 uppercase tracking-widest">
+//             The allotted time for this assessment has expired.
+//         </p>
+//         <Button 
+//           variant="outline" 
+//           onClick={() => router.push("/student/dashboard")}
+//           className="mt-8 border-white/10 text-slate-400 rounded-xl px-10 h-12 uppercase text-[10px] font-black"
+//         >
+//             Return to Dashboard
+//         </Button>
+//       </div>
+//     );
+//   }
+
+//   // ── Active Exam View ──
+//   return (
+//     <div className="p-4 md:p-8 bg-slate-950 min-h-screen text-slate-50">
+//       <div className="max-w-4xl mx-auto space-y-10 pb-32">
+        
+//         {/* FIXED HEADER */}
+//         <header className="sticky top-4 z-40 bg-slate-900/80 backdrop-blur-md border border-white/5 p-6 rounded-[2rem] shadow-2xl flex justify-between items-center">
+//           <div className="flex items-center gap-4">
+//              <div className="h-10 w-10 bg-school-primary/10 rounded-xl flex items-center justify-center border border-school-primary/20">
+//                 <ShieldCheck className="h-5 w-5 text-school-primary" />
+//              </div>
+//              <div>
+//                 <h1 className="text-lg font-black text-white uppercase italic tracking-tight leading-none">
+//                     {exam.title}
+//                 </h1>
+//                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">
+//                     Identity Verified • Institutional Assessment
+//                 </p>
+//              </div>
+//           </div>
+
+//           <div className={cn(
+//               "px-6 py-2.5 rounded-xl font-black text-sm tabular-nums border transition-colors",
+//               timeLeft < 300 ? "bg-red-500/10 border-red-500 text-red-500 animate-pulse" : "bg-slate-950 border-white/10 text-school-primary"
+//           )}>
+//             ⏱ {formatTime(timeLeft)}
+//           </div>
+//         </header>
+
+//         {/* QUESTION POOL */}
+//         <div className="space-y-6">
+//           {exam.questions.map((q, index) => (
+//             <Card key={q.id} className="bg-slate-900 border-white/5 rounded-[2.5rem] shadow-xl overflow-hidden group hover:border-white/10 transition-all">
+//               <CardContent className="p-8 space-y-8">
+//                 <div className="flex gap-4">
+//                   <span className="font-black text-xl text-school-primary/30 mt-1 italic">
+//                     {index + 1 < 10 ? `0${index + 1}` : index + 1}
+//                   </span>
+//                   <p className="text-xl font-bold text-white leading-snug tracking-tight">
+//                     {q.text}
+//                   </p>
+//                 </div>
+
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-10">
+//                   {q.options.map((opt, i) => (
+//                     <label
+//                       key={`${q.id}-${i}`}
+//                       className={cn(
+//                           "relative flex items-center p-5 rounded-2xl border cursor-pointer transition-all active:scale-95 group/option",
+//                           answers[q.id] === opt 
+//                             ? "bg-school-primary border-school-primary text-slate-950 shadow-lg" 
+//                             : "bg-slate-950 border-white/5 text-slate-500 hover:border-white/10"
+//                       )}
+//                     >
+//                       <input
+//                         type="radio"
+//                         name={q.id}
+//                         value={opt}
+//                         className="sr-only"
+//                         checked={answers[q.id] === opt}
+//                         onChange={() => handleOptionChange(q.id, opt)}
+//                         disabled={isPending}
+//                       />
+//                       <span className={cn(
+//                           "mr-3 text-[10px] font-black opacity-40",
+//                           answers[q.id] === opt ? "text-slate-950" : "text-slate-500"
+//                       )}>
+//                         {String.fromCharCode(65 + i)}
+//                       </span>
+//                       <span className="text-sm font-bold uppercase tracking-tight">{opt}</span>
+                      
+//                       {answers[q.id] === opt && (
+//                           <div className="ml-auto">
+//                               <CheckCircle2 className="h-4 w-4" />
+//                           </div>
+//                       )}
+//                     </label>
+//                   ))}
+//                 </div>
+//               </CardContent>
+//             </Card>
+//           ))}
+//         </div>
+
+//         {/* SUBMISSION ACTION */}
+//         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xs px-4 no-print">
+//             <Button
+//                 size="lg"
+//                 disabled={isPending}
+//                 className="w-full bg-school-primary text-slate-950 font-black py-8 rounded-2xl shadow-2xl hover:scale-[1.03] transition-all uppercase text-[11px] tracking-[0.2em] group"
+//                 onClick={handleFinalSubmit}
+//             >
+//                 {isPending ? (
+//                     <Loader2 className="animate-spin h-5 w-5" />
+//                 ) : (
+//                     <>Finalize Registry Entry <Zap className="ml-2 h-4 w-4 fill-current group-hover:scale-110 transition-transform" /></>
+//                 )}
+//             </Button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
 "use client";
 
-import { useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { useExamTimer } from "@/hooks/useExamTimer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   Timer, ShieldCheck, AlertCircle, 
-  CheckCircle2, Zap, Loader2 
+  CheckCircle2, Zap, Loader2, ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ExamStatus } from "@prisma/client";
-import { submitExamAction, StudentAnswer } from "@/app/actions/submit-exams";
+import { submitExamAction, type StudentAnswer } from "@/app/actions/submit-exams";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-// ── Types ───────────────────────────────────────────────────────────────────
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface ExamQuestion {
   id: string;
@@ -537,15 +808,12 @@ interface ExamQuestion {
   points: number;
 }
 
-/**
- * Rule 11: System Truth Payload
- */
 export interface StudentExamPayload {
   id: string;
   title: string;
   startTime: Date | null;
   duration: number;
-  status: ExamStatus; // Added status field
+  status: ExamStatus;
   classId: string;
   questions: ExamQuestion[];
 }
@@ -558,14 +826,19 @@ interface ExamClientProps {
 
 // ── Main Component ──────────────────────────────────────────────────────────
 
+/**
+ * ASSESSMENT EXECUTION TERMINAL (Tier 3)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 21: Scale Protocol for mathematical brand tints.
+ */
 export default function ExamClient({ exam, userId, schoolId }: ExamClientProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
-  /**
-   * Timer Initialization
-   */
+  // ── Timer Logic ──
   const startTimeISO = exam.startTime 
     ? exam.startTime.toISOString() 
     : new Date().toISOString();
@@ -587,11 +860,11 @@ export default function ExamClient({ exam, userId, schoolId }: ExamClientProps) 
   };
 
   /**
-   * Rule 11: Transactional Submission
+   * Rule 11: Final Transactional Registry Commitment
    */
   const handleFinalSubmit = () => {
     if (Object.keys(answers).length < exam.questions.length) {
-        if (!confirm("You have unanswered questions. Proceed with final submission?")) return;
+        if (!confirm("Identity Protocol Warning: Unanswered entries detected. Proceed with final sync?")) return;
     }
 
     startTransition(async () => {
@@ -610,171 +883,191 @@ export default function ExamClient({ exam, userId, schoolId }: ExamClientProps) 
         });
 
         if (result.success) {
-          toast.success(`Exam submitted. Score: ${result.score}/${result.total}`);
+          toast.success(`Registry entry finalized. Score: ${result.score}/${result.total}`);
           router.push("/student/dashboard");
         } else {
-          toast.error(result.error || "Submission failed.");
+          toast.error("Submission failed. Connection to registry timed out.");
         }
       } catch (error: unknown) {
-        toast.error("A critical registry error occurred during submission.");
+        toast.error("Critical Registry Breach: Submission protocol error.");
       }
     });
   };
 
-  // ── Access Control: Status-Based Guard ──
+  // ── Access Control: CONCLUDED STATE (Rule 18/19) ──
   if (exam.status === ExamStatus.COMPLETED) {
       return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 p-6 text-center">
-            <CheckCircle2 className="h-16 w-16 text-emerald-500 mb-6" />
-            <h1 className="text-2xl font-black text-white uppercase italic">Assessment Concluded</h1>
-            <p className="text-slate-500 text-xs mt-2 uppercase tracking-widest">
-                This examination window has been closed by the institution.
+        <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6 text-center animate-in fade-in duration-500">
+            <div className="h-20 w-20 rounded-[2rem] bg-emerald-50 flex items-center justify-center border border-emerald-200 shadow-xl mb-8">
+                <CheckCircle2 className="h-10 w-10 text-emerald-500" />
+            </div>
+            <h1 className="text-3xl font-extrabold text-foreground uppercase italic tracking-tighter">Assessment Concluded</h1>
+            <p className="text-muted-foreground text-[10px] font-bold mt-3 uppercase tracking-widest italic leading-relaxed opacity-60">
+                This examination window has been officially sealed by the institution.
             </p>
-            <Button onClick={() => router.push("/student/dashboard")} className="mt-8 bg-slate-900 border border-white/10 rounded-xl px-10">
+            <Button 
+                onClick={() => router.push("/student/dashboard")} 
+                className="mt-10 bg-surface border border-border text-foreground hover:bg-background rounded-xl px-10 h-12 uppercase text-[10px] font-bold shadow-sm"
+            >
                 Return to Dashboard
             </Button>
         </div>
       );
   }
 
-  // ── Access Control: Waiting State ──
+  // ── Access Control: WAITING STATE ──
   if (timerStatus === "waiting") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 p-6 text-center">
-        <div className="h-20 w-20 bg-slate-900 rounded-3xl flex items-center justify-center mb-8 border border-white/5 animate-pulse">
-            <Timer className="h-10 w-10 text-school-primary" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6 text-center animate-in fade-in duration-700">
+        <div className="h-24 w-24 bg-surface rounded-[2rem] flex items-center justify-center mb-8 border border-border shadow-inner group">
+            <Timer className="h-10 w-10 text-school-primary animate-pulse" />
         </div>
-        <h1 className="text-3xl font-black text-white uppercase italic tracking-tighter">
-            Session Locked
+        <h1 className="text-3xl md:text-4xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+            Hub Locked
         </h1>
-        <p className="text-slate-500 text-sm mt-2 max-w-xs uppercase tracking-widest leading-relaxed">
-            The assessment is scheduled to begin at: <br/>
-            <span className="text-school-primary font-bold">
-                {exam.startTime ? exam.startTime.toLocaleString() : "Institutional Schedule"}
+        <div className="mt-6 space-y-2">
+            <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest italic">Assessment scheduled for:</p>
+            <span className="inline-block px-4 py-2 rounded-lg bg-school-primary-50 text-school-primary font-extrabold text-sm border border-school-primary-200">
+                {exam.startTime ? exam.startTime.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }) : "Institutional Schedule"}
             </span>
-        </p>
+        </div>
       </div>
     );
   }
 
-  // ── Access Control: Ended State ──
+  // ── Access Control: TERMINATED STATE ──
   if (timerStatus === "ended") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 p-6 text-center">
-        <AlertCircle className="h-16 w-16 text-red-500/20 mb-6" />
-        <h1 className="text-2xl font-black text-white uppercase italic">Session Terminated</h1>
-        <p className="text-slate-500 text-xs mt-2 uppercase tracking-widest">
-            The allotted time for this assessment has expired.
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6 text-center animate-in zoom-in-95 duration-500">
+        <div className="h-20 w-20 bg-destructive/10 rounded-[2rem] flex items-center justify-center mb-8 border border-destructive/20 shadow-xl">
+            <AlertCircle className="h-10 w-10 text-destructive" />
+        </div>
+        <h1 className="text-3xl font-extrabold text-foreground uppercase italic tracking-tighter">Session Terminated</h1>
+        <p className="text-muted-foreground text-[10px] font-bold mt-3 uppercase tracking-widest italic">
+            The allotted time for this entry has expired.
         </p>
         <Button 
           variant="outline" 
           onClick={() => router.push("/student/dashboard")}
-          className="mt-8 border-white/10 text-slate-400 rounded-xl px-10 h-12 uppercase text-[10px] font-black"
+          className="mt-10 border-border bg-surface text-muted-foreground hover:text-foreground rounded-2xl px-12 h-14 uppercase text-[10px] font-extrabold shadow-md transition-all active:scale-95"
         >
-            Return to Dashboard
+            Dashboard
         </Button>
       </div>
     );
   }
 
-  // ── Active Exam View ──
+  // ── ACTIVE TERMINAL VIEW (Rule 20) ──
   return (
-    <div className="p-4 md:p-8 bg-slate-950 min-h-screen text-slate-50">
+    <div className="p-4 md:p-8 bg-background min-h-screen text-foreground animate-in fade-in duration-700">
       <div className="max-w-4xl mx-auto space-y-10 pb-32">
         
-        {/* FIXED HEADER */}
-        <header className="sticky top-4 z-40 bg-slate-900/80 backdrop-blur-md border border-white/5 p-6 rounded-[2rem] shadow-2xl flex justify-between items-center">
+        {/* ── STICKY CONTROL HUB (Rule 18/19/21) ── */}
+        <header className="sticky top-4 z-40 bg-surface/80 backdrop-blur-md border border-border p-5 md:p-6 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex justify-between items-center transition-all">
           <div className="flex items-center gap-4">
-             <div className="h-10 w-10 bg-school-primary/10 rounded-xl flex items-center justify-center border border-school-primary/20">
-                <ShieldCheck className="h-5 w-5 text-school-primary" />
+             <div className="h-12 w-12 bg-school-primary-50 rounded-xl flex items-center justify-center border border-school-primary-200">
+                <ShieldCheck className="h-6 w-6 text-school-primary" />
              </div>
-             <div>
-                <h1 className="text-lg font-black text-white uppercase italic tracking-tight leading-none">
+             <div className="hidden sm:block">
+                <h1 className="text-base font-extrabold text-foreground uppercase italic tracking-tight leading-none">
                     {exam.title}
                 </h1>
-                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">
-                    Identity Verified • Institutional Assessment
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1.5 opacity-60">
+                    Identity Synchronized • Verified Core
                 </p>
              </div>
           </div>
 
           <div className={cn(
-              "px-6 py-2.5 rounded-xl font-black text-sm tabular-nums border transition-colors",
-              timeLeft < 300 ? "bg-red-500/10 border-red-500 text-red-500 animate-pulse" : "bg-slate-950 border-white/10 text-school-primary"
+              "px-6 py-3 rounded-xl font-extrabold text-sm tabular-nums border transition-all shadow-inner",
+              timeLeft < 300 
+                ? "bg-destructive/10 border-destructive text-destructive animate-pulse" 
+                : "bg-surface border-border text-school-primary"
           )}>
             ⏱ {formatTime(timeLeft)}
           </div>
         </header>
 
-        {/* QUESTION POOL */}
+        {/* ── QUESTION MODULES (Rule 19) ── */}
         <div className="space-y-6">
           {exam.questions.map((q, index) => (
-            <Card key={q.id} className="bg-slate-900 border-white/5 rounded-[2.5rem] shadow-xl overflow-hidden group hover:border-white/10 transition-all">
-              <CardContent className="p-8 space-y-8">
-                <div className="flex gap-4">
-                  <span className="font-black text-xl text-school-primary/30 mt-1 italic">
-                    {index + 1 < 10 ? `0${index + 1}` : index + 1}
+            <Card key={q.id} className="bg-card border-border rounded-[2rem] shadow-xl overflow-hidden group hover:border-school-primary-200 transition-all duration-300">
+              <CardContent className="p-8 md:p-10 space-y-10">
+                <div className="flex gap-6">
+                  <span className="font-extrabold text-2xl text-school-primary/20 mt-0.5 italic tabular-nums">
+                    {String(index + 1).padStart(2, '0')}
                   </span>
-                  <p className="text-xl font-bold text-white leading-snug tracking-tight">
+                  <p className="text-xl font-bold text-foreground leading-relaxed tracking-tight italic">
                     {q.text}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-10">
-                  {q.options.map((opt, i) => (
-                    <label
-                      key={`${q.id}-${i}`}
-                      className={cn(
-                          "relative flex items-center p-5 rounded-2xl border cursor-pointer transition-all active:scale-95 group/option",
-                          answers[q.id] === opt 
-                            ? "bg-school-primary border-school-primary text-slate-950 shadow-lg" 
-                            : "bg-slate-950 border-white/5 text-slate-500 hover:border-white/10"
-                      )}
-                    >
-                      <input
-                        type="radio"
-                        name={q.id}
-                        value={opt}
-                        className="sr-only"
-                        checked={answers[q.id] === opt}
-                        onChange={() => handleOptionChange(q.id, opt)}
-                        disabled={isPending}
-                      />
-                      <span className={cn(
-                          "mr-3 text-[10px] font-black opacity-40",
-                          answers[q.id] === opt ? "text-slate-950" : "text-slate-500"
-                      )}>
-                        {String.fromCharCode(65 + i)}
-                      </span>
-                      <span className="text-sm font-bold uppercase tracking-tight">{opt}</span>
-                      
-                      {answers[q.id] === opt && (
-                          <div className="ml-auto">
-                              <CheckCircle2 className="h-4 w-4" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:pl-12">
+                  {q.options.map((opt, i) => {
+                    const isSelected = answers[q.id] === opt;
+                    return (
+                        <label
+                          key={`${q.id}-${i}`}
+                          className={cn(
+                              "relative flex items-center p-5 rounded-2xl border cursor-pointer transition-all active:scale-[0.97] group/option overflow-hidden",
+                              isSelected 
+                                ? "bg-school-primary border-school-primary text-on-school-primary shadow-lg shadow-school-primary-200 scale-[1.02]" 
+                                : "bg-surface border-border text-muted-foreground hover:border-school-primary-300 hover:bg-surface/50"
+                          )}
+                        >
+                          <input
+                            type="radio"
+                            name={q.id}
+                            value={opt}
+                            className="sr-only"
+                            checked={isSelected}
+                            onChange={() => handleOptionChange(q.id, opt)}
+                            disabled={isPending}
+                          />
+                          <div className={cn(
+                              "mr-4 h-6 w-6 rounded-lg flex items-center justify-center text-[10px] font-extrabold transition-colors border",
+                              isSelected 
+                                ? "bg-on-school-primary/20 border-on-school-primary/20 text-on-school-primary" 
+                                : "bg-background border-border text-muted-foreground/40"
+                          )}>
+                            {String.fromCharCode(65 + i)}
                           </div>
-                      )}
-                    </label>
-                  ))}
+                          <span className="text-sm font-extrabold uppercase tracking-tight leading-tight">{opt}</span>
+                          
+                          {isSelected && (
+                              <div className="ml-auto animate-in zoom-in duration-300">
+                                  <CheckCircle2 className="h-5 w-5" />
+                              </div>
+                          )}
+                        </label>
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* SUBMISSION ACTION */}
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xs px-4 no-print">
-            <Button
-                size="lg"
+        {/* ── FINAL SUBMISSION TERMINAL (Rule 21) ── */}
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 w-full max-w-xs px-6 no-print">
+            <button
                 disabled={isPending}
-                className="w-full bg-school-primary text-slate-950 font-black py-8 rounded-2xl shadow-2xl hover:scale-[1.03] transition-all uppercase text-[11px] tracking-[0.2em] group"
                 onClick={handleFinalSubmit}
+                className={cn(
+                    "w-full h-16 rounded-2xl shadow-2xl transition-all active:scale-95 group relative overflow-hidden",
+                    "bg-school-primary text-on-school-primary font-extrabold text-[11px] uppercase tracking-widest",
+                    "hover:brightness-110 shadow-school-primary-200 disabled:opacity-20"
+                )}
             >
                 {isPending ? (
-                    <Loader2 className="animate-spin h-5 w-5" />
+                    <Loader2 className="animate-spin h-5 w-5 mx-auto" />
                 ) : (
-                    <>Finalize Registry Entry <Zap className="ml-2 h-4 w-4 fill-current group-hover:scale-110 transition-transform" /></>
+                    <div className="flex items-center justify-center gap-3">
+                        <span>Finalize Registry Entry</span>
+                        <Zap className="h-4 w-4 fill-current transition-transform group-hover:scale-125" />
+                    </div>
                 )}
-            </Button>
+            </button>
         </div>
       </div>
     </div>

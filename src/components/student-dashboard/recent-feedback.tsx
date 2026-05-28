@@ -246,15 +246,149 @@
 // }
 
 
-"use client"
+// "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { MessageSquare, FileText, Star, Quote, History } from "lucide-react"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+// import { Button } from "@/components/ui/button"
+// import { Badge } from "@/components/ui/badge"
+// import { MessageSquare, FileText, Star, Quote, History } from "lucide-react"
 
-// ── Types ───────────────────────────────────────────────────────────────────
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// interface FeedbackItem {
+//   message: string | null;
+//   sentAt: Date | string | null;
+// }
+
+// interface AssessmentWithFeedback {
+//   id: string;
+//   score: number | null;
+//   maxScore: number | null;
+//   gradeSubject?: {
+//     subject?: {
+//       name: string;
+//     };
+//   };
+//   feedbacks?: FeedbackItem[];
+// }
+
+// interface RecentFeedbackProps {
+//   // FIX: Replaced 'any[]' with the specific interface
+//   assessments: AssessmentWithFeedback[]; 
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// export function RecentFeedback({ assessments }: RecentFeedbackProps) {
+//   return (
+//     <Card className="h-full bg-slate-900 border-white/5 rounded-[2rem] shadow-2xl overflow-hidden">
+//       <CardHeader className="pb-6 bg-slate-950/50 border-b border-white/5">
+//         <div className="flex items-center justify-between">
+//           <div className="flex items-center gap-3">
+//             <div className="p-2 bg-school-primary/10 rounded-lg text-school-primary">
+//                 <MessageSquare className="h-4 w-4" />
+//             </div>
+//             <CardTitle className="text-sm font-black uppercase italic tracking-tighter text-white">
+//                 Instructor Remarks
+//             </CardTitle>
+//           </div>
+//           <Button variant="outline" size="sm" className="h-8 border-white/10 text-slate-500 hover:text-school-primary transition-all rounded-xl uppercase text-[9px] font-black tracking-widest">
+//             <FileText className="h-3 w-3 mr-2" />
+//             Registry Record
+//           </Button>
+//         </div>
+//       </CardHeader>
+
+//       <CardContent className="p-6 space-y-6">
+//         {assessments.length === 0 ? (
+//           <div className="py-20 text-center opacity-30">
+//             <History className="h-10 w-10 text-slate-700 mx-auto mb-4" />
+//             <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">
+//                 No recent feedback logs found
+//             </p>
+//           </div>
+//         ) : (
+//           assessments.map((assessment) => {
+//             // Extraction logic with safe navigation
+//             const subjectName = assessment.gradeSubject?.subject?.name || "General Module";
+//             const feedback = assessment.feedbacks?.[0]; 
+//             const scorePercent = (assessment.score !== null && assessment.maxScore) 
+//               ? Math.round((assessment.score / assessment.maxScore) * 100) 
+//               : null;
+
+//             return (
+//               <div
+//                 key={assessment.id}
+//                 className="relative p-6 rounded-3xl bg-slate-950 border border-white/5 hover:border-school-primary/20 transition-all group"
+//               >
+//                 {/* Score Indicator */}
+//                 {scorePercent !== null && (
+//                     <div className="absolute top-6 right-6 flex flex-col items-end">
+//                         <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Grade</div>
+//                         <div className="text-sm font-black text-school-primary italic">{scorePercent}%</div>
+//                     </div>
+//                 )}
+
+//                 <div className="flex items-start gap-4">
+//                   <Avatar className="h-10 w-10 border border-white/5 shadow-xl">
+//                     <AvatarFallback className="bg-slate-900 text-slate-500 text-[10px] font-black">
+//                       {subjectName.substring(0, 2).toUpperCase()}
+//                     </AvatarFallback>
+//                   </Avatar>
+
+//                   <div className="flex-1 min-w-0">
+//                     <div className="mb-4">
+//                         <h4 className="font-black text-white text-xs uppercase italic tracking-widest">
+//                             {subjectName}
+//                         </h4>
+//                         <p className="text-[9px] font-bold text-slate-500 uppercase mt-1">
+//                             {feedback?.sentAt ? new Date(feedback.sentAt).toLocaleDateString() : 'Assessment Log'}
+//                         </p>
+//                     </div>
+
+//                     <div className="relative">
+//                       <Quote className="absolute -left-2 -top-2 h-4 w-4 text-school-primary/10" />
+//                       <p className="text-sm font-medium text-slate-400 leading-relaxed pl-4 italic border-l-2 border-school-primary/20">
+//                         {feedback?.message || "Assessment recorded. Subject instructor provided no specific remarks for this module."}
+//                       </p>
+//                     </div>
+
+//                     {/* Tags */}
+//                     <div className="mt-6 flex flex-wrap gap-2">
+//                         <Badge variant="outline" className="bg-slate-900 border-white/5 text-[8px] font-black uppercase text-slate-500 tracking-tighter px-3">
+//                            Verified Remark
+//                         </Badge>
+//                         {scorePercent !== null && scorePercent >= 75 && (
+//                              <Badge className="bg-emerald-500/10 text-emerald-500 border-none text-[8px] font-black uppercase px-3 flex items-center gap-1">
+//                                 <Star className="h-2.5 w-2.5 fill-emerald-500" /> Commendation
+//                              </Badge>
+//                         )}
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             )
+//           })
+//         )}
+//       </CardContent>
+//     </Card>
+//   )
+// }
+
+
+
+"use client";
+
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { MessageSquare, FileText, Star, Quote, History, MessageCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface FeedbackItem {
   message: string | null;
@@ -274,43 +408,52 @@ interface AssessmentWithFeedback {
 }
 
 interface RecentFeedbackProps {
-  // FIX: Replaced 'any[]' with the specific interface
   assessments: AssessmentWithFeedback[]; 
 }
 
-// ── Main Component ──────────────────────────────────────────────────────────
-
+/**
+ * INSTRUCTOR FEEDBACK LEDGER (Tier 3)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 21: Scale Protocol for clean mathematical status tints.
+ */
 export function RecentFeedback({ assessments }: RecentFeedbackProps) {
   return (
-    <Card className="h-full bg-slate-900 border-white/5 rounded-[2rem] shadow-2xl overflow-hidden">
-      <CardHeader className="pb-6 bg-slate-950/50 border-b border-white/5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-school-primary/10 rounded-lg text-school-primary">
-                <MessageSquare className="h-4 w-4" />
+    <Card className="h-full bg-card border-border rounded-[2rem] shadow-xl overflow-hidden animate-in fade-in duration-700">
+      
+      {/* ── HEADER (Rule 11/21) ── */}
+      <CardHeader className="pb-6 bg-surface/50 border-b border-border">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            {/* Rule 21: Scale Protocol Icon Container */}
+            <div className="p-2.5 bg-school-primary-50 border border-school-primary-200 rounded-xl flex items-center justify-center">
+                <MessageSquare className="h-5 w-5 text-school-primary" />
             </div>
-            <CardTitle className="text-sm font-black uppercase italic tracking-tighter text-white">
+            <CardTitle className="text-base font-extrabold uppercase italic tracking-tighter text-foreground">
                 Instructor Remarks
             </CardTitle>
           </div>
-          <Button variant="outline" size="sm" className="h-8 border-white/10 text-slate-500 hover:text-school-primary transition-all rounded-xl uppercase text-[9px] font-black tracking-widest">
-            <FileText className="h-3 w-3 mr-2" />
-            Registry Record
-          </Button>
+          <button className="h-9 px-4 border border-border bg-surface text-muted-foreground hover:text-school-primary hover:border-school-primary-200 transition-all rounded-xl uppercase text-[9px] font-extrabold tracking-widest flex items-center gap-2 shadow-sm active:scale-95">
+            <FileText className="h-3.5 w-3.5" />
+            Full Hub Record
+          </button>
         </div>
       </CardHeader>
 
-      <CardContent className="p-6 space-y-6">
+      <CardContent className="p-6 md:p-8 space-y-6">
         {assessments.length === 0 ? (
-          <div className="py-20 text-center opacity-30">
-            <History className="h-10 w-10 text-slate-700 mx-auto mb-4" />
-            <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">
-                No recent feedback logs found
+          /* ── EMPTY STATE ── */
+          <div className="py-24 text-center opacity-40 flex flex-col items-center">
+            <div className="h-16 w-16 bg-surface border border-border rounded-full flex items-center justify-center mb-6 shadow-inner">
+                <MessageCircle className="h-8 w-8 text-muted-foreground/30" />
+            </div>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.3em] italic max-w-[180px] leading-relaxed">
+                No recent communication hub logs discovered
             </p>
           </div>
         ) : (
           assessments.map((assessment) => {
-            // Extraction logic with safe navigation
             const subjectName = assessment.gradeSubject?.subject?.name || "General Module";
             const feedback = assessment.feedbacks?.[0]; 
             const scorePercent = (assessment.score !== null && assessment.maxScore) 
@@ -320,47 +463,49 @@ export function RecentFeedback({ assessments }: RecentFeedbackProps) {
             return (
               <div
                 key={assessment.id}
-                className="relative p-6 rounded-3xl bg-slate-950 border border-white/5 hover:border-school-primary/20 transition-all group"
+                className="relative p-6 md:p-8 rounded-[1.5rem] bg-surface border border-border hover:border-school-primary-200 transition-all group shadow-sm hover:shadow-md"
               >
-                {/* Score Indicator */}
+                {/* ── SCORE INDICATOR (Rule 11) ── */}
                 {scorePercent !== null && (
-                    <div className="absolute top-6 right-6 flex flex-col items-end">
-                        <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Grade</div>
-                        <div className="text-sm font-black text-school-primary italic">{scorePercent}%</div>
+                    <div className="absolute top-6 right-8 text-right space-y-0.5">
+                        <p className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-widest opacity-40">Proficiency</p>
+                        <p className="text-lg font-extrabold text-school-primary italic tracking-tighter tabular-nums">{scorePercent}%</p>
                     </div>
                 )}
 
-                <div className="flex items-start gap-4">
-                  <Avatar className="h-10 w-10 border border-white/5 shadow-xl">
-                    <AvatarFallback className="bg-slate-900 text-slate-500 text-[10px] font-black">
+                <div className="flex items-start gap-5">
+                  {/* Subject Avatar (Rule 19) */}
+                  <Avatar className="h-12 w-12 border-2 border-background ring-4 ring-school-primary-50 transition-all group-hover:ring-school-primary-100 shadow-lg">
+                    <AvatarFallback className="bg-surface text-school-primary text-xs font-extrabold italic tabular-nums">
                       {subjectName.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1 min-w-0">
-                    <div className="mb-4">
-                        <h4 className="font-black text-white text-xs uppercase italic tracking-widest">
+                    <div className="mb-6">
+                        <h4 className="font-extrabold text-foreground text-sm uppercase italic tracking-widest leading-none">
                             {subjectName}
                         </h4>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase mt-1">
-                            {feedback?.sentAt ? new Date(feedback.sentAt).toLocaleDateString() : 'Assessment Log'}
+                        <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-2 flex items-center gap-2">
+                            <History className="h-3 w-3 opacity-40" />
+                            {feedback?.sentAt ? new Date(feedback.sentAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Archive Hub Log'}
                         </p>
                     </div>
 
                     <div className="relative">
-                      <Quote className="absolute -left-2 -top-2 h-4 w-4 text-school-primary/10" />
-                      <p className="text-sm font-medium text-slate-400 leading-relaxed pl-4 italic border-l-2 border-school-primary/20">
-                        {feedback?.message || "Assessment recorded. Subject instructor provided no specific remarks for this module."}
+                      <Quote className="absolute -left-3 -top-3 h-5 w-5 text-school-primary-100 opacity-50" />
+                      <p className="text-sm font-medium text-foreground/70 leading-relaxed pl-6 italic border-l-2 border-school-primary-200">
+                        {feedback?.message || "Module synchronization complete. Subject instructor provided no specific qualitative remarks for this hub."}
                       </p>
                     </div>
 
-                    {/* Tags */}
-                    <div className="mt-6 flex flex-wrap gap-2">
-                        <Badge variant="outline" className="bg-slate-900 border-white/5 text-[8px] font-black uppercase text-slate-500 tracking-tighter px-3">
+                    {/* ── STATUS TAGS (Rule 21) ── */}
+                    <div className="mt-8 flex flex-wrap gap-3">
+                        <Badge variant="outline" className="bg-background border-border text-[8px] font-extrabold uppercase text-muted-foreground tracking-widest px-3 py-1 rounded-lg">
                            Verified Remark
                         </Badge>
                         {scorePercent !== null && scorePercent >= 75 && (
-                             <Badge className="bg-emerald-500/10 text-emerald-500 border-none text-[8px] font-black uppercase px-3 flex items-center gap-1">
+                             <Badge className="bg-emerald-50 text-emerald-600 border border-emerald-200 text-[8px] font-extrabold uppercase px-3 py-1 rounded-lg flex items-center gap-1.5 shadow-sm">
                                 <Star className="h-2.5 w-2.5 fill-emerald-500" /> Commendation
                              </Badge>
                         )}
@@ -368,10 +513,10 @@ export function RecentFeedback({ assessments }: RecentFeedbackProps) {
                   </div>
                 </div>
               </div>
-            )
+            );
           })
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

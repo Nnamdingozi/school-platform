@@ -522,15 +522,142 @@
 // }
 
 
+// "use client";
+
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+// import { Card } from "../../ui/card";
+// import { Badge } from "../../ui/badge";
+// import { UserCheck, Users, School, BookOpen } from "lucide-react";
+// import { useProfileStore } from "@/store/profileStore";
+
+// // ── Types ───────────────────────────────────────────────────────────────────
+
+// export interface Classmate {
+//   id: string;
+//   name: string | null;
+// }
+
+// export interface StudentClassRegistryData {
+//   name: string;
+//   teacher: { name: string | null } | null;
+//   classmates: Classmate[];
+//   mySubjects: string[]; 
+// }
+
+// interface StudentClassViewProps {
+//   data: StudentClassRegistryData | null;
+// }
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// /**
+//  * PURE DISPLAY COMPONENT (Visual Layer)
+//  * Rule 17: Pulls primaryColor from Zustand.
+//  */
+// export function StudentClassView({ data }: StudentClassViewProps) {
+//   const { profile } = useProfileStore();
+//   const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//   if (!data) {
+//     return (
+//       <div className="py-20 text-center bg-slate-900/50 rounded-[3rem] border border-dashed border-white/5">
+//         <School className="h-12 w-12 text-slate-800 mx-auto mb-4" />
+//         <h3 className="text-xl font-black text-white uppercase italic">Registry Unlinked</h3>
+//         <p className="text-slate-500 text-xs mt-2 uppercase tracking-widest max-w-xs mx-auto">
+//           No classroom assignment discovered in the institutional registry.
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+//       {/* ── CLASS IDENTITY ── */}
+//       <div className="lg:col-span-1 space-y-6">
+//         <Card 
+//           className="border-none p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group text-slate-950"
+//           style={{ backgroundColor: primaryColor }}
+//         >
+//           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+//              <School className="h-20 w-20 fill-current" />
+//           </div>
+
+//           <div className="relative z-10">
+//             <h2 className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60">Assigned Node</h2>
+//             <p className="text-4xl font-black italic uppercase tracking-tighter mt-2 leading-none">{data.name}</p>
+            
+//             <div className="mt-10 flex items-center gap-4 bg-slate-950/10 p-4 rounded-2xl backdrop-blur-sm border border-white/10">
+//               <div className="h-12 w-12 rounded-xl bg-slate-950 flex items-center justify-center shadow-lg">
+//                 <UserCheck className="h-6 w-6" style={{ color: primaryColor }} />
+//               </div>
+//               <div>
+//                 <p className="text-[9px] font-black opacity-70 uppercase tracking-widest">Lead Instructor</p>
+//                 <p className="font-black uppercase italic text-sm text-white">{data.teacher?.name || "Pending"}</p>
+//               </div>
+//             </div>
+//           </div>
+//         </Card>
+
+//         <Card className="bg-slate-900 border-white/5 p-8 rounded-[2.5rem] shadow-xl">
+//           <div className="flex items-center gap-3 mb-6">
+//             <BookOpen className="h-4 w-4" style={{ color: primaryColor }} />
+//             <h3 className="text-xs font-black uppercase text-slate-400 tracking-[0.2em]">Academic Modules</h3>
+//           </div>
+//           <div className="flex flex-wrap gap-2">
+//             {data.mySubjects.map((sub) => (
+//               <Badge key={sub} variant="outline" className="px-3 py-1.5 rounded-xl border-white/5 bg-slate-950 text-slate-300 text-[9px] font-black uppercase tracking-widest">
+//                 {sub}
+//               </Badge>
+//             ))}
+//           </div>
+//         </Card>
+//       </div>
+
+//       {/* ── PEER REGISTRY ── */}
+//       <div className="lg:col-span-2">
+//         <Card className="bg-slate-900 border-white/5 p-8 rounded-[2.5rem] shadow-xl h-full">
+//           <div className="flex items-center justify-between mb-10">
+//             <div>
+//                 <h3 className="text-sm font-black uppercase text-white italic tracking-widest">Peer directory</h3>
+//                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1">{data.classmates.length} Peers Assigned</p>
+//             </div>
+//             <Users className="h-5 w-5 text-slate-700" />
+//           </div>
+
+//           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//             {data.classmates.map((student) => (
+//               <div key={student.id} className="flex items-center gap-4 p-5 rounded-2xl bg-slate-950 border border-white/5 hover:border-school-primary/20 transition-all group">
+//                 <Avatar className="h-10 w-10 border-2 border-slate-900 ring-2 ring-white/5 group-hover:ring-school-primary/20 transition-all">
+//                   <AvatarFallback className="bg-slate-900 text-[10px] font-black uppercase" style={{ color: primaryColor }}>
+//                     {(student.name ?? "??").substring(0, 2)}
+//                   </AvatarFallback>
+//                 </Avatar>
+//                 <p className="text-sm font-black text-slate-300 group-hover:text-white uppercase italic tracking-tight truncate">
+//                   {student.name ?? "Anonymous Learner"}
+//                 </p>
+//               </div>
+//             ))}
+//           </div>
+//         </Card>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
 "use client";
 
+import React from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "../../ui/card";
 import { Badge } from "../../ui/badge";
-import { UserCheck, Users, School, BookOpen } from "lucide-react";
+import { UserCheck, Users, School, BookOpen, ChevronRight } from "lucide-react";
 import { useProfileStore } from "@/store/profileStore";
 
-// ── Types ───────────────────────────────────────────────────────────────────
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 export interface Classmate {
   id: string;
@@ -551,62 +678,81 @@ interface StudentClassViewProps {
 // ── Main Component ──────────────────────────────────────────────────────────
 
 /**
- * PURE DISPLAY COMPONENT (Visual Layer)
- * Rule 17: Pulls primaryColor from Zustand.
+ * PURE DISPLAY COMPONENT (Tier 3 Visual Layer)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem] and [3rem].
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function StudentClassView({ data }: StudentClassViewProps) {
   const { profile } = useProfileStore();
-  const primaryColor = profile?.primaryColor || "#f59e0b";
 
   if (!data) {
     return (
-      <div className="py-20 text-center bg-slate-900/50 rounded-[3rem] border border-dashed border-white/5">
-        <School className="h-12 w-12 text-slate-800 mx-auto mb-4" />
-        <h3 className="text-xl font-black text-white uppercase italic">Registry Unlinked</h3>
-        <p className="text-slate-500 text-xs mt-2 uppercase tracking-widest max-w-xs mx-auto">
-          No classroom assignment discovered in the institutional registry.
+      /* ── EMPTY REGISTRY HUB ── */
+      <div className="py-24 md:py-32 text-center bg-surface border-2 border-dashed border-border rounded-[3rem] animate-in fade-in duration-700">
+        <div className="h-20 w-20 bg-background rounded-[1.5rem] border border-border flex items-center justify-center mx-auto shadow-sm mb-6">
+          <School className="h-10 w-10 text-muted-foreground/30" />
+        </div>
+        <h3 className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter">Registry Hub Unlinked</h3>
+        <p className="text-muted-foreground text-[10px] font-bold mt-3 uppercase tracking-widest max-w-xs mx-auto italic leading-relaxed opacity-60">
+          No classroom assignment discovered in the institutional ledger.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
       
-      {/* ── CLASS IDENTITY ── */}
-      <div className="lg:col-span-1 space-y-6">
+      {/* ── CLASS IDENTITY (Tier 2/3 Meta) ── */}
+      <div className="lg:col-span-1 space-y-6 md:space-y-8">
+        {/* Rule 18: High-impact Brand Card */}
         <Card 
-          className="border-none p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group text-slate-950"
-          style={{ backgroundColor: primaryColor }}
+          className="bg-school-primary border-none p-8 md:p-10 rounded-[2rem] shadow-2xl relative overflow-hidden group text-on-school-primary"
         >
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-             <School className="h-20 w-20 fill-current" />
+          {/* Rule 21: Scale protocol decoration */}
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700">
+             <School className="h-24 w-24 fill-current" />
           </div>
 
-          <div className="relative z-10">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60">Assigned Node</h2>
-            <p className="text-4xl font-black italic uppercase tracking-tighter mt-2 leading-none">{data.name}</p>
+          <div className="relative z-10 space-y-12">
+            <div>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.4em] opacity-60 italic">Assigned Registry Hub</p>
+              <h2 className="text-4xl md:text-5xl font-extrabold italic uppercase tracking-tighter mt-3 leading-none drop-shadow-sm">
+                {data.name}
+              </h2>
+            </div>
             
-            <div className="mt-10 flex items-center gap-4 bg-slate-950/10 p-4 rounded-2xl backdrop-blur-sm border border-white/10">
-              <div className="h-12 w-12 rounded-xl bg-slate-950 flex items-center justify-center shadow-lg">
-                <UserCheck className="h-6 w-6" style={{ color: primaryColor }} />
+            <div className="flex items-center gap-4 bg-on-school-primary/10 p-4 rounded-2xl backdrop-blur-md border border-on-school-primary/10 shadow-inner">
+              {/* Rule 21: Scale Protocol for dark surface in light bg */}
+              <div className="h-12 w-12 rounded-xl bg-on-school-primary/20 flex items-center justify-center shadow-sm">
+                <UserCheck className="h-6 w-6 text-on-school-primary" />
               </div>
               <div>
-                <p className="text-[9px] font-black opacity-70 uppercase tracking-widest">Lead Instructor</p>
-                <p className="font-black uppercase italic text-sm text-white">{data.teacher?.name || "Pending"}</p>
+                <p className="text-[9px] font-bold opacity-70 uppercase tracking-widest leading-none mb-1">Lead Instructor</p>
+                <p className="font-extrabold uppercase italic text-sm tracking-tight">{data.teacher?.name || "Registry Pending"}</p>
               </div>
             </div>
           </div>
         </Card>
 
-        <Card className="bg-slate-900 border-white/5 p-8 rounded-[2.5rem] shadow-xl">
-          <div className="flex items-center gap-3 mb-6">
-            <BookOpen className="h-4 w-4" style={{ color: primaryColor }} />
-            <h3 className="text-xs font-black uppercase text-slate-400 tracking-[0.2em]">Academic Modules</h3>
+        {/* ── ACADEMIC MODULES HUB ── */}
+        <Card className="bg-card border-border p-6 md:p-8 rounded-[2rem] shadow-xl">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="h-10 w-10 rounded-xl bg-school-primary-50 border border-school-primary-200 flex items-center justify-center">
+              <BookOpen className="h-5 w-5 text-school-primary" />
+            </div>
+            <h3 className="text-xs font-extrabold uppercase text-foreground italic tracking-widest">Academic Modules</h3>
           </div>
-          <div className="flex flex-wrap gap-2">
+          
+          <div className="flex flex-wrap gap-2.5">
             {data.mySubjects.map((sub) => (
-              <Badge key={sub} variant="outline" className="px-3 py-1.5 rounded-xl border-white/5 bg-slate-950 text-slate-300 text-[9px] font-black uppercase tracking-widest">
+              <Badge 
+                key={sub} 
+                variant="outline" 
+                className="px-4 py-2 rounded-xl border-border bg-surface text-muted-foreground text-[10px] font-bold uppercase tracking-widest hover:border-school-primary-200 hover:text-school-primary transition-all cursor-default"
+              >
                 {sub}
               </Badge>
             ))}
@@ -614,28 +760,39 @@ export function StudentClassView({ data }: StudentClassViewProps) {
         </Card>
       </div>
 
-      {/* ── PEER REGISTRY ── */}
+      {/* ── PEER REGISTRY MATRIX (Rule 20) ── */}
       <div className="lg:col-span-2">
-        <Card className="bg-slate-900 border-white/5 p-8 rounded-[2.5rem] shadow-xl h-full">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-                <h3 className="text-sm font-black uppercase text-white italic tracking-widest">Peer directory</h3>
-                <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1">{data.classmates.length} Peers Assigned</p>
+        <Card className="bg-card border-border p-6 md:p-10 rounded-[2rem] shadow-xl h-full">
+          <div className="flex items-center justify-between mb-10 border-b border-border pb-6">
+            <div className="space-y-1">
+                <h3 className="text-xl font-extrabold uppercase text-foreground italic tracking-tighter">Peer Directory</h3>
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest italic opacity-60">
+                  {data.classmates.length} Identity Profiles Synchronized
+                </p>
             </div>
-            <Users className="h-5 w-5 text-slate-700" />
+            <div className="h-10 w-10 rounded-full bg-surface border border-border flex items-center justify-center">
+              <Users className="h-5 w-5 text-muted-foreground/30" />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
             {data.classmates.map((student) => (
-              <div key={student.id} className="flex items-center gap-4 p-5 rounded-2xl bg-slate-950 border border-white/5 hover:border-school-primary/20 transition-all group">
-                <Avatar className="h-10 w-10 border-2 border-slate-900 ring-2 ring-white/5 group-hover:ring-school-primary/20 transition-all">
-                  <AvatarFallback className="bg-slate-900 text-[10px] font-black uppercase" style={{ color: primaryColor }}>
-                    {(student.name ?? "??").substring(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
-                <p className="text-sm font-black text-slate-300 group-hover:text-white uppercase italic tracking-tight truncate">
-                  {student.name ?? "Anonymous Learner"}
-                </p>
+              <div 
+                key={student.id} 
+                className="flex items-center justify-between gap-4 p-5 rounded-2xl bg-surface border border-border hover:border-school-primary/40 transition-all group shadow-sm hover:shadow-md"
+              >
+                <div className="flex items-center gap-4 min-w-0">
+                  {/* Avatar Standard (Rule 19/21) */}
+                  <Avatar className="h-10 w-10 border-2 border-background ring-4 ring-school-primary-50 transition-all group-hover:ring-school-primary-100">
+                    <AvatarFallback className="bg-surface text-[10px] font-extrabold uppercase italic text-school-primary tabular-nums">
+                      {(student.name ?? "??").substring(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="text-sm font-extrabold text-foreground/80 group-hover:text-school-primary uppercase italic tracking-tight truncate leading-none transition-colors">
+                    {student.name ?? "Anonymous Learner"}
+                  </p>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground/20 group-hover:text-school-primary group-hover:translate-x-1 transition-all" />
               </div>
             ))}
           </div>

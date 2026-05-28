@@ -498,20 +498,245 @@
 // }
 
 
+// 'use client'
+
+// import React, { useState, useEffect } from 'react'
+// import { Card, CardContent } from '@/components/ui/card'
+// import { 
+//     LucideIcon, Loader2, X, BookOpen, 
+//     CheckCircle2, AlertTriangle, ShieldCheck 
+// } from 'lucide-react'
+// import { useProfileStore } from '@/store/profileStore'
+// import { getClassesBySchool, assignUserToClass, assignTeacherToClass } from '@/app/actions/user-management'
+// import { cn } from '@/lib/utils'
+// import { Role } from '@prisma/client'
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// interface SectionProps {
+//     title: string
+//     icon: LucideIcon
+//     children: React.ReactNode
+// }
+
+// interface AssignClassModalProps {
+//     userId:    string
+//     schoolId:  string
+//     role:      Role
+//     onClose:   () => void
+//     onSuccess: () => void
+// }
+
+// interface ConfirmModalProps {
+//     title:        string
+//     description:  string
+//     confirmLabel: string
+//     danger?:      boolean
+//     loading:      boolean
+//     onConfirm:    () => void
+//     onCancel:     () => void
+// }
+
+// // ── 1. Shared Section Wrapper ──────────────────────────────────────────────────
+
+// export function Section({ title, icon: Icon, children }: SectionProps) {
+//     const { profile } = useProfileStore();
+//     const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//     return (
+//         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+//             <div className="flex items-center gap-3 px-2">
+//                 <div className="p-2 rounded-lg bg-slate-900 border border-white/5 shadow-inner">
+//                     <Icon className="h-4 w-4" style={{ color: primaryColor }} />
+//                 </div>
+//                 <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white italic">
+//                     {title}
+//                 </h3>
+//             </div>
+//             {children}
+//         </section>
+//     )
+// }
+
+// // ── 2. Shared Empty State ──────────────────────────────────────────────────────
+
+// export function EmptySection({ message }: { message: string }) {
+//     return (
+//         <Card className="bg-slate-900 border-white/5 border-dashed rounded-[2.5rem] p-12 text-center shadow-2xl">
+//             <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest italic leading-relaxed">
+//                 {message}
+//             </p>
+//         </Card>
+//     )
+// }
+
+// // ── 3. Shared Detail Skeleton ──────────────────────────────────────────────────
+
+// export function DetailSkeleton() {
+//     return (
+//         <div className="min-h-screen bg-slate-950 p-4 md:p-8 lg:p-12 space-y-10">
+//             <div className="h-4 w-32 bg-slate-900 rounded-lg animate-pulse" />
+//             <div className="h-48 bg-slate-900 border border-white/5 rounded-[2.5rem] animate-pulse" />
+//             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+//                 <div className="lg:col-span-2 space-y-10">
+//                     <div className="h-64 bg-slate-900 border border-white/5 rounded-[2.5rem] animate-pulse" />
+//                     <div className="h-64 bg-slate-900 border border-white/5 rounded-[2.5rem] animate-pulse" />
+//                 </div>
+//                 <div className="space-y-8">
+//                     <div className="h-80 bg-slate-900 border border-white/5 rounded-[2.5rem] animate-pulse" />
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// // ── 4. Assign Class Modal ──────────────────────────────────────────────────────
+
+// /**
+//  * INSTITUTIONAL PLACEMENT MODAL
+//  * Rule 17: Branding from Zustand.
+//  * Rule 5: Fetches classes only for the specific school registry.
+//  */
+// export function AssignClassModal({ userId, schoolId, role, onClose, onSuccess }: AssignClassModalProps) {
+//     const { profile } = useProfileStore();
+//     const primaryColor = profile?.primaryColor || "#f59e0b";
+    
+//     const [classes, setClasses] = useState<{ id: string; name: string; grade: { displayName: string } }[]>([])
+//     const [selected, setSelected] = useState('')
+//     const [loading, setLoading] = useState(true)
+//     const [assigning, setAssigning] = useState(false)
+
+//     useEffect(() => {
+//         // Rule 5: Isolated Institutional Fetch
+//         getClassesBySchool(schoolId).then(data => {
+//             setClasses(data);
+//             setLoading(false);
+//         });
+//     }, [schoolId]);
+
+//     async function handleAssign() {
+//         if (!selected) return;
+//         setAssigning(true);
+        
+//         // Rule 11: System Truth Update based on role
+//         const result = role === Role.TEACHER
+//             ? await assignTeacherToClass(userId, selected)
+//             : await assignUserToClass(userId, selected);
+
+//         if (result.success) {
+//             onSuccess();
+//         } else {
+//             setAssigning(false);
+//         }
+//     }
+
+//     return (
+//         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+//             <div className="w-full max-w-sm bg-slate-900 border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden">
+//                 <div className="p-8 border-b border-white/5 flex items-center justify-between bg-slate-950/50">
+//                     <div className="flex items-center gap-3">
+//                         <ShieldCheck className="h-5 w-5 text-school-primary" style={{ color: primaryColor }} />
+//                         <h3 className="text-lg font-black text-white uppercase italic tracking-tighter">Registry Placement</h3>
+//                     </div>
+//                     <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
+//                         <X className="h-5 w-5" />
+//                     </button>
+//                 </div>
+
+//                 <div className="p-8 space-y-4">
+//                     {loading ? (
+//                         <div className="flex justify-center py-10">
+//                             <Loader2 className="h-6 w-6 animate-spin" style={{ color: primaryColor }} />
+//                         </div>
+//                     ) : classes.length === 0 ? (
+//                         <p className="text-[10px] font-black text-slate-600 uppercase text-center py-8">No classrooms discovered in registry.</p>
+//                     ) : (
+//                         <div className="space-y-2 max-h-64 overflow-y-auto no-scrollbar">
+//                             {classes.map(c => (
+//                                 <button
+//                                     key={c.id}
+//                                     onClick={() => setSelected(c.id)}
+//                                     className={cn(
+//                                         "w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all",
+//                                         selected === c.id ? "bg-slate-800 border-white/20 shadow-lg" : "bg-slate-950 border-white/5 text-slate-500 hover:border-white/10"
+//                                     )}
+//                                 >
+//                                     <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: selected === c.id ? `${primaryColor}20` : '#1e293b' }}>
+//                                         {selected === c.id ? <CheckCircle2 className="h-4 w-4" style={{ color: primaryColor }} /> : <BookOpen className="h-4 w-4" />}
+//                                     </div>
+//                                     <div className="min-w-0">
+//                                         <p className="text-sm font-bold text-white uppercase italic truncate">{c.name}</p>
+//                                         <p className="text-[9px] font-bold uppercase tracking-widest">{c.grade.displayName}</p>
+//                                     </div>
+//                                 </button>
+//                             ))}
+//                         </div>
+//                     )}
+//                 </div>
+
+//                 <div className="p-8 pt-0">
+//                     <button
+//                         onClick={handleAssign}
+//                         disabled={!selected || assigning}
+//                         className="w-full py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all disabled:opacity-30 shadow-xl"
+//                         style={{ backgroundColor: primaryColor, color: '#000' }}
+//                     >
+//                         {assigning ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "Commit Placement"}
+//                     </button>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// // ── 5. Confirm Modal ───────────────────────────────────────────────────────────
+
+// export function ConfirmModal({ title, description, confirmLabel, danger, loading, onConfirm, onCancel }: ConfirmModalProps) {
+//     const { profile } = useProfileStore();
+//     const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//     return (
+//         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+//             <div className="w-full max-w-sm bg-slate-900 border border-white/10 rounded-[2.5rem] shadow-2xl p-8 space-y-6">
+//                 <div className="flex items-center gap-3">
+//                     <AlertTriangle className={cn("h-6 w-6", danger ? "text-red-500" : "text-amber-500")} />
+//                     <h3 className="font-black text-white text-lg uppercase italic tracking-tighter">{title}</h3>
+//                 </div>
+//                 <p className="text-xs text-slate-400 leading-relaxed font-medium italic">{description}</p>
+//                 <div className="flex gap-3 pt-4">
+//                     <button onClick={onCancel} disabled={loading} className="flex-1 py-4 rounded-xl border border-white/5 text-slate-500 hover:text-white text-[10px] font-black uppercase tracking-widest transition-all">
+//                         Cancel
+//                     </button>
+//                     <button
+//                         onClick={onConfirm}
+//                         disabled={loading}
+//                         className="flex-1 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50 shadow-xl"
+//                         style={{ backgroundColor: danger ? '#ef4444' : primaryColor, color: '#000' }}
+//                     >
+//                         {loading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : confirmLabel}
+//                     </button>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { 
     LucideIcon, Loader2, X, BookOpen, 
-    CheckCircle2, AlertTriangle, ShieldCheck 
+    CheckCircle2, AlertTriangle, ShieldCheck, ChevronRight 
 } from 'lucide-react'
 import { useProfileStore } from '@/store/profileStore'
 import { getClassesBySchool, assignUserToClass, assignTeacherToClass } from '@/app/actions/user-management'
 import { cn } from '@/lib/utils'
 import { Role } from '@prisma/client'
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface SectionProps {
     title: string
@@ -537,19 +762,18 @@ interface ConfirmModalProps {
     onCancel:     () => void
 }
 
-// ── 1. Shared Section Wrapper ──────────────────────────────────────────────────
+// ── 1. Shared Section Wrapper (Rule 18) ──────────────────────────────────────
 
 export function Section({ title, icon: Icon, children }: SectionProps) {
-    const { profile } = useProfileStore();
-    const primaryColor = profile?.primaryColor || "#f59e0b";
-
     return (
-        <section className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <section className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div className="flex items-center gap-3 px-2">
-                <div className="p-2 rounded-lg bg-slate-900 border border-white/5 shadow-inner">
-                    <Icon className="h-4 w-4" style={{ color: primaryColor }} />
+                {/* Rule 19: Item Radius Standardized */}
+                <div className="p-2.5 rounded-xl bg-surface border border-border shadow-inner">
+                    <Icon className="h-4 w-4 text-school-primary" />
                 </div>
-                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white italic">
+                {/* Rule 11: Header scaling */}
+                <h3 className="text-sm font-extrabold uppercase tracking-widest text-foreground italic">
                     {title}
                 </h3>
             </div>
@@ -558,49 +782,47 @@ export function Section({ title, icon: Icon, children }: SectionProps) {
     )
 }
 
-// ── 2. Shared Empty State ──────────────────────────────────────────────────────
+// ── 2. Shared Empty State (Rule 19) ──────────────────────────────────────────
 
 export function EmptySection({ message }: { message: string }) {
     return (
-        <Card className="bg-slate-900 border-white/5 border-dashed rounded-[2.5rem] p-12 text-center shadow-2xl">
-            <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest italic leading-relaxed">
+        <Card className="bg-card/40 border-border border-dashed border-2 rounded-[2rem] p-12 text-center shadow-sm">
+            <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest italic leading-relaxed">
                 {message}
             </p>
         </Card>
     )
 }
 
-// ── 3. Shared Detail Skeleton ──────────────────────────────────────────────────
+// ── 3. Shared Detail Skeleton (Rule 20) ──────────────────────────────────────
 
 export function DetailSkeleton() {
     return (
-        <div className="min-h-screen bg-slate-950 p-4 md:p-8 lg:p-12 space-y-10">
-            <div className="h-4 w-32 bg-slate-900 rounded-lg animate-pulse" />
-            <div className="h-48 bg-slate-900 border border-white/5 rounded-[2.5rem] animate-pulse" />
+        <div className="min-h-screen bg-background p-4 md:p-8 lg:p-12 space-y-10">
+            <div className="h-6 w-32 bg-surface rounded-full animate-pulse" />
+            <div className="h-48 bg-card border border-border rounded-[2rem] animate-pulse" />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 <div className="lg:col-span-2 space-y-10">
-                    <div className="h-64 bg-slate-900 border border-white/5 rounded-[2.5rem] animate-pulse" />
-                    <div className="h-64 bg-slate-900 border border-white/5 rounded-[2.5rem] animate-pulse" />
+                    <div className="h-72 bg-card border border-border rounded-[2rem] animate-pulse" />
+                    <div className="h-72 bg-card border border-border rounded-[2rem] animate-pulse" />
                 </div>
                 <div className="space-y-8">
-                    <div className="h-80 bg-slate-900 border border-white/5 rounded-[2.5rem] animate-pulse" />
+                    <div className="h-96 bg-card border border-border rounded-[2rem] animate-pulse" />
                 </div>
             </div>
         </div>
     )
 }
 
-// ── 4. Assign Class Modal ──────────────────────────────────────────────────────
+// ── 4. Assign Class Modal (Rule 18 & 19) ──────────────────────────────────────
 
 /**
  * INSTITUTIONAL PLACEMENT MODAL
- * Rule 17: Branding from Zustand.
- * Rule 5: Fetches classes only for the specific school registry.
+ * Rule 11: High-fidelity Typography.
+ * Rule 18: Semantic Flip (Purged hardcoded Slates).
+ * Rule 19: Standardized Geometry [2rem].
  */
 export function AssignClassModal({ userId, schoolId, role, onClose, onSuccess }: AssignClassModalProps) {
-    const { profile } = useProfileStore();
-    const primaryColor = profile?.primaryColor || "#f59e0b";
-    
     const [classes, setClasses] = useState<{ id: string; name: string; grade: { displayName: string } }[]>([])
     const [selected, setSelected] = useState('')
     const [loading, setLoading] = useState(true)
@@ -618,7 +840,6 @@ export function AssignClassModal({ userId, schoolId, role, onClose, onSuccess }:
         if (!selected) return;
         setAssigning(true);
         
-        // Rule 11: System Truth Update based on role
         const result = role === Role.TEACHER
             ? await assignTeacherToClass(userId, selected)
             : await assignUserToClass(userId, selected);
@@ -631,42 +852,52 @@ export function AssignClassModal({ userId, schoolId, role, onClose, onSuccess }:
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-            <div className="w-full max-w-sm bg-slate-900 border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden">
-                <div className="p-8 border-b border-white/5 flex items-center justify-between bg-slate-950/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
+            <div className="w-full max-w-sm bg-card border border-border rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.1)] overflow-hidden animate-in zoom-in-95 duration-300">
+                <div className="p-6 md:p-8 border-b border-border flex items-center justify-between bg-surface/50">
                     <div className="flex items-center gap-3">
-                        <ShieldCheck className="h-5 w-5 text-school-primary" style={{ color: primaryColor }} />
-                        <h3 className="text-lg font-black text-white uppercase italic tracking-tighter">Registry Placement</h3>
+                        <ShieldCheck className="h-5 w-5 text-school-primary" />
+                        <h3 className="text-lg font-extrabold text-foreground uppercase italic tracking-tighter">Registry Placement</h3>
                     </div>
-                    <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
+                    <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors p-1">
                         <X className="h-5 w-5" />
                     </button>
                 </div>
 
-                <div className="p-8 space-y-4">
+                <div className="p-6 md:p-8 space-y-4">
                     {loading ? (
                         <div className="flex justify-center py-10">
-                            <Loader2 className="h-6 w-6 animate-spin" style={{ color: primaryColor }} />
+                            <Loader2 className="h-7 w-7 animate-spin text-school-primary" />
                         </div>
                     ) : classes.length === 0 ? (
-                        <p className="text-[10px] font-black text-slate-600 uppercase text-center py-8">No classrooms discovered in registry.</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase text-center py-8 italic tracking-widest">No classrooms discovered in registry.</p>
                     ) : (
-                        <div className="space-y-2 max-h-64 overflow-y-auto no-scrollbar">
+                        <div className="space-y-3 max-h-72 overflow-y-auto no-scrollbar py-2">
                             {classes.map(c => (
                                 <button
                                     key={c.id}
                                     onClick={() => setSelected(c.id)}
                                     className={cn(
                                         "w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all",
-                                        selected === c.id ? "bg-slate-800 border-white/20 shadow-lg" : "bg-slate-950 border-white/5 text-slate-500 hover:border-white/10"
+                                        selected === c.id 
+                                            ? "bg-school-primary-100 border-school-primary/40 shadow-inner" 
+                                            : "bg-surface border-border text-muted-foreground hover:border-school-primary/20"
                                     )}
                                 >
-                                    <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: selected === c.id ? `${primaryColor}20` : '#1e293b' }}>
-                                        {selected === c.id ? <CheckCircle2 className="h-4 w-4" style={{ color: primaryColor }} /> : <BookOpen className="h-4 w-4" />}
+                                    <div className={cn(
+                                        "h-10 w-10 rounded-xl flex items-center justify-center transition-colors",
+                                        selected === c.id ? "bg-school-primary text-on-school-primary" : "bg-background border border-border"
+                                    )}>
+                                        {selected === c.id ? <CheckCircle2 className="h-5 w-5" /> : <BookOpen className="h-4 w-4 opacity-40" />}
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-sm font-bold text-white uppercase italic truncate">{c.name}</p>
-                                        <p className="text-[9px] font-bold uppercase tracking-widest">{c.grade.displayName}</p>
+                                        <p className={cn(
+                                            "text-sm font-bold uppercase italic truncate leading-tight",
+                                            selected === c.id ? "text-foreground" : "text-muted-foreground"
+                                        )}>
+                                            {c.name}
+                                        </p>
+                                        <p className="text-[9px] font-bold uppercase tracking-widest opacity-60">{c.grade.displayName}</p>
                                     </div>
                                 </button>
                             ))}
@@ -674,12 +905,11 @@ export function AssignClassModal({ userId, schoolId, role, onClose, onSuccess }:
                     )}
                 </div>
 
-                <div className="p-8 pt-0">
+                <div className="p-6 md:p-8 pt-0">
                     <button
                         onClick={handleAssign}
                         disabled={!selected || assigning}
-                        className="w-full py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all disabled:opacity-30 shadow-xl"
-                        style={{ backgroundColor: primaryColor, color: '#000' }}
+                        className="w-full py-5 rounded-2xl bg-school-primary text-on-school-primary font-extrabold text-[10px] uppercase tracking-widest transition-all disabled:opacity-20 shadow-xl active:scale-95"
                     >
                         {assigning ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "Commit Placement"}
                     </button>
@@ -689,29 +919,40 @@ export function AssignClassModal({ userId, schoolId, role, onClose, onSuccess }:
     )
 }
 
-// ── 5. Confirm Modal ───────────────────────────────────────────────────────────
+// ── 5. Confirm Modal (Rule 18 & 19) ──────────────────────────────────────────
 
 export function ConfirmModal({ title, description, confirmLabel, danger, loading, onConfirm, onCancel }: ConfirmModalProps) {
-    const { profile } = useProfileStore();
-    const primaryColor = profile?.primaryColor || "#f59e0b";
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-            <div className="w-full max-w-sm bg-slate-900 border border-white/10 rounded-[2.5rem] shadow-2xl p-8 space-y-6">
-                <div className="flex items-center gap-3">
-                    <AlertTriangle className={cn("h-6 w-6", danger ? "text-red-500" : "text-amber-500")} />
-                    <h3 className="font-black text-white text-lg uppercase italic tracking-tighter">{title}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
+            <div className="w-full max-w-sm bg-card border border-border rounded-[2rem] shadow-2xl p-8 md:p-10 space-y-8 animate-in zoom-in-95 duration-300">
+                <div className="flex items-center gap-4">
+                    <div className={cn(
+                        "h-12 w-12 rounded-xl flex items-center justify-center border",
+                        danger ? "bg-destructive/10 border-destructive/20" : "bg-amber-500/10 border-amber-500/20"
+                    )}>
+                        <AlertTriangle className={cn("h-6 w-6", danger ? "text-destructive" : "text-amber-500")} />
+                    </div>
+                    <h3 className="font-extrabold text-foreground text-xl uppercase italic tracking-tighter leading-none">{title}</h3>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium italic">{description}</p>
-                <div className="flex gap-3 pt-4">
-                    <button onClick={onCancel} disabled={loading} className="flex-1 py-4 rounded-xl border border-white/5 text-slate-500 hover:text-white text-[10px] font-black uppercase tracking-widest transition-all">
+                <div className="space-y-2">
+                    <p className="text-sm text-foreground leading-relaxed font-medium italic">{description}</p>
+                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest">Action requires re-validation.</p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <button 
+                        onClick={onCancel} 
+                        disabled={loading} 
+                        className="flex-1 py-4 rounded-xl text-muted-foreground hover:bg-surface text-[10px] font-bold uppercase tracking-widest transition-all"
+                    >
                         Cancel
                     </button>
                     <button
                         onClick={onConfirm}
                         disabled={loading}
-                        className="flex-1 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50 shadow-xl"
-                        style={{ backgroundColor: danger ? '#ef4444' : primaryColor, color: '#000' }}
+                        className={cn(
+                            "flex-1 py-4 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-20",
+                            danger ? "bg-destructive text-white" : "bg-school-primary text-on-school-primary"
+                        )}
                     >
                         {loading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : confirmLabel}
                     </button>

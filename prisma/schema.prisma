@@ -17,6 +17,10 @@ model School {
 
   whatsappCredits Int @default(0)
 
+    // Branding
+  primaryColor   String @default("#f59e0b")
+  secondaryColor String @default("#1e293b")
+
   // Relations
   users            Profile[]
   classes          Class[]
@@ -60,9 +64,7 @@ model Profile {
   curriculumId String
   theme  String  @default("light")
 
-  // Branding
-  primaryColor   String @default("#f59e0b")
-  secondaryColor String @default("#1e293b")
+
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { supabase as supabaseAdmin } from '@/lib/supabase/admin'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 import { Role } from '@prisma/client'
 import { toTitleCase, formatPhone } from '@/lib/utils/formatters'

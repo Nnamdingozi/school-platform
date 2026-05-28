@@ -1,96 +1,196 @@
+// // "use client"
+
+// // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+// // import { Button } from "@/components/ui/button"
+// // import { Badge } from "@/components/ui/badge"
+// // import { Mail, MessageSquare, User } from "lucide-react"
+
+// // interface Teacher {
+// //   name: string
+// //   role: string
+// //   subject: string
+// //   avatar?: string
+// //   email: string
+// //   available: boolean
+// // }
+
+// // const classTeacher: Teacher = {
+// //   name: "Mrs. Folake Adebayo",
+// //   role: "Class Teacher",
+// //   subject: "Mathematics",
+// //   email: "f.adebayo@school.edu",
+// //   available: true,
+// // }
+
+// // export function TeacherContact() {
+// //   const initials = classTeacher.name
+// //     .split(" ")
+// //     .map((n) => n[0])
+// //     .join("")
+// //     .slice(0, 2)
+
+// //   return (
+// //     <Card>
+// //       <CardHeader className="pb-3">
+// //         <CardTitle className="flex items-center gap-2 text-lg">
+// //           <User className="h-5 w-5 text-primary" />
+// //           Class Teacher
+// //         </CardTitle>
+// //       </CardHeader>
+// //       <CardContent>
+// //         <div className="flex items-center gap-4">
+// //           {/* Avatar */}
+// //           <div className="relative">
+// //             <Avatar className="h-16 w-16">
+// //               <AvatarImage src={classTeacher.avatar || "/placeholder.svg"} />
+// //               <AvatarFallback className="bg-primary/10 text-primary text-lg font-medium">
+// //                 {initials}
+// //               </AvatarFallback>
+// //             </Avatar>
+// //             {classTeacher.available && (
+// //               <span className="absolute bottom-0 right-0 flex h-4 w-4 items-center justify-center rounded-full border-2 border-card bg-success">
+// //                 <span className="sr-only">Online</span>
+// //               </span>
+// //             )}
+// //           </div>
+
+// //           {/* Info */}
+// //           <div className="flex-1 min-w-0">
+// //             <h3 className="font-semibold text-foreground truncate">
+// //               {classTeacher.name}
+// //             </h3>
+// //             <p className="text-sm text-muted-foreground">{classTeacher.role}</p>
+// //             <div className="flex items-center gap-2 mt-1">
+// //               <Badge variant="secondary" className="text-xs">
+// //                 {classTeacher.subject}
+// //               </Badge>
+// //               {classTeacher.available && (
+// //                 <Badge variant="outline" className="text-xs text-success border-success/30">
+// //                   Available
+// //                 </Badge>
+// //               )}
+// //             </div>
+// //           </div>
+// //         </div>
+
+// //         {/* Contact Actions */}
+// //         <div className="flex items-center gap-2 mt-4">
+// //           <Button className="flex-1 gap-2" size="sm">
+// //             <MessageSquare className="h-4 w-4" />
+// //             Send Message
+// //           </Button>
+// //           <Button variant="outline" size="icon" className="shrink-0 bg-transparent">
+// //             <Mail className="h-4 w-4" />
+// //             <span className="sr-only">Email</span>
+// //           </Button>
+// //         </div>
+
+// //         {/* Quick Info */}
+// //         <div className="mt-4 pt-4 border-t border-border">
+// //           <div className="flex items-center gap-2 text-sm text-muted-foreground">
+// //             <Mail className="h-4 w-4" />
+// //             <span className="truncate">{classTeacher.email}</span>
+// //           </div>
+// //         </div>
+// //       </CardContent>
+// //     </Card>
+// //   )
+// // }
+
+
 // "use client"
 
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 // import { Button } from "@/components/ui/button"
 // import { Badge } from "@/components/ui/badge"
-// import { Mail, MessageSquare, User } from "lucide-react"
+// import { Mail, MessageSquare, ShieldCheck, Phone } from "lucide-react"
 
-// interface Teacher {
-//   name: string
-//   role: string
-//   subject: string
-//   avatar?: string
-//   email: string
-//   available: boolean
+// interface TeacherContactProps {
+//   teacher: {
+//     name: string | null;
+//     email: string;
+//     phone?: string | null;
+//     avatar?: string;
+//   } | null;
 // }
 
-// const classTeacher: Teacher = {
-//   name: "Mrs. Folake Adebayo",
-//   role: "Class Teacher",
-//   subject: "Mathematics",
-//   email: "f.adebayo@school.edu",
-//   available: true,
-// }
-
-// export function TeacherContact() {
-//   const initials = classTeacher.name
-//     .split(" ")
-//     .map((n) => n[0])
-//     .join("")
-//     .slice(0, 2)
+// export function TeacherContact({ teacher }: TeacherContactProps) {
+//   // Logic: Safe initials generation
+//   const initials = teacher?.name
+//     ? teacher.name.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2)
+//     : "TR";
 
 //   return (
-//     <Card>
-//       <CardHeader className="pb-3">
-//         <CardTitle className="flex items-center gap-2 text-lg">
-//           <User className="h-5 w-5 text-primary" />
-//           Class Teacher
-//         </CardTitle>
+//     <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] shadow-2xl overflow-hidden">
+//       <CardHeader className="pb-6 bg-slate-950/50 border-b border-white/5">
+//         <div className="flex items-center gap-3">
+//             <div className="p-2 bg-school-primary/10 rounded-lg text-school-primary">
+//                 <ShieldCheck className="h-4 w-4" />
+//             </div>
+//             <CardTitle className="text-sm font-black uppercase italic tracking-tighter text-white">
+//                 Classroom Leadership
+//             </CardTitle>
+//         </div>
 //       </CardHeader>
-//       <CardContent>
-//         <div className="flex items-center gap-4">
-//           {/* Avatar */}
+
+//       <CardContent className="p-8">
+//         <div className="flex flex-col items-center text-center space-y-4 mb-8">
+//           {/* Avatar with Ring */}
 //           <div className="relative">
-//             <Avatar className="h-16 w-16">
-//               <AvatarImage src={classTeacher.avatar || "/placeholder.svg"} />
-//               <AvatarFallback className="bg-primary/10 text-primary text-lg font-medium">
+//             <Avatar className="h-24 w-24 border-4 border-slate-950 shadow-2xl ring-2 ring-white/5">
+//               <AvatarImage src={teacher?.avatar} alt={teacher?.name || "Teacher"} />
+//               <AvatarFallback className="bg-slate-950 text-school-primary text-xl font-black italic">
 //                 {initials}
 //               </AvatarFallback>
 //             </Avatar>
-//             {classTeacher.available && (
-//               <span className="absolute bottom-0 right-0 flex h-4 w-4 items-center justify-center rounded-full border-2 border-card bg-success">
-//                 <span className="sr-only">Online</span>
-//               </span>
-//             )}
+//             <div className="absolute -bottom-1 -right-1 bg-emerald-500 h-5 w-5 rounded-full border-4 border-slate-900 shadow-lg" title="Status: Online" />
 //           </div>
 
-//           {/* Info */}
-//           <div className="flex-1 min-w-0">
-//             <h3 className="font-semibold text-foreground truncate">
-//               {classTeacher.name}
+//           {/* Teacher Identity */}
+//           <div className="space-y-1">
+//             <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">
+//               {teacher?.name || "Registry Pending"}
 //             </h3>
-//             <p className="text-sm text-muted-foreground">{classTeacher.role}</p>
-//             <div className="flex items-center gap-2 mt-1">
-//               <Badge variant="secondary" className="text-xs">
-//                 {classTeacher.subject}
-//               </Badge>
-//               {classTeacher.available && (
-//                 <Badge variant="outline" className="text-xs text-success border-success/30">
-//                   Available
-//                 </Badge>
-//               )}
-//             </div>
+//             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
+//                 Designated Form Teacher
+//             </p>
+//           </div>
+
+//           <div className="flex gap-2">
+//              <Badge className="bg-school-primary/10 text-school-primary border-none text-[8px] font-black uppercase px-3 py-0.5">
+//                 Official Representative
+//              </Badge>
 //           </div>
 //         </div>
 
 //         {/* Contact Actions */}
-//         <div className="flex items-center gap-2 mt-4">
-//           <Button className="flex-1 gap-2" size="sm">
-//             <MessageSquare className="h-4 w-4" />
-//             Send Message
+//         <div className="space-y-3">
+//           <Button className="w-full bg-school-primary text-slate-950 font-black py-6 rounded-2xl hover:scale-[1.02] active:scale-95 transition-all text-[10px] uppercase tracking-widest shadow-xl shadow-school-primary/10">
+//             <MessageSquare className="mr-2 h-4 w-4" />
+//             Initiate Consultation
 //           </Button>
-//           <Button variant="outline" size="icon" className="shrink-0 bg-transparent">
-//             <Mail className="h-4 w-4" />
-//             <span className="sr-only">Email</span>
-//           </Button>
+          
+//           <div className="grid grid-cols-2 gap-3">
+//             <Button variant="outline" className="border-white/5 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl py-5">
+//               <Mail className="h-4 w-4" />
+//             </Button>
+//             <Button variant="outline" className="border-white/5 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl py-5">
+//               <Phone className="h-4 w-4" />
+//             </Button>
+//           </div>
 //         </div>
 
-//         {/* Quick Info */}
-//         <div className="mt-4 pt-4 border-t border-border">
-//           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-//             <Mail className="h-4 w-4" />
-//             <span className="truncate">{classTeacher.email}</span>
+//         {/* Official Data Registry */}
+//         <div className="mt-8 pt-6 border-t border-white/5 space-y-3">
+//           <div className="flex items-center justify-between text-[10px] font-bold">
+//             <span className="text-slate-600 uppercase tracking-widest">Email Hash</span>
+//             <span className="text-slate-400 truncate max-w-[150px]">{teacher?.email || "N/A"}</span>
+//           </div>
+//           <div className="flex items-center justify-between text-[10px] font-bold">
+//             <span className="text-slate-600 uppercase tracking-widest">Access Key</span>
+//             <span className="text-slate-400 font-mono">STAFF_{teacher?.name?.split(" ")[1]?.toUpperCase() || "PENDING"}</span>
 //           </div>
 //         </div>
 //       </CardContent>
@@ -101,11 +201,15 @@
 
 "use client"
 
+import React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Mail, MessageSquare, ShieldCheck, Phone } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface TeacherContactProps {
   teacher: {
@@ -116,84 +220,100 @@ interface TeacherContactProps {
   } | null;
 }
 
+/**
+ * CLASSROOM LEADERSHIP NODE (Tier 3)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
+ */
 export function TeacherContact({ teacher }: TeacherContactProps) {
-  // Logic: Safe initials generation
+  // Rule 15: Safe data extraction
   const initials = teacher?.name
-    ? teacher.name.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2)
+    ? teacher.name.split(" ").filter(Boolean).map((n) => n[0]).join("").toUpperCase().substring(0, 2)
     : "TR";
 
   return (
-    <Card className="bg-slate-900 border-white/5 rounded-[2.5rem] shadow-2xl overflow-hidden">
-      <CardHeader className="pb-6 bg-slate-950/50 border-b border-white/5">
-        <div className="flex items-center gap-3">
-            <div className="p-2 bg-school-primary/10 rounded-lg text-school-primary">
-                <ShieldCheck className="h-4 w-4" />
+    <Card className="bg-card border-border rounded-[2rem] shadow-xl overflow-hidden animate-in fade-in duration-700">
+      
+      {/* ── HEADER (Rule 11/21) ── */}
+      <CardHeader className="pb-6 bg-surface/50 border-b border-border">
+        <div className="flex items-center gap-4">
+            {/* Rule 21 Scale Protocol Icon Box */}
+            <div className="p-2.5 bg-school-primary-50 border border-school-primary-200 rounded-xl flex items-center justify-center">
+                <ShieldCheck className="h-5 w-5 text-school-primary" />
             </div>
-            <CardTitle className="text-sm font-black uppercase italic tracking-tighter text-white">
+            <CardTitle className="text-base font-extrabold uppercase italic tracking-tighter text-foreground">
                 Classroom Leadership
             </CardTitle>
         </div>
       </CardHeader>
 
       <CardContent className="p-8">
-        <div className="flex flex-col items-center text-center space-y-4 mb-8">
-          {/* Avatar with Ring */}
-          <div className="relative">
-            <Avatar className="h-24 w-24 border-4 border-slate-950 shadow-2xl ring-2 ring-white/5">
-              <AvatarImage src={teacher?.avatar} alt={teacher?.name || "Teacher"} />
-              <AvatarFallback className="bg-slate-950 text-school-primary text-xl font-black italic">
+        <div className="flex flex-col items-center text-center space-y-5 mb-10">
+          {/* ── AVATAR PROFILE (Rule 19/21) ── */}
+          <div className="relative group">
+            <Avatar className="h-24 w-24 border-4 border-background shadow-2xl ring-4 ring-school-primary-50 transition-all group-hover:ring-school-primary-100">
+              <AvatarImage src={teacher?.avatar} alt={teacher?.name || "Instructor"} />
+              <AvatarFallback className="bg-surface text-school-primary text-xl font-extrabold italic tabular-nums">
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-1 -right-1 bg-emerald-500 h-5 w-5 rounded-full border-4 border-slate-900 shadow-lg" title="Status: Online" />
+            {/* Live Status Indicator */}
+            <div className="absolute -bottom-1 -right-1 bg-emerald-500 h-6 w-6 rounded-full border-4 border-card shadow-lg animate-in zoom-in duration-500" title="Identity Active" />
           </div>
 
-          {/* Teacher Identity */}
-          <div className="space-y-1">
-            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">
+          {/* ── IDENTITY RECORD (Rule 11) ── */}
+          <div className="space-y-2">
+            <h3 className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
               {teacher?.name || "Registry Pending"}
             </h3>
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
-                Designated Form Teacher
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest italic opacity-60">
+                Designated Form Instructor
             </p>
           </div>
 
-          <div className="flex gap-2">
-             <Badge className="bg-school-primary/10 text-school-primary border-none text-[8px] font-black uppercase px-3 py-0.5">
-                Official Representative
+          <div className="flex justify-center">
+             <Badge className="bg-school-primary-50 text-school-primary border border-school-primary-200 text-[8px] font-extrabold uppercase px-4 py-1 rounded-lg shadow-sm">
+                Official Institutional Representative
              </Badge>
           </div>
         </div>
 
-        {/* Contact Actions */}
-        <div className="space-y-3">
-          <Button className="w-full bg-school-primary text-slate-950 font-black py-6 rounded-2xl hover:scale-[1.02] active:scale-95 transition-all text-[10px] uppercase tracking-widest shadow-xl shadow-school-primary/10">
-            <MessageSquare className="mr-2 h-4 w-4" />
-            Initiate Consultation
+        {/* ── ACTION HUB (Rule 18/19) ── */}
+        <div className="space-y-4">
+          <Button className="w-full h-14 bg-school-primary text-on-school-primary font-extrabold rounded-2xl hover:brightness-110 active:scale-95 transition-all text-[10px] uppercase tracking-widest shadow-lg shadow-school-primary-200">
+            <MessageSquare className="mr-3 h-4 w-4" />
+            Initiate Consultation Hub
           </Button>
           
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" className="border-white/5 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl py-5">
+          <div className="grid grid-cols-2 gap-4">
+            <Button variant="outline" className="h-12 border-border bg-surface text-muted-foreground hover:text-foreground hover:bg-background rounded-xl transition-all shadow-sm">
               <Mail className="h-4 w-4" />
             </Button>
-            <Button variant="outline" className="border-white/5 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl py-5">
+            <Button variant="outline" className="h-12 border-border bg-surface text-muted-foreground hover:text-foreground hover:bg-background rounded-xl transition-all shadow-sm">
               <Phone className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        {/* Official Data Registry */}
-        <div className="mt-8 pt-6 border-t border-white/5 space-y-3">
-          <div className="flex items-center justify-between text-[10px] font-bold">
-            <span className="text-slate-600 uppercase tracking-widest">Email Hash</span>
-            <span className="text-slate-400 truncate max-w-[150px]">{teacher?.email || "N/A"}</span>
+        {/* ── REGISTRY METADATA (Rule 11) ── */}
+        <div className="mt-10 pt-8 border-t border-border space-y-4">
+          <div className="flex items-center justify-between text-[10px] font-semibold">
+            <span className="text-muted-foreground/40 uppercase tracking-widest italic">Identity Hub</span>
+            <span className="text-muted-foreground font-mono truncate max-w-[160px] lowercase">{teacher?.email || "pending_sync"}</span>
           </div>
-          <div className="flex items-center justify-between text-[10px] font-bold">
-            <span className="text-slate-600 uppercase tracking-widest">Access Key</span>
-            <span className="text-slate-400 font-mono">STAFF_{teacher?.name?.split(" ")[1]?.toUpperCase() || "PENDING"}</span>
+          <div className="flex items-center justify-between text-[10px] font-semibold">
+            <span className="text-muted-foreground/40 uppercase tracking-widest italic">Protocol Key</span>
+            <span className="text-school-primary/60 font-mono font-bold tracking-tighter">
+                STAFF_{teacher?.name?.split(" ").filter(Boolean)[1]?.toUpperCase() || "UNLINKED"}
+            </span>
           </div>
         </div>
       </CardContent>
+
+      {/* Visual Depth Footer Accent (Rule 21) */}
+      <div className="h-1 bg-gradient-to-r from-transparent via-school-primary-100 to-transparent opacity-30" />
     </Card>
   )
 }
