@@ -2830,6 +2830,221 @@
 
 
 
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { google } from "@ai-sdk/google";
+// import { generateObject } from "ai";
+// import { z } from "zod";
+// import { Prisma, QuestionCategory, QuestionType, OwnershipType, Role } from "@prisma/client";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { contentScope } from "@/lib/content-scope";
+// import { logActivity } from "@/lib/activitylogger";
+
+
+
+// export interface VisualAid {
+//   title: string;
+//   description: string;
+//   imagePrompt: string;
+//   url?: string; 
+// }
+
+// export interface EnhancedLessonContent {
+//   metadata: {
+//     topicContext: string;
+//     difficultyLevel: string;
+//   };
+//   teacherLogic: {
+//     teachingMethod: string;
+//     timeAllocation: string;
+//     pedagogicalTips: string;
+//     introductionHook: string;
+//   };
+//   studentContent: {
+//     title: string;
+//     learningObjectives: string[];
+//     explanation: string;
+//     summary: string;
+//     vocabulary: string[];
+//     visualAids: VisualAid[];
+//     examples: {
+//       task: string;
+//       solution: string;
+//     }[];
+//     quiz: {
+//       question: string;
+//       options: string[];
+//       answer: string;
+//       explanation: string;
+//     }[];
+//   };
+// }
+
+
+// /* ───────── AI SCHEMA ───────── */
+
+// const LessonAiSchema = z.object({
+//   metadata: z.object({
+//     topicContext: z.string(),
+//     difficultyLevel: z.string(),
+//   }),
+//   teacherLogic: z.object({
+//     teachingMethod: z.string(),
+//     timeAllocation: z.string(),
+//     pedagogicalTips: z.string(),
+//     introductionHook: z.string(),
+//   }),
+//   studentContent: z.object({
+//     title: z.string(),
+//     learningObjectives: z.array(z.string()),
+//     explanation: z.string(),
+//     summary: z.string(),
+//     vocabulary: z.array(z.string()),
+//     visualAids: z.array(
+//       z.object({
+//         title: z.string(),
+//         description: z.string(),
+//         imagePrompt: z.string(),
+//       })
+//     ),
+//     quiz: z.array(
+//       z.object({
+//         question: z.string(),
+//         options: z.array(z.string()),
+//         answer: z.string(),
+//         explanation: z.string(),
+//       })
+//     ),
+//   }),
+// });
+
+// /* ───────── MAIN ACTION ───────── */
+
+// interface GenerateTopicParams {
+//   topicId: string;
+//   userId: string;
+//   schoolId?: string | null;
+//   userRole: Role;
+// }
+
+// export async function generateTopicContent({ 
+//   topicId, 
+//   userId, 
+//   schoolId, 
+//   userRole 
+// }: GenerateTopicParams) {
+//   try {
+//     // 1. Fetch Topic with STRICT Security Filter (Rule 7 & 10)
+//     const topic = await prisma.topic.findFirst({
+//       where: { 
+//         id: topicId,
+//         ...contentScope({ schoolId }) 
+//       },
+//       include: {
+//         gradeSubject: {
+//           include: {
+//             grade: { include: { curriculum: true } },
+//             subject: true,
+//           },
+//         },
+//       },
+//     });
+
+//     if (!topic) throw new Error("Topic not found or access denied");
+
+//     // 2. Prevent Duplication based on Scope (Rule 4)
+//     const existingLesson = await prisma.globalLesson.findFirst({
+//       where: { 
+//         topicId,
+//         schoolId: topic.schoolId // Only check within the same scope
+//       },
+//     });
+
+//     if (existingLesson) {
+//       return { success: true, message: "Content already exists for this scope" };
+//     }
+
+//     const curriculum = topic.gradeSubject.grade.curriculum;
+//     const subjectName = topic.gradeSubject.subject.name;
+
+//     // 3. Determine Ownership for the new content (Rule 8)
+//     // If the topic is global, the AI output is Global.
+//     // If the topic is school-specific, the AI output is School-specific.
+//     const isGlobalContent = topic.isGlobal;
+//     const contentSchoolId = isGlobalContent ? null : topic.schoolId;
+
+//     const dynamicPrompt = `You are an expert instructional designer for the ${curriculum.name} curriculum.
+//     Generate a COMPREHENSIVE academic package for: ${topic.title}.
+//     Subject: ${subjectName}. Level: ${topic.gradeSubject.grade.displayName}.
+
+//     STRICT CONTENT REQUIREMENTS:
+//     1. EXPLANATION: Write a massive, detailed lesson note (minimum 1000 words). Use rich Markdown.
+//     2. VISUAL AIDS: Generate exactly 3 distinct visual aid prompts.
+//     3. QUIZ: Generate exactly 10 multiple-choice questions.
+
+//     STRICT SCOPE:
+//      - Topic: ${topic.title}
+//      - Content Breakdown: ${topic.description ?? "Focus on core syllabus principles."}
+//     `;
+
+//     const { object: ai } = await generateObject({
+//       model: google("gemini-1.5-flash"),
+//       schema: LessonAiSchema,
+//       prompt: dynamicPrompt,
+//     });
+    
+//     // 4. Transactional Write (Rule 11)
+//     await prisma.$transaction(async (tx) => {
+//       // Save Lesson
+//       const lesson = await tx.globalLesson.create({
+//         data: {
+//           topicId,
+//           schoolId: contentSchoolId,
+//           isGlobal: isGlobalContent,
+//           title: ai.studentContent.title,
+//           aiContent: ai as unknown as Prisma.InputJsonValue,
+//           ownershipType: isGlobalContent ? OwnershipType.GLOBAL : OwnershipType.SCHOOL,
+//         },
+//       });
+
+//       // Rule 8: Save Questions to the Global or School Question Bank
+//       const questionData = ai.studentContent.quiz.map((q) => ({
+//         topicId,
+//         text: q.question,
+//         options: q.options as unknown as Prisma.InputJsonValue,
+//         correctAnswer: q.answer,
+//         explanation: q.explanation,
+//         type: QuestionType.MCQ,
+//         category: QuestionCategory.PRACTICE,
+//         points: 1,
+//       }));
+
+//       await tx.question.createMany({
+//         data: questionData,
+//       });
+
+//       // 5. Log Activity (Adhering to requested logger rule)
+//       await logActivity({
+//         schoolId: schoolId,
+//         actorId: userId,
+//         actorRole: userRole,
+//         type: "ASSESSMENT_CREATED", // Reusing logic for content creation
+//         title: `AI Content Generated: ${topic.title}`,
+//         description: `Generated a full lesson and 10 questions for ${topic.title}. Scope: ${isGlobalContent ? 'Global' : 'School'}`
+//       });
+//     });
+    
+//     return { success: true };
+
+//   } catch (err: unknown) {
+//     console.error("Content Gen Error:", err);
+//     return { success: false, error: getErrorMessage(err) };
+//   }
+// } 
+
+
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -2839,9 +3054,9 @@ import { z } from "zod";
 import { Prisma, QuestionCategory, QuestionType, OwnershipType, Role } from "@prisma/client";
 import { getErrorMessage } from "@/lib/error-handler";
 import { contentScope } from "@/lib/content-scope";
-import { logActivity } from "@/lib/activitylogger";
+import { logActivity } from "@/app/actions/activitylog";
 
-
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 export interface VisualAid {
   title: string;
@@ -2881,8 +3096,7 @@ export interface EnhancedLessonContent {
   };
 }
 
-
-/* ───────── AI SCHEMA ───────── */
+/* ───────── AI PROTOCOL SCHEMA ───────── */
 
 const LessonAiSchema = z.object({
   metadata: z.object({
@@ -2919,7 +3133,7 @@ const LessonAiSchema = z.object({
   }),
 });
 
-/* ───────── MAIN ACTION ───────── */
+/* ───────── MAIN SYNTHESIS ACTION ───────── */
 
 interface GenerateTopicParams {
   topicId: string;
@@ -2928,6 +3142,12 @@ interface GenerateTopicParams {
   userRole: Role;
 }
 
+/**
+ * GENERATE TOPIC CONTENT (Syllabus Synthesis Hub)
+ * Rule 11: Final System Truth - Creates authoritative academic modules.
+ * Rule 12: Server-First AI Orchestration.
+ * Rule 15: Resolved 'no-unused-vars' by removing unreferenced creation result.
+ */
 export async function generateTopicContent({ 
   topicId, 
   userId, 
@@ -2935,7 +3155,7 @@ export async function generateTopicContent({
   userRole 
 }: GenerateTopicParams) {
   try {
-    // 1. Fetch Topic with STRICT Security Filter (Rule 7 & 10)
+    // 1. Fetch Module with STRICT Security Filter (Rule 7 & 10)
     const topic = await prisma.topic.findFirst({
       where: { 
         id: topicId,
@@ -2951,68 +3171,69 @@ export async function generateTopicContent({
       },
     });
 
-    if (!topic) throw new Error("Topic not found or access denied");
+    if (!topic) throw new Error("Registry Error: Academic module not found or access denied");
 
-    // 2. Prevent Duplication based on Scope (Rule 4)
+    // 2. Prevent Duplication in Registry (Rule 4)
     const existingLesson = await prisma.globalLesson.findFirst({
       where: { 
         topicId,
-        schoolId: topic.schoolId // Only check within the same scope
+        schoolId: topic.schoolId 
       },
     });
 
     if (existingLesson) {
-      return { success: true, message: "Content already exists for this scope" };
+      return { success: true, message: "Hub synchronization skipped: Content already exists." };
     }
 
     const curriculum = topic.gradeSubject.grade.curriculum;
     const subjectName = topic.gradeSubject.subject.name;
 
-    // 3. Determine Ownership for the new content (Rule 8)
-    // If the topic is global, the AI output is Global.
-    // If the topic is school-specific, the AI output is School-specific.
+    // 3. Determine Tier Ownership (Rule 8)
     const isGlobalContent = topic.isGlobal;
     const contentSchoolId = isGlobalContent ? null : topic.schoolId;
 
-    const dynamicPrompt = `You are an expert instructional designer for the ${curriculum.name} curriculum.
-    Generate a COMPREHENSIVE academic package for: ${topic.title}.
+    const dynamicPrompt = `You are a Senior Instructional Architect for the ${curriculum.name} curriculum.
+    Synthesize a COMPREHENSIVE academic hub for the module: ${topic.title}.
     Subject: ${subjectName}. Level: ${topic.gradeSubject.grade.displayName}.
 
-    STRICT CONTENT REQUIREMENTS:
-    1. EXPLANATION: Write a massive, detailed lesson note (minimum 1000 words). Use rich Markdown.
-    2. VISUAL AIDS: Generate exactly 3 distinct visual aid prompts.
-    3. QUIZ: Generate exactly 10 multiple-choice questions.
+    STRICT REGISTRY REQUIREMENTS:
+    1. EXPLANATION: Construct a massive, high-fidelity lesson note (minimum 1000 words). Use academic Markdown.
+    2. VISUAL ASSETS: Generate exactly 3 distinct image prompts for diagram synthesis.
+    3. ASSESSMENT: Generate exactly 10 multiple-choice questions for the practice hub.
 
-    STRICT SCOPE:
-     - Topic: ${topic.title}
-     - Content Breakdown: ${topic.description ?? "Focus on core syllabus principles."}
+    CONTEXT:
+     - Module Title: ${topic.title}
+     - Syllabus Scope: ${topic.description ?? "Focus on core curriculum principles."}
     `;
 
+    // Rule 12: AI Core Handshake
     const { object: ai } = await generateObject({
       model: google("gemini-1.5-flash"),
       schema: LessonAiSchema,
       prompt: dynamicPrompt,
     });
     
-    // 4. Transactional Write (Rule 11)
+    // 4. ATOMIC REGISTRY COMMITMENT (Rule 11)
     await prisma.$transaction(async (tx) => {
-      // Save Lesson
-      const lesson = await tx.globalLesson.create({
+      // Create Learning Hub Note
+      // ✅ RESOLVED: Removed unused 'lesson' variable assignment
+      await tx.globalLesson.create({
         data: {
           topicId,
           schoolId: contentSchoolId,
           isGlobal: isGlobalContent,
           title: ai.studentContent.title,
-          aiContent: ai as unknown as Prisma.InputJsonValue,
+          // Rule 15: Safe unknown bridge for JSON
+          aiContent: (ai as unknown) as Prisma.InputJsonValue,
           ownershipType: isGlobalContent ? OwnershipType.GLOBAL : OwnershipType.SCHOOL,
         },
       });
 
-      // Rule 8: Save Questions to the Global or School Question Bank
+      // Rule 8: Populate Tier-specific Question Bank
       const questionData = ai.studentContent.quiz.map((q) => ({
         topicId,
         text: q.question,
-        options: q.options as unknown as Prisma.InputJsonValue,
+        options: (q.options as unknown) as Prisma.InputJsonValue,
         correctAnswer: q.answer,
         explanation: q.explanation,
         type: QuestionType.MCQ,
@@ -3024,21 +3245,21 @@ export async function generateTopicContent({
         data: questionData,
       });
 
-      // 5. Log Activity (Adhering to requested logger rule)
+      // 5. Activity Logging Hub (Rule 22)
       await logActivity({
-        schoolId: schoolId,
+        schoolId: schoolId ?? null,
         actorId: userId,
         actorRole: userRole,
-        type: "ASSESSMENT_CREATED", // Reusing logic for content creation
-        title: `AI Content Generated: ${topic.title}`,
-        description: `Generated a full lesson and 10 questions for ${topic.title}. Scope: ${isGlobalContent ? 'Global' : 'School'}`
+        type: "ASSESSMENT_CREATED", 
+        title: `AI Module Synthesized: ${topic.title}`,
+        description: `Generated comprehensive academic material and 10 assessment nodes for ${topic.title}.`
       });
     });
     
     return { success: true };
 
   } catch (err: unknown) {
-    console.error("Content Gen Error:", err);
+    console.error("[SYNTHESIS_HUB_FAULT]:", getErrorMessage(err));
     return { success: false, error: getErrorMessage(err) };
   }
-} 
+}

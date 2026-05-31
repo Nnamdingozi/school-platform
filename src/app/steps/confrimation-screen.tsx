@@ -995,12 +995,13 @@ import { useOnboardingStore } from '@/store/onboardingStore';
 import { updateOnboardingEmail } from '@/app/actions/onboarding';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
-import { Mail, Check, Loader2, ArrowRight, Zap, Edit3, ShieldCheck, X } from 'lucide-react';
+import { Loader2, ArrowRight, Zap, Edit3, ShieldCheck } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/error-handler';
+
 
 export function ConfirmationScreen() {
-    const { confirmedEmail, setConfirmedEmail, paymentData, paymentStatus } = useOnboardingStore();
+    const { confirmedEmail, setConfirmedEmail, paymentData } = useOnboardingStore();
     const [isResending, setIsResending] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [newEmail, setNewEmail] = useState(confirmedEmail || '');
@@ -1015,10 +1016,13 @@ export function ConfirmationScreen() {
                 email: confirmedEmail!,
                 options: { emailRedirectTo: `${window.location.origin}/confirm` },
             });
-            if (error) throw error;
+            if (error) {
+                getErrorMessage(error)
+                throw error;}
             toast.success("Security link re-transmitted.");
-        } catch (err: any) {
-            toast.error(err.message || "Failed to resend. You may be rate-limited (3/hr).");
+        } catch (err: unknown) {
+            const message = getErrorMessage(err)
+            toast.error( message || "Failed to resend. You may be rate-limited (3/hr).");
         } finally {
             setIsResending(false);
         }
@@ -1038,6 +1042,7 @@ export function ConfirmationScreen() {
             }
         } catch (err) {
             toast.error("Update failed.");
+            getErrorMessage(err)
         } finally {
             setIsUpdating(false);
         }

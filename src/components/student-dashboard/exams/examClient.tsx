@@ -791,13 +791,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   Timer, ShieldCheck, AlertCircle, 
-  CheckCircle2, Zap, Loader2, ArrowRight
+  CheckCircle2, Zap, Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ExamStatus } from "@prisma/client";
 import { submitExamAction, type StudentAnswer } from "@/app/actions/submit-exams";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { getErrorMessage } from "@/lib/error-handler";
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
@@ -889,7 +890,8 @@ export default function ExamClient({ exam, userId, schoolId }: ExamClientProps) 
           toast.error("Submission failed. Connection to registry timed out.");
         }
       } catch (error: unknown) {
-        toast.error("Critical Registry Breach: Submission protocol error.");
+        const message = getErrorMessage(error)
+        toast.error(message || "Critical Registry Breach: Submission protocol error.");
       }
     });
   };

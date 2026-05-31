@@ -190,7 +190,7 @@ import {
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { type CurriculumStats, type TermStat } from '@/app/actions/curiculum-stats'
-import { cn } from '@/lib/utils'
+
 
 export interface CurriculumCardProps {
     initialStats?: CurriculumStats | null

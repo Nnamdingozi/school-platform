@@ -476,7 +476,7 @@ import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
 import { getErrorMessage } from '@/lib/error-handler'
 import { revalidatePath } from 'next/cache'
-import { Notification, Prisma } from '@prisma/client'
+import { Notification } from '@prisma/client'
 
 // ── Interfaces ──────────────────────────────────────────────────────────────
 

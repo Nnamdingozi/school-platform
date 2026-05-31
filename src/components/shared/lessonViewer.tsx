@@ -133,7 +133,7 @@
 
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
-import { BookOpen, Lightbulb, Target, Info } from 'lucide-react'
+import { Lightbulb, Target, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────

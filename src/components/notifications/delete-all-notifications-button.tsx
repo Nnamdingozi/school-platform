@@ -156,10 +156,10 @@
 import React, { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { deleteAllNotificationsAction } from '@/app/actions/notifications'
-import { Trash2, Loader2, AlertTriangle, X } from 'lucide-react'
+import { Trash2, Loader2, AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { useProfileStore } from '@/store/profileStore'
 import { cn } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/error-handler'
 
 interface DeleteAllNotificationsButtonProps {
     disabled?: boolean
@@ -175,7 +175,6 @@ interface DeleteAllNotificationsButtonProps {
  */
 export function DeleteAllNotificationsButton({ disabled }: DeleteAllNotificationsButtonProps) {
     const router = useRouter();
-    const { profile } = useProfileStore();
     const [isPending, startTransition] = useTransition();
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -194,6 +193,7 @@ export function DeleteAllNotificationsButton({ disabled }: DeleteAllNotification
                     toast.error('Registry purge protocol failed.');
                 }
             } catch (error: unknown) {
+                getErrorMessage(error)
                 toast.error('Critical registry synchronization failure.');
             }
         });

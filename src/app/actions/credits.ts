@@ -701,7 +701,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getErrorMessage } from '@/lib/error-handler'
 import { revalidatePath } from 'next/cache'
 import { logActivity } from '@/lib/activitylogger'
-import { ActivityType, TxStatus, Role, Prisma } from '@prisma/client'
+import { ActivityType, TxStatus} from '@prisma/client'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 

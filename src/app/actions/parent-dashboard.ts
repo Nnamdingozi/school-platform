@@ -774,7 +774,7 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { EnrollmentStatus, Notification, Prisma, Role } from '@prisma/client';
+import { EnrollmentStatus, Notification } from '@prisma/client';
 import type {
     AssessmentRecord,
     ChildProfile,
@@ -783,7 +783,7 @@ import type {
     TopicStatus,
 } from '@/types/parent-dashboard';
 import { getErrorMessage } from '@/lib/error-handler';
-import { academicCoreScope, contentScope } from '@/lib/content-scope';
+import { contentScope } from '@/lib/content-scope';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 

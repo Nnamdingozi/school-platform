@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+
 
 /**
  * Interface for scoping parameters.

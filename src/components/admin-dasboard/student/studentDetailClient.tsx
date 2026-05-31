@@ -726,12 +726,12 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { 
     LucideIcon, Loader2, X, BookOpen, 
-    CheckCircle2, AlertTriangle, ShieldCheck, ChevronRight 
+    CheckCircle2, AlertTriangle, ShieldCheck
 } from 'lucide-react'
-import { useProfileStore } from '@/store/profileStore'
+
 import { getClassesBySchool, assignUserToClass, assignTeacherToClass } from '@/app/actions/user-management'
 import { cn } from '@/lib/utils'
 import { Role } from '@prisma/client'

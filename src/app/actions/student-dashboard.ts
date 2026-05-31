@@ -97,7 +97,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { Role, Prisma } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { classifyNigerianSubject } from "@/lib/curriculum/nigeria";
 import { contentScope, academicCoreScope } from "@/lib/content-scope";
 

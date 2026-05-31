@@ -354,7 +354,7 @@
 // }
 
 
-import { type EnhancedLessonContent } from "@/components/TeacherDashboard/ai-learning-planner";
+import { type EnhancedLessonContent } from "@/app/actions/ai-generator";
 import { type ParentViewPerformance } from "@/app/actions/getParetnsLesson";
 
 /**

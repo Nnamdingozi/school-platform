@@ -726,7 +726,6 @@ import React from "react";
 import { Loader2, ShieldCheck, Database, Sparkles, School, Clock, Timer, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useExamStore } from "@/store/useExamStore";
-import { useProfileStore } from "@/store/profileStore";
 import { toast } from "sonner";
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
@@ -748,7 +747,7 @@ interface SettingsSidebarProps {
  * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function SettingsSidebar({ onBuildPool }: SettingsSidebarProps) {
-  const { profile } = useProfileStore();
+
   const { 
     config, 
     setConfig, 

@@ -355,7 +355,7 @@ import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { Role, ActivityType, Prisma } from '@prisma/client'
+import { ActivityType } from '@prisma/client'
 import { logActivity } from '@/lib/activitylogger'
 import { academicCoreScope, contentScope } from '@/lib/content-scope'
 

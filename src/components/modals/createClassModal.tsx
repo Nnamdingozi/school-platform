@@ -472,7 +472,7 @@ import { createSingleClass } from "@/app/actions/class-management"
 import { useProfileStore } from "@/store/profileStore"
 import { toast } from "sonner"
 import { Role } from "@prisma/client"
-import { cn } from "@/lib/utils"
+
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 

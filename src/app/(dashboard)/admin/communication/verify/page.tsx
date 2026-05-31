@@ -206,91 +206,141 @@
 
 
 
-'use client'
+// 'use client'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { CheckCircle2, XCircle, Zap, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useProfileStore } from '@/store/profileStore'
+// import { useEffect } from 'react'
+// import { useRouter } from 'next/navigation'
+// import { CheckCircle2, XCircle, Zap, ArrowRight } from 'lucide-react'
+// import { Button } from '@/components/ui/button'
+// import { useProfileStore } from '@/store/profileStore'
 
-interface CreditVerificationClientProps {
-    initialStatus: 'success' | 'failed';
-    credits?: number;
-    initialError?: string;
+// interface CreditVerificationClientProps {
+//     initialStatus: 'success' | 'failed';
+//     credits?: number;
+//     initialError?: string;
+// }
+
+// /**
+//  * Rule 1: Institutional Layer UI
+//  * Rule 17: Uses Zustand for branding colors on the success state.
+//  */
+// export function CreditVerificationClient({ initialStatus, credits, initialError }: CreditVerificationClientProps) {
+//     const router = useRouter();
+//     const { profile } = useProfileStore();
+
+//     useEffect(() => {
+//         // Rule 11: If successful, redirect back to the hub after a short delay
+//         if (initialStatus === 'success') {
+//             const timer = setTimeout(() => {
+//                 router.push('/admin/communication');
+//             }, 3000);
+//             return () => clearTimeout(timer);
+//         }
+//     }, [initialStatus, router]);
+
+//     return (
+//         <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+//             <div className="max-w-sm w-full text-center space-y-8 animate-in fade-in zoom-in-95 duration-500">
+
+//                 {initialStatus === 'success' && (
+//                     <>
+//                         <div className="flex h-20 w-20 mx-auto items-center justify-center rounded-[2rem] bg-emerald-500/10 border border-emerald-500/20 shadow-2xl shadow-emerald-500/10">
+//                             <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+//                         </div>
+//                         <div className="space-y-2">
+//                             <h1 className="text-2xl font-black text-white uppercase italic tracking-tighter">
+//                                 Credits Synchronized
+//                             </h1>
+//                             <p className="text-sm text-slate-400 font-medium uppercase tracking-widest leading-relaxed">
+//                                 <span className="text-school-primary font-black" style={{ color: profile?.primaryColor }}>
+//                                     {credits?.toLocaleString()} Units
+//                                 </span>{" "}
+//                                 have been bound to your institutional registry.
+//                             </p>
+//                         </div>
+//                         <div className="flex items-center justify-center gap-3 rounded-2xl border border-white/5 bg-slate-900/50 px-6 py-4 shadow-inner">
+//                             <Zap className="h-4 w-4 text-school-primary" style={{ color: profile?.primaryColor }} />
+//                             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+//                                 Auto-Redirecting to Hub...
+//                             </p>
+//                         </div>
+//                     </>
+//                 )}
+
+//                 {initialStatus === 'failed' && (
+//                     <>
+//                         <div className="flex h-20 w-20 mx-auto items-center justify-center rounded-[2.5rem] bg-red-500/10 border border-red-500/20">
+//                             <XCircle className="h-10 w-10 text-red-400" />
+//                         </div>
+//                         <div className="space-y-2">
+//                             <h1 className="text-2xl font-black text-white uppercase italic tracking-tighter">
+//                                 Validation Failed
+//                             </h1>
+//                             <p className="text-xs text-slate-500 font-bold uppercase tracking-widest px-4">
+//                                 {initialError ?? 'The transaction could not be verified by the gateway registry.'}
+//                             </p>
+//                         </div>
+//                         <Button
+//                             onClick={() => router.push('/admin/communication')}
+//                             className="w-full py-8 rounded-2xl bg-school-primary text-slate-950 font-black uppercase text-xs tracking-widest hover:scale-[1.02] transition-all"
+//                             style={{ backgroundColor: profile?.primaryColor }}
+//                         >
+//                             Return to Registry <ArrowRight className="ml-2 h-4 w-4" />
+//                         </Button>
+//                     </>
+//                 )}
+
+//             </div>
+//         </div>
+//     )
+// }
+
+
+
+
+import { Metadata } from "next";
+import { verifyCreditsPayment } from "@/app/actions/credits";
+import { CreditVerificationClient } from "@/components/communication/creditVerificationClient"
+
+/**
+ * RESOURCE VERIFICATION | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO
+ */
+export const metadata: Metadata = {
+    title: "Credit Synchronization | Registry | SchoolPaaS",
+    description: "Institutional resource verification and registry update in progress.",
+};
+
+interface PageProps {
+    searchParams: Promise<{ reference?: string | string[] }>;
 }
 
 /**
- * Rule 1: Institutional Layer UI
- * Rule 17: Uses Zustand for branding colors on the success state.
+ * CREDIT VERIFICATION HUB (Tier 2 Sync)
+ * Rule 12: Server-First Execution.
+ * Rule 11: Final System Truth - Squashes duplicate refs and verifies payment.
  */
-export function CreditVerificationClient({ initialStatus, credits, initialError }: CreditVerificationClientProps) {
-    const router = useRouter();
-    const { profile } = useProfileStore();
+export default async function VerifyCreditsPage({ searchParams }: PageProps) {
+    const params = await searchParams;
+    const rawRef = params.reference;
+    
+    // Normalization Protocol: Handle potential duplicate query params
+    const reference = Array.isArray(rawRef) ? rawRef[0] : rawRef;
 
-    useEffect(() => {
-        // Rule 11: If successful, redirect back to the hub after a short delay
-        if (initialStatus === 'success') {
-            const timer = setTimeout(() => {
-                router.push('/admin/communication');
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [initialStatus, router]);
+    if (!reference) {
+        return <CreditVerificationClient initialStatus="failed" initialError="Missing transaction reference." />;
+    }
+
+    // Rule 11: Transactional Verification via Server Action
+    const result = await verifyCreditsPayment(reference);
 
     return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-            <div className="max-w-sm w-full text-center space-y-8 animate-in fade-in zoom-in-95 duration-500">
-
-                {initialStatus === 'success' && (
-                    <>
-                        <div className="flex h-20 w-20 mx-auto items-center justify-center rounded-[2rem] bg-emerald-500/10 border border-emerald-500/20 shadow-2xl shadow-emerald-500/10">
-                            <CheckCircle2 className="h-10 w-10 text-emerald-400" />
-                        </div>
-                        <div className="space-y-2">
-                            <h1 className="text-2xl font-black text-white uppercase italic tracking-tighter">
-                                Credits Synchronized
-                            </h1>
-                            <p className="text-sm text-slate-400 font-medium uppercase tracking-widest leading-relaxed">
-                                <span className="text-school-primary font-black" style={{ color: profile?.primaryColor }}>
-                                    {credits?.toLocaleString()} Units
-                                </span>{" "}
-                                have been bound to your institutional registry.
-                            </p>
-                        </div>
-                        <div className="flex items-center justify-center gap-3 rounded-2xl border border-white/5 bg-slate-900/50 px-6 py-4 shadow-inner">
-                            <Zap className="h-4 w-4 text-school-primary" style={{ color: profile?.primaryColor }} />
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
-                                Auto-Redirecting to Hub...
-                            </p>
-                        </div>
-                    </>
-                )}
-
-                {initialStatus === 'failed' && (
-                    <>
-                        <div className="flex h-20 w-20 mx-auto items-center justify-center rounded-[2.5rem] bg-red-500/10 border border-red-500/20">
-                            <XCircle className="h-10 w-10 text-red-400" />
-                        </div>
-                        <div className="space-y-2">
-                            <h1 className="text-2xl font-black text-white uppercase italic tracking-tighter">
-                                Validation Failed
-                            </h1>
-                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest px-4">
-                                {initialError ?? 'The transaction could not be verified by the gateway registry.'}
-                            </p>
-                        </div>
-                        <Button
-                            onClick={() => router.push('/admin/communication')}
-                            className="w-full py-8 rounded-2xl bg-school-primary text-slate-950 font-black uppercase text-xs tracking-widest hover:scale-[1.02] transition-all"
-                            style={{ backgroundColor: profile?.primaryColor }}
-                        >
-                            Return to Registry <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                    </>
-                )}
-
-            </div>
-        </div>
-    )
+        <main className="min-h-screen bg-background flex items-center justify-center p-4">
+            <CreditVerificationClient 
+                initialStatus={result.success ? "success" : "failed"}
+                credits={result.credits}
+                initialError={result.error}
+            />
+        </main>
+    );
 }

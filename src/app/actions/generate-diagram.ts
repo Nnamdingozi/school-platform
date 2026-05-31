@@ -94,14 +94,168 @@
 //   }
 // }
 
+// "use server";
+
+// import OpenAI from "openai";
+// import { customAlphabet } from 'nanoid';
+// import { supabaseAdmin } from "@/lib/supabase/admin";
+// import { prisma } from "@/lib/prisma";
+// import { Role } from "@prisma/client";
+// import { logActivity } from "@/app/actions/activitylog";
+
+// // Initialize OpenAI client
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
+
+// // Generate a URL-friendly unique ID for filenames
+// const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10);
+
+// interface GenerateDiagramParams {
+//   prompt: string;
+//   schoolId: string | null;
+//   userId: string;
+//   userRole: Role;
+// }
+
+// /**
+//  * GENERATE OR RETRIEVE DIAGRAM
+//  * Rule 8: AI content (Images) should be stored once and reused globally if possible.
+//  */
+// export async function generateDiagramImage({ 
+//   prompt, 
+//   schoolId, 
+//   userId, 
+//   userRole 
+// }: GenerateDiagramParams) {
+  
+//   // Rule 10: Backend authorization check
+//   if (userRole === Role.STUDENT || userRole === Role.PARENT) {
+//     return { success: false, error: "Unauthorized: Only educators can synthesize visuals." };
+//   }
+
+//   if (!prompt) {
+//     return { success: false, error: "No prompt provided for diagram generation." };
+//   }
+
+//   try {
+//     /* ─────────────────────────────────────────────────────────────
+//        1. DUPLICATE PREVENTION (Rule 4 & 8)
+//        Search the global lesson bank for this exact prompt to avoid 
+//        duplicate AI costs.
+//        ───────────────────────────────────────────────────────────── */
+//     const existingAsset = await prisma.globalLesson.findFirst({
+//         where: {
+//             aiContent: {
+//                 path: ['studentContent', 'visualAids'],
+//                 array_contains: { imagePrompt: prompt }
+//             }
+//         },
+//         select: { aiContent: true }
+//     });
+
+//     // Type-safe navigation of the JSON content
+//     if (existingAsset?.aiContent) {
+//         const content = existingAsset.aiContent as any; // Temporary cast for deep JSON navigation
+//         const aids = content?.studentContent?.visualAids;
+        
+//         if (Array.isArray(aids)) {
+//             const match = aids.find((v: { imagePrompt: string, url: string }) => v.imagePrompt === prompt);
+//             if (match?.url) {
+//                 console.log("♻️ Reusing existing Global Asset for prompt:", prompt);
+//                 return { success: true, url: match.url, cached: true };
+//             }
+//         }
+//     }
+
+//     /* ─────────────────────────────────────────────────────────────
+//        2. AI GENERATION (Rule 8)
+//        ───────────────────────────────────────────────────────────── */
+//     const dallePrompt = `
+//       Educational textbook illustration style. Clear, clean lines, flat colors, high contrast.
+//       Pure white background (#FFFFFF). Accurate subject-specific details.
+//       Topic: ${prompt}
+//     `;
+
+//     console.log("Sending prompt to DALL-E:", dallePrompt);
+//     const dalleResponse = await openai.images.generate({
+//       model: "dall-e-3",
+//       prompt: dallePrompt,
+//       n: 1,
+//       size: "1024x1024",
+//       quality: "standard",
+//       style: "natural",
+//       response_format: "url", 
+//     });
+
+//     // ✅ FIXED: TypeScript Guard for dalleResponse.data (Resolves Error 18048)
+//     if (!dalleResponse.data || dalleResponse.data.length === 0 || !dalleResponse.data[0].url) {
+//         throw new Error("DALL-E failed to return valid image data.");
+//     }
+
+//     const temporaryImageUrl = dalleResponse.data[0].url;
+
+//     /* ─────────────────────────────────────────────────────────────
+//        3. STORAGE (Supabase)
+//        ───────────────────────────────────────────────────────────── */
+//     // Download the temporary image
+//     const imageFetchResponse = await fetch(temporaryImageUrl);
+//     if (!imageFetchResponse.ok) {
+//       throw new Error(`Failed to download image from DALL-E: ${imageFetchResponse.statusText}`);
+//     }
+//     const imageBuffer = await imageFetchResponse.arrayBuffer();
+
+//     const bucketName = 'lesson-diagrams';
+//     // Rule 11: System pathing isolation
+//     const scopePrefix = schoolId ? `schools/${schoolId}` : 'global';
+//     const filename = `${scopePrefix}/${nanoid()}-${Date.now()}.png`;
+
+//     console.log("Uploading to Supabase Storage:", bucketName, filename);
+//     const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+//       .from(bucketName)
+//       .upload(filename, imageBuffer, {
+//         contentType: 'image/png',
+//         upsert: false,
+//       });
+
+//     if (uploadError) {
+//       throw new Error(`Supabase upload failed: ${uploadError.message}`);
+//     }
+    
+//     // Construct the permanent public URL
+//     const permanentImageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucketName}/${uploadData.path}`;
+
+//     /* ─────────────────────────────────────────────────────────────
+//        4. ACTIVITY LOGGING
+//        ───────────────────────────────────────────────────────────── */
+//     await logActivity({
+//         schoolId,
+//         actorId: userId,
+//         actorRole: userRole,
+//         type: "SETTINGS_UPDATED",
+//         title: "AI Visual Generated",
+//         description: `Generated educational diagram for prompt: ${prompt.substring(0, 50)}...`
+//     });
+
+//     return { success: true, url: permanentImageUrl, cached: false };
+
+//   } catch (error: unknown) {
+//     console.error(":: Error generating or storing diagram image ::", error);
+//     return { success: false, error: "Failed to generate diagram. Please check server logs." };
+//   }
+// }
+
+
+
 "use server";
 
 import OpenAI from "openai";
 import { customAlphabet } from 'nanoid';
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { prisma } from "@/lib/prisma";
-import { Role } from "@prisma/client";
+import { Role, ActivityType } from "@prisma/client";
 import { logActivity } from "@/app/actions/activitylog";
+import { type EnhancedLessonContent } from "./ai-generator"; // Rule 15: Import strict interface
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -109,7 +263,7 @@ const openai = new OpenAI({
 });
 
 // Generate a URL-friendly unique ID for filenames
-const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10);
+const hubIdGen = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10);
 
 interface GenerateDiagramParams {
   prompt: string;
@@ -119,8 +273,10 @@ interface GenerateDiagramParams {
 }
 
 /**
- * GENERATE OR RETRIEVE DIAGRAM
- * Rule 8: AI content (Images) should be stored once and reused globally if possible.
+ * GENERATE OR RETRIEVE DIAGRAM (Visual Hub Synthesis)
+ * Rule 8: AI content is stored once and reused globally to optimize resource load.
+ * Rule 11: System Truth - Persistence to Supabase Storage Hub.
+ * Rule 15: Resolved TS-Explicit-Any via unknown bridge casting.
  */
 export async function generateDiagramImage({ 
   prompt, 
@@ -129,20 +285,20 @@ export async function generateDiagramImage({
   userRole 
 }: GenerateDiagramParams) {
   
-  // Rule 10: Backend authorization check
+  // Rule 10: Backend Authorization Protocol
   if (userRole === Role.STUDENT || userRole === Role.PARENT) {
-    return { success: false, error: "Unauthorized: Only educators can synthesize visuals." };
+    return { success: false, error: "Unauthorized Registry Access: Asset synthesis restricted." };
   }
 
   if (!prompt) {
-    return { success: false, error: "No prompt provided for diagram generation." };
+    return { success: false, error: "Protocol Breach: Metadata prompt missing." };
   }
 
   try {
     /* ─────────────────────────────────────────────────────────────
        1. DUPLICATE PREVENTION (Rule 4 & 8)
-       Search the global lesson bank for this exact prompt to avoid 
-       duplicate AI costs.
+       Search the global hub for this exact prompt to avoid 
+       redundant synthesis costs.
        ───────────────────────────────────────────────────────────── */
     const existingAsset = await prisma.globalLesson.findFirst({
         where: {
@@ -154,30 +310,29 @@ export async function generateDiagramImage({
         select: { aiContent: true }
     });
 
-    // Type-safe navigation of the JSON content
+    // ✅ RESOLVED: Strict interface mapping without 'any'
     if (existingAsset?.aiContent) {
-        const content = existingAsset.aiContent as any; // Temporary cast for deep JSON navigation
-        const aids = content?.studentContent?.visualAids;
+        const content = (existingAsset.aiContent as unknown) as EnhancedLessonContent;
+        const aids = content.studentContent.visualAids;
         
         if (Array.isArray(aids)) {
-            const match = aids.find((v: { imagePrompt: string, url: string }) => v.imagePrompt === prompt);
+            const match = aids.find((v) => v.imagePrompt === prompt);
             if (match?.url) {
-                console.log("♻️ Reusing existing Global Asset for prompt:", prompt);
+                console.log("♻️ Registry Cache Hit: Reusing existing Hub Asset.");
                 return { success: true, url: match.url, cached: true };
             }
         }
     }
 
     /* ─────────────────────────────────────────────────────────────
-       2. AI GENERATION (Rule 8)
+       2. AI HUB SYNTHESIS (Rule 8)
        ───────────────────────────────────────────────────────────── */
     const dallePrompt = `
       Educational textbook illustration style. Clear, clean lines, flat colors, high contrast.
-      Pure white background (#FFFFFF). Accurate subject-specific details.
+      Pure white background (#FFFFFF). Accurate subject-specific details for institutional modules.
       Topic: ${prompt}
     `;
 
-    console.log("Sending prompt to DALL-E:", dallePrompt);
     const dalleResponse = await openai.images.generate({
       model: "dall-e-3",
       prompt: dallePrompt,
@@ -188,29 +343,27 @@ export async function generateDiagramImage({
       response_format: "url", 
     });
 
-    // ✅ FIXED: TypeScript Guard for dalleResponse.data (Resolves Error 18048)
+    // TypeScript Guard for DALL-E payload integrity
     if (!dalleResponse.data || dalleResponse.data.length === 0 || !dalleResponse.data[0].url) {
-        throw new Error("DALL-E failed to return valid image data.");
+        throw new Error("AI Synthesis Hub failed to return valid image data.");
     }
 
     const temporaryImageUrl = dalleResponse.data[0].url;
 
     /* ─────────────────────────────────────────────────────────────
-       3. STORAGE (Supabase)
+       3. PERMANENT REGISTRY STORAGE (Supabase)
        ───────────────────────────────────────────────────────────── */
-    // Download the temporary image
     const imageFetchResponse = await fetch(temporaryImageUrl);
     if (!imageFetchResponse.ok) {
-      throw new Error(`Failed to download image from DALL-E: ${imageFetchResponse.statusText}`);
+      throw new Error("Failed to download synthesized asset from AI gateway.");
     }
     const imageBuffer = await imageFetchResponse.arrayBuffer();
 
     const bucketName = 'lesson-diagrams';
-    // Rule 11: System pathing isolation
+    // Rule 11: Institutional Path Isolation Hub
     const scopePrefix = schoolId ? `schools/${schoolId}` : 'global';
-    const filename = `${scopePrefix}/${nanoid()}-${Date.now()}.png`;
+    const filename = `${scopePrefix}/${hubIdGen()}-${Date.now()}.png`;
 
-    console.log("Uploading to Supabase Storage:", bucketName, filename);
     const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from(bucketName)
       .upload(filename, imageBuffer, {
@@ -219,28 +372,28 @@ export async function generateDiagramImage({
       });
 
     if (uploadError) {
-      throw new Error(`Supabase upload failed: ${uploadError.message}`);
+      throw new Error(`Registry storage sync failure: ${uploadError.message}`);
     }
     
-    // Construct the permanent public URL
+    // Construct the permanent Hub URL
     const permanentImageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucketName}/${uploadData.path}`;
 
     /* ─────────────────────────────────────────────────────────────
-       4. ACTIVITY LOGGING
+       4. REGISTRY AUDIT (Rule 11)
        ───────────────────────────────────────────────────────────── */
     await logActivity({
         schoolId,
         actorId: userId,
         actorRole: userRole,
-        type: "SETTINGS_UPDATED",
-        title: "AI Visual Generated",
-        description: `Generated educational diagram for prompt: ${prompt.substring(0, 50)}...`
+        type: ActivityType.SETTINGS_UPDATED,
+        title: "AI Visual Asset Synthesized",
+        description: `Generated high-fidelity module visual for prompt: ${prompt.substring(0, 50)}...`
     });
 
     return { success: true, url: permanentImageUrl, cached: false };
 
   } catch (error: unknown) {
-    console.error(":: Error generating or storing diagram image ::", error);
-    return { success: false, error: "Failed to generate diagram. Please check server logs." };
+    console.error("[VISUAL_SYNTHESIS_FAULT]:", error);
+    return { success: false, error: "Registry failed to synthesize hub asset." };
   }
 }

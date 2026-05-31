@@ -780,8 +780,7 @@ import React, { useState, useEffect, useTransition, useCallback } from 'react';
 import { getLinkedFamiliesPaginated, unlinkParentStudent } from '@/app/actions/parent-linking';
 import { 
   ChevronDown, ChevronRight, User, GraduationCap, 
-  Trash2, Loader2, Search, ChevronLeft, ShieldCheck, 
-  Users, Activity
+  Trash2, Loader2, Search, ChevronLeft, Activity
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getErrorMessage } from "@/lib/error-handler";

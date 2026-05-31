@@ -471,11 +471,11 @@
 'use client'
 
 import React, { useState, useTransition } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { 
     ShieldAlert, Lock, CreditCard, 
     Loader2, LogOut, Mail, UserCheck, 
-    Zap, ChevronRight 
+    Zap
 } from 'lucide-react'
 import { 
     initiateIndividualPayment, 
@@ -484,7 +484,7 @@ import {
 } from '@/app/actions/subscription.actions'
 import { logoutAction } from '@/app/actions/auth'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+
 
 interface BillingTerminalProps {
     profile: {

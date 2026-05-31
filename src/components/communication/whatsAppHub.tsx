@@ -519,11 +519,11 @@ import { useRouter } from 'next/navigation'
 import {
     MessageCircle, Zap, History, ShoppingCart,
     Clock, BarChart3, 
-    TrendingDown
+    TrendingDown,
+    LucideIcon
 } from 'lucide-react'
 import { type CommunicationStats } from '@/app/actions/communication.action'
 import { format } from 'date-fns'
-import { useProfileStore } from '@/store/profileStore'
 import { cn } from '@/lib/utils'
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
@@ -570,7 +570,7 @@ function StatCard({
     label:   string
     value:   number | string
     sub?:    string
-    icon:    any
+    icon:    LucideIcon
     variant?: 'primary' | 'success' | 'info' | 'purple'
 }) {
     const variants = {

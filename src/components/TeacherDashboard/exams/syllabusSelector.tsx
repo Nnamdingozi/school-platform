@@ -293,7 +293,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { CheckCircle2, Layers, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useProfileStore } from "@/store/profileStore";
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 

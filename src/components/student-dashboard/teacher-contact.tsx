@@ -207,7 +207,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Mail, MessageSquare, ShieldCheck, Phone } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 

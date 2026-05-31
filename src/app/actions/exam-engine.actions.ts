@@ -3020,6 +3020,394 @@
 //   }
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { 
+//     AssessmentType, 
+//     ExamStatus, 
+//     QuestionCategory, 
+//     QuestionType, 
+//     Prisma, 
+//     Role, 
+//     ActivityType,
+// } from '@prisma/client'
+// import { google } from "@ai-sdk/google"
+// import { generateObject } from "ai"
+// import { z } from "zod"
+// import { revalidatePath } from 'next/cache'
+// import { contentScope, academicCoreScope } from '@/lib/content-scope'
+// import { logActivity } from "@/lib/activitylogger";
+
+// // ── 1. Types & Schemas ────────────────────────────────────────────────────────
+
+// const ExamQuestionsSchema = z.object({
+//   questions: z.array(z.object({
+//     text: z.string(),
+//     options: z.array(z.string()),
+//     correctAnswer: z.string(),
+//     explanation: z.string(),
+//   }))
+// })
+
+// export interface ExamGenerationConfig {
+//   title: string
+//   type: AssessmentType
+//   schoolId: string
+//   classIds: string[]
+//   teacherId: string
+//   termId: string
+//   topicIds: string[]
+//   totalQuestions: number
+//   reusePercentage: number
+//   duration: number
+//   startTime: Date
+//   endTime: Date
+//   status: "SCHEDULED"
+// }
+
+// export interface ExamPoolItem {
+//   id?: string
+//   text: string
+//   options: string[]
+//   correctAnswer: string
+//   explanation: string
+//   category: "REVISION" | "NEW_AI"
+// }
+
+// export interface AdminExamStats {
+//   totalExams: number
+//   activeNow: number
+//   completionRate: number
+// }
+
+ 
+// export interface ExamRegistryItem {
+//   id: string
+//   title: string
+//   className: string
+//   status: string
+//   studentCount: number
+//   completedCount: number
+// }
+
+// // ── 2. AI Question Pool Generation ──────────────────────────────────────────
+
+// /**
+//  * Synthesizes a pool of questions for a specific exam.
+//  * Tier 2 Rule: New AI questions are stored in the School's bank.
+//  */
+// export async function buildExamPool(config: {
+//   topicIds: string[];
+//   totalQuestions: number;
+//   reusePercentage: number;
+//   schoolId: string;
+//   userId: string;
+// }) {
+//   try {
+//     const reuseCount = Math.floor(config.totalQuestions * (config.reusePercentage / 100));
+//     const newCount = config.totalQuestions - reuseCount;
+//     const pool: ExamPoolItem[] = [];
+
+//     // 1️⃣ SOURCE REVISION QUESTIONS (Rule 7)
+//     if (reuseCount > 0) {
+//       const existing = await prisma.question.findMany({
+//         where: {
+//           topicId: { in: config.topicIds },
+//           ...contentScope({ schoolId: config.schoolId }),
+//         },
+//         take: reuseCount,
+//       });
+
+//       pool.push(...existing.map((q) => ({
+//         text: q.text,
+//         options: q.options as string[],
+//         correctAnswer: q.correctAnswer,
+//         explanation: q.explanation ?? "",
+//         id: q.id,
+//         category: "REVISION" as const
+//       })));
+//     }
+
+//     // 2️⃣ GENERATE NEW QUESTIONS (Rule 8)
+//     if (newCount > 0) {
+//       const topics = await prisma.topic.findMany({
+//         where: { id: { in: config.topicIds }, ...contentScope({ schoolId: config.schoolId }) },
+//         select: { title: true },
+//       });
+
+//       const context = topics.map((t) => t.title).join(", ");
+//       const prompt = `Act as a Senior WAEC/JAMB Examiner. Generate ${newCount} high-quality MCQ questions for these topics: ${context}. Use Nigerian terminology. Provide explanation. JSON format.`;
+
+//       const { object: validated } = await generateObject({
+//         model: google("gemini-1.5-flash"),
+//         schema: ExamQuestionsSchema,
+//         prompt,
+//       });
+
+//       if (validated.questions) {
+//         pool.push(...validated.questions.map(q => ({ ...q, category: "NEW_AI" as const })));
+//       }
+//     }
+
+//     // 3️⃣ PERSIST NEW AI QUESTIONS (Rule 5, 8, 11)
+//     // ✅ FIXED: Added missing 'type' and 'isGlobal' fields to resolve TS error
+//     const newAiQuestions = pool.filter(q => q.category === "NEW_AI");
+//     if (newAiQuestions.length > 0) {
+//       await prisma.question.createMany({
+//         data: newAiQuestions.map((q) => ({
+//           text: q.text,
+//           options: q.options as unknown as Prisma.InputJsonValue,
+//           correctAnswer: q.correctAnswer,
+//           explanation: q.explanation,
+//           topicId: config.topicIds[0],
+//           schoolId: config.schoolId,
+//           creatorId: config.userId,
+//           isGlobal: false, // Rule 5: School specific
+//           type: QuestionType.MCQ,
+//           category: QuestionCategory.EXAM,
+//         })),
+//       });
+//     }
+
+//     return { success: true, questions: pool };
+//   } catch (err: unknown) {
+//     return { success: false, error: getErrorMessage(err) };
+//   }
+// }
+
+// // ── 3. Queries ───────────────────────────────────────────────────────────────
+
+// /**
+//  * Fetches authorized assignments for the teacher.
+//  */
+// export async function getTeacherAuthorizedAssignments(teacherId: string, schoolId: string | null) {
+//   try {
+//     return await prisma.gradeSubject.findMany({
+//       where: {
+//         AND: [
+//           { teachers: { some: { id: teacherId } } },
+//           academicCoreScope({ schoolId })
+//         ]
+//       },
+//       include: {
+//         subject: { select: { name: true } },
+//         grade: { select: { id: true, displayName: true } }
+//       },
+//       orderBy: { grade: { level: 'asc' } }
+//     });
+//   } catch (err: unknown) {
+//     console.error(getErrorMessage(err));
+//     return [];
+//   }
+// }
+
+// /**
+//  * Retrieves topics grouped by term for selection.
+//  */
+// export async function getGroupedTopics(gradeSubjectId: string) {
+//   try {
+//     return await prisma.term.findMany({
+//       where: { grade: { gradeSubjects: { some: { id: gradeSubjectId } } } },
+//       include: {
+//         topics: {
+//           where: { gradeSubjectId },
+//           select: { id: true, title: true }
+//         }
+//       },
+//       orderBy: { index: 'asc' }
+//     });
+//   } catch (err: unknown) {
+//     console.error(getErrorMessage(err));
+//     return [];
+//   }
+// }
+
+// // ── 4. Mutations ──────────────────────────────────────────────────────────────
+
+// /**
+//  * Rule 5 & 11: Deploys exam instances to classes within a school.
+//  */
+// export async function finalizeAndDeployExam(
+//   config: ExamGenerationConfig,
+//   selectedQuestions: { id: string }[],
+//   userId: string,
+//   userRole: Role
+// ) {
+//   if (!config.schoolId) throw new Error("Independent users cannot deploy institutional exams.");
+
+//   try {
+//     const results = await prisma.$transaction(async (tx) => {
+//       const exams: Prisma.ExamGetPayload<{}>[] = [];
+
+//       for (const classId of config.classIds) {
+//         const exam = await tx.exam.create({
+//           data: {
+//             title: config.title,
+//             type: config.type,
+//             duration: config.duration,
+//             startTime: config.startTime,
+//             endTime: config.endTime,
+//             status: ExamStatus.SCHEDULED,
+//             schoolId: config.schoolId,
+//             classId,
+//             creatorId: config.teacherId,
+//             termId: config.termId,
+//             questions: {
+//               create: selectedQuestions.map((q, i) => ({
+//                 questionId: q.id,
+//                 order: i + 1,
+//               })),
+//             },
+//           },
+//         });
+//         exams.push(exam);
+//       }
+
+//       await logActivity({
+//         schoolId: config.schoolId,
+//         actorId: userId,
+//         actorRole: userRole,
+//         type: ActivityType.ASSESSMENT_CREATED,
+//         title: `Exam Deployed: ${config.title}`,
+//         description: `Deployed to ${config.classIds.length} classes.`
+//       });
+
+//       return exams;
+//     });
+
+//     revalidatePath('/teacher/assessment');
+//     return { success: true, data: results };
+//   } catch (err: unknown) {
+//     return { success: false, error: getErrorMessage(err) };
+//   }
+// }
+
+// /**
+//  * Handles official school exam submission.
+//  * Rule 11: Transactional grading + Assessment record creation.
+//  */
+// export async function submitExam(
+//     examId: string, 
+//     studentId: string, 
+//     schoolId: string, 
+//     answers: Record<string, string>
+// ) {
+//     try {
+//       const exam = await prisma.exam.findUnique({
+//         where: { id: examId, schoolId },
+//         include: { 
+//             questions: { 
+//                 include: { 
+//                     question: { include: { topic: true } } 
+//                 } 
+//             } 
+//         }
+//       })
+  
+//       if (!exam) throw new Error("Exam record inaccessible.");
+  
+//       let score = 0
+//       exam.questions.forEach((eq) => {
+//         if (answers[eq.questionId] === eq.question.correctAnswer) {
+//           score += eq.question.points
+//         }
+//       })
+
+//       // ✅ FIXED: Dynamically resolve the gradeSubjectId from the context
+//       const gradeSubjectId = exam.questions[0]?.question.topic.gradeSubjectId;
+//       if (!gradeSubjectId) throw new Error("Internal Reference Error: Subject mapping failed.");
+  
+//       await prisma.assessment.create({
+//         data: {
+//           type: exam.type,
+//           score,
+//           maxScore: exam.questions.length,
+//           studentId,
+//           schoolId,
+//           gradeSubjectId,
+//           comments: "CBT Automated Grading",
+//           examId: exam.id
+//         }
+//       })
+  
+//       await logActivity({
+//         schoolId,
+//         actorId: studentId,
+//         type: ActivityType.ASSESSMENT_GRADED,
+//         title: "Exam Finalized",
+//         description: `Submitted ${exam.title}. Score: ${score}/${exam.questions.length}`
+//       });
+  
+//       revalidatePath('/student/grades')
+//       return { success: true, score, maxScore: exam.questions.length }
+//     } catch (err: unknown) {
+//       return { success: false, error: getErrorMessage(err) }
+//     }
+//   }
+
+//   export async function getAdminExamRegistry(schoolId: string) {
+//     try {
+//         const examsData = await prisma.exam.findMany({
+//             where: { schoolId },
+//             include: {
+//                 class: { include: { _count: { select: { enrollments: true } } } },
+//                 _count: { select: { assessments: true } }
+//             },
+//             orderBy: { createdAt: 'desc' }
+//         });
+
+//         const exams = examsData.map((e) => ({
+//             id: e.id,
+//             title: e.title,
+//             className: e.class.name,
+//             status: e.status,
+//             studentCount: e.class._count.enrollments,
+//             completedCount: e._count.assessments
+//         }));
+
+//         const totalExams = exams.length;
+//         const activeNow = exams.filter(e => e.status === 'PUBLISHED').length;
+//         const totalExpected = exams.reduce((acc, curr) => acc + curr.studentCount, 0);
+//         const totalActual = exams.reduce((acc, curr) => acc + curr.completedCount, 0);
+//         const completionRate = totalExpected > 0 ? Math.round((totalActual / totalExpected) * 100) : 0;
+
+//         return { success: true, stats: { totalExams, activeNow, completionRate }, exams };
+//     } catch (err) {
+//       getErrorMessage(err)
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+
+
+// export async function deleteExam(examId: string, teacherId: string) {
+//   try {
+//     const exam = await prisma.exam.findUnique({
+//       where: { id: examId },
+//       include: { _count: { select: { assessments: true } } }
+//     })
+
+//     if (!exam) throw new Error("Exam not found")
+//     if (exam.creatorId !== teacherId) throw new Error("Unauthorized")
+//     if (exam._count.assessments > 0) throw new Error("Cannot delete exam. Students have already taken it.")
+
+//     await prisma.$transaction(async (tx) => {
+//       await tx.examQuestion.deleteMany({ where: { examId } })
+//       await tx.examSubmission.deleteMany({ where: { examId } })
+//       await tx.exam.delete({ where: { id: examId } })
+//     })
+
+//     revalidatePath("/teacher/assessment")
+//     return { success: true }
+//   } catch (err) {
+//     return { success: false, error: getErrorMessage(err) }
+//   }
+// }
+
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
@@ -3032,16 +3420,16 @@ import {
     Prisma, 
     Role, 
     ActivityType,
-    Question 
+    Exam, // Rule 15: Authoritative Model Type
 } from '@prisma/client'
 import { google } from "@ai-sdk/google"
 import { generateObject } from "ai"
 import { z } from "zod"
 import { revalidatePath } from 'next/cache'
 import { contentScope, academicCoreScope } from '@/lib/content-scope'
-import { logActivity } from "@/lib/activitylogger";
+import { logActivity } from "@/app/actions/activitylog"
 
-// ── 1. Types & Schemas ────────────────────────────────────────────────────────
+// ── 1. Types & Protocols (Rule 15) ──────────────────────────────────────────
 
 const ExamQuestionsSchema = z.object({
   questions: z.array(z.object({
@@ -3083,7 +3471,6 @@ export interface AdminExamStats {
   completionRate: number
 }
 
- 
 export interface ExamRegistryItem {
   id: string
   title: string
@@ -3093,11 +3480,11 @@ export interface ExamRegistryItem {
   completedCount: number
 }
 
-// ── 2. AI Question Pool Generation ──────────────────────────────────────────
+// ── 2. AI Synthesis Hub (Rule 8 & 11) ───────────────────────────────────────
 
 /**
- * Synthesizes a pool of questions for a specific exam.
- * Tier 2 Rule: New AI questions are stored in the School's bank.
+ * Synthesizes a pool of questions for a specific assessment hub.
+ * Rule 11: Final System Truth - Archives new AI modules in the Hub bank.
  */
 export async function buildExamPool(config: {
   topicIds: string[];
@@ -3111,7 +3498,7 @@ export async function buildExamPool(config: {
     const newCount = config.totalQuestions - reuseCount;
     const pool: ExamPoolItem[] = [];
 
-    // 1️⃣ SOURCE REVISION QUESTIONS (Rule 7)
+    // 1️⃣ SOURCE REVISION MODULES (Rule 7)
     if (reuseCount > 0) {
       const existing = await prisma.question.findMany({
         where: {
@@ -3123,7 +3510,7 @@ export async function buildExamPool(config: {
 
       pool.push(...existing.map((q) => ({
         text: q.text,
-        options: q.options as string[],
+        options: (q.options as unknown) as string[],
         correctAnswer: q.correctAnswer,
         explanation: q.explanation ?? "",
         id: q.id,
@@ -3131,7 +3518,7 @@ export async function buildExamPool(config: {
       })));
     }
 
-    // 2️⃣ GENERATE NEW QUESTIONS (Rule 8)
+    // 2️⃣ SYNTHESIZE NEW MODULES (Rule 8)
     if (newCount > 0) {
       const topics = await prisma.topic.findMany({
         where: { id: { in: config.topicIds }, ...contentScope({ schoolId: config.schoolId }) },
@@ -3139,7 +3526,7 @@ export async function buildExamPool(config: {
       });
 
       const context = topics.map((t) => t.title).join(", ");
-      const prompt = `Act as a Senior WAEC/JAMB Examiner. Generate ${newCount} high-quality MCQ questions for these topics: ${context}. Use Nigerian terminology. Provide explanation. JSON format.`;
+      const prompt = `Act as a Senior Academic Examiner. Generate ${newCount} high-fidelity MCQ modules for: ${context}. Use regional terminology. Provide pedagogical explanation. JSON format.`;
 
       const { object: validated } = await generateObject({
         model: google("gemini-1.5-flash"),
@@ -3152,20 +3539,19 @@ export async function buildExamPool(config: {
       }
     }
 
-    // 3️⃣ PERSIST NEW AI QUESTIONS (Rule 5, 8, 11)
-    // ✅ FIXED: Added missing 'type' and 'isGlobal' fields to resolve TS error
+    // 3️⃣ PERSIST NEW AI HUB ASSETS (Rule 11)
     const newAiQuestions = pool.filter(q => q.category === "NEW_AI");
     if (newAiQuestions.length > 0) {
       await prisma.question.createMany({
         data: newAiQuestions.map((q) => ({
           text: q.text,
-          options: q.options as unknown as Prisma.InputJsonValue,
+          options: (q.options as unknown) as Prisma.InputJsonValue,
           correctAnswer: q.correctAnswer,
           explanation: q.explanation,
           topicId: config.topicIds[0],
           schoolId: config.schoolId,
           creatorId: config.userId,
-          isGlobal: false, // Rule 5: School specific
+          isGlobal: false, 
           type: QuestionType.MCQ,
           category: QuestionCategory.EXAM,
         })),
@@ -3180,9 +3566,6 @@ export async function buildExamPool(config: {
 
 // ── 3. Queries ───────────────────────────────────────────────────────────────
 
-/**
- * Fetches authorized assignments for the teacher.
- */
 export async function getTeacherAuthorizedAssignments(teacherId: string, schoolId: string | null) {
   try {
     return await prisma.gradeSubject.findMany({
@@ -3199,14 +3582,11 @@ export async function getTeacherAuthorizedAssignments(teacherId: string, schoolI
       orderBy: { grade: { level: 'asc' } }
     });
   } catch (err: unknown) {
-    console.error(getErrorMessage(err));
+    console.error(`[ASSIGNMENT_LOOKUP_FAULT]: ${getErrorMessage(err)}`);
     return [];
   }
 }
 
-/**
- * Retrieves topics grouped by term for selection.
- */
 export async function getGroupedTopics(gradeSubjectId: string) {
   try {
     return await prisma.term.findMany({
@@ -3220,15 +3600,16 @@ export async function getGroupedTopics(gradeSubjectId: string) {
       orderBy: { index: 'asc' }
     });
   } catch (err: unknown) {
-    console.error(getErrorMessage(err));
+    console.error(`[TOPIC_GROUP_FAULT]: ${getErrorMessage(err)}`);
     return [];
   }
 }
 
-// ── 4. Mutations ──────────────────────────────────────────────────────────────
+// ── 4. Mutations (Rule 11/22) ────────────────────────────────────────────────
 
 /**
- * Rule 5 & 11: Deploys exam instances to classes within a school.
+ * DEPLOY ASSESSMENT HUBS
+ * ✅ RESOLVED: Removed '{}' empty object type in favor of strict 'Exam' model.
  */
 export async function finalizeAndDeployExam(
   config: ExamGenerationConfig,
@@ -3236,11 +3617,12 @@ export async function finalizeAndDeployExam(
   userId: string,
   userRole: Role
 ) {
-  if (!config.schoolId) throw new Error("Independent users cannot deploy institutional exams.");
+  if (!config.schoolId) throw new Error("Security Protocol: Independent users restricted from deployment.");
 
   try {
     const results = await prisma.$transaction(async (tx) => {
-      const exams: Prisma.ExamGetPayload<{}>[] = [];
+      // ✅ FIXED: Using strictly typed Exam array instead of Prisma.ExamGetPayload<{}>
+      const exams: Exam[] = [];
 
       for (const classId of config.classIds) {
         const exam = await tx.exam.create({
@@ -3271,8 +3653,8 @@ export async function finalizeAndDeployExam(
         actorId: userId,
         actorRole: userRole,
         type: ActivityType.ASSESSMENT_CREATED,
-        title: `Exam Deployed: ${config.title}`,
-        description: `Deployed to ${config.classIds.length} classes.`
+        title: `Assessment Hub Deployed: ${config.title}`,
+        description: `Successfully synchronized hubs for ${config.classIds.length} cohorts.`
       });
 
       return exams;
@@ -3286,8 +3668,7 @@ export async function finalizeAndDeployExam(
 }
 
 /**
- * Handles official school exam submission.
- * Rule 11: Transactional grading + Assessment record creation.
+ * SUBMIT ASSESSMENT HUB
  */
 export async function submitExam(
     examId: string, 
@@ -3307,7 +3688,7 @@ export async function submitExam(
         }
       })
   
-      if (!exam) throw new Error("Exam record inaccessible.");
+      if (!exam) throw new Error("Registry Error: Hub record inaccessible.");
   
       let score = 0
       exam.questions.forEach((eq) => {
@@ -3316,9 +3697,8 @@ export async function submitExam(
         }
       })
 
-      // ✅ FIXED: Dynamically resolve the gradeSubjectId from the context
       const gradeSubjectId = exam.questions[0]?.question.topic.gradeSubjectId;
-      if (!gradeSubjectId) throw new Error("Internal Reference Error: Subject mapping failed.");
+      if (!gradeSubjectId) throw new Error("Logical Reference Failure: Module mapping lost.");
   
       await prisma.assessment.create({
         data: {
@@ -3328,17 +3708,17 @@ export async function submitExam(
           studentId,
           schoolId,
           gradeSubjectId,
-          comments: "CBT Automated Grading",
+          comments: "CBT Automated Grading Hub",
           examId: exam.id
         }
       })
   
       await logActivity({
-        schoolId,
+        schoolId: schoolId,
         actorId: studentId,
         type: ActivityType.ASSESSMENT_GRADED,
-        title: "Exam Finalized",
-        description: `Submitted ${exam.title}. Score: ${score}/${exam.questions.length}`
+        title: "Assessment Synchronized",
+        description: `Finalized ${exam.title} protocol. Score: ${score}/${exam.questions.length}`
       });
   
       revalidatePath('/student/grades')
@@ -3346,9 +3726,9 @@ export async function submitExam(
     } catch (err: unknown) {
       return { success: false, error: getErrorMessage(err) }
     }
-  }
+}
 
-  export async function getAdminExamRegistry(schoolId: string) {
+export async function getAdminExamRegistry(schoolId: string) {
     try {
         const examsData = await prisma.exam.findMany({
             where: { schoolId },
@@ -3376,12 +3756,9 @@ export async function submitExam(
 
         return { success: true, stats: { totalExams, activeNow, completionRate }, exams };
     } catch (err) {
-      getErrorMessage(err)
         return { success: false, error: getErrorMessage(err) };
     }
 }
-
-
 
 export async function deleteExam(examId: string, teacherId: string) {
   try {
@@ -3390,9 +3767,9 @@ export async function deleteExam(examId: string, teacherId: string) {
       include: { _count: { select: { assessments: true } } }
     })
 
-    if (!exam) throw new Error("Exam not found")
-    if (exam.creatorId !== teacherId) throw new Error("Unauthorized")
-    if (exam._count.assessments > 0) throw new Error("Cannot delete exam. Students have already taken it.")
+    if (!exam) throw new Error("Hub not discovered.")
+    if (exam.creatorId !== teacherId) throw new Error("Unauthorized Security Hub Breach.")
+    if (exam._count.assessments > 0) throw new Error("Protocol Restricted: Identities have already synchronized with this hub.")
 
     await prisma.$transaction(async (tx) => {
       await tx.examQuestion.deleteMany({ where: { examId } })

@@ -77,6 +77,141 @@
 
 
 
+// 'use client'
+
+// import React, { useState, useTransition } from 'react'
+// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+// import { Label } from '@/components/ui/label'
+// import { School, ShieldCheck, Save, Loader2, User } from 'lucide-react'
+// import { updateSchoolProfile } from '@/app/actions/school-settings.action'
+// import { updatePersonalProfile } from '@/app/actions/profile'
+// import { useProfileStore } from '@/store/profileStore'
+// import { toast } from 'sonner'
+// import { cn } from '@/lib/utils'
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// interface ProfileSectionProps {
+//     data: {
+//         school?: {
+//             name: string;
+//         };
+//     };
+//     onUpdate: (updated: any) => void;
+// }
+
+// /**
+//  * REGISTRY IDENTITY HUB (Tier 2/3)
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Flip (bg-card, bg-surface, border-border).
+//  * Rule 19: Standardized Geometry [2rem].
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  */
+// export function ProfileSection({ data, onUpdate }: ProfileSectionProps) {
+//     const { profile } = useProfileStore()
+//     const [name, setName] = useState(data?.school?.name || profile?.name || "")
+//     const [isPending, startTransition] = useTransition()
+
+//     const handleSave = () => {
+//         if (!name.trim()) return toast.error("Identity Error: Name cannot be null.");
+
+//         startTransition(async () => {
+//             try {
+//                 const res = profile?.schoolId 
+//                     ? await updateSchoolProfile(profile.schoolId, { 
+//                         name, 
+//                         primaryColor: profile.primaryColor, 
+//                         secondaryColor: profile.secondaryColor 
+//                       })
+//                     : await updatePersonalProfile({ name });
+
+//                 if (res.success) {
+//                     toast.success("Identity Synchronization Complete.");
+//                     if (onUpdate) onUpdate({ school: { ...data?.school, name } });
+//                 } else {
+//                     toast.error("Registry update failed.");
+//                 }
+//             } catch (err) {
+//                 toast.error("Protocol Breach: Synchronization aborted.");
+//             }
+//         })
+//     }
+
+//     return (
+//         <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl animate-in fade-in duration-500">
+//             {/* ── HEADER (Rule 18/21) ── */}
+//             <CardHeader className="p-6 md:p-8 bg-surface/50 border-b border-border">
+//                 <CardTitle className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter flex items-center gap-4">
+//                     {/* Rule 21: Scale Protocol Icon Container */}
+//                     <div className="h-10 w-10 rounded-xl bg-school-primary-50 border border-school-primary-200 flex items-center justify-center shadow-inner">
+//                         {profile?.schoolId ? (
+//                             <School className="h-5 w-5 text-school-primary" />
+//                         ) : (
+//                             <User className="h-5 w-5 text-school-primary" />
+//                         )}
+//                     </div>
+//                     Registry Identity
+//                 </CardTitle>
+//             </CardHeader>
+
+//             <CardContent className="p-6 md:p-10 space-y-10">
+//                 {/* ── IDENTITY FIELD ── */}
+//                 <div className="space-y-4 group">
+//                     <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                         {profile?.schoolId ? "Institutional Identification" : "Personal Display Identity"}
+//                     </Label>
+//                     <input 
+//                         value={name}
+//                         onChange={(e) => setName(e.target.value)}
+//                         placeholder="Registry Name..."
+//                         className={cn(
+//                             "w-full px-6 py-5 outline-none transition-all",
+//                             "bg-surface border border-border rounded-2xl shadow-sm", // Rule 18/19
+//                             "text-base font-extrabold text-foreground uppercase italic tracking-tight",
+//                             "focus:ring-2 focus:ring-school-primary-200 focus:border-school-primary", // Rule 21
+//                             "placeholder:text-muted-foreground/30"
+//                         )}
+//                     />
+//                     <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-widest ml-1 italic opacity-60">
+//                         This identity will be visible across all academic modules and reports.
+//                     </p>
+//                 </div>
+
+//                 {/* ── FOOTER ACTIONS ── */}
+//                 <div className="pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-6">
+//                     <div className="flex items-center gap-3 text-muted-foreground/60">
+//                         <ShieldCheck className="h-4 w-4 text-school-primary" />
+//                         <span className="text-[10px] font-bold uppercase tracking-widest italic">
+//                             Authorized Metadata Update
+//                         </span>
+//                     </div>
+                    
+//                     <button 
+//                         onClick={handleSave}
+//                         disabled={isPending}
+//                         className={cn(
+//                             "w-full sm:w-auto px-10 py-4 rounded-xl transition-all shadow-xl active:scale-95",
+//                             "bg-school-primary text-on-school-primary font-extrabold text-[10px] uppercase tracking-widest", // Rule 18 Contrast
+//                             "hover:brightness-110 shadow-school-primary-200 disabled:opacity-20"
+//                         )}
+//                     >
+//                         {isPending ? (
+//                             <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+//                         ) : (
+//                             <div className="flex items-center justify-center gap-2">
+//                                 <Save className="h-4 w-4" />
+//                                 Persist Hub Changes
+//                             </div>
+//                         )}
+//                     </button>
+//                 </div>
+//             </CardContent>
+//         </Card>
+//     )
+// }
+
+
+
 'use client'
 
 import React, { useState, useTransition } from 'react'
@@ -88,32 +223,39 @@ import { updatePersonalProfile } from '@/app/actions/profile'
 import { useProfileStore } from '@/store/profileStore'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/error-handler'
+// ✅ Rule 15: Importing the authoritative Hub Data type
+import { type SchoolSettingsData } from '@/app/actions/school-settings.action'
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface ProfileSectionProps {
-    data: {
-        school?: {
-            name: string;
-        };
-    };
-    onUpdate: (updated: any) => void;
+    data: SchoolSettingsData | null;
+    // ✅ RESOLVED: Explicitly typed partial update protocol
+    onUpdate: (updated: Partial<SchoolSettingsData>) => void;
 }
 
 /**
  * REGISTRY IDENTITY HUB (Tier 2/3)
  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
- * Rule 18: Semantic Flip (bg-card, bg-surface, border-border).
+ * Rule 15: Zero 'any' types in props or logic.
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
  * Rule 19: Standardized Geometry [2rem].
  * Rule 21: Scale Protocol for clean mathematical brand tints.
+ * Rule 23: Explicit Error Protocol with getErrorMessage.
  */
 export function ProfileSection({ data, onUpdate }: ProfileSectionProps) {
     const { profile } = useProfileStore()
+    
+    // Logic: Initialize from Hub Data or Profile Store
     const [name, setName] = useState(data?.school?.name || profile?.name || "")
     const [isPending, startTransition] = useTransition()
 
     const handleSave = () => {
-        if (!name.trim()) return toast.error("Identity Error: Name cannot be null.");
+        if (!name.trim()) {
+            toast.error("Identity Protocol Error: Registry name is mandatory.");
+            return;
+        }
 
         startTransition(async () => {
             try {
@@ -126,23 +268,34 @@ export function ProfileSection({ data, onUpdate }: ProfileSectionProps) {
                     : await updatePersonalProfile({ name });
 
                 if (res.success) {
-                    toast.success("Identity Synchronization Complete.");
-                    if (onUpdate) onUpdate({ school: { ...data?.school, name } });
+                    toast.success("Identity Hub Synchronized.");
+                    
+                    // ✅ Rule 15: Type-safe partial update execution
+                    if (data?.school) {
+                        onUpdate({ 
+                            school: { 
+                                ...data.school, 
+                                name 
+                            } 
+                        });
+                    }
                 } else {
-                    toast.error("Registry update failed.");
+                    toast.error(res.error || "Registry update protocol failed.");
                 }
-            } catch (err) {
-                toast.error("Protocol Breach: Synchronization aborted.");
+            } catch (error: unknown) {
+                // ✅ Rule 23: Standardized Error Extraction
+                const message = getErrorMessage(error);
+                toast.error(message);
             }
         })
     }
 
     return (
         <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl animate-in fade-in duration-500">
-            {/* ── HEADER (Rule 18/21) ── */}
+            {/* ── HEADER (Rule 11/18/21) ── */}
             <CardHeader className="p-6 md:p-8 bg-surface/50 border-b border-border">
                 <CardTitle className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter flex items-center gap-4">
-                    {/* Rule 21: Scale Protocol Icon Container */}
+                    {/* Rule 21: Scale Protocol Hub Icon */}
                     <div className="h-10 w-10 rounded-xl bg-school-primary-50 border border-school-primary-200 flex items-center justify-center shadow-inner">
                         {profile?.schoolId ? (
                             <School className="h-5 w-5 text-school-primary" />
@@ -150,7 +303,7 @@ export function ProfileSection({ data, onUpdate }: ProfileSectionProps) {
                             <User className="h-5 w-5 text-school-primary" />
                         )}
                     </div>
-                    Registry Identity
+                    Registry Identity Hub
                 </CardTitle>
             </CardHeader>
 
@@ -158,12 +311,12 @@ export function ProfileSection({ data, onUpdate }: ProfileSectionProps) {
                 {/* ── IDENTITY FIELD ── */}
                 <div className="space-y-4 group">
                     <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
-                        {profile?.schoolId ? "Institutional Identification" : "Personal Display Identity"}
+                        {profile?.schoolId ? "Official Institutional Designation" : "Personal Display Identity"}
                     </Label>
                     <input 
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Registry Name..."
+                        placeholder="Registry Identity..."
                         className={cn(
                             "w-full px-6 py-5 outline-none transition-all",
                             "bg-surface border border-border rounded-2xl shadow-sm", // Rule 18/19
@@ -173,7 +326,7 @@ export function ProfileSection({ data, onUpdate }: ProfileSectionProps) {
                         )}
                     />
                     <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-widest ml-1 italic opacity-60">
-                        This identity will be visible across all academic modules and reports.
+                        This identity will be synchronized across all academic hubs and module ledgers.
                     </p>
                 </div>
 
@@ -182,7 +335,7 @@ export function ProfileSection({ data, onUpdate }: ProfileSectionProps) {
                     <div className="flex items-center gap-3 text-muted-foreground/60">
                         <ShieldCheck className="h-4 w-4 text-school-primary" />
                         <span className="text-[10px] font-bold uppercase tracking-widest italic">
-                            Authorized Metadata Update
+                            Authenticated Metadata Handshake
                         </span>
                     </div>
                     
@@ -200,7 +353,7 @@ export function ProfileSection({ data, onUpdate }: ProfileSectionProps) {
                         ) : (
                             <div className="flex items-center justify-center gap-2">
                                 <Save className="h-4 w-4" />
-                                Persist Hub Changes
+                                Commit Hub Changes
                             </div>
                         )}
                     </button>

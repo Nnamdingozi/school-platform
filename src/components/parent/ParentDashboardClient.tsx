@@ -668,6 +668,254 @@
 
 
 
+// 'use client';
+
+// import React, { useMemo, useState, useEffect } from 'react';
+// import { useProfileStore } from '@/store/profileStore';
+// import { 
+//     AssessmentRecord, ChildProfile, 
+//     SubjectProgress 
+// } from '@/types/parent-dashboard';
+// import { Notification } from '@prisma/client';
+// import { Bell, GraduationCap, BookOpen, ShieldCheck, History, Activity, LucideIcon } from 'lucide-react';
+// import { Card } from '@/components/ui/card';
+// import { useSchool } from "@/context/schoolProvider";
+// import { cn } from '@/lib/utils';
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// type ParentDashboardProps = {
+//     initialProfile: any;
+//     childrenOfParent: ChildProfile[];
+//     subjectsByChild: Record<string, SubjectProgress[]>;
+//     assessmentsByChild: Record<string, AssessmentRecord[]>;
+//     notificationsByChild: Record<string, Notification[]>;
+// };
+
+// // ── Main Component ──────────────────────────────────────────────────────────
+
+// /**
+//  * PARENT PERFORMANCE CONSOLE (Tier 3)
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+//  * Rule 19: Standardized Geometry [2rem].
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  */
+// export function ParentDashboardClient({
+//     initialProfile,
+//     childrenOfParent,
+//     subjectsByChild,
+//     assessmentsByChild,
+//     notificationsByChild,
+// }: ParentDashboardProps) {
+//     // Rule 11 & 17: Sync Registry Identity to Store
+//     const setProfile = useProfileStore((state) => state.setProfile);
+//     const { school } = useSchool();
+    
+//     useEffect(() => {
+//         if (initialProfile) setProfile(initialProfile);
+//     }, [initialProfile, setProfile]);
+
+//     const schoolName = school?.name ?? initialProfile.school?.name ?? 'Institutional Registry';
+
+//     // Internal Terminal State
+//     const [selectedChildId, setSelectedChildId] = useState<string>(childrenOfParent[0]?.id ?? '');
+//     const [activeTab, setActiveTab] = useState<'overview' | 'subjects' | 'assessments'>('overview');
+
+//     // Contextual Selectors (Rule 11 System Truth)
+//     const currentChild = useMemo(
+//         () => childrenOfParent.find((c) => c.id === selectedChildId) ?? childrenOfParent[0],
+//         [childrenOfParent, selectedChildId]
+//     );
+
+//     const currentSubjects = useMemo(() => subjectsByChild[currentChild?.id ?? ''] ?? [], [subjectsByChild, currentChild?.id]);
+//     const currentAssessments = useMemo(() => assessmentsByChild[currentChild?.id ?? ''] ?? [], [assessmentsByChild, currentChild?.id]);
+//     const currentNotifications = useMemo(() => notificationsByChild[currentChild?.id ?? ''] ?? [], [notificationsByChild, currentChild?.id]);
+
+//     const overallStats = useMemo(() => {
+//         const allPcts = currentSubjects.flatMap(s => s.assessments.map(a => a.pct).filter((p): p is number => p != null));
+//         const overallPct = allPcts.length > 0 ? allPcts.reduce((a, b) => a + b, 0) / allPcts.length : 0;
+//         const lessonsCount = currentSubjects.reduce((acc, s) => acc + s.topics.filter(t => t.hasLesson).length, 0);
+
+//         return { 
+//             totalSubjects: currentSubjects.length, 
+//             overallPct: Math.round(overallPct), 
+//             lessonsAvailable: lessonsCount
+//         };
+//     }, [currentSubjects]);
+
+//     return (
+//         <div className="min-h-screen bg-background text-foreground animate-in fade-in duration-700 pb-24">
+            
+//             {/* ── HEADER (Rule 18/21) ── */}
+//             <header className="border-b border-border bg-surface/80 backdrop-blur-md sticky top-0 z-50">
+//                 <div className="mx-auto flex max-w-7xl items-center justify-between px-4 md:px-8 py-4">
+//                     <div className="flex items-center gap-4">
+//                         <div className="h-10 w-10 rounded-xl bg-school-primary flex items-center justify-center font-extrabold text-on-school-primary italic shadow-lg">
+//                             {schoolName.charAt(0)}
+//                         </div>
+//                         <div className="hidden sm:block">
+//                             <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest leading-none">Parent Terminal</p>
+//                             <h2 className="text-base font-extrabold uppercase italic tracking-tighter text-foreground mt-1">{schoolName}</h2>
+//                         </div>
+//                     </div>
+
+//                     <div className="flex items-center gap-6">
+//                         <div className="hidden md:block text-right">
+//                             <div className="text-sm font-extrabold uppercase italic tracking-tight leading-none">{initialProfile.name}</div>
+//                             <div className="text-[9px] font-bold text-muted-foreground uppercase mt-1 tracking-widest">Authorized Guardian</div>
+//                         </div>
+//                         <div className="relative p-2.5 rounded-xl bg-surface border border-border shadow-sm group cursor-pointer hover:border-school-primary-200 transition-all">
+//                             <Bell className="h-5 w-5 text-muted-foreground group-hover:text-school-primary transition-colors" />
+//                             {currentNotifications.length > 0 && (
+//                                 <span className="absolute -top-1 -right-1 h-4 w-4 bg-destructive text-white text-[9px] font-extrabold rounded-full flex items-center justify-center animate-in zoom-in">
+//                                     {currentNotifications.length}
+//                                 </span>
+//                             )}
+//                         </div>
+//                     </div>
+//                 </div>
+//             </header>
+
+//             <main className="mx-auto max-w-7xl px-4 md:px-8 py-10 space-y-12">
+                
+//                 {/* ── CHILD SWITCHER (Rule 19/21) ── */}
+//                 {childrenOfParent.length > 1 && (
+//                     <div className="flex gap-2 bg-surface p-1.5 rounded-2xl w-fit border border-border shadow-inner">
+//                         {childrenOfParent.map(child => (
+//                             <button
+//                                 key={child.id}
+//                                 onClick={() => setSelectedChildId(child.id)}
+//                                 className={cn(
+//                                     "px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all",
+//                                     selectedChildId === child.id 
+//                                     ? "bg-school-primary text-on-school-primary shadow-lg" 
+//                                     : "text-muted-foreground hover:text-foreground"
+//                                 )}
+//                             >
+//                                 {child.name}
+//                             </button>
+//                         ))}
+//                     </div>
+//                 )}
+
+//                 {/* ── PERFORMANCE GRID (Rule 20) ── */}
+//                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+//                     {/* Primary Identity Card (Rule 19/21) */}
+//                     <Card className="bg-card border-border rounded-[2rem] p-8 md:p-10 flex flex-col items-center justify-center text-center shadow-2xl relative overflow-hidden group">
+//                         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
+//                             <GraduationCap className="h-32 w-32 text-foreground" />
+//                         </div>
+                        
+//                         <div className="relative h-44 w-44 flex items-center justify-center mb-8">
+//                             <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+//                                 <circle cx="50" cy="50" r="44" fill="none" className="stroke-surface" strokeWidth="8" />
+//                                 <circle 
+//                                     cx="50" cy="50" r="44" fill="none" 
+//                                     stroke="var(--school-primary)" strokeWidth="8" 
+//                                     strokeDasharray="276.5" 
+//                                     strokeDashoffset={276.5 - (276.5 * overallStats.overallPct) / 100}
+//                                     strokeLinecap="round"
+//                                     className="transition-all duration-1000 ease-out shadow-lg"
+//                                 />
+//                             </svg>
+//                             <div className="absolute inset-0 flex flex-col items-center justify-center">
+//                                 <span className="text-4xl font-extrabold italic tracking-tighter tabular-nums">{overallStats.overallPct}%</span>
+//                                 <span className="text-[9px] font-bold uppercase text-muted-foreground tracking-[0.2em] mt-1">Aggregate</span>
+//                             </div>
+//                         </div>
+//                         <h3 className="font-extrabold text-2xl uppercase italic text-foreground leading-tight tracking-tighter">{currentChild?.name}</h3>
+//                         <div className="mt-3 flex items-center gap-2 px-4 py-1 rounded-full bg-surface border border-border shadow-sm">
+//                             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{currentChild?.grade} hub</span>
+//                         </div>
+//                     </Card>
+
+//                     {/* Telemetry Module Grid */}
+//                     <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+//                         <StatTile label="Registry Modules" value={overallStats.totalSubjects} icon={BookOpen} variant="primary" />
+//                         <StatTile label="Academic Hubs" value={overallStats.lessonsAvailable} icon={ShieldCheck} variant="primary" />
+//                         <StatTile label="Performance Index" value={`${overallStats.overallPct}%`} icon={Activity} variant="primary" />
+//                         <StatTile label="System Alerts" value={currentNotifications.length} icon={Bell} variant="destructive" />
+//                     </div>
+//                 </div>
+
+//                 {/* ── TAB NAVIGATION HUB (Rule 11) ── */}
+//                 <div className="space-y-8 pt-4">
+//                    <nav className="flex gap-10 border-b border-border px-4 overflow-x-auto no-scrollbar">
+//                         {(['overview', 'subjects', 'assessments'] as const).map((t) => (
+//                             <button 
+//                                 key={t} 
+//                                 onClick={() => setActiveTab(t)}
+//                                 className={cn(
+//                                     "pb-5 text-[10px] font-extrabold uppercase tracking-[0.3em] transition-all relative whitespace-nowrap",
+//                                     activeTab === t ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+//                                 )}
+//                             >
+//                                 {t}
+//                                 {activeTab === t && (
+//                                     <div 
+//                                         className="absolute bottom-0 left-0 right-0 h-1 bg-school-primary rounded-t-full shadow-[0_0_15px_rgba(var(--school-primary-raw),0.4)]" 
+//                                     />
+//                                 )}
+//                             </button>
+//                         ))}
+//                    </nav>
+
+//                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+//                         {activeTab === 'assessments' && (
+//                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                                 {currentAssessments.length > 0 ? currentAssessments.map(a => (
+//                                     <Card key={a.id} className="bg-card border-border p-6 rounded-[1.5rem] flex justify-between items-center hover:border-school-primary-200 transition-all shadow-sm group">
+//                                         <div className="space-y-1.5 min-w-0">
+//                                             <p className="font-extrabold text-foreground uppercase italic text-sm truncate">{a.subjectName}</p>
+//                                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">{a.topicTitle}</p>
+//                                         </div>
+//                                         <div className="text-right pl-4">
+//                                             <p className="text-2xl font-extrabold italic leading-none text-school-primary tabular-nums tracking-tighter">{a.pct}%</p>
+//                                             <p className="text-[9px] text-muted-foreground font-bold uppercase mt-2 tracking-tighter opacity-60">
+//                                                 {new Date(a.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+//                                             </p>
+//                                         </div>
+//                                     </Card>
+//                                 )) : (
+//                                     <div className="col-span-full py-24 text-center bg-surface/50 border-2 border-dashed border-border rounded-[2rem]">
+//                                         <History className="h-12 w-12 mx-auto mb-4 text-muted-foreground/20" />
+//                                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">Performance ledger offline</p>
+//                                     </div>
+//                                 )}
+//                             </div>
+//                         )}
+//                         {/* Other tab contents handled here */}
+//                    </div>
+//                 </div>
+//             </main>
+//         </div>
+//     );
+// }
+
+// // ── Sub-Components ──────────────────────────────────────────────────────────
+
+// function StatTile({ label, value, icon: Icon, variant = 'primary' }: { label: string, value: string | number, icon:LucideIcon, variant: 'primary' | 'destructive' }) {
+//     return (
+//         <Card className="bg-card border-border p-8 rounded-[2rem] shadow-xl group hover:border-school-primary-300 transition-all">
+//             <div className="flex items-center gap-5 mb-6">
+//                 {/* Rule 21 Scale Protocol */}
+//                 <div className={cn(
+//                     "p-3 rounded-2xl border shadow-inner transition-transform group-hover:scale-110",
+//                     variant === 'primary' ? "bg-school-primary-50 border-school-primary-200 text-school-primary" : "bg-destructive/10 border-destructive/20 text-destructive"
+//                 )}>
+//                     <Icon className="h-5 w-5" />
+//                 </div>
+//                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
+//             </div>
+//             <p className="text-5xl font-extrabold italic tracking-tighter text-foreground tabular-nums">
+//                 {value}
+//             </p>
+//         </Card>
+//     );
+// }
+
 'use client';
 
 import React, { useMemo, useState, useEffect } from 'react';
@@ -677,20 +925,22 @@ import {
     SubjectProgress 
 } from '@/types/parent-dashboard';
 import { Notification } from '@prisma/client';
-import { Bell, GraduationCap, Layout, BookOpen, ShieldCheck, History, Activity } from 'lucide-react';
+import { Bell, GraduationCap, BookOpen, ShieldCheck, History, Activity, LucideIcon } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useSchool } from "@/context/schoolProvider";
 import { cn } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/error-handler';
+import { type AnyProfile } from '@/types/profile';
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
-type ParentDashboardProps = {
-    initialProfile: any;
+interface ParentDashboardProps {
+    initialProfile: unknown; // ✅ Rule 15: unknown bridge for safe casting
     childrenOfParent: ChildProfile[];
     subjectsByChild: Record<string, SubjectProgress[]>;
     assessmentsByChild: Record<string, AssessmentRecord[]>;
     notificationsByChild: Record<string, Notification[]>;
-};
+}
 
 // ── Main Component ──────────────────────────────────────────────────────────
 
@@ -700,6 +950,7 @@ type ParentDashboardProps = {
  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
  * Rule 19: Standardized Geometry [2rem].
  * Rule 21: Scale Protocol for clean mathematical brand tints.
+ * Rule 23: Explicit Error Protocol with getErrorMessage.
  */
 export function ParentDashboardClient({
     initialProfile,
@@ -708,21 +959,29 @@ export function ParentDashboardClient({
     assessmentsByChild,
     notificationsByChild,
 }: ParentDashboardProps) {
-    // Rule 11 & 17: Sync Registry Identity to Store
     const setProfile = useProfileStore((state) => state.setProfile);
     const { school } = useSchool();
     
+    // ── IDENTITY HYDRATION (Rule 11/23) ──
     useEffect(() => {
-        if (initialProfile) setProfile(initialProfile);
+        try {
+            if (initialProfile) {
+                // Rule 15: Bridging server data to store profile type
+                setProfile(initialProfile as unknown as AnyProfile);
+            }
+        } catch (error: unknown) {
+            // ✅ Rule 23: Standardized Error Extraction
+            console.error(`[IDENTITY_SYNC_FAULT]: ${getErrorMessage(error)}`);
+        }
     }, [initialProfile, setProfile]);
 
-    const schoolName = school?.name ?? initialProfile.school?.name ?? 'Institutional Registry';
+    const schoolName = school?.name || "Registry Hub";
 
-    // Internal Terminal State
+    // Internal Hub State
     const [selectedChildId, setSelectedChildId] = useState<string>(childrenOfParent[0]?.id ?? '');
     const [activeTab, setActiveTab] = useState<'overview' | 'subjects' | 'assessments'>('overview');
 
-    // Contextual Selectors (Rule 11 System Truth)
+    // Contextual Data Selectors
     const currentChild = useMemo(
         () => childrenOfParent.find((c) => c.id === selectedChildId) ?? childrenOfParent[0],
         [childrenOfParent, selectedChildId]
@@ -735,19 +994,19 @@ export function ParentDashboardClient({
     const overallStats = useMemo(() => {
         const allPcts = currentSubjects.flatMap(s => s.assessments.map(a => a.pct).filter((p): p is number => p != null));
         const overallPct = allPcts.length > 0 ? allPcts.reduce((a, b) => a + b, 0) / allPcts.length : 0;
-        const lessonsCount = currentSubjects.reduce((acc, s) => acc + s.topics.filter(t => t.hasLesson).length, 0);
+        const modulesCount = currentSubjects.reduce((acc, s) => acc + s.topics.filter(t => t.hasLesson).length, 0);
 
         return { 
             totalSubjects: currentSubjects.length, 
             overallPct: Math.round(overallPct), 
-            lessonsAvailable: lessonsCount
+            modulesAvailable: modulesCount
         };
     }, [currentSubjects]);
 
     return (
         <div className="min-h-screen bg-background text-foreground animate-in fade-in duration-700 pb-24">
             
-            {/* ── HEADER (Rule 18/21) ── */}
+            {/* ── HEADER HUB (Rule 18/21) ── */}
             <header className="border-b border-border bg-surface/80 backdrop-blur-md sticky top-0 z-50">
                 <div className="mx-auto flex max-w-7xl items-center justify-between px-4 md:px-8 py-4">
                     <div className="flex items-center gap-4">
@@ -755,20 +1014,22 @@ export function ParentDashboardClient({
                             {schoolName.charAt(0)}
                         </div>
                         <div className="hidden sm:block">
-                            <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest leading-none">Parent Terminal</p>
+                            <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest leading-none">Guardian Terminal</p>
                             <h2 className="text-base font-extrabold uppercase italic tracking-tighter text-foreground mt-1">{schoolName}</h2>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-6">
                         <div className="hidden md:block text-right">
-                            <div className="text-sm font-extrabold uppercase italic tracking-tight leading-none">{initialProfile.name}</div>
-                            <div className="text-[9px] font-bold text-muted-foreground uppercase mt-1 tracking-widest">Authorized Guardian</div>
+                            <div className="text-sm font-extrabold uppercase italic tracking-tight leading-none">
+                                {(initialProfile as AnyProfile)?.name || "Guardian"}
+                            </div>
+                            <div className="text-[9px] font-bold text-muted-foreground uppercase mt-1 tracking-widest">Authorized Registry Access</div>
                         </div>
                         <div className="relative p-2.5 rounded-xl bg-surface border border-border shadow-sm group cursor-pointer hover:border-school-primary-200 transition-all">
                             <Bell className="h-5 w-5 text-muted-foreground group-hover:text-school-primary transition-colors" />
                             {currentNotifications.length > 0 && (
-                                <span className="absolute -top-1 -right-1 h-4 w-4 bg-destructive text-white text-[9px] font-extrabold rounded-full flex items-center justify-center animate-in zoom-in">
+                                <span className="absolute -top-1 -right-1 h-4 w-4 bg-destructive text-white text-[8px] font-extrabold rounded-full flex items-center justify-center animate-in zoom-in tabular-nums">
                                     {currentNotifications.length}
                                 </span>
                             )}
@@ -781,16 +1042,16 @@ export function ParentDashboardClient({
                 
                 {/* ── CHILD SWITCHER (Rule 19/21) ── */}
                 {childrenOfParent.length > 1 && (
-                    <div className="flex gap-2 bg-surface p-1.5 rounded-2xl w-fit border border-border shadow-inner">
+                    <div className="flex flex-wrap gap-2 bg-surface p-1.5 rounded-2xl w-fit border border-border shadow-inner">
                         {childrenOfParent.map(child => (
                             <button
                                 key={child.id}
                                 onClick={() => setSelectedChildId(child.id)}
                                 className={cn(
-                                    "px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all",
+                                    "px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all whitespace-nowrap border",
                                     selectedChildId === child.id 
-                                    ? "bg-school-primary text-on-school-primary shadow-lg" 
-                                    : "text-muted-foreground hover:text-foreground"
+                                    ? "bg-school-primary text-on-school-primary shadow-lg border-school-primary" 
+                                    : "bg-card border-transparent text-muted-foreground hover:text-foreground"
                                 )}
                             >
                                 {child.name}
@@ -802,8 +1063,8 @@ export function ParentDashboardClient({
                 {/* ── PERFORMANCE GRID (Rule 20) ── */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
-                    {/* Primary Identity Card (Rule 19/21) */}
-                    <Card className="bg-card border-border rounded-[2rem] p-8 md:p-10 flex flex-col items-center justify-center text-center shadow-2xl relative overflow-hidden group">
+                    {/* Primary Identity Card */}
+                    <Card className="bg-card border-border rounded-[2rem] p-8 md:p-12 flex flex-col items-center justify-center text-center shadow-2xl relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
                             <GraduationCap className="h-32 w-32 text-foreground" />
                         </div>
@@ -821,22 +1082,22 @@ export function ParentDashboardClient({
                                 />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-4xl font-extrabold italic tracking-tighter tabular-nums">{overallStats.overallPct}%</span>
+                                <span className="text-4xl font-extrabold italic tracking-tighter tabular-nums leading-none">{overallStats.overallPct}%</span>
                                 <span className="text-[9px] font-bold uppercase text-muted-foreground tracking-[0.2em] mt-1">Aggregate</span>
                             </div>
                         </div>
                         <h3 className="font-extrabold text-2xl uppercase italic text-foreground leading-tight tracking-tighter">{currentChild?.name}</h3>
-                        <div className="mt-3 flex items-center gap-2 px-4 py-1 rounded-full bg-surface border border-border shadow-sm">
-                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{currentChild?.grade} hub</span>
+                        <div className="mt-3 flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface border border-border shadow-sm">
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{currentChild?.grade} Hub</span>
                         </div>
                     </Card>
 
-                    {/* Telemetry Module Grid */}
+                    {/* Telemetry Module Matrix */}
                     <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <StatTile label="Registry Modules" value={overallStats.totalSubjects} icon={BookOpen} variant="primary" />
-                        <StatTile label="Academic Hubs" value={overallStats.lessonsAvailable} icon={ShieldCheck} variant="primary" />
-                        <StatTile label="Performance Index" value={`${overallStats.overallPct}%`} icon={Activity} variant="primary" />
-                        <StatTile label="System Alerts" value={currentNotifications.length} icon={Bell} variant="destructive" />
+                        <StatTile label="Academic Modules" value={overallStats.totalSubjects} icon={BookOpen} variant="primary" />
+                        <StatTile label="Registry Modules" value={overallStats.modulesAvailable} icon={ShieldCheck} variant="primary" />
+                        <StatTile label="Proficiency Index" value={`${overallStats.overallPct}%`} icon={Activity} variant="primary" />
+                        <StatTile label="System Transmissions" value={currentNotifications.length} icon={Bell} variant="destructive" />
                     </div>
                 </div>
 
@@ -854,9 +1115,7 @@ export function ParentDashboardClient({
                             >
                                 {t}
                                 {activeTab === t && (
-                                    <div 
-                                        className="absolute bottom-0 left-0 right-0 h-1 bg-school-primary rounded-t-full shadow-[0_0_15px_rgba(var(--school-primary-raw),0.4)]" 
-                                    />
+                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-school-primary rounded-t-full shadow-[0_0_15px_rgba(var(--school-primary-raw),0.4)]" />
                                 )}
                             </button>
                         ))}
@@ -881,12 +1140,11 @@ export function ParentDashboardClient({
                                 )) : (
                                     <div className="col-span-full py-24 text-center bg-surface/50 border-2 border-dashed border-border rounded-[2rem]">
                                         <History className="h-12 w-12 mx-auto mb-4 text-muted-foreground/20" />
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">Performance ledger offline</p>
+                                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">Hub telemetry currently offline</p>
                                     </div>
                                 )}
                             </div>
                         )}
-                        {/* Other tab contents handled here */}
                    </div>
                 </div>
             </main>
@@ -894,9 +1152,9 @@ export function ParentDashboardClient({
     );
 }
 
-// ── Sub-Components ──────────────────────────────────────────────────────────
+// ── Sub-Components (Registry Style) ─────────────────────────────────────────
 
-function StatTile({ label, value, icon: Icon, variant = 'primary' }: { label: string, value: string | number, icon: any, variant: 'primary' | 'destructive' }) {
+function StatTile({ label, value, icon: Icon, variant = 'primary' }: { label: string, value: string | number, icon: LucideIcon, variant: 'primary' | 'destructive' }) {
     return (
         <Card className="bg-card border-border p-8 rounded-[2rem] shadow-xl group hover:border-school-primary-300 transition-all">
             <div className="flex items-center gap-5 mb-6">
@@ -909,7 +1167,7 @@ function StatTile({ label, value, icon: Icon, variant = 'primary' }: { label: st
                 </div>
                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
             </div>
-            <p className="text-5xl font-extrabold italic tracking-tighter text-foreground tabular-nums">
+            <p className="text-5xl font-extrabold italic tracking-tighter text-foreground tabular-nums leading-none">
                 {value}
             </p>
         </Card>

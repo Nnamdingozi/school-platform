@@ -1103,6 +1103,79 @@
 
 
 
+// import { Metadata } from "next";
+// import { Inter } from "next/font/google";
+// import "./globals.css";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getSchoolThemeStyle } from "@/lib/school-theme";
+// import { cookies } from "next/headers";
+// import { SchoolProvider } from "@/context/schoolProvider";
+// import { ProfileInitializer } from "@/components/profileInitializer";
+// import { BrandingProvider } from "@/context/brandingProvider";
+// import { Toaster } from "@/components/ui/sonner";
+
+// const inter = Inter({ subsets: ["latin"] });
+
+// export default async function RootLayout({ children }: { children: React.ReactNode }) {
+//     const cookieStore = await cookies();
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+
+//     // 1. Resolve Global Identity (Server-Side)
+//     let profile = null;
+//     if (user) {
+//         profile = await prisma.profile.findUnique({
+//             where: { id: user.id },
+//             select: {
+//                 id: true,
+//                 theme: true,
+//                 schoolId: true,
+//                 role: true,
+//                 name: true,
+//                 email: true,
+//                 // ✅ Fetch colors from School, not Profile
+//                 school: {
+//                     select: {
+//                         primaryColor: true,
+//                         secondaryColor: true,
+//                     }
+//                 }
+//             }
+//         });
+//     }
+
+//     // 2. Resolve Theme & Branding
+//     const cookieTheme = cookieStore.get('theme')?.value || 'dark';
+//     const resolvedTheme = profile?.theme || cookieTheme;
+
+//     // ✅ Pull colors from the nested school relation
+//     const primaryColor = profile?.school?.primaryColor || null;
+//     const secondaryColor = profile?.school?.secondaryColor || null;
+//     const brandingStyles = getSchoolThemeStyle(primaryColor, secondaryColor);
+
+//     return (
+//         <html
+//             lang="en"
+//             className={resolvedTheme}
+//             style={brandingStyles}
+//             suppressHydrationWarning
+//         >
+//             <body className={`${inter.className} bg-background text-foreground antialiased`}>
+//                 <SchoolProvider initialProfile={profile as any}>
+//                     <ProfileInitializer profile={profile as any} />
+//                     <BrandingProvider>
+//                         <Toaster />
+//                         {children}
+//                     </BrandingProvider>
+//                 </SchoolProvider>
+//             </body>
+//         </html>
+//     );
+// }
+
+
+import React from "react";
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -1114,59 +1187,98 @@ import { SchoolProvider } from "@/context/schoolProvider";
 import { ProfileInitializer } from "@/components/profileInitializer";
 import { BrandingProvider } from "@/context/brandingProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { getErrorMessage } from "@/lib/error-handler";
+import { type AnyProfile } from "@/types/profile";
 
 const inter = Inter({ subsets: ["latin"] });
 
+/**
+ * GLOBAL REGISTRY METADATA
+ * Rule 16: Static SEO Baseline for the platform architecture.
+ */
+export const metadata: Metadata = {
+    title: {
+        template: "%s | SchoolPaaS Registry",
+        default: "SchoolPaaS | The AI Academic Core",
+    },
+    description: "Multicurricular institutional management and personal learning hub synchronized across global registries.",
+    keywords: ["Academic Registry", "Syllabus Hub", "Institutional Management", "AI Pedagogy"],
+};
+
+/**
+ * ROOT REGISTRY LAYOUT
+ * Rule 11: System-wide Typography consistency.
+ * Rule 12: Server-First identity and branding resolution.
+ * Rule 15: Zero 'any' types. JSON handled via strict interface casting.
+ * Rule 18: Semantic Flip via resolvedTheme and class injection.
+ * Rule 23: Explicit Error Protocol for registry handshake.
+ */
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
     const cookieStore = await cookies();
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    
+    let hydratedProfile: AnyProfile | null = null;
 
-    // 1. Resolve Global Identity (Server-Side)
-    let profile = null;
-    if (user) {
-        profile = await prisma.profile.findUnique({
-            where: { id: user.id },
-            select: {
-                id: true,
-                theme: true,
-                schoolId: true,
-                role: true,
-                name: true,
-                email: true,
-                // ✅ Fetch colors from School, not Profile
-                school: {
-                    select: {
-                        primaryColor: true,
-                        secondaryColor: true,
+    try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+
+        // 1. Resolve Identity Hub (Server-Side Rule 12)
+        if (authUser) {
+            const profileData = await prisma.profile.findUnique({
+                where: { id: authUser.id },
+                select: {
+                    id: true,
+                    theme: true,
+                    schoolId: true,
+                    role: true,
+                    name: true,
+                    email: true,
+                    // ✅ Tier 2: Branding anchored to Institutional Hub Source of Truth
+                    school: {
+                        select: {
+                            primaryColor: true,
+                            secondaryColor: true,
+                        }
                     }
                 }
+            });
+
+            // Rule 15: Cast Prisma result to Unified Registry Profile Type
+            if (profileData) {
+                hydratedProfile = (profileData as unknown) as AnyProfile;
             }
-        });
+        }
+    } catch (error: unknown) {
+        // ✅ Rule 23: Explicit Error Handling for Registry Handshake
+        console.error(`[ROOT_LAYOUT_SYNC_FAULT]: ${getErrorMessage(error)}`);
     }
 
-    // 2. Resolve Theme & Branding
+    // 2. Resolve Interface Theme & Hub Branding
     const cookieTheme = cookieStore.get('theme')?.value || 'dark';
-    const resolvedTheme = profile?.theme || cookieTheme;
+    const resolvedTheme = hydratedProfile?.theme || cookieTheme;
 
-    // ✅ Pull colors from the nested school relation
-    const primaryColor = profile?.school?.primaryColor || null;
-    const secondaryColor = profile?.school?.secondaryColor || null;
+    // Rule 21: Extract numerical brand tints from the Institutional Hub record
+    const primaryColor = hydratedProfile?.school?.primaryColor || null;
+    const secondaryColor = hydratedProfile?.school?.secondaryColor || null;
     const brandingStyles = getSchoolThemeStyle(primaryColor, secondaryColor);
 
     return (
         <html
             lang="en"
             className={resolvedTheme}
-            style={brandingStyles}
+            style={brandingStyles as React.CSSProperties}
             suppressHydrationWarning
         >
-            <body className={`${inter.className} bg-background text-foreground antialiased`}>
-                <SchoolProvider initialProfile={profile as any}>
-                    <ProfileInitializer profile={profile as any} />
+            <body className={`${inter.className} bg-background text-foreground antialiased selection:bg-school-primary/30`}>
+                <SchoolProvider initialProfile={hydratedProfile}>
+                    {/* Rule 17: Syncing server-fetched identity with the global State Hub */}
+                    <ProfileInitializer profile={hydratedProfile} />
+                    
                     <BrandingProvider>
-                        <Toaster />
-                        {children}
+                        <Toaster closeButton position="top-right" richColors />
+                        <div className="relative flex min-h-screen flex-col">
+                            {children}
+                        </div>
                     </BrandingProvider>
                 </SchoolProvider>
             </body>

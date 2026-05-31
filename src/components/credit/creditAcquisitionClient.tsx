@@ -133,11 +133,11 @@
 import React, { useState } from 'react';
 import { initiateCreditsPayment } from '@/app/actions/credits';
 import { useProfileStore } from '@/store/profileStore';
-import { Loader2, Zap, ArrowRight, Shield, MessageSquare } from 'lucide-react';
+import { Zap, Shield, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { PackageCard } from './packageCard';
 import { getErrorMessage } from '@/lib/error-handler';
-import { cn } from '@/lib/utils';
+
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 

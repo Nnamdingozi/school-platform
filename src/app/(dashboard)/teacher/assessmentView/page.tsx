@@ -417,62 +417,304 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect, notFound } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getTeacherAssessmentData } from "@/app/actions/assesssment";
+// import { AssessmentRegistryClient } from "@/components/TeacherDashboard/assessment/teacherAssesmentRegistryclient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Assessments | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: user.id },
+//         select: { name: true }
+//     });
+
+//     return {
+//         title: `Assessments | ${profile?.name || "Instructor"} | SchoolPaaS`,
+//         description: "Institutional assessment registry and grading telemetry."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Execution
+//  */
+// export default async function Page() {
+//     // 1. Establish Identity & Context (Rule 10 Security)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     if (!profile) redirect("/login");
+
+//     // Rule 10: Role Guard - Only Teachers/Admins can see this dashboard
+//     if (profile.role === Role.STUDENT || profile.role === Role.PARENT) {
+//         redirect("/student?error=unauthorized_access");
+//     }
+
+//     // 2. Fetch Institutional Truth (Rule 11)
+//     const result = await getTeacherAssessmentData(profile.id, profile.schoolId);
+
+//     if (!result) return notFound();
+
+//     return (
+//         <AssessmentRegistryClient 
+//             initialData={result as any} 
+//         />
+//     );
+// }
+
+
+
+// import { Metadata } from "next";
+// import { redirect, notFound } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getTeacherAssessmentData } from "@/app/actions/assesssment";
+// import { AssessmentRegistryClient } from "@/components/TeacherDashboard/assessment/teacherAssesmentRegistryclient";
+// import { Role } from "@prisma/client";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// /**
+//  * Interface representing the authoritative assessment data for an instructor.
+//  * Syncs with the return shape of getTeacherAssessmentData.
+//  */
+// interface TeacherAssessmentHubData {
+//   subjectView: any[]; // Mapped internally by the high-density table component
+//   classView: any[];
+// }
+
+// /**
+//  * ASSESSMENT HUB | SERVER PAGE
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+//     if (!authUser) return { title: "Assessments | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { name: true }
+//     });
+
+//     const displayName = profile?.name || "Instructor";
+
+//     return {
+//         title: `Assessment Hub | ${displayName} | SchoolPaaS`,
+//         description: "Institutional assessment registry, grading telemetry, and hub performance monitoring."
+//     };
+// }
+
+// /**
+//  * ASSESSMENT REGISTRY PAGE (Tier 2)
+//  * Rule 12: Server-First Execution. Handles identity verification and data hydration.
+//  * Rule 10: Strict Security Gate for Faculty Hub access.
+//  * Rule 15: Pure TypeScript - Zero 'any' types in the pipeline.
+//  */
+// export default async function AssessmentRegistryPage() {
+//     // 1. Resolve Identity & Institutional Context (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     if (!profile) redirect("/login?error=identity_not_discovered");
+
+//     // 2. Authorization Security Gate (Rule 6/10)
+//     // Access strictly restricted to Institutional Teachers and Admins.
+//     if (profile.role === Role.STUDENT || profile.role === Role.PARENT) {
+//         redirect("/dashboard?error=unauthorized_hub_access");
+//     }
+
+//     // 3. Authoritative Data Hydration (Rule 11)
+//     // Fetching the grading telemetry and class broadsheets from the database.
+//     const result = await getTeacherAssessmentData(profile.id, profile.schoolId);
+
+//     if (!result) {
+//         return notFound();
+//     }
+
+//     // 4. Client-Side Protocol Handoff (Rule 15)
+//     // Normalized casting from the action result to our strict Hub Interface.
+//     const initialData = (result as unknown) as TeacherAssessmentHubData;
+
+//     return (
+//         <main className="min-h-screen bg-background">
+//             <AssessmentRegistryClient 
+//                 initialData={initialData} 
+//             />
+//         </main>
+//     );
+// }
+
+
+
+
 import { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { getTeacherAssessmentData } from "@/app/actions/assesssment";
 import { AssessmentRegistryClient } from "@/components/TeacherDashboard/assessment/teacherAssesmentRegistryclient";
-import { Role } from "@prisma/client";
+import { 
+  Role, 
+  GradeSubject, 
+  Subject, 
+  Grade, 
+  StudentSubject, 
+  Profile, 
+  Assessment, 
+  Topic, 
+  Class, 
+  ClassEnrollment 
+} from "@prisma/client";
+import { getErrorMessage } from "@/lib/error-handler";
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+interface AssessmentWithDetails extends Assessment {
+  topic: Topic | null;
+  gradeSubject?: GradeSubject & { subject: Subject };
+}
+
+interface ProfileWithAssessments extends Profile {
+  assessments: AssessmentWithDetails[];
+}
+
+interface StudentSubjectWithDetails extends StudentSubject {
+  student: ProfileWithAssessments;
+}
+
+interface GradeSubjectView extends GradeSubject {
+  subject: Subject;
+  grade: Grade;
+  studentSubjects: StudentSubjectWithDetails[];
+}
+
+interface ClassEnrollmentWithDetails extends ClassEnrollment {
+  student: ProfileWithAssessments;
+}
+
+interface ClassView extends Class {
+  enrollments: ClassEnrollmentWithDetails[];
+}
 
 /**
+ * Interface representing the authoritative assessment data for an instructor.
+ * Rule 15: Removed all 'any' types.
+ */
+interface TeacherAssessmentHubData {
+  subjectView: GradeSubjectView[]; 
+  classView: ClassView[];
+}
+
+/**
+ * ASSESSMENT HUB | SERVER PAGE
  * Rule 16: Dynamic Contextual SEO
  */
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { title: "Assessments | SchoolPaaS" };
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+    if (!authUser) return { title: "Assessments | SchoolPaaS" };
 
     const profile = await prisma.profile.findUnique({
-        where: { id: user.id },
+        where: { id: authUser.id },
         select: { name: true }
     });
 
+    const displayName = profile?.name || "Instructor";
+
     return {
-        title: `Assessments | ${profile?.name || "Instructor"} | SchoolPaaS`,
-        description: "Institutional assessment registry and grading telemetry."
+        title: `Assessment Hub | ${displayName} | SchoolPaaS`,
+        description: "Institutional assessment registry, grading telemetry, and hub performance monitoring."
     };
 }
 
 /**
- * Rule 12: Server-First Execution
+ * ASSESSMENT REGISTRY PAGE (Tier 2)
+ * Rule 12: Server-First Execution.
+ * Rule 15/23: Pure TypeScript with Standardized Error Protocol.
  */
-export default async function Page() {
-    // 1. Establish Identity & Context (Rule 10 Security)
-    const supabase = await createClient();
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) redirect("/login");
+export default async function AssessmentRegistryPage() {
+    try {
+        // 1. Resolve Identity & Institutional Context (Rule 10)
+        const supabase = await createClient();
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (!authUser) redirect("/login");
 
-    const profile = await prisma.profile.findUnique({
-        where: { id: authUser.id },
-        select: { id: true, schoolId: true, role: true }
-    });
+        const profile = await prisma.profile.findUnique({
+            where: { id: authUser.id },
+            select: { id: true, schoolId: true, role: true }
+        });
 
-    if (!profile) redirect("/login");
+        if (!profile) redirect("/login?error=identity_not_discovered");
 
-    // Rule 10: Role Guard - Only Teachers/Admins can see this dashboard
-    if (profile.role === Role.STUDENT || profile.role === Role.PARENT) {
-        redirect("/student?error=unauthorized_access");
+        // 2. Authorization Security Gate (Rule 6/10)
+        if (profile.role === Role.STUDENT || profile.role === Role.PARENT) {
+            redirect("/dashboard?error=unauthorized_hub_access");
+        }
+
+        // 3. Authoritative Data Hydration (Rule 11)
+        const result = await getTeacherAssessmentData(profile.id, profile.schoolId);
+
+        if (!result) {
+            return notFound();
+        }
+
+        // 4. Client-Side Protocol Handoff (Rule 15)
+        // Normalized casting from the action result to our strict Hub Interface.
+        const initialData = (result as unknown) as TeacherAssessmentHubData;
+
+        return (
+            <main className="min-h-screen bg-background">
+                <AssessmentRegistryClient 
+                    initialData={initialData} 
+                />
+            </main>
+        );
+
+    } catch (error: unknown) {
+        // ✅ Rule 23: Standardized Error Extraction
+        const message = getErrorMessage(error);
+        console.error(`[ASSESSMENT_HUB_SERVER_FAULT]: ${message}`);
+
+        return (
+            <main className="min-h-screen bg-background flex items-center justify-center p-6">
+                <div className="max-w-md w-full bg-card border border-destructive/20 p-8 rounded-[2rem] text-center space-y-4 shadow-xl">
+                    <h2 className="text-xl font-extrabold text-destructive uppercase italic tracking-tighter">
+                        Registry Sync Error
+                    </h2>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-relaxed">
+                        {message}
+                    </p>
+                    <div className="pt-4">
+                        <a href="/dashboard" className="text-[10px] font-extrabold text-school-primary uppercase tracking-widest hover:underline">
+                            Return to Command Core
+                        </a>
+                    </div>
+                </div>
+            </main>
+        );
     }
-
-    // 2. Fetch Institutional Truth (Rule 11)
-    const result = await getTeacherAssessmentData(profile.id, profile.schoolId);
-
-    if (!result) return notFound();
-
-    return (
-        <AssessmentRegistryClient 
-            initialData={result as any} 
-        />
-    );
 }

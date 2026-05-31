@@ -326,7 +326,7 @@ import {
     markNotificationReadAction,
     deleteNotificationAction,
 } from '@/app/actions/notifications'
-import { MessageCircle, Check, Trash2, Loader2, ExternalLink, Zap } from 'lucide-react'
+import { MessageCircle, Check, Trash2, Loader2, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import { useProfileStore } from '@/store/profileStore'
 import { cn } from '@/lib/utils'

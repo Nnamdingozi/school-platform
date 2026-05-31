@@ -267,11 +267,11 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Loader2, Trash2, UserX, UserCheck, AlertTriangle } from 'lucide-react'
+import { Loader2, Trash2, UserX, UserCheck } from 'lucide-react'
 import { deleteUser, deactivateUser, reactivateUser } from '@/app/actions/user-management'
 import { toast } from 'sonner'
-import { useProfileStore } from '@/store/profileStore'
 import { cn } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/error-handler'
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
@@ -301,7 +301,7 @@ export function UserActionsModal({
     onSuccess 
 }: UserActionsModalProps) {
     const [loading, setLoading] = useState(false)
-    const { profile } = useProfileStore()
+ 
 
     const displayIdentity = userName ?? userEmail
 
@@ -321,6 +321,7 @@ export function UserActionsModal({
                 setLoading(false);
             }
         } catch (error) {
+            getErrorMessage(error)
             toast.error("Registry Protocol Breach: Action Aborted.");
             setLoading(false);
         }

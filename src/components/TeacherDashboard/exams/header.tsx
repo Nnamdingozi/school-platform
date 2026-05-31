@@ -23,7 +23,7 @@
 
 import React from "react";
 import { FileText, ShieldCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
+
 
 /**
  * EXAM ARCHITECT HEADER (Tier 2 Hub)

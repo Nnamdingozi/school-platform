@@ -520,6 +520,7 @@ import Papa from "papaparse"
 import { Upload, Loader2, FileCheck, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useProfileStore } from "@/store/profileStore"
+import { getErrorMessage } from "@/lib/error-handler"
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
@@ -578,7 +579,8 @@ export function CSVImporter({
           // Rule 12: Ensure data integration follows async protocols
           await onDataUpload(results.data);
         } catch (err: unknown) {
-          setError("Data integration protocols failed.");
+          const message = getErrorMessage(err)
+          setError(message || "Data integration protocols failed.");
         }
       },
       error: () => {

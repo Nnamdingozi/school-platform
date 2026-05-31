@@ -2253,7 +2253,7 @@ import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { EnrollmentStatus, ActivityType, Role, Prisma } from '@prisma/client'
+import { EnrollmentStatus, ActivityType, Role } from '@prisma/client'
 import { logActivity } from "@/lib/activitylogger";
 import { classifyNigerianSubject } from '@/lib/curriculum/nigeria'
 import { academicCoreScope } from '@/lib/content-scope'

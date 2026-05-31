@@ -208,7 +208,7 @@ import { useProfileStore } from "@/store/profileStore"
 import { Layers, Users, ArrowRight, Activity, Plus } from "lucide-react"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+
 
 /**
  * CLASSROOM DISTRIBUTION LEDGER (Tier 2)

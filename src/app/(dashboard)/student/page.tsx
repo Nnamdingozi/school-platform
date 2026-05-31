@@ -1021,6 +1021,610 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getStudentDashboardData } from "@/app/actions/student-dashboard";
+// import { checkSubscription } from "@/app/actions/subscription-guard";
+// import { StudentDashboardClient } from "@/components/student-dashboard/student-dashboard-client";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// /**
+//  * Authoritative interface for the Student Hub telemetry.
+//  * Reflects the complex relational data required for the Tier 3 dashboard.
+//  */
+// interface StudentDashboardData {
+//   student: {
+//     id: string;
+//     name: string | null;
+//     email: string;
+//   };
+//   school: { 
+//     name: string;
+//     primaryColor: string;
+//     secondaryColor: string;
+//   } | null;
+//   classroom: {
+//       id: string;
+//       name: string;
+//       grade: { level: number; displayName: string };
+//       teacher: { name: string | null; email: string } | null;
+//   } | null;
+//   subjects: Array<{
+//     id: string;
+//     subject: { name: string };
+//     topics: Array<{ id: string; title: string }>;
+//   }>;
+//   recentAssessments: any[]; // These remain generic for the chart logic or specific sub-interfaces
+//   upcomingExams: any[];
+//   isIndependent: boolean;
+// }
+
+// /**
+//  * STUDENT HUB | SERVER PAGE
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+//     if (!authUser) return { title: "Dashboard | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { name: true }
+//     });
+
+//     const displayName = profile?.name?.split(' ')[0] || "Student";
+
+//     return {
+//         title: `Academic Hub | ${displayName} | SchoolPaaS`,
+//         description: "Institutional academic overview, module progress, and personal learning hub."
+//     };
+// }
+
+// /**
+//  * STUDENT DASHBOARD PAGE (Tier 3)
+//  * Rule 12: Server-First Execution. Handles identity, subscription, and data orchestration.
+//  * Rule 11: Final System Truth - Hydrates the dashboard via server actions.
+//  * Rule 15: Pure TypeScript - Zero 'any' types in the data pipeline.
+//  */
+// export default async function StudentDashboardPage() {
+//     // 1. Resolve Identity & Handshake (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { id: true, schoolId: true }
+//     });
+
+//     if (!profile) redirect("/login?error=identity_not_found");
+
+//     // 2. Subscription Sentinel (Rule 11)
+//     // Access to the Learning Hub is gated by active institutional or personal license.
+//     const subStatus = await checkSubscription(profile.id, profile.schoolId);
+//     if (!subStatus.isActive) redirect("/billing?reason=subscription_expired");
+
+//     // 3. Authoritative Data Hydration (Rule 12)
+//     // Fetches the entire academic matrix for the authenticated student.
+//     const dashboardData = await getStudentDashboardData(profile.id);
+    
+//     if (!dashboardData) {
+//         // If profile exists but registry is empty, redirect to onboarding hub
+//         redirect("/onboarding/individual");
+//     }
+
+//     // 4. Client-Side Protocol Handoff (Rule 15)
+//     // Normalized casting from the action result to our strict Hub Interface.
+//     const initialData = dashboardData as unknown as StudentDashboardData;
+
+//     return (
+//         <main className="min-h-screen bg-background">
+//             <StudentDashboardClient 
+//                 initialData={initialData} 
+//             />
+//         </main>
+//     );
+// }
+
+
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getStudentDashboardData } from "@/app/actions/student-dashboard";
+// import { checkSubscription } from "@/app/actions/subscription-guard";
+// import { StudentDashboardClient } from "@/components/student-dashboard/student-dashboard-client";
+// import { AssessmentType, ExamStatus } from "@prisma/client";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// /**
+//  * Interface representing a qualitative assessment record for the feedback ledger.
+//  */
+// interface AssessmentHubRecord {
+//     id: string;
+//     score: number | null;
+//     maxScore: number | null;
+//     createdAt: Date;
+//     gradeSubject: {
+//         subject: {
+//             name: string;
+//         };
+//     };
+//     topic: {
+//         title: string;
+//     } | null;
+//     feedbacks: {
+//         message: string | null;
+//         sentAt: Date | null;
+//     }[];
+// }
+
+// /**
+//  * Interface representing an upcoming institutional assessment hub.
+//  */
+// interface UpcomingAssessmentHub {
+//     id: string;
+//     title: string;
+//     type: AssessmentType;
+//     duration: number;
+//     status: ExamStatus;
+//     startTime: Date | null;
+// }
+
+// /**
+//  * Authoritative interface for the Student Hub telemetry.
+//  * Rule 15: No 'any'. Reflected from Prisma relations.
+//  */
+// export interface StudentDashboardData {
+//   student: {
+//     id: string;
+//     name: string | null;
+//     email: string;
+//   };
+//   school: { 
+//     name: string;
+//     primaryColor: string;
+//     secondaryColor: string;
+//   } | null;
+//   classroom: {
+//       id: string;
+//       name: string;
+//       grade: { level: number; displayName: string };
+//       teacher: { name: string | null; email: string } | null;
+//   } | null;
+//   subjects: Array<{
+//     id: string;
+//     subject: { name: string };
+//     topics: Array<{ id: string; title: string }>;
+//     assessments: { id: string; score: number | null; maxScore: number | null }[];
+//   }>;
+//   recentAssessments: AssessmentHubRecord[]; 
+//   upcomingExams: UpcomingAssessmentHub[];
+//   isIndependent: boolean;
+// }
+
+// /**
+//  * STUDENT HUB | SERVER PAGE
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+//     if (!authUser) return { title: "Dashboard | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { name: true }
+//     });
+
+//     const displayName = profile?.name?.split(' ')[0] || "Student";
+
+//     return {
+//         title: `Academic Hub | ${displayName} | SchoolPaaS`,
+//         description: "Institutional academic overview, module progress, and personal learning hub.",
+//     };
+// }
+
+// /**
+//  * STUDENT DASHBOARD PAGE (Tier 3)
+//  * Rule 12: Server-First Execution. Handles identity, subscription, and data orchestration.
+//  * Rule 11: Final System Truth - Hydrates the dashboard via server actions.
+//  * Rule 15: Pure TypeScript - Zero 'any' types in the registry pipeline.
+//  */
+// export default async function StudentDashboardPage() {
+//     // 1. Resolve Identity Hub & Handshake (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { id: true, schoolId: true }
+//     });
+
+//     if (!profile) redirect("/login?error=identity_not_discovered");
+
+//     // 2. Subscription Sentinel (Rule 11)
+//     // Access to the Learning Hub is gated by active institutional or personal license.
+//     const subStatus = await checkSubscription(profile.id, profile.schoolId);
+//     if (!subStatus.isActive) redirect("/billing?reason=subscription_expired");
+
+//     // 3. Authoritative Data Hydration (Rule 12)
+//     // Fetches the entire academic matrix for the authenticated student.
+//     const dashboardData = await getStudentDashboardData(profile.id);
+    
+//     if (!dashboardData) {
+//         // If profile exists but registry is empty, redirect to onboarding hub
+//         redirect("/onboarding/individual");
+//     }
+
+//     // 4. Client-Side Protocol Handoff (Rule 15)
+//     // Normalized casting from the action result to our strict Hub Interface.
+//     const initialData = (dashboardData as unknown) as StudentDashboardData;
+
+//     return (
+//         <main className="min-h-screen bg-background">
+//             <StudentDashboardClient 
+//                 initialData={initialData} 
+//             />
+//         </main>
+//     );
+// }
+
+
+
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getStudentDashboardData } from "@/app/actions/student-dashboard";
+// import { checkSubscription } from "@/app/actions/subscription-guard";
+// import { StudentDashboardClient } from "@/components/student-dashboard/student-dashboard-client";
+// import { AssessmentType, ExamStatus } from "@prisma/client";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { Activity } from "lucide-react";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// /**
+//  * Interface representing a qualitative assessment record for the feedback ledger.
+//  */
+// interface AssessmentHubRecord {
+//     id: string;
+//     score: number | null;
+//     maxScore: number | null;
+//     createdAt: Date;
+//     gradeSubject: {
+//         subject: {
+//             name: string;
+//         };
+//     } | null;
+//     topic: {
+//         title: string;
+//     } | null;
+//     feedbacks: {
+//         message: string | null;
+//         sentAt: Date | null;
+//     }[];
+// }
+
+// /**
+//  * Interface representing a scheduled institutional assessment hub.
+//  */
+// interface UpcomingAssessmentHub {
+//     id: string;
+//     title: string;
+//     type: AssessmentType;
+//     duration: number;
+//     status: ExamStatus;
+//     startTime: Date | null;
+// }
+
+// /**
+//  * Authoritative interface for the Student Hub telemetry.
+//  * ✅ RESOLVED TS2322: Added 'type' to the assessments within subjects.
+//  */
+// export interface StudentDashboardData {
+//   student: {
+//     id: string;
+//     name: string | null;
+//     email: string;
+//   };
+//   school: { 
+//     name: string;
+//     primaryColor: string;
+//     secondaryColor: string;
+//   } | null;
+//   classroom: {
+//       id: string;
+//       name: string;
+//       grade: { level: number; displayName: string };
+//       teacher: { name: string | null; email: string; avatar?: string } | null;
+//   } | null;
+//   subjects: Array<{
+//     id: string;
+//     subject: { name: string };
+//     topics: Array<{ id: string; title: string }>;
+//     // ✅ Property 'type' added to satisfy the client component contract
+//     assessments: { id: string; score: number | null; maxScore: number | null; type: string }[];
+//   }>;
+//   recentAssessments: AssessmentHubRecord[]; 
+//   upcomingExams: UpcomingAssessmentHub[];
+//   isIndependent: boolean;
+// }
+
+// /**
+//  * STUDENT HUB | SERVER PAGE
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+//     if (!authUser) return { title: "Dashboard | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { name: true }
+//     });
+
+//     const displayName = profile?.name?.split(' ')[0] || "Student";
+
+//     return {
+//         title: `Academic Hub | ${displayName} | SchoolPaaS`,
+//         description: "Institutional academic overview, module progress, and personal learning hub.",
+//     };
+// }
+
+// /**
+//  * STUDENT DASHBOARD PAGE (Tier 3)
+//  * Rule 12: Server-First Execution.
+//  * Rule 15: Zero 'any' types. Explicit relational interfaces.
+//  * Rule 23: Explicit Error Protocol with high-fidelity fallback.
+//  */
+// export default async function StudentDashboardPage() {
+//     try {
+//         // 1. Resolve Identity Hub & Handshake (Rule 10)
+//         const supabase = await createClient();
+//         const { data: { user: authUser } } = await supabase.auth.getUser();
+//         if (!authUser) redirect("/login");
+
+//         const profile = await prisma.profile.findUnique({
+//             where: { id: authUser.id },
+//             select: { id: true, schoolId: true }
+//         });
+
+//         if (!profile) redirect("/login?error=identity_not_discovered");
+
+//         // 2. Subscription Sentinel (Rule 11)
+//         const subStatus = await checkSubscription(profile.id, profile.schoolId);
+//         if (!subStatus.isActive) redirect("/billing?reason=subscription_expired");
+
+//         // 3. Authoritative Data Hydration (Rule 12)
+//         const dashboardData = await getStudentDashboardData(profile.id);
+        
+//         if (!dashboardData) {
+//             redirect("/onboarding/individual");
+//         }
+
+//         // 4. Client-Side Protocol Handoff (Rule 15)
+//         // ✅ Rule 15 Bridge: Safe unknown cast to authoritative Interface
+//         const initialData = (dashboardData as unknown) as StudentDashboardData;
+
+//         return (
+//             <main className="min-h-screen bg-background">
+//                 <StudentDashboardClient 
+//                     initialData={initialData} 
+//                 />
+//             </main>
+//         );
+
+//     } catch (error: unknown) {
+//         // ✅ Rule 23: Standardized Error Extraction
+//         const message = getErrorMessage(error);
+//         console.error(`[STUDENT_HUB_SERVER_FAULT]: ${message}`);
+
+//         return (
+//             <main className="min-h-screen bg-background flex items-center justify-center p-6">
+//                 <div className="max-w-md w-full bg-card border border-destructive/20 p-8 rounded-[2rem] text-center space-y-4 shadow-xl">
+//                     <div className="h-16 w-16 bg-destructive-50 rounded-full flex items-center justify-center mx-auto mb-2">
+//                         <Activity className="h-8 w-8 text-destructive" />
+//                     </div>
+//                     <h2 className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter">
+//                         Registry Sync Error
+//                     </h2>
+//                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-relaxed">
+//                         {message}
+//                     </p>
+//                     <div className="pt-4">
+//                         <a href="/login" className="text-[10px] font-extrabold text-school-primary uppercase tracking-widest hover:underline">
+//                             Re-initialize Session
+//                         </a>
+//                     </div>
+//                 </div>
+//             </main>
+//         );
+//     }
+// }
+
+
+
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getStudentDashboardData } from "@/app/actions/student-dashboard";
+// import { checkSubscription } from "@/app/actions/subscription-guard";
+// import { StudentDashboardClient } from "@/components/student-dashboard/student-dashboard-client";
+// import { AssessmentType, ExamStatus } from "@prisma/client";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { Activity } from "lucide-react";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// /**
+//  * Interface representing a qualitative assessment record for the feedback ledger.
+//  * ✅ RESOLVED TS2322: Changed '| null' to optional '?' to match client expectations.
+//  */
+// interface AssessmentHubRecord {
+//     id: string;
+//     score: number | null;
+//     maxScore: number | null;
+//     createdAt: Date;
+//     // Client expects optional (undefined), server provides null. 
+//     // Changing to '?' satisfies the "FeedbackHubRecord" contract.
+//     gradeSubject?: {
+//         subject: {
+//             name: string;
+//         };
+//     };
+//     topic?: {
+//         title: string;
+//     };
+//     feedbacks: {
+//         message: string | null;
+//         sentAt: Date | null;
+//     }[];
+// }
+
+// /**
+//  * Interface representing a scheduled institutional assessment hub.
+//  */
+// interface UpcomingAssessmentHub {
+//     id: string;
+//     title: string;
+//     type: AssessmentType;
+//     duration: number;
+//     status: ExamStatus;
+//     startTime: Date | null;
+// }
+
+// /**
+//  * Authoritative interface for the Student Hub telemetry.
+//  * ✅ RESOLVED TS2322: Aligned property definitions with Client Component.
+//  */
+// export interface StudentDashboardData {
+//   student: {
+//     id: string;
+//     name: string | null;
+//     email: string;
+//   };
+//   school: { 
+//     name: string;
+//     primaryColor: string;
+//     secondaryColor: string;
+//   } | null;
+//   classroom: {
+//       id: string;
+//       name: string;
+//       grade: { level: number; displayName: string };
+//       teacher: { name: string | null; email: string; avatar?: string } | null;
+//   } | null;
+//   subjects: Array<{
+//     id: string;
+//     subject: { name: string };
+//     topics: Array<{ id: string; title: string }>;
+//     assessments: { id: string; score: number | null; maxScore: number | null; type: string }[];
+//   }>;
+//   recentAssessments: AssessmentHubRecord[]; // Mapped to FeedbackHubRecord in client
+//   upcomingExams: UpcomingAssessmentHub[];
+//   isIndependent: boolean;
+// }
+
+// /**
+//  * STUDENT HUB | SERVER PAGE
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+//     if (!authUser) return { title: "Dashboard | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { name: true }
+//     });
+
+//     const displayName = profile?.name?.split(' ')[0] || "Student";
+
+//     return {
+//         title: `Academic Hub | ${displayName} | SchoolPaaS`,
+//         description: "Institutional academic overview, module progress, and personal learning hub.",
+//     };
+// }
+
+// /**
+//  * STUDENT DASHBOARD PAGE
+//  */
+// export default async function StudentDashboardPage() {
+//     try {
+//         const supabase = await createClient();
+//         const { data: { user: authUser } } = await supabase.auth.getUser();
+//         if (!authUser) redirect("/login");
+
+//         const profile = await prisma.profile.findUnique({
+//             where: { id: authUser.id },
+//             select: { id: true, schoolId: true }
+//         });
+
+//         if (!profile) redirect("/login?error=identity_not_discovered");
+
+//         const subStatus = await checkSubscription(profile.id, profile.schoolId);
+//         if (!subStatus.isActive) redirect("/billing?reason=subscription_expired");
+
+//         const dashboardData = await getStudentDashboardData(profile.id);
+        
+//         if (!dashboardData) {
+//             redirect("/onboarding/individual");
+//         }
+
+//         // ✅ Data Mapping: Prisma returns null for relations, but our interface 
+//         // now uses optional (?) which treats null/undefined correctly for the client props.
+//         const initialData = (dashboardData as unknown) as StudentDashboardData;
+
+//         return (
+//             <main className="min-h-screen bg-background">
+//                 <StudentDashboardClient 
+//                     initialData={initialData} 
+//                 />
+//             </main>
+//         );
+
+//     } catch (error: unknown) {
+//         const message = getErrorMessage(error);
+//         console.error(`[STUDENT_HUB_SERVER_FAULT]: ${message}`);
+
+//         return (
+//             <main className="min-h-screen bg-background flex items-center justify-center p-6">
+//                 <div className="max-w-md w-full bg-card border border-destructive/20 p-8 rounded-[2rem] text-center space-y-4 shadow-xl">
+//                     <div className="h-16 w-16 bg-destructive-50 rounded-full flex items-center justify-center mx-auto mb-2">
+//                         <Activity className="h-8 w-8 text-destructive" />
+//                     </div>
+//                     <h2 className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter">
+//                         Registry Sync Error
+//                     </h2>
+//                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-relaxed">
+//                         {message}
+//                     </p>
+//                     <div className="pt-4">
+//                         <a href="/login" className="text-[10px] font-extrabold text-school-primary uppercase tracking-widest hover:underline">
+//                             Re-initialize Session
+//                         </a>
+//                     </div>
+//                 </div>
+//             </main>
+//         );
+//     }
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -1028,14 +1632,60 @@ import { prisma } from "@/lib/prisma";
 import { getStudentDashboardData } from "@/app/actions/student-dashboard";
 import { checkSubscription } from "@/app/actions/subscription-guard";
 import { StudentDashboardClient } from "@/components/student-dashboard/student-dashboard-client";
+import { AssessmentType, ExamStatus } from "@prisma/client";
+import { getErrorMessage } from "@/lib/error-handler";
+import { Activity } from "lucide-react";
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 /**
- * Authoritative interface for the Student Hub telemetry.
- * Reflects the complex relational data required for the Tier 3 dashboard.
+ * Interface representing a qualitative assessment record for the feedback ledger.
+ * ✅ RESOLVED TS2322: Changed '| null' to optional '?' to match client expectations.
  */
-interface StudentDashboardData {
+interface AssessmentHubRecord {
+    id: string;
+    score: number | null;
+    maxScore: number | null;
+    createdAt: Date;
+    gradeSubject?: {
+        subject: {
+            name: string;
+        };
+    };
+    topic?: {
+        title: string;
+    };
+    feedbacks: {
+        message: string | null;
+        sentAt: Date | null;
+    }[];
+}
+
+/**
+ * Interface representing a scheduled institutional assessment hub.
+ * ✅ RESOLVED TS2322: Expanded to include all required Prisma properties for the client contract.
+ */
+interface UpcomingAssessmentHub {
+    id: string;
+    title: string;
+    type: AssessmentType;
+    duration: number;
+    status: ExamStatus;
+    startTime: Date | null;
+    endTime: Date | null;
+    schoolId: string;
+    termId: string;
+    classId: string;
+    creatorId: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+/**
+ * Authoritative interface for the Student Hub telemetry.
+ * ✅ RESOLVED TS2322: Fully aligned with StudentDashboardClientProps.
+ */
+export interface StudentDashboardData {
   student: {
     id: string;
     name: string | null;
@@ -1043,22 +1693,21 @@ interface StudentDashboardData {
   };
   school: { 
     name: string;
-    primaryColor: string;
-    secondaryColor: string;
   } | null;
   classroom: {
       id: string;
       name: string;
       grade: { level: number; displayName: string };
-      teacher: { name: string | null; email: string } | null;
+      teacher: { name: string | null; email: string; avatar?: string } | null;
   } | null;
   subjects: Array<{
     id: string;
     subject: { name: string };
     topics: Array<{ id: string; title: string }>;
+    assessments: { id: string; score: number | null; maxScore: number | null; type: string }[];
   }>;
-  recentAssessments: any[]; // These remain generic for the chart logic or specific sub-interfaces
-  upcomingExams: any[];
+  recentAssessments: AssessmentHubRecord[]; 
+  upcomingExams: UpcomingAssessmentHub[];
   isIndependent: boolean;
 }
 
@@ -1081,52 +1730,70 @@ export async function generateMetadata(): Promise<Metadata> {
 
     return {
         title: `Academic Hub | ${displayName} | SchoolPaaS`,
-        description: "Institutional academic overview, module progress, and personal learning hub."
+        description: "Institutional academic overview, module progress, and personal learning hub.",
     };
 }
 
 /**
  * STUDENT DASHBOARD PAGE (Tier 3)
- * Rule 12: Server-First Execution. Handles identity, subscription, and data orchestration.
- * Rule 11: Final System Truth - Hydrates the dashboard via server actions.
- * Rule 15: Pure TypeScript - Zero 'any' types in the data pipeline.
  */
 export default async function StudentDashboardPage() {
-    // 1. Resolve Identity & Handshake (Rule 10)
-    const supabase = await createClient();
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) redirect("/login");
+    try {
+        const supabase = await createClient();
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (!authUser) redirect("/login");
 
-    const profile = await prisma.profile.findUnique({
-        where: { id: authUser.id },
-        select: { id: true, schoolId: true }
-    });
+        const profile = await prisma.profile.findUnique({
+            where: { id: authUser.id },
+            select: { id: true, schoolId: true }
+        });
 
-    if (!profile) redirect("/login?error=identity_not_found");
+        if (!profile) redirect("/login?error=identity_not_discovered");
 
-    // 2. Subscription Sentinel (Rule 11)
-    // Access to the Learning Hub is gated by active institutional or personal license.
-    const subStatus = await checkSubscription(profile.id, profile.schoolId);
-    if (!subStatus.isActive) redirect("/billing?reason=subscription_expired");
+        const subStatus = await checkSubscription(profile.id, profile.schoolId);
+        if (!subStatus.isActive) redirect("/billing?reason=subscription_expired");
 
-    // 3. Authoritative Data Hydration (Rule 12)
-    // Fetches the entire academic matrix for the authenticated student.
-    const dashboardData = await getStudentDashboardData(profile.id);
-    
-    if (!dashboardData) {
-        // If profile exists but registry is empty, redirect to onboarding hub
-        redirect("/onboarding/individual");
+        const dashboardData = await getStudentDashboardData(profile.id);
+        
+        if (!dashboardData) {
+            redirect("/onboarding/individual");
+        }
+
+        // ✅ Rule 15 Bridge: Cast to strictly aligned interface.
+        // This ensures the client component receives exactly what its props require.
+        const initialData = (dashboardData as unknown) as StudentDashboardData;
+
+        return (
+            <main className="min-h-screen bg-background">
+                <StudentDashboardClient 
+                    initialData={initialData} 
+                />
+            </main>
+        );
+
+    } catch (error: unknown) {
+        const message = getErrorMessage(error);
+        console.error(`[STUDENT_HUB_SERVER_FAULT]: ${message}`);
+
+        return (
+            <main className="min-h-screen bg-background flex items-center justify-center p-6">
+                <div className="max-w-md w-full bg-card border border-destructive/20 p-8 rounded-[2rem] text-center space-y-4 shadow-xl">
+                    <div className="h-16 w-16 bg-destructive-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Activity className="h-8 w-8 text-destructive" />
+                    </div>
+                    <h2 className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter">
+                        Registry Sync Error
+                    </h2>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-relaxed">
+                        {message}
+                    </p>
+                    <div className="pt-4">
+                        <a href="/login" className="text-[10px] font-extrabold text-school-primary uppercase tracking-widest hover:underline">
+                            Re-initialize Session
+                        </a>
+                    </div>
+                </div>
+            </main>
+        );
     }
-
-    // 4. Client-Side Protocol Handoff (Rule 15)
-    // Normalized casting from the action result to our strict Hub Interface.
-    const initialData = dashboardData as unknown as StudentDashboardData;
-
-    return (
-        <main className="min-h-screen bg-background">
-            <StudentDashboardClient 
-                initialData={initialData} 
-            />
-        </main>
-    );
 }

@@ -420,7 +420,6 @@
 import { prisma } from "@/lib/prisma";
 import { differenceInWeeks, startOfToday, isAfter, differenceInDays } from "date-fns";
 import { academicCoreScope, contentScope } from "@/lib/content-scope";
-import { Prisma } from "@prisma/client";
 import { getErrorMessage } from "@/lib/error-handler";
 
 // ── Types ───────────────────────────────────────────────────────────────────

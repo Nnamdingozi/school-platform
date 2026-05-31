@@ -75,7 +75,7 @@
 
 
 
-import { LessonAiContent } from "@/app/actions/ai-generator";
+import { EnhancedLessonContent } from "@/app/actions/ai-generator";
 
 export type LessonDTO = {
   topicId: string;
@@ -111,7 +111,7 @@ export type LessonDTO = {
 
 export function transformLesson(
   topicId: string,
-  ai: LessonAiContent
+  ai: EnhancedLessonContent
 ): LessonDTO {
   return {
     topicId,

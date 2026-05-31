@@ -111,7 +111,6 @@
 
 import React, { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { useProfileStore } from '@/store/profileStore'
 import { type UserListItem } from '@/app/actions/user-management'
 import { Search, UserPlus, X, Users } from 'lucide-react'
 import { UserCard, EmptyState } from '@/components/shared/user-card'
@@ -130,7 +129,6 @@ interface ParentsListClientProps {
  */
 export function ParentsListClient({ initialParents }: ParentsListClientProps) {
     const router = useRouter();
-    const { profile } = useProfileStore();
     const [query, setQuery] = useState('');
 
     const filtered = useMemo(() => {

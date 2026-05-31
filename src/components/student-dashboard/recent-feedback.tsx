@@ -383,10 +383,9 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, FileText, Star, Quote, History, MessageCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 

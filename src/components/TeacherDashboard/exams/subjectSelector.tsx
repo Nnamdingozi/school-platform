@@ -239,7 +239,6 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { useProfileStore } from "@/store/profileStore";
 import { BookOpen, CheckCircle2 } from "lucide-react";
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
@@ -281,7 +280,7 @@ export function SubjectSelector({
   selectedAssignment,
   setSelectedAssignment,
 }: SubjectSelectorProps) {
-  const { profile } = useProfileStore();
+
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 animate-in fade-in duration-700">

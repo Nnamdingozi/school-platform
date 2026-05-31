@@ -636,10 +636,10 @@ import {
 } from '@/types/parent-dashboard';
 import { type AnyProfile } from '@/types/profile'; // ✅ Rule 15: Import the store's expected type
 import { Notification, Profile, School } from '@prisma/client';
-import { Bell, GraduationCap, Layout, BookOpen, ShieldCheck, History, ChevronRight, Activity } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Bell, GraduationCap, BookOpen, ShieldCheck, History, Activity, LucideIcon } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { useSchool } from "@/context/schoolProvider";
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils'; 
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
@@ -854,7 +854,7 @@ export function ParentDashboardClient({
 
 // ── Sub-Components ──────────────────────────────────────────────────────────
 
-function StatTile({ label, value, icon: Icon, variant = 'primary' }: { label: string, value: string | number, icon: any, variant: 'primary' | 'destructive' }) {
+function StatTile({ label, value, icon: Icon, variant = 'primary' }: { label: string, value: string | number, icon: LucideIcon, variant: 'primary' | 'destructive' }) {
     return (
         <Card className="bg-card border-border p-8 rounded-[2rem] shadow-xl group hover:border-school-primary-300 transition-all">
             <div className="flex items-center gap-5 mb-6">

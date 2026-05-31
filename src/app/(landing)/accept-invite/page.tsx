@@ -252,27 +252,160 @@
 
 
 
-import { cookies } from 'next/headers'
-import { Navbar } from '@/components/landing/navbar'
-import { Footer } from '@/components/landing/footer'
+// import { cookies } from 'next/headers'
+// import { Navbar } from '@/components/landing/navbar'
+// import { Footer } from '@/components/landing/footer'
 
-export default async function LandingLayout({
-    children,
-}: {
-    children: React.ReactNode
-}) {
-    // Read the theme cookie server-side so the correct class is applied
-    // before paint. Logged-out visitors default to light mode.
-    const cookieStore = await cookies()
-    const isDark = cookieStore.get('theme')?.value === 'dark'
+// export default async function LandingLayout({
+//     children,
+// }: {
+//     children: React.ReactNode
+// }) {
+//     // Read the theme cookie server-side so the correct class is applied
+//     // before paint. Logged-out visitors default to light mode.
+//     const cookieStore = await cookies()
+//     const isDark = cookieStore.get('theme')?.value === 'dark'
 
-    return (
-        <div className={`min-h-screen flex flex-col bg-background text-foreground${isDark ? ' dark' : ''}`}>
-            <Navbar />
-            <main className="flex-1">
-                {children}
-            </main>
-            <Footer />
-        </div>
-    )
+//     return (
+//         <div className={`min-h-screen flex flex-col bg-background text-foreground${isDark ? ' dark' : ''}`}>
+//             <Navbar />
+//             <main className="flex-1">
+//                 {children}
+//             </main>
+//             <Footer />
+//         </div>
+//     )
+// }
+
+
+
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { SetPasswordForm } from "@/components/set-password-form";
+// import { getErrorMessage } from "@/lib/error-handler";
+
+// /**
+//  * INVITATION HUB | SERVER PAGE
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export const metadata: Metadata = {
+//     title: "Accept Invitation | Registry | SchoolPaaS",
+//     description: "Synchronizing institutional identity with the academic hub.",
+// };
+
+// interface PageProps {
+//     // ✅ RESOLVED: Next.js pages do not take 'children'. 
+//     // They take params and searchParams.
+//     searchParams: Promise<{ token?: string; email?: string }>;
+// }
+
+// /**
+//  * ACCEPT INVITATION HUB (Tier 3)
+//  * Rule 12: Server-First Execution.
+//  * Rule 23: Explicit Error Protocol.
+//  */
+// export default async function AcceptInvitePage({ searchParams }: PageProps) {
+//     const { token, email } = await searchParams;
+
+//     if (!token || !email) {
+//         redirect("/login?error=invalid_invitation_link");
+//     }
+
+//     try {
+//         // Rule 11: System Truth - Verify invitation exists and hasn't expired
+//         const invitation = await prisma.invitation.findUnique({
+//             where: { token }
+//         });
+
+//         if (!invitation || invitation.email !== email) {
+//             throw new Error("Invitation protocol mismatch or link expired.");
+//         }
+
+//         if (invitation.acceptedAt) {
+//             redirect("/login?message=invitation_already_synchronized");
+//         }
+
+//         return (
+//             <main className="min-h-screen bg-background flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-700">
+//                 <div className="w-full max-w-md">
+//                     <SetPasswordForm userEmail={email} />
+//                 </div>
+//             </main>
+//         );
+
+//     } catch (error: unknown) {
+//         const message = getErrorMessage(error);
+//         console.error(`[INVITATION_HUB_FAULT]: ${message}`);
+//         redirect(`/login?error=${encodeURIComponent(message)}`);
+//     }
+// }
+
+
+
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { SetPasswordForm } from "@/components/set-password-form";
+import { getErrorMessage } from "@/lib/error-handler";
+
+/**
+ * INVITATION SYNC HUB | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO
+ */
+export const metadata: Metadata = {
+    title: "Synchronize Identity | Registry | SchoolPaaS",
+    description: "Finalizing institutional identity synchronization for the academic hub.",
+};
+
+interface PageProps {
+    searchParams: Promise<{ token?: string | string[]; email?: string | string[] }>;
+}
+
+/**
+ * ACCEPT INVITATION HUB (Tier 3)
+ * Rule 12: Server-First Execution.
+ * Rule 23: Explicit Error Protocol.
+ * Rule 11: System Truth - Handshake validation.
+ */
+export default async function AcceptInvitePage({ searchParams }: PageProps) {
+    const params = await searchParams;
+    
+    // Normalization Protocol (Rule 15)
+    const token = Array.isArray(params.token) ? params.token[0] : params.token;
+    const email = Array.isArray(params.email) ? params.email[0] : params.email;
+
+    if (!token || !email) {
+        redirect("/login?error=protocol_metadata_missing");
+    }
+
+    try {
+        // Rule 11: Database Sync Check
+        const invitation = await prisma.invitation.findUnique({
+            where: { token }
+        });
+
+        if (!invitation || invitation.email !== email) {
+            throw new Error("Invitation Hub Error: Protocol mismatch or link expired.");
+        }
+
+        if (invitation.acceptedAt) {
+            redirect("/login?message=identity_already_synchronized");
+        }
+
+        return (
+            <section className="flex items-center justify-center py-20 px-4 animate-in fade-in duration-1000">
+                <div className="w-full max-w-md">
+                    <SetPasswordForm userEmail={email} />
+                </div>
+            </section>
+        );
+
+    } catch (error: unknown) {
+        // ✅ Rule 23: Explicit Error Protocol
+        const message = getErrorMessage(error);
+        console.error(`[INVITATION_HANDSHAKE_FAULT]: ${message}`);
+        redirect(`/login?error=${encodeURIComponent(message)}`);
+    }
 }

@@ -1041,8 +1041,8 @@ export async function getCurricula() {
             orderBy: { name: 'asc' },
         });
         return { success: true, data: curricula };
-    } catch (err: unknown) {
-        return { success: false, data: [], error: "Registry fault." };
+    } catch (err) {
+        return { success: false, data: [], error: getErrorMessage(err) };
     }
 }
 
@@ -1160,17 +1160,12 @@ export async function completeOnboarding(
 
         return { success: true };
 
-    } catch (err: any) {
-        console.error('[ONBOARDING_CRITICAL_FAULT]:', err);
-        
-        // Protocol: Mask technical Prisma/Auth errors from the end user
-        const friendlyError = err.message.includes('prisma') 
-            ? "Registry Synchronization Fault. Please contact system support."
-            : err.message;
+    } catch (err) {
+        console.error('[ONBOARDING_CRITICAL_FAULT]:', getErrorMessage(err));
 
         return { 
             success: false, 
-            error: `Protocol Breach: ${friendlyError}` 
+            error: getErrorMessage(err) 
         };
     }
 }
@@ -1193,7 +1188,8 @@ export async function verifyPaystackPayment(reference: string) {
         }
 
         return { success: true, reference };
-    } catch (err: unknown) {
+    } catch (err) {
+        getErrorMessage(err)
         return { success: false, error: 'Gateway timeout.' };
     }
 }
@@ -1241,8 +1237,8 @@ export async function updateOnboardingEmail(
         });
 
         return { success: true };
-    } catch (err: any) {
-        console.error("[EMAIL_CORRECTION_FAULT]:", err.message);
+    } catch (err) {
+        console.error("[EMAIL_CORRECTION_FAULT]:", getErrorMessage(err));
         return { success: false, error: "Registry identity update failed." };
     }
 }

@@ -2110,6 +2110,193 @@
 // }
 
 
+// 'use client'
+
+// import React, { useState, useEffect, useTransition } from 'react'
+// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+// import { 
+//     CreditCard, CheckCircle2, 
+//     Loader2, Shield, Zap, 
+//     ChevronRight, ArrowRight
+// } from 'lucide-react'
+// import { 
+//     initiateSubscriptionPayment, 
+//     initiateIndividualPayment, 
+//     getSubscriptionPlans, 
+//     getSchoolSubscription 
+// } from '@/app/actions/subscription.actions'
+// import { 
+//     type SubscriptionPlanItem, 
+//     type SubscriptionWithHistory 
+// } from '@/app/actions/subscription.actions'
+// import { type SchoolSettingsData } from '@/app/actions/school-settings.action'
+// import { useProfileStore } from '@/store/profileStore'
+// import { toast } from 'sonner'
+// import { format } from 'date-fns'
+// import { cn } from '@/lib/utils'
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// interface BillingSectionProps {
+//     initialData: SchoolSettingsData | null;
+//     isIndependent: boolean;
+// }
+
+// /**
+//  * BILLING REGISTRY SECTION (Tier 2/3)
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+//  * Rule 19: Standardized Geometry [2rem].
+//  * Rule 21: Scale Protocol - Uses mathematical CSS tokens (-50, -100, -200).
+//  */
+// export function BillingSection({ initialData, isIndependent }: BillingSectionProps) {
+//     const { profile } = useProfileStore();
+    
+//     const [sub, setSub] = useState<SubscriptionWithHistory | null>(null);
+//     const [plans, setPlans] = useState<SubscriptionPlanItem[]>([]);
+//     const [plansLoading, setPlansLoading] = useState(false);
+//     const [showPlans, setShowPlans] = useState(false);
+//     const [isPending, startTransition] = useTransition();
+
+//     useEffect(() => {
+//         // Rule 12: Tier 1 Global Store Fetch
+//         setPlansLoading(true);
+//         getSubscriptionPlans().then(data => {
+//             setPlans(data);
+//             setPlansLoading(false);
+//         });
+
+//         // Rule 11: Synchronizing with License Registry
+//         if (profile?.id) {
+//             getSchoolSubscription(profile.schoolId || "INDIVIDUAL", profile.id)
+//                 .then(setSub);
+//         }
+//     }, [profile?.id, profile?.schoolId]);
+
+//     const handleSelectPlan = async (planId: string) => {
+//         startTransition(async () => {
+//             try {
+//                 const res = isIndependent 
+//                     ? await initiateIndividualPayment(planId)
+//                     : await initiateSubscriptionPayment(profile?.schoolId!, planId);
+                
+//                 if (res.success && res.authorizationUrl) {
+//                     window.location.href = res.authorizationUrl;
+//                 } else {
+//                     toast.error(res.error || "Gateway initialization failed.");
+//                 }
+//             } catch (err) {
+//                 toast.error("Billing registry connection error.");
+//             }
+//         });
+//     };
+
+//     return (
+//         <div className="space-y-8 animate-in fade-in duration-500">
+            
+//             {/* ── SECTION HEADER (Rule 11) ── */}
+//             <div className="flex items-center gap-3 px-2">
+//                 <Shield className="h-4 w-4 text-emerald-500" />
+//                 <span className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest">
+//                     Registry License Ledger: {isIndependent ? "Personal Account" : (initialData?.school.name || "Institutional")}
+//                 </span>
+//             </div>
+
+//             {/* ── MAIN BILLING CARD (Rule 19) ── */}
+//             <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl">
+//                 <CardHeader className="p-6 md:p-8 bg-surface/50 border-b border-border">
+//                     <CardTitle className="text-lg font-extrabold text-foreground uppercase italic tracking-tighter flex items-center gap-3">
+//                         <CreditCard className="h-5 w-5 text-school-primary" /> Current Coverage
+//                     </CardTitle>
+//                 </CardHeader>
+                
+//                 <CardContent className="p-6 md:p-10 space-y-10">
+//                     {!sub ? (
+//                         <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed border-border rounded-[2rem] text-center space-y-6 animate-in zoom-in-95">
+//                             <Zap className="h-12 w-12 text-muted-foreground/20" />
+//                             <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest italic leading-relaxed">
+//                                 No active registry license identified.
+//                             </p>
+//                             <button 
+//                                 onClick={() => setShowPlans(!showPlans)}
+//                                 className="px-10 py-4 rounded-2xl bg-school-primary text-on-school-primary font-extrabold text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95"
+//                             >
+//                                 Explore Tiers
+//                             </button>
+//                         </div>
+//                     ) : (
+//                         <div className="space-y-8">
+//                              {/* Rule 21: Using Scale Protocol for highlighted status */}
+//                              <div className="p-6 md:p-8 rounded-[1.5rem] border border-school-primary-200 bg-school-primary-50 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-inner">
+//                                 <div className="text-center sm:text-left space-y-1">
+//                                     <p className="text-[10px] font-bold uppercase text-school-primary tracking-widest">{sub.status}</p>
+//                                     <h4 className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter">{sub.plan} Plan</h4>
+//                                 </div>
+//                                 <div className="text-center sm:text-right space-y-1">
+//                                     <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">Valid Until</p>
+//                                     <p className="text-base font-extrabold text-foreground italic">{format(new Date(sub.currentPeriodEnd), 'dd MMM yyyy')}</p>
+//                                 </div>
+//                              </div>
+
+//                              <button 
+//                                 onClick={() => setShowPlans(!showPlans)}
+//                                 className="w-full py-4 rounded-xl border border-border bg-surface hover:bg-background text-[10px] font-bold uppercase text-muted-foreground hover:text-foreground transition-all flex items-center justify-center gap-2"
+//                              >
+//                                 {showPlans ? "Hide Upgrade Options" : "View Upgrade Tiers"}
+//                                 <ChevronRight className={cn("h-3 w-3 transition-transform", showPlans ? "rotate-90" : "")} />
+//                              </button>
+//                         </div>
+//                     )}
+
+//                     {/* ── PLAN SELECTION GRID (Rule 20) ── */}
+//                     {showPlans && (
+//                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-top-6 duration-500">
+//                             {plansLoading ? (
+//                                 [1, 2, 3].map(i => (
+//                                     <div key={i} className="h-80 bg-surface border border-border rounded-[2rem] animate-pulse" />
+//                                 ))
+//                             ) : (
+//                                 plans.map(plan => (
+//                                     <Card key={plan.id} className="bg-surface border border-border p-8 rounded-[2rem] flex flex-col justify-between hover:border-school-primary/40 transition-all group shadow-sm">
+//                                         <div className="space-y-6">
+//                                             <div className="space-y-1">
+//                                                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{plan.name}</p>
+//                                                 <h3 className="text-3xl font-extrabold text-foreground italic tracking-tighter">₦{plan.priceNGN.toLocaleString()}</h3>
+//                                             </div>
+                                            
+//                                             <ul className="space-y-3 pt-6 border-t border-border">
+//                                                 {plan.features.slice(0, 4).map((f, i) => (
+//                                                     <li key={i} className="text-[10px] text-muted-foreground uppercase font-semibold flex items-center gap-3">
+//                                                         <CheckCircle2 className="h-4 w-4 text-school-primary" /> {f}
+//                                                     </li>
+//                                                 ))}
+//                                             </ul>
+//                                         </div>
+                                        
+//                                         <button 
+//                                             disabled={isPending}
+//                                             onClick={() => handleSelectPlan(plan.id)}
+//                                             className="w-full mt-10 py-5 rounded-2xl bg-foreground text-background dark:bg-white dark:text-black font-extrabold text-[10px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+//                                         >
+//                                             {isPending ? (
+//                                                 <Loader2 className="h-4 w-4 animate-spin" />
+//                                             ) : (
+//                                                 <>Purchase Tier <ArrowRight className="h-3 w-3" /></>
+//                                             )}
+//                                         </button>
+//                                     </Card>
+//                                 ))
+//                             )}
+//                         </div>
+//                     )}
+//                 </CardContent>
+//             </Card>
+//         </div>
+//     )
+// }
+
+
+
 'use client'
 
 import React, { useState, useEffect, useTransition } from 'react'
@@ -2134,6 +2321,7 @@ import { useProfileStore } from '@/store/profileStore'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/error-handler'
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
@@ -2143,11 +2331,13 @@ interface BillingSectionProps {
 }
 
 /**
- * BILLING REGISTRY SECTION (Tier 2/3)
+ * BILLING REGISTRY HUB (Tier 2/3)
  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 15: Resolved Non-Null assertion error via strict identity validation.
  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
  * Rule 19: Standardized Geometry [2rem].
- * Rule 21: Scale Protocol - Uses mathematical CSS tokens (-50, -100, -200).
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
+ * Rule 23: Explicit Error Protocol using getErrorMessage.
  */
 export function BillingSection({ initialData, isIndependent }: BillingSectionProps) {
     const { profile } = useProfileStore();
@@ -2173,20 +2363,35 @@ export function BillingSection({ initialData, isIndependent }: BillingSectionPro
         }
     }, [profile?.id, profile?.schoolId]);
 
+    /**
+     * PLAN SELECTION PROTOCOL
+     * ✅ RESOLVED: Removed unsafe ! assertion and handled undefined schoolId.
+     * ✅ RESOLVED: err is now typed as unknown and passed to getErrorMessage.
+     */
     const handleSelectPlan = async (planId: string) => {
         startTransition(async () => {
             try {
-                const res = isIndependent 
-                    ? await initiateIndividualPayment(planId)
-                    : await initiateSubscriptionPayment(profile?.schoolId!, planId);
+                let res;
+
+                if (isIndependent) {
+                    res = await initiateIndividualPayment(planId);
+                } else {
+                    // Logic Hub Guard: Ensure institutional identity is present
+                    const sid = profile?.schoolId;
+                    if (!sid) throw new Error("Institutional synchronization failure: Missing Hub ID.");
+                    
+                    res = await initiateSubscriptionPayment(sid, planId);
+                }
                 
                 if (res.success && res.authorizationUrl) {
                     window.location.href = res.authorizationUrl;
                 } else {
                     toast.error(res.error || "Gateway initialization failed.");
                 }
-            } catch (err) {
-                toast.error("Billing registry connection error.");
+            } catch (error: unknown) {
+                // ✅ Rule 23: Explicit Error Protocol
+                const message = getErrorMessage(error);
+                toast.error(message);
             }
         });
     };
@@ -2194,18 +2399,18 @@ export function BillingSection({ initialData, isIndependent }: BillingSectionPro
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             
-            {/* ── SECTION HEADER (Rule 11) ── */}
+            {/* ── HUB HEADER (Rule 11) ── */}
             <div className="flex items-center gap-3 px-2">
                 <Shield className="h-4 w-4 text-emerald-500" />
-                <span className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest">
-                    Registry License Ledger: {isIndependent ? "Personal Account" : (initialData?.school.name || "Institutional")}
+                <span className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest italic">
+                    Registry License Ledger: {isIndependent ? "Personal Hub" : (initialData?.school.name || "Institutional Hub")}
                 </span>
             </div>
 
-            {/* ── MAIN BILLING CARD (Rule 19) ── */}
+            {/* ── MAIN BILLING HUB (Rule 19) ── */}
             <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl">
                 <CardHeader className="p-6 md:p-8 bg-surface/50 border-b border-border">
-                    <CardTitle className="text-lg font-extrabold text-foreground uppercase italic tracking-tighter flex items-center gap-3">
+                    <CardTitle className="text-lg font-extrabold text-foreground uppercase italic tracking-tighter flex items-center gap-3 leading-none">
                         <CreditCard className="h-5 w-5 text-school-primary" /> Current Coverage
                     </CardTitle>
                 </CardHeader>
@@ -2213,7 +2418,9 @@ export function BillingSection({ initialData, isIndependent }: BillingSectionPro
                 <CardContent className="p-6 md:p-10 space-y-10">
                     {!sub ? (
                         <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed border-border rounded-[2rem] text-center space-y-6 animate-in zoom-in-95">
-                            <Zap className="h-12 w-12 text-muted-foreground/20" />
+                            <div className="p-4 rounded-full bg-surface border border-border shadow-inner">
+                                <Zap className="h-10 w-10 text-muted-foreground/20" />
+                            </div>
                             <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest italic leading-relaxed">
                                 No active registry license identified.
                             </p>
@@ -2226,15 +2433,17 @@ export function BillingSection({ initialData, isIndependent }: BillingSectionPro
                         </div>
                     ) : (
                         <div className="space-y-8">
-                             {/* Rule 21: Using Scale Protocol for highlighted status */}
-                             <div className="p-6 md:p-8 rounded-[1.5rem] border border-school-primary-200 bg-school-primary-50 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-inner">
-                                <div className="text-center sm:text-left space-y-1">
+                             {/* Rule 21: Scale Protocol for clean brand tints */}
+                             <div className="p-6 md:p-8 rounded-[1.5rem] border border-school-primary-200 bg-school-primary-50 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-inner relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-school-primary-100 rounded-full blur-3xl opacity-20 pointer-events-none" />
+                                
+                                <div className="text-center sm:text-left space-y-1.5 relative z-10">
                                     <p className="text-[10px] font-bold uppercase text-school-primary tracking-widest">{sub.status}</p>
-                                    <h4 className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter">{sub.plan} Plan</h4>
+                                    <h4 className="text-2xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">{sub.plan} Plan</h4>
                                 </div>
-                                <div className="text-center sm:text-right space-y-1">
-                                    <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">Valid Until</p>
-                                    <p className="text-base font-extrabold text-foreground italic">{format(new Date(sub.currentPeriodEnd), 'dd MMM yyyy')}</p>
+                                <div className="text-center sm:text-right space-y-1.5 relative z-10">
+                                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Valid Until</p>
+                                    <p className="text-base font-extrabold text-foreground italic tabular-nums">{format(new Date(sub.currentPeriodEnd), 'dd MMM yyyy')}</p>
                                 </div>
                              </div>
 
@@ -2248,7 +2457,7 @@ export function BillingSection({ initialData, isIndependent }: BillingSectionPro
                         </div>
                     )}
 
-                    {/* ── PLAN SELECTION GRID (Rule 20) ── */}
+                    {/* ── PLAN SELECTION MATRIX (Rule 20/21) ── */}
                     {showPlans && (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-top-6 duration-500">
                             {plansLoading ? (
@@ -2256,18 +2465,21 @@ export function BillingSection({ initialData, isIndependent }: BillingSectionPro
                                     <div key={i} className="h-80 bg-surface border border-border rounded-[2rem] animate-pulse" />
                                 ))
                             ) : (
-                                plans.map(plan => (
-                                    <Card key={plan.id} className="bg-surface border border-border p-8 rounded-[2rem] flex flex-col justify-between hover:border-school-primary/40 transition-all group shadow-sm">
+                                plans.map((plan) => (
+                                    <Card key={plan.id} className="bg-surface border border-border p-8 rounded-[2rem] flex flex-col justify-between hover:border-school-primary-200 transition-all group shadow-sm">
                                         <div className="space-y-6">
-                                            <div className="space-y-1">
+                                            <div className="space-y-2">
                                                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{plan.name}</p>
-                                                <h3 className="text-3xl font-extrabold text-foreground italic tracking-tighter">₦{plan.priceNGN.toLocaleString()}</h3>
+                                                <h3 className="text-3xl font-extrabold text-foreground italic tracking-tighter tabular-nums leading-none">₦{plan.priceNGN.toLocaleString()}</h3>
                                             </div>
                                             
                                             <ul className="space-y-3 pt-6 border-t border-border">
                                                 {plan.features.slice(0, 4).map((f, i) => (
-                                                    <li key={i} className="text-[10px] text-muted-foreground uppercase font-semibold flex items-center gap-3">
-                                                        <CheckCircle2 className="h-4 w-4 text-school-primary" /> {f}
+                                                    <li key={i} className="text-[10px] font-semibold text-muted-foreground uppercase flex items-center gap-3">
+                                                        <div className="h-4 w-4 rounded bg-school-primary-50 border border-school-primary-200 flex items-center justify-center">
+                                                            <CheckCircle2 className="h-3 w-3 text-school-primary" />
+                                                        </div>
+                                                        <span className="leading-tight">{f}</span>
                                                     </li>
                                                 ))}
                                             </ul>
@@ -2276,7 +2488,10 @@ export function BillingSection({ initialData, isIndependent }: BillingSectionPro
                                         <button 
                                             disabled={isPending}
                                             onClick={() => handleSelectPlan(plan.id)}
-                                            className="w-full mt-10 py-5 rounded-2xl bg-foreground text-background dark:bg-white dark:text-black font-extrabold text-[10px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+                                            className={cn(
+                                                "w-full mt-10 h-14 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2",
+                                                "bg-foreground text-background dark:bg-white dark:text-black font-extrabold text-[10px] uppercase tracking-widest shadow-lg"
+                                            )}
                                         >
                                             {isPending ? (
                                                 <Loader2 className="h-4 w-4 animate-spin" />

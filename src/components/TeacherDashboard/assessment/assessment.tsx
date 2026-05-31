@@ -1099,7 +1099,7 @@ import {
   Class, 
   ClassEnrollment 
 } from "@prisma/client";
-import { cn } from "@/lib/utils";
+
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 

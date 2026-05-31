@@ -81,9 +81,8 @@ import React from "react";
 import { StudentClassView, type StudentClassRegistryData } from "./studentClassView";
 import { Users, Globe, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useProfileStore } from "@/store/profileStore";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+
 
 interface ClassRegistryClientProps {
     initialData: StudentClassRegistryData | null;
@@ -99,7 +98,6 @@ interface ClassRegistryClientProps {
  * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function ClassRegistryClient({ initialData, isIndependent }: ClassRegistryClientProps) {
-    const { profile } = useProfileStore();
 
     if (isIndependent) {
         return (

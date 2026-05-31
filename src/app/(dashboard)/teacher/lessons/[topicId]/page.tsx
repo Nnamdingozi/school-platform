@@ -1194,22 +1194,321 @@
 
 
 
+// import { Metadata } from "next";
+// import { notFound, redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getLessonForTeacher } from "@/app/actions/lesson.actions"
+// import { getScannedPapers } from "@/app/actions/scanned-question-bank";
+// import { LessonStudioClient } from "@/components/TeacherDashboard/lessonClient";
+
+// interface PageProps {
+//   params: Promise<{ topicId: string }>;
+// }
+
+// /**
+//  * Rule 16: Contextual SEO
+//  * Dynamically resolves the topic title for the browser registry.
+//  */
+// export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+//   const { topicId } = await params;
+//   const topic = await prisma.topic.findUnique({
+//     where: { id: topicId },
+//     select: { title: true }
+//   });
+
+//   return {
+//     title: `${topic?.title || "Lesson Studio"} | Module Architect | SchoolPaaS`,
+//     description: "Institutional module builder and AI syllabus synthesis console."
+//   };
+// }
+
+// /**
+//  * Rule 12: Server-First Execution
+//  * Resolves all Tier-1 and Tier-2 dependencies before rendering.
+//  */
+// export default async function Page({ params }: PageProps) {
+//   const { topicId } = await params;
+
+//   // 1. Resolve Identity (Rule 10)
+//   const supabase = await createClient();
+//   const { data: { user: authUser } } = await supabase.auth.getUser();
+//   if (!authUser) redirect("/login");
+
+//   const profile = await prisma.profile.findUnique({
+//     where: { id: authUser.id },
+//     select: { id: true, schoolId: true, role: true }
+//   });
+
+//   if (!profile) redirect("/login");
+
+//   // 2. Parallel Data Fetching (Rule 11 System Truth)
+//   const [lessonRes, scannedQuestions] = await Promise.all([
+//     // Fetches institutional customization or global blueprint
+//     getLessonForTeacher(topicId, profile.schoolId ?? ""),
+//     // Fetches past paper questions linked to this topic
+//     getScannedPapers(
+//         schoolId: profile.schoolId, userId: profile.id)
+//   ]);
+
+//   if (!lessonRes.success) return notFound();
+
+//   return (
+//     <LessonStudioClient 
+//         topicId={topicId}
+//         initialLesson={lessonRes.data}
+//         initialScannedQuestions={scannedQuestions}
+//     />
+//   );
+// }
+
+
+// import { Metadata } from "next";
+// import { notFound, redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getLessonForTeacher } from "@/app/actions/lesson.actions";
+// import { getScannedPapers, type ExtractedQuestion } from "@/app/actions/scanned-question-bank";
+// import { LessonStudioClient } from "@/components/TeacherDashboard/lessonClient";
+// import { Question, QuestionType, QuestionCategory } from "@prisma/client";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// interface PageProps {
+//   params: Promise<{ topicId: string }>;
+// }
+
+// /**
+//  * MODULE ARCHITECT HUB | SERVER PAGE
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+//   const { topicId } = await params;
+//   const topic = await prisma.topic.findUnique({
+//     where: { id: topicId },
+//     select: { title: true }
+//   });
+
+//   return {
+//     title: `${topic?.title || "Module Architect"} | Studio Hub | SchoolPaaS`,
+//     description: "Institutional module builder and AI syllabus synthesis hub."
+//   };
+// }
+
+// /**
+//  * MODULE ARCHITECT PAGE (Tier 2)
+//  * Rule 12: Server-First Execution.
+//  * Rule 11: Final System Truth - Integrates Hub Blueprints with Archive Ledgers.
+//  * Rule 15: Resolved TS2322 by fulfilling all mandatory Prisma 'Question' properties.
+//  */
+// export default async function Page({ params }: PageProps) {
+//   const { topicId } = await params;
+
+//   // 1. Resolve Identity Hub & Context (Rule 10)
+//   const supabase = await createClient();
+//   const { data: { user: authUser } } = await supabase.auth.getUser();
+//   if (!authUser) redirect("/login");
+
+//   const profile = await prisma.profile.findUnique({
+//     where: { id: authUser.id },
+//     select: { id: true, schoolId: true, role: true }
+//   });
+
+//   if (!profile) redirect("/login?error=identity_not_discovered");
+
+//   // 2. Parallel Hub Hydration (Rule 11)
+//   // ✅ FIXED: Passed arguments positionally as defined in the action protocol
+//   const [lessonRes, scannedPapers] = await Promise.all([
+//     // Fetches institutional customization or global hub blueprint
+//     getLessonForTeacher(topicId, profile.schoolId ?? ""),
+//     // Fetches digitized archive ledgers for this hub
+//     getScannedPapers(profile.schoolId, profile.id) 
+//   ]);
+
+//   if (!lessonRes.success) return notFound();
+
+//   // 3. Registry Synthesis (Rule 15: Strict Type Alignment)
+//   // Mapping scanned paper JSON into individual academic module nodes.
+//   const initialQuestions: Question[] = scannedPapers.flatMap((paper) => {
+//       const rawQuestions = paper.questions as unknown as ExtractedQuestion[];
+      
+//       return rawQuestions.map((q, idx) => ({
+//           id: `${paper.id}-${idx}`,
+//           text: q.text,
+//           correctAnswer: q.answer,
+//           explanation: q.explanation || null, // Normalizing database nulls
+//           points: 1,
+//           year: paper.year || null,
+//           examBody: paper.type || null,
+//           subjectId: null,
+//           topicId: topicId,
+//           schoolId: paper.schoolId,
+//           creatorId: paper.creatorId,
+//           isGlobal: paper.schoolId === null, // Tier identification
+//           type: QuestionType.ESSAY, 
+//           category: QuestionCategory.SCANNED,
+//           difficulty: null,
+//           options: [] as any, 
+//           createdAt: paper.createdAt,
+//           updatedAt: paper.createdAt
+//       }));
+//   });
+
+//   return (
+//     <main className="min-h-screen bg-background">
+//         <LessonStudioClient 
+//             topicId={topicId}
+//             initialLesson={lessonRes.data}
+//             initialScannedQuestions={initialQuestions}
+//         />
+//     </main>
+//   );
+// }
+
+
+// import { Metadata } from "next";
+// import { notFound, redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { getLessonForTeacher } from "@/app/actions/lesson.actions";
+// import { getScannedPapers, type ExtractedQuestion } from "@/app/actions/scanned-question-bank";
+// import { LessonStudioClient } from "@/components/TeacherDashboard/lessonClient";
+// import { Question, QuestionType, QuestionCategory, Prisma } from "@prisma/client";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// interface PageProps {
+//   params: Promise<{ topicId: string }>;
+// }
+
+// /**
+//  * MODULE ARCHITECT HUB | SERVER PAGE
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+//   const { topicId } = await params;
+//   const topic = await prisma.topic.findUnique({
+//     where: { id: topicId },
+//     select: { title: true }
+//   });
+
+//   return {
+//     title: `${topic?.title || "Module Architect"} | Studio Hub | SchoolPaaS`,
+//     description: "Institutional module builder and AI syllabus synthesis hub."
+//   };
+// }
+
+// /**
+//  * MODULE ARCHITECT PAGE (Tier 2)
+//  * Rule 12: Server-First Execution.
+//  * Rule 11: Final System Truth - Integrates Hub Blueprints with Archive Ledgers.
+//  * Rule 15: Pure TypeScript - Zero 'any' types. JSON handled via Prisma namespace.
+//  */
+// export default async function Page({ params }: PageProps) {
+//   const { topicId } = await params;
+
+//   // 1. Resolve Identity Hub & Context (Rule 10)
+//   const supabase = await createClient();
+//   const { data: { user: authUser } } = await supabase.auth.getUser();
+//   if (!authUser) redirect("/login");
+
+//   const profile = await prisma.profile.findUnique({
+//     where: { id: authUser.id },
+//     select: { id: true, schoolId: true, role: true }
+//   });
+
+//   if (!profile) redirect("/login?error=identity_not_discovered");
+
+//   // 2. Parallel Hub Hydration (Rule 11)
+//   const [lessonRes, scannedPapers] = await Promise.all([
+//     // Fetches institutional customization or global hub blueprint
+//     getLessonForTeacher(topicId, profile.schoolId ?? ""),
+//     // Fetches digitized archive ledgers for this hub
+//     getScannedPapers(profile.schoolId, profile.id) 
+//   ]);
+
+//   if (!lessonRes.success || !lessonRes.data) return notFound();
+
+//   // 3. Registry Synthesis (Rule 15: Strict Type Alignment)
+//   // Mapping archive ledger JSON into individual academic module nodes.
+//   const initialQuestions: Question[] = scannedPapers.flatMap((paper) => {
+//       // ✅ Rule 15: Safe bridge cast from Prisma Json to known internal shape
+//       const rawQuestions = (paper.questions as unknown) as ExtractedQuestion[];
+      
+//       return rawQuestions.map((q, idx) => ({
+//           id: `${paper.id}-${idx}`,
+//           text: q.text,
+//           correctAnswer: q.answer,
+//           explanation: q.explanation || null, 
+//           points: 1,
+//           year: paper.year || null,
+//           examBody: paper.type || null,
+//           subjectId: null,
+//           topicId: topicId,
+//           schoolId: paper.schoolId,
+//           creatorId: paper.creatorId,
+//           isGlobal: paper.schoolId === null, 
+//           type: QuestionType.ESSAY, 
+//           category: QuestionCategory.SCANNED,
+//           difficulty: null,
+//           // ✅ FIXED Rule 15: Appropriate Prisma Json type for options field
+//           options: [] as Prisma.JsonValue, 
+//           createdAt: paper.createdAt,
+//           updatedAt: paper.createdAt
+//       }));
+//   });
+
+//   return (
+//     <main className="min-h-screen bg-background">
+//         <LessonStudioClient 
+//             topicId={topicId}
+//             initialLesson={lessonRes.data}
+//             initialScannedQuestions={initialQuestions}
+//         />
+//     </main>
+//   );
+// }
+
+
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { getLessonForTeacher } from "@/app/actions/lesson.actions"
-import { getScannedPapers } from "@/app/actions/scanned-question-bank";
-import { LessonStudioClient } from "@/components/TeacherDashboard/lessonClient";
+import { getLessonForTeacher } from "@/app/actions/lesson.actions";
+import { getScannedPapers, type ExtractedQuestion } from "@/app/actions/scanned-question-bank";
+import { LessonStudioClient, type LessonHubRecord } from "@/components/TeacherDashboard/lessonClient";
+import { Question, QuestionType, QuestionCategory, Prisma, OwnershipType } from "@prisma/client";
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface PageProps {
   params: Promise<{ topicId: string }>;
 }
 
 /**
- * Rule 16: Contextual SEO
- * Dynamically resolves the topic title for the browser registry.
+ * Interface describing the raw data shape from the lesson.action.
+ * Used to avoid 'any' and handle the nested globalLesson relation.
  */
+interface TeacherLessonResponse {
+  id: string;
+  customContent: Prisma.JsonValue;
+  status: string;
+  globalLessonId?: string | null;
+  globalLesson: {
+    id: string;
+    schoolId: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    title: string;
+    isGlobal: boolean;
+    topicId: string;
+    ownershipType: OwnershipType;
+    baseId: string | null;
+    aiContent: Prisma.JsonValue;
+    videoScript: string | null;
+  };
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { topicId } = await params;
   const topic = await prisma.topic.findUnique({
@@ -1218,19 +1517,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 
   return {
-    title: `${topic?.title || "Lesson Studio"} | Module Architect | SchoolPaaS`,
-    description: "Institutional module builder and AI syllabus synthesis console."
+    title: `${topic?.title || "Module Architect"} | Studio Hub | SchoolPaaS`,
+    description: "Institutional module builder and AI syllabus synthesis hub."
   };
 }
 
-/**
- * Rule 12: Server-First Execution
- * Resolves all Tier-1 and Tier-2 dependencies before rendering.
- */
 export default async function Page({ params }: PageProps) {
   const { topicId } = await params;
 
-  // 1. Resolve Identity (Rule 10)
   const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) redirect("/login");
@@ -1240,24 +1534,64 @@ export default async function Page({ params }: PageProps) {
     select: { id: true, schoolId: true, role: true }
   });
 
-  if (!profile) redirect("/login");
+  if (!profile) redirect("/login?error=identity_not_discovered");
 
-  // 2. Parallel Data Fetching (Rule 11 System Truth)
-  const [lessonRes, scannedQuestions] = await Promise.all([
-    // Fetches institutional customization or global blueprint
+  const [lessonRes, scannedPapers] = await Promise.all([
     getLessonForTeacher(topicId, profile.schoolId ?? ""),
-    // Fetches past paper questions linked to this topic
-    getScannedPapers(
-        schoolId: profile.schoolId, userId: profile.id)
+    getScannedPapers(profile.schoolId, profile.id) 
   ]);
 
-  if (!lessonRes.success) return notFound();
+  if (!lessonRes.success || !lessonRes.data) return notFound();
+
+  // ── Logic: Strict Lesson Registry Synthesis (No 'any') ──
+  
+  // 1. Cast to the internal response type defined above
+  const rawLesson = lessonRes.data as unknown as TeacherLessonResponse;
+
+  // 2. Synthesize to match LessonHubRecord exactly
+  const initialLesson: LessonHubRecord = {
+    id: rawLesson.id,
+    customContent: rawLesson.customContent,
+    status: rawLesson.status,
+    globalLessonId: rawLesson.globalLessonId ?? rawLesson.globalLesson.id,
+    globalLesson: rawLesson.globalLesson
+  };
+
+  // ── Logic: Strict Question Registry Synthesis (No 'any') ──
+  
+  const initialQuestions: Question[] = scannedPapers.flatMap((paper) => {
+      // Use the imported ExtractedQuestion type from your action
+      const rawQuestions = (paper.questions as unknown) as ExtractedQuestion[];
+      
+      return rawQuestions.map((q, idx): Question => ({
+          id: `${paper.id}-${idx}`,
+          text: q.text,
+          correctAnswer: q.answer,
+          explanation: q.explanation || null, 
+          points: 1,
+          year: paper.year || null,
+          examBody: paper.type || null,
+          subjectId: null,
+          topicId: topicId,
+          schoolId: paper.schoolId,
+          creatorId: paper.creatorId,
+          isGlobal: paper.schoolId === null, 
+          type: QuestionType.ESSAY, 
+          category: QuestionCategory.SCANNED,
+          difficulty: null,
+          options: [] as Prisma.JsonValue, 
+          createdAt: paper.createdAt,
+          updatedAt: paper.createdAt
+      }));
+  });
 
   return (
-    <LessonStudioClient 
-        topicId={topicId}
-        initialLesson={lessonRes.data}
-        initialScannedQuestions={scannedQuestions}
-    />
+    <main className="min-h-screen bg-background">
+        <LessonStudioClient 
+            topicId={topicId}
+            initialLesson={initialLesson}
+            initialScannedQuestions={initialQuestions}
+        />
+    </main>
   );
 }

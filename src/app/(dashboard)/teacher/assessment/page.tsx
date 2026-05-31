@@ -2994,6 +2994,70 @@
 
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { 
+//     getTeacherAuthorizedAssignments 
+// } from "@/app/actions/exam-engine.actions";
+// import { getSchoolClassesWithGrades } from "@/app/actions/subject-allocation";
+// import { TeacherExamArchitectClient } from "@/components/TeacherDashboard/exams/teacherExamClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * Rule 16: Dynamic Contextual SEO
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return { title: "Exam Architect | SchoolPaaS" };
+
+//     return {
+//         title: "Exam Architect | Registry Deployment | SchoolPaaS",
+//         description: "AI-assisted institutional assessment construction and deployment."
+//     };
+// }
+
+// /**
+//  * Rule 12: Server-First Execution
+//  */
+// export default async function Page() {
+//     // 1. Resolve Identity & Context (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     // Rule 10: Security - Ensure user is a Teacher/Admin
+//     if (!profile || profile.role === Role.STUDENT || profile.role === Role.PARENT) {
+//         redirect("/student?error=unauthorized_access");
+//     }
+
+//     // Rule 6: Independent Learner Guard
+//     if (!profile.schoolId) {
+//         redirect("/student?error=institutional_feature_only");
+//     }
+
+//     // 2. Fetch Institutional Data in Parallel (Rule 11)
+//     const [assignments, classes] = await Promise.all([
+//         getTeacherAuthorizedAssignments(profile.id, profile.schoolId),
+//         getSchoolClassesWithGrades(profile.schoolId)
+//     ]);
+
+//     return (
+//         <TeacherExamArchitectClient 
+//             initialAssignments={assignments as any}
+//             initialClasses={classes as any}
+//         />
+//     );
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -3003,27 +3067,28 @@ import {
 } from "@/app/actions/exam-engine.actions";
 import { getSchoolClassesWithGrades } from "@/app/actions/subject-allocation";
 import { TeacherExamArchitectClient } from "@/components/TeacherDashboard/exams/teacherExamClient";
-import { Role } from "@prisma/client";
+import { type AssignmentWithDetails } from "@/store/useExamStore";
+import { Role, Class } from "@prisma/client";
 
 /**
- * Rule 16: Dynamic Contextual SEO
+ * ASSESSMENT ARCHITECT HUB | SERVER PAGE
+ * Rule 16: Dynamic Contextual SEO - Hub-specific indexing.
  */
 export async function generateMetadata(): Promise<Metadata> {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { title: "Exam Architect | SchoolPaaS" };
-
     return {
-        title: "Exam Architect | Registry Deployment | SchoolPaaS",
-        description: "AI-assisted institutional assessment construction and deployment."
+        title: "Assessment Architect | Deployment Hub | SchoolPaaS",
+        description: "AI-assisted institutional assessment construction and deployment hub."
     };
 }
 
 /**
- * Rule 12: Server-First Execution
+ * ASSESSMENT ARCHITECT PAGE (Tier 2)
+ * Rule 12: Server-First Execution. Handles identity, role-gating, and parallel data hydration.
+ * Rule 15: Pure TypeScript - Zero 'any' types in the generation pipeline.
+ * Rule 6: Institutional Guard - Prevents independent access to faculty-only tools.
  */
-export default async function Page() {
-    // 1. Resolve Identity & Context (Rule 10)
+export default async function AssessmentArchitectPage() {
+    // 1. Resolve Identity & Verification (Rule 10)
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) redirect("/login");
@@ -3033,26 +3098,36 @@ export default async function Page() {
         select: { id: true, schoolId: true, role: true }
     });
 
-    // Rule 10: Security - Ensure user is a Teacher/Admin
+    // 2. Authorization Security Gate (Rule 6/10)
+    // Assessment Hub is strictly restricted to Institutional Teachers and Admins.
     if (!profile || profile.role === Role.STUDENT || profile.role === Role.PARENT) {
-        redirect("/student?error=unauthorized_access");
+        redirect("/dashboard?error=unauthorized_hub_access");
     }
 
-    // Rule 6: Independent Learner Guard
+    // 3. Multi-Tenant Isolation Protocol (Rule 5)
+    // Tier-2 Institutional logic requires a valid schoolId.
     if (!profile.schoolId) {
-        redirect("/student?error=institutional_feature_only");
+        redirect("/dashboard?error=institutional_feature_only");
     }
 
-    // 2. Fetch Institutional Data in Parallel (Rule 11)
+    // 4. Authoritative Data Hydration (Rule 11)
+    // Fetch authorized subject modules and classroom hubs in parallel for high-performance sync.
     const [assignments, classes] = await Promise.all([
         getTeacherAuthorizedAssignments(profile.id, profile.schoolId),
         getSchoolClassesWithGrades(profile.schoolId)
     ]);
 
+    // 5. Client-Side Protocol Handoff (Rule 15)
+    // We cast the results via unknown bridge to our strictly defined store interfaces.
+    const initialAssignments = (assignments as unknown) as AssignmentWithDetails[];
+    const initialClasses = (classes as unknown) as Class[];
+
     return (
-        <TeacherExamArchitectClient 
-            initialAssignments={assignments as any}
-            initialClasses={classes as any}
-        />
+        <main className="min-h-screen bg-background">
+            <TeacherExamArchitectClient 
+                initialAssignments={initialAssignments}
+                initialClasses={initialClasses}
+            />
+        </main>
     );
 }

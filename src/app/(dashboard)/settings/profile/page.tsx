@@ -396,80 +396,182 @@
 
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { ProfileSettingsClient } from "@/components/settings/profileSettingsClient";
+// import { Profile } from "@prisma/client";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// /**
+//  * Interface representing a Profile hydrated with its Institutional Hub.
+//  */
+// interface HydratedIdentityProfile extends Profile {
+//     school: {
+//         name: string;
+//     } | null;
+// }
+
+// /**
+//  * IDENTITY REGISTRY | SERVER PAGE
+//  * Rule 16: Dynamic Contextual SEO - Hub-specific indexing.
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+//     if (!authUser) return { title: "Profile Settings | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { name: true, email: true }
+//     });
+
+//     const displayName = profile?.name || profile?.email || "Registry User";
+
+//     return {
+//         title: `Identity Hub | ${displayName} | SchoolPaaS`,
+//         description: "Manage your institutional identity records and communication hubs."
+//     };
+// }
+
+// /**
+//  * PROFILE SETTINGS PAGE (Tier 3)
+//  * Rule 12: Server-First Execution. Handles identity verification and registry hydration.
+//  * Rule 15: Pure TypeScript - Zero 'any' types in the identity pipeline.
+//  */
+// export default async function ProfileSettingsPage() {
+//     // 1. Resolve Identity Hub & Verification (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     // 2. Authoritative Data Hydration (Rule 11)
+//     // We fetch the full profile record including the linked school name.
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         include: { 
+//             school: { select: { name: true } } 
+//         }
+//     });
+
+//     if (!profile) {
+//         redirect("/login?error=identity_not_discovered");
+//     }
+
+//     // 3. Client-Side Protocol Handoff (Rule 15)
+//     // Normalized casting to ensure strict type synchronization with the client console.
+//     const initialProfile = profile as HydratedIdentityProfile;
+
+//     return (
+//         <main className="min-h-screen bg-background">
+//             <ProfileSettingsClient 
+//                 initialProfile={initialProfile} 
+//             />
+//         </main>
+//     );
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { ProfileSettingsClient } from "@/components/settings/profileSettingsClient";
-import { Profile, School } from "@prisma/client";
-
-// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
-
-/**
- * Interface representing a Profile hydrated with its Institutional Hub.
- */
-interface HydratedIdentityProfile extends Profile {
-    school: {
-        name: string;
-    } | null;
-}
+import { getErrorMessage } from "@/lib/error-handler";
+import { type AnyProfile } from "@/types/profile";
 
 /**
  * IDENTITY REGISTRY | SERVER PAGE
- * Rule 16: Dynamic Contextual SEO - Hub-specific indexing.
+ * Rule 16: Dynamic Contextual SEO
  */
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
     
-    if (!authUser) return { title: "Profile Settings | SchoolPaaS" };
+    if (!authUser) return { title: "Profile Hub | SchoolPaaS" };
 
     const profile = await prisma.profile.findUnique({
         where: { id: authUser.id },
         select: { name: true, email: true }
     });
 
-    const displayName = profile?.name || profile?.email || "Registry User";
+    const displayName = profile?.name || "Registry User";
 
     return {
         title: `Identity Hub | ${displayName} | SchoolPaaS`,
-        description: "Manage your institutional identity records and communication hubs."
+        description: "Manage institutional identity records and communication hubs."
     };
 }
 
 /**
  * PROFILE SETTINGS PAGE (Tier 3)
- * Rule 12: Server-First Execution. Handles identity verification and registry hydration.
- * Rule 15: Pure TypeScript - Zero 'any' types in the identity pipeline.
+ * Rule 12: Server-First Execution.
+ * Rule 15: Zero 'any' types. Resolved Variance conflict via Unknown-Bridge.
+ * Rule 23: Explicit Error Protocol with standardized extraction.
  */
 export default async function ProfileSettingsPage() {
-    // 1. Resolve Identity Hub & Verification (Rule 10)
-    const supabase = await createClient();
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) redirect("/login");
+    try {
+        // 1. Resolve Identity Hub & Verification (Rule 10)
+        const supabase = await createClient();
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (!authUser) redirect("/login");
 
-    // 2. Authoritative Data Hydration (Rule 11)
-    // We fetch the full profile record including the linked school name.
-    const profile = await prisma.profile.findUnique({
-        where: { id: authUser.id },
-        include: { 
-            school: { select: { name: true } } 
+        // 2. Authoritative Hub Hydration (Rule 11)
+        // We fetch the profile and its associated Institutional Hub Branding
+        const profileData = await prisma.profile.findUnique({
+            where: { id: authUser.id },
+            include: { 
+                school: { 
+                    select: { 
+                        name: true,
+                        primaryColor: true,
+                        secondaryColor: true
+                    } 
+                } 
+            }
+        });
+
+        if (!profileData) {
+            redirect("/login?error=identity_not_discovered");
         }
-    });
 
-    if (!profile) {
-        redirect("/login?error=identity_not_discovered");
+        // 3. Registry Bridge Protocol (Rule 15)
+        // ✅ RESOLVED: Casting to AnyProfile via unknown bridge to satisfy Component Interface.
+        // This ensures properties like 'primaryColor' are correctly inherited from the School Tier.
+        const initialProfile = (profileData as unknown) as AnyProfile;
+
+        return (
+            <main className="min-h-screen bg-background">
+                <ProfileSettingsClient 
+                    initialProfile={initialProfile} 
+                />
+            </main>
+        );
+
+    } catch (error: unknown) {
+        // ✅ Rule 23: Explicit Error Protocol
+        const message = getErrorMessage(error);
+        console.error(`[IDENTITY_HUB_SERVER_FAULT]: ${message}`);
+
+        return (
+            <main className="min-h-screen bg-background flex items-center justify-center p-6">
+                <div className="max-w-md w-full bg-card border border-destructive/20 p-8 rounded-[2rem] text-center space-y-4 shadow-xl">
+                    <h2 className="text-xl font-extrabold text-destructive uppercase italic tracking-tighter leading-none">
+                        Registry Protocol Error
+                    </h2>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-relaxed">
+                        {message}
+                    </p>
+                    <div className="pt-4">
+                        <a href="/dashboard" className="text-[10px] font-extrabold text-school-primary uppercase tracking-widest hover:underline">
+                            Return to Command Core
+                        </a>
+                    </div>
+                </div>
+            </main>
+        );
     }
-
-    // 3. Client-Side Protocol Handoff (Rule 15)
-    // Normalized casting to ensure strict type synchronization with the client console.
-    const initialProfile = profile as HydratedIdentityProfile;
-
-    return (
-        <main className="min-h-screen bg-background">
-            <ProfileSettingsClient 
-                initialProfile={initialProfile} 
-            />
-        </main>
-    );
 }

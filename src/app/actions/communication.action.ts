@@ -119,7 +119,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
-import { Role, Prisma, TxStatus } from '@prisma/client'
+import {Prisma, TxStatus } from '@prisma/client'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 

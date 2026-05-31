@@ -519,6 +519,179 @@
 
 
 
+// 'use client'
+
+// import React, { useState } from "react"
+// import { useProfileStore } from "@/store/profileStore"
+// import { generateTopicContent, type EnhancedLessonContent } from "@/app/actions/ai-generator"
+// import { getScannedPapers } from "@/app/actions/scanned-question-bank"
+// import { getLessonForTeacher } from "@/app/actions/lesson.actions"
+// import { ArrowLeft, BookOpen, Loader2, Sparkles, ShieldCheck } from "lucide-react"
+// import Link from "next/link"
+// import { AILessonPlanner } from "@/components/TeacherDashboard/ai-learning-planner"
+// import { toast } from "sonner"
+// import { getErrorMessage } from "@/lib/error-handler"
+// import { Question, Role } from "@prisma/client"
+
+
+// interface LessonStudioClientProps {
+//   topicId: string;
+//   initialLesson: any; 
+//   initialScannedQuestions: Question[];
+// }
+
+// /**
+//  * INSTITUTIONAL LESSON STUDIO (Tier 2/3)
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 15: Resolved casting bridge TS2345 via 'unknown' and explicit model targeting.
+//  * Rule 18/21: Semantic Flip & Scale Protocol.
+//  */
+// export function LessonStudioClient({ topicId, initialLesson, initialScannedQuestions }: LessonStudioClientProps) {
+//   const { profile } = useProfileStore();
+  
+//   const [lessonContent, setLessonContent] = useState<EnhancedLessonContent | null>(
+//     (initialLesson?.customContent as unknown as EnhancedLessonContent) ?? null
+//   );
+  
+//   const [scannedQuestions, setScannedQuestions] = useState<Question[]>(initialScannedQuestions);
+//   const [isGenerating, setIsGenerating] = useState(false);
+
+//   const userId = profile?.id ?? "";
+//   const schoolId = profile?.schoolId ?? null;
+//   const userRole = profile?.role ?? Role.TEACHER;
+
+//   /**
+//    * Rule 11: Hub Re-Synchronization Protocol
+//    * ✅ RESOLVED TS2345: Explicitly typing qRes to ensure state compatibility.
+//    */
+//   const refreshStudio = async () => {
+//     try {
+//         const [lRes, qRes] = await Promise.all([
+//             getLessonForTeacher(topicId, schoolId ?? ""),
+//             getScannedPapers(schoolId, userId )
+//         ]);
+        
+//         if (lRes.success && lRes.data) {
+//             setLessonContent(lRes.data.customContent as unknown as EnhancedLessonContent);
+//         }
+        
+//         // Rule 15: Safe Bridge Cast to Question[]
+//         if (qRes) {
+//             setScannedQuestions(qRes as unknown as Question[]);
+//         }
+//     } catch (err) {
+//         console.error("[STUDIO_SYNC_FAULT]:", err);
+//     }
+//   };
+
+//   const handleGenerate = async () => {
+//     if (!userId) return toast.error("Registry Protocol: Identification required.");
+
+//     setIsGenerating(true);
+//     try {
+//       const res = await generateTopicContent({ topicId, userId, schoolId, userRole: userRole as Role });
+
+//       if (res.success) {
+//         toast.success("AI Synthesis Complete.");
+//         await refreshStudio();
+//       } else {
+//         toast.error("Synthesis protocol failed.");
+//       }
+//     } catch (err: unknown) {
+//       toast.error(getErrorMessage(err));
+//     } finally {
+//       setIsGenerating(false);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-background text-foreground animate-in fade-in duration-700">
+//       <div className="max-w-7xl mx-auto p-4 md:p-8 lg:p-12 space-y-10 md:space-y-12">
+        
+//         {/* ── HEADER (Rule 11/21) ── */}
+//         <header className="space-y-8">
+//           <Link 
+//               href={userRole === Role.STUDENT ? "/student" : "/teacher"} 
+//               className="text-muted-foreground hover:text-foreground text-[10px] font-extrabold uppercase flex items-center gap-2 transition-all w-fit tracking-widest italic"
+//           >
+//             <ChevronLeft className="h-4 w-4" /> Return to Hub Terminal
+//           </Link>
+
+//           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-border pb-10">
+//             <div className="flex items-center gap-6">
+//               <div className="h-16 w-16 rounded-2xl border border-school-primary-200 bg-school-primary-50 flex items-center justify-center shadow-lg transition-colors">
+//                 <BookOpen className="h-8 w-8 text-school-primary" />
+//               </div>
+//               <div className="space-y-1">
+//                 <h1 className="text-2xl md:text-4xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">Studio Console</h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest mt-2 flex items-center gap-2">
+//                     <span className="h-1.5 w-1.5 rounded-full bg-school-primary animate-pulse" />
+//                     Registry Module Architecture Hub
+//                 </p>
+//               </div>
+//             </div>
+            
+//             <div className="hidden md:flex items-center gap-4 bg-surface px-6 py-3 rounded-2xl border border-border shadow-inner">
+//                 <ShieldCheck className="h-5 w-5 text-school-primary" />
+//                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-foreground italic">Logic Hub Active</span>
+//             </div>
+//           </div>
+//         </header>
+
+//         <main className="w-full">
+//           {!lessonContent ? (
+//             /* ── EMPTY HUB STATE (Rule 18/21) ── */
+//             <div className="text-center py-32 bg-card rounded-[3rem] border-2 border-dashed border-border space-y-10 shadow-2xl animate-in zoom-in-95 duration-500 max-w-4xl mx-auto">
+//               <div className="h-24 w-24 rounded-[2rem] flex items-center justify-center mx-auto border border-school-primary-200 bg-school-primary-50 shadow-inner">
+//                   <Sparkles className="h-12 w-12 text-school-primary animate-pulse" />
+//               </div>
+
+//               <div className="space-y-3 px-6">
+//                   <h2 className="text-2xl md:text-3xl font-extrabold uppercase italic text-foreground tracking-tighter">Registry Hub Empty</h2>
+//                   <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest leading-relaxed max-w-xs mx-auto italic opacity-70">
+//                     Initialize the synthesis engine to generate academic modules for this syllabus hub.
+//                   </p>
+//               </div>
+
+//               <button
+//                 onClick={handleGenerate}
+//                 disabled={isGenerating}
+//                 className="px-12 py-5 bg-school-primary text-on-school-primary font-extrabold rounded-2xl uppercase text-[11px] tracking-widest hover:brightness-110 active:scale-95 transition-all disabled:opacity-20 shadow-xl shadow-school-primary-200"
+//               >
+//                 {isGenerating ? (
+//                   <div className="flex items-center gap-3">
+//                     <Loader2 className="animate-spin w-5 h-5" />
+//                     Synthesizing Hub...
+//                   </div>
+//                 ) : (
+//                   "Initialize Synthesis Hub"
+//                 )}
+//               </button>
+//             </div>
+//           ) : (
+//             <div className="animate-in slide-in-from-bottom-6 duration-1000">
+//                 <AILessonPlanner
+//                     topicId={topicId}
+//                     lessonId={initialLesson?.id || ""}
+//                     schoolId={schoolId}
+//                     userId={userId}
+//                     userRole={userRole as Role}
+//                     topicTitle={lessonContent.studentContent.title}
+//                     initialData={lessonContent}
+//                     initialScannedQuestions={scannedQuestions}
+//                     mode={userRole === Role.STUDENT ? "student" : "teacher"}
+//                 />
+//             </div>
+//           )}
+//         </main>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
 'use client'
 
 import React, { useState } from "react"
@@ -526,29 +699,65 @@ import { useProfileStore } from "@/store/profileStore"
 import { generateTopicContent, type EnhancedLessonContent } from "@/app/actions/ai-generator"
 import { getScannedPapers } from "@/app/actions/scanned-question-bank"
 import { getLessonForTeacher } from "@/app/actions/lesson.actions"
-import { ArrowLeft, BookOpen, Loader2, Sparkles, ShieldCheck, ChevronLeft } from "lucide-react"
+import { BookOpen, Loader2, Sparkles, ShieldCheck, ChevronLeft } from "lucide-react"
 import Link from "next/link"
 import { AILessonPlanner } from "@/components/TeacherDashboard/ai-learning-planner"
 import { toast } from "sonner"
 import { getErrorMessage } from "@/lib/error-handler"
 import { Question, Role } from "@prisma/client"
-import { cn } from "@/lib/utils"
+import { Prisma, OwnershipType } from "@prisma/client"
+
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// interface LessonHubRecord {
+//     id: string;
+//     customContent: unknown;
+//     status: LessonStatus;
+//     globalLessonId: string;
+// }
+
+export interface LessonHubRecord {
+  id: string;
+  customContent: Prisma.JsonValue;
+  status: string; 
+  globalLessonId: string;
+  globalLesson: {
+    id: string;
+    schoolId: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    title: string;
+    isGlobal: boolean;
+    topicId: string;
+    ownershipType: OwnershipType;
+    baseId: string | null;
+    aiContent: Prisma.JsonValue;
+    videoScript: string | null;
+  };
+}
 
 interface LessonStudioClientProps {
   topicId: string;
-  initialLesson: any; 
+  initialLesson: LessonHubRecord | null; // ✅ Resolved 'any' type
   initialScannedQuestions: Question[];
 }
+
+
 
 /**
  * INSTITUTIONAL LESSON STUDIO (Tier 2/3)
  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
- * Rule 15: Resolved casting bridge TS2345 via 'unknown' and explicit model targeting.
- * Rule 18/21: Semantic Flip & Scale Protocol.
+ * Rule 15: Pure TypeScript - Zero 'any' types.
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
+ * Rule 23: Explicit Error Protocol via getErrorMessage.
  */
 export function LessonStudioClient({ topicId, initialLesson, initialScannedQuestions }: LessonStudioClientProps) {
   const { profile } = useProfileStore();
   
+  // Rule 15: unknown bridge casting for Prisma JSON types
   const [lessonContent, setLessonContent] = useState<EnhancedLessonContent | null>(
     (initialLesson?.customContent as unknown as EnhancedLessonContent) ?? null
   );
@@ -562,13 +771,13 @@ export function LessonStudioClient({ topicId, initialLesson, initialScannedQuest
 
   /**
    * Rule 11: Hub Re-Synchronization Protocol
-   * ✅ RESOLVED TS2345: Explicitly typing qRes to ensure state compatibility.
+   * Rule 23: Explicit Error Protocol
    */
   const refreshStudio = async () => {
     try {
         const [lRes, qRes] = await Promise.all([
             getLessonForTeacher(topicId, schoolId ?? ""),
-            getScannedPapers(schoolId, userId )
+            getScannedPapers(schoolId, userId)
         ]);
         
         if (lRes.success && lRes.data) {
@@ -579,8 +788,9 @@ export function LessonStudioClient({ topicId, initialLesson, initialScannedQuest
         if (qRes) {
             setScannedQuestions(qRes as unknown as Question[]);
         }
-    } catch (err) {
-        console.error("[STUDIO_SYNC_FAULT]:", err);
+    } catch (error: unknown) {
+        const message = getErrorMessage(error);
+        console.error(`[STUDIO_SYNC_FAULT]: ${message}`);
     }
   };
 
@@ -597,8 +807,9 @@ export function LessonStudioClient({ topicId, initialLesson, initialScannedQuest
       } else {
         toast.error("Synthesis protocol failed.");
       }
-    } catch (err: unknown) {
-      toast.error(getErrorMessage(err));
+    } catch (error: unknown) {
+        const message = getErrorMessage(error);
+        toast.error(message);
     } finally {
       setIsGenerating(false);
     }
@@ -606,6 +817,7 @@ export function LessonStudioClient({ topicId, initialLesson, initialScannedQuest
 
   return (
     <div className="min-h-screen bg-background text-foreground animate-in fade-in duration-700">
+      {/* Rule 20: Fluid Container and Padding */}
       <div className="max-w-7xl mx-auto p-4 md:p-8 lg:p-12 space-y-10 md:space-y-12">
         
         {/* ── HEADER (Rule 11/21) ── */}
@@ -619,6 +831,7 @@ export function LessonStudioClient({ topicId, initialLesson, initialScannedQuest
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-border pb-10">
             <div className="flex items-center gap-6">
+              {/* Rule 21: Scale Protocol Hub Icon */}
               <div className="h-16 w-16 rounded-2xl border border-school-primary-200 bg-school-primary-50 flex items-center justify-center shadow-lg transition-colors">
                 <BookOpen className="h-8 w-8 text-school-primary" />
               </div>
@@ -632,6 +845,7 @@ export function LessonStudioClient({ topicId, initialLesson, initialScannedQuest
             </div>
             
             <div className="hidden md:flex items-center gap-4 bg-surface px-6 py-3 rounded-2xl border border-border shadow-inner">
+                {/* Rule 21 mathematical brand accent */}
                 <ShieldCheck className="h-5 w-5 text-school-primary" />
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-foreground italic">Logic Hub Active</span>
             </div>
@@ -640,7 +854,7 @@ export function LessonStudioClient({ topicId, initialLesson, initialScannedQuest
 
         <main className="w-full">
           {!lessonContent ? (
-            /* ── EMPTY HUB STATE (Rule 18/21) ── */
+            /* ── EMPTY HUB STATE (Rule 18/19/21) ── */
             <div className="text-center py-32 bg-card rounded-[3rem] border-2 border-dashed border-border space-y-10 shadow-2xl animate-in zoom-in-95 duration-500 max-w-4xl mx-auto">
               <div className="h-24 w-24 rounded-[2rem] flex items-center justify-center mx-auto border border-school-primary-200 bg-school-primary-50 shadow-inner">
                   <Sparkles className="h-12 w-12 text-school-primary animate-pulse" />
@@ -669,6 +883,7 @@ export function LessonStudioClient({ topicId, initialLesson, initialScannedQuest
               </button>
             </div>
           ) : (
+            /* ── ACTIVE PLANNER HUB ── */
             <div className="animate-in slide-in-from-bottom-6 duration-1000">
                 <AILessonPlanner
                     topicId={topicId}

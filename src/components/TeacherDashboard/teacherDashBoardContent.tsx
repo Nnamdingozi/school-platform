@@ -2599,12 +2599,12 @@ import { Button } from '@/components/ui/button'
 // Actions & Types
 import { getPerformanceDashboardData } from '@/app/actions/performance-data'
 import { PerformanceDashboardData } from '@/types/performanceData'
-import { LayoutGrid, ShieldCheck, Activity } from 'lucide-react'
+import { LayoutGrid, ShieldCheck } from 'lucide-react'
 import { useTeacherStore, type DashboardSubject, type DashboardTopic } from '@/store/teacherDataStore'
 import { useProfileStore } from '@/store/profileStore'
 import { getErrorMessage } from '@/lib/error-handler'
 import { Role } from '@prisma/client'
-import { cn } from '@/lib/utils'
+
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 

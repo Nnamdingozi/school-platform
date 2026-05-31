@@ -198,7 +198,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { Prisma, Role } from "@prisma/client";
 import { getErrorMessage } from "@/lib/error-handler";
-import { type EnhancedLessonContent } from "@/components/TeacherDashboard/ai-learning-planner";
+import { type EnhancedLessonContent } from "@/app/actions/ai-generator";
 import { logActivity } from "@/lib/activitylogger";
 
 /**

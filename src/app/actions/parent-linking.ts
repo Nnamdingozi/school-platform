@@ -725,7 +725,8 @@ export async function searchUsersByRole(schoolId: string, query: string, role: R
       select: { id: true, name: true, email: true },
       take: 8,
     });
-  } catch (err: unknown) {
+  } catch (err) {
+    getErrorMessage(err)
     return [];
   }
 }

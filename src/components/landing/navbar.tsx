@@ -373,7 +373,7 @@ import { GraduationCap, Menu, X, ShieldCheck, Zap, ChevronRight } from "lucide-r
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ThemeToggle } from "../themeToggle";
-import { cn } from "@/lib/utils";
+
 
 // ── Configuration ───────────────────────────────────────────────────────────
 

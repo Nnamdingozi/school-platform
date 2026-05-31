@@ -633,12 +633,12 @@
 import React, { useState, useTransition } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { BookOpen, Save, Loader2, Info, ShieldCheck } from 'lucide-react'
+import { BookOpen, Save, Loader2, ShieldCheck } from 'lucide-react'
 import { updateCurriculumLabels } from '@/app/actions/school-settings.action'
 import { type SchoolSettingsData } from '@/app/actions/school-settings.action'
-import { useProfileStore } from '@/store/profileStore'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/error-handler'
 
 interface CurriculumSectionProps {
     data: SchoolSettingsData
@@ -653,7 +653,6 @@ interface CurriculumSectionProps {
  * Rule 21: Scale Protocol for mathematical brand tints.
  */
 export function CurriculumSection({ data, onUpdate }: CurriculumSectionProps) {
-    const { profile } = useProfileStore();
     const [isPending, startTransition] = useTransition();
 
     const [labels, setLabels] = useState({
@@ -698,6 +697,7 @@ export function CurriculumSection({ data, onUpdate }: CurriculumSectionProps) {
                     toast.error("Registry update failed.");
                 }
             } catch (err) {
+                 getErrorMessage(err)
                 toast.error("Synchronous failure in terminology pipeline.");
             }
         });

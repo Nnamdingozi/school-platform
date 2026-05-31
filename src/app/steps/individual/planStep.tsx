@@ -63,9 +63,10 @@
 import React, { useTransition } from 'react';
 import { useRegisterStore } from '@/store/individualOnboardingStore';
 import { initiateIndividualPayment } from '@/app/actions/subscription.actions';
-import { Check, Loader2, ArrowRight } from 'lucide-react';
+import { Check, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/error-handler';
 
 /**
  * INDIVIDUAL PLAN SELECTION HUB (Tier 3)
@@ -89,6 +90,7 @@ export function RegisterPlanStep() {
                     toast.error("Billing Protocol Breach: Initialization failed.");
                 }
             } catch (error) {
+                getErrorMessage(error)
                 toast.error("Registry connection error.");
             }
         });

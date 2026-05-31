@@ -765,7 +765,6 @@ export function AdminStep() {
         setAdminData, 
         setError, 
         isLoading, 
-        error, 
         adminData, 
         paymentStatus, 
         reset 

@@ -544,7 +544,7 @@ import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { School, User, Activity, Sparkles } from "lucide-react";
 import { motion, Variants } from "framer-motion";
-import { cn } from '@/lib/utils';
+
 
 // ── Animation Variants ────────────────────────────────────────────────────────
 

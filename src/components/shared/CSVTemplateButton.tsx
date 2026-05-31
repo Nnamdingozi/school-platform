@@ -158,7 +158,7 @@
 import React from 'react';
 import { FileSpreadsheet } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useProfileStore } from '@/store/profileStore';
+
 
 interface CSVTemplateButtonProps {
   fileName: string;
@@ -181,7 +181,7 @@ export function CSVTemplateButton({
   label = "Download Template", 
   className 
 }: CSVTemplateButtonProps) {
-  const { profile } = useProfileStore();
+ 
 
   const handleDownload = () => {
     // Generate CSV data from props

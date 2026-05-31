@@ -921,7 +921,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { ActivityType, Role, Prisma, LessonStatus } from '@prisma/client'
+import { ActivityType, Role, Prisma } from '@prisma/client'
 import { getErrorMessage } from '@/lib/error-handler'
 import { logActivity } from "@/lib/activitylogger";
 import { academicCoreScope } from "@/lib/content-scope";

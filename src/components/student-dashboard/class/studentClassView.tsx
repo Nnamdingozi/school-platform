@@ -654,7 +654,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "../../ui/card";
 import { Badge } from "../../ui/badge";
 import { UserCheck, Users, School, BookOpen, ChevronRight } from "lucide-react";
-import { useProfileStore } from "@/store/profileStore";
+
 
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
@@ -685,7 +685,7 @@ interface StudentClassViewProps {
  * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function StudentClassView({ data }: StudentClassViewProps) {
-  const { profile } = useProfileStore();
+  
 
   if (!data) {
     return (

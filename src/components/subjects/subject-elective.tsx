@@ -191,7 +191,6 @@
 'use client'
 
 import React, { useState, useTransition } from 'react';
-import { useProfileStore } from "@/store/profileStore";
 import { submitSeniorSubjects } from "@/app/actions/subject-allocation";
 import { 
     BookOpen, Info, Loader2, 
@@ -224,7 +223,6 @@ export function StudentElectiveClient({
     studentId, 
     schoolId 
 }: StudentElectiveClientProps) {
-    const { profile } = useProfileStore();
     const [isPending, startTransition] = useTransition();
 
     // Rule 11: Initialize state from definitive database registry

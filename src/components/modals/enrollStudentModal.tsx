@@ -573,12 +573,12 @@
 "use client"
 
 import React, { useState, useEffect, useTransition, useCallback } from "react"
-import { X, Search, Loader2, CheckCircle2, GraduationCap, ChevronDown, ArrowRight } from "lucide-react"
+import { X, Search, Loader2, CheckCircle2, ChevronDown, ArrowRight } from "lucide-react"
 import { enrollSingleStudent, searchStudents } from "@/app/actions/class-management"
 import { useProfileStore } from "@/store/profileStore"
 import { toast } from "sonner"
 import { Role } from "@prisma/client"
-import { cn } from "@/lib/utils"
+
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 

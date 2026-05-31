@@ -1231,6 +1231,280 @@
 
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { createClient } from '@/lib/supabase/server'
+// import { revalidatePath } from 'next/cache'
+// import { logActivity } from '@/app/actions/activitylog'
+// import {  TxStatus} from '@prisma/client'
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// /**
+//  * Rule 15: Synced strictly with schema.prisma
+//  * priceUSD is a Float in the DB, mapped here as number.
+//  */
+// export interface SubscriptionPlanItem {
+//     id:           string
+//     name:         string
+//     slug:         string
+//     priceNGN:     number
+//     priceKobo:    number
+//     priceUSD:     number 
+//     durationDays: number
+//     description:  string
+//     features:     string[]
+//     popular:      boolean
+//     sortOrder:    number
+// }
+
+// export interface PaymentHistoryEntry {
+//     id:        string
+//     planName:  string
+//     amountNGN: number
+//     status:    TxStatus
+//     paidAt:    Date | null
+//     createdAt: Date
+// }
+
+// export interface SubscriptionWithHistory {
+//     id:               string
+//     plan:             string
+//     status:           string
+//     currentPeriodEnd: Date
+//     amountNGN:        number | null
+//     paidAt:           Date | null
+//     subPlan: {
+//         name:         string
+//         priceNGN:     number
+//         durationDays: number
+//         description:  string
+//         features:     string[]
+//     } | null
+//     transactions:     PaymentHistoryEntry[]
+// }
+
+// // ── Actions ───────────────────────────────────────────────────────────────────
+
+// export async function getSubscriptionPlans(): Promise<SubscriptionPlanItem[]> {
+//     try {
+//         const plans = await prisma.subscriptionPlan.findMany({
+//             where:   { active: true },
+//             orderBy: { sortOrder: 'asc' },
+//         });
+//         return plans as SubscriptionPlanItem[];
+//     } catch (err: unknown) {
+//         return [];
+//     }
+// }
+
+// export async function initiateIndividualPayment(planId: string) {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user } } = await supabase.auth.getUser()
+//         if (!user) throw new Error("Unauthorized");
+
+//         const plan = await prisma.subscriptionPlan.findUnique({ where: { id: planId } });
+//         if (!plan || !plan.active) throw new Error("Plan not found or inactive");
+
+//         const reference = `indiv_${user.id.slice(0, 8)}_${Date.now()}`;
+
+//         await prisma.$transaction([
+//             prisma.subscriptionTransaction.create({
+//                 data: {
+//                     schoolId: "INDIVIDUAL",
+//                     planId: plan.id,
+//                     planName: plan.name,
+//                     amountNGN: plan.priceNGN,
+//                     amountKobo: plan.priceKobo,
+//                     reference,
+//                     status: TxStatus.PENDING,
+//                     initiatedBy: user.id,
+//                 }
+//             }),
+//             prisma.subscription.upsert({
+//                 where: { profileId: user.id },
+//                 update: { paystackReference: reference },
+//                 create: {
+//                     profileId: user.id,
+//                     schoolId: "INDIVIDUAL", 
+//                     plan: plan.name,
+//                     planId: plan.id,
+//                     status: 'pending',
+//                     currentPeriodEnd: new Date(),
+//                     paystackReference: reference
+//                 }
+//             })
+//         ]);
+
+//         const response = await fetch('https://api.paystack.co/transaction/initialize', {
+//             method:  'POST',
+//             headers: {
+//                 Authorization:  `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({
+//                 email: user.email,
+//                 amount: plan.priceKobo,
+//                 reference,
+//                 currency: 'NGN',
+//                 metadata: { userId: user.id, planId: plan.id, tier: 'INDIVIDUAL' },
+//                 callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing/verify?reference=${reference}`,
+//             }),
+//         });
+
+//         const paystackData = await response.json();
+//         return { success: true, authorizationUrl: paystackData.data.authorization_url as string, reference };
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// export async function initiateSubscriptionPayment(schoolId: string, planId: string) {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user } } = await supabase.auth.getUser()
+//         if (!user) throw new Error("Unauthorized");
+
+//         const plan = await prisma.subscriptionPlan.findUnique({ where: { id: planId } });
+//         if (!plan) throw new Error("Plan not found");
+
+//         const reference = `school_${schoolId.slice(0, 8)}_${Date.now()}`;
+
+//         await prisma.$transaction([
+//             prisma.subscriptionTransaction.create({
+//                 data: {
+//                     schoolId,
+//                     planId: plan.id,
+//                     planName: plan.name,
+//                     amountNGN: plan.priceNGN,
+//                     amountKobo: plan.priceKobo,
+//                     reference,
+//                     status: TxStatus.PENDING,
+//                     initiatedBy: user.id,
+//                 }
+//             }),
+//             prisma.subscription.upsert({
+//                 where: { schoolId },
+//                 update: { paystackReference: reference },
+//                 create: {
+//                     schoolId,
+//                     plan: plan.name,
+//                     planId: plan.id,
+//                     status: 'pending',
+//                     currentPeriodEnd: new Date(),
+//                     paystackReference: reference
+//                 }
+//             })
+//         ]);
+
+//         const response = await fetch('https://api.paystack.co/transaction/initialize', {
+//             method:  'POST',
+//             headers: {
+//                 Authorization:  `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({
+//                 email: user.email,
+//                 amount: plan.priceKobo,
+//                 reference,
+//                 currency: 'NGN',
+//                 metadata: { schoolId, planId: plan.id, tier: 'INSTITUTIONAL' },
+//                 callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing/verify?reference=${reference}`,
+//             }),
+//         });
+
+//         const paystackData = await response.json();
+//         return { success: true, authorizationUrl: paystackData.data.authorization_url as string, reference };
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// export async function verifySubscriptionPayment(reference: string) {
+//     try {
+//         const transaction = await prisma.subscriptionTransaction.findUnique({
+//             where: { reference },
+//             include: { plan: true }
+//         });
+
+//         if (!transaction) throw new Error("Transaction missing.");
+//         if (transaction.status === TxStatus.SUCCESS) return { success: true };
+
+//         const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+//             headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` }
+//         });
+
+//         const paystackData = await response.json();
+//         if (!paystackData.status || paystackData.data.status !== 'success') {
+//             await prisma.subscriptionTransaction.update({ where: { reference }, data: { status: TxStatus.FAILED } });
+//             return { success: false, error: "Payment verification failed." };
+//         }
+
+//         const now = new Date();
+//         const expiresAt = new Date(now.getTime() + transaction.plan.durationDays * 24 * 60 * 60 * 1000);
+
+//         await prisma.$transaction(async (tx) => {
+//             await tx.subscriptionTransaction.update({
+//                 where: { reference },
+//                 data: { status: TxStatus.SUCCESS, paidAt: now }
+//             });
+
+//             if (transaction.schoolId === "INDIVIDUAL") {
+//                 await tx.subscription.update({
+//                     where: { profileId: transaction.initiatedBy! },
+//                     data: { plan: transaction.planName, status: 'active', currentPeriodEnd: expiresAt, paidAt: now }
+//                 });
+//             } else {
+//                 await tx.subscription.update({
+//                     where: { schoolId: transaction.schoolId },
+//                     data: { plan: transaction.planName, status: 'active', currentPeriodEnd: expiresAt, paidAt: now }
+//                 });
+//             }
+//         });
+
+//         return { success: true, planName: transaction.planName };
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+// export async function getSchoolSubscription(schoolId: string, userId: string): Promise<SubscriptionWithHistory | null> {
+//     try {
+//         const res = await prisma.subscription.findFirst({
+//             where: schoolId === "INDIVIDUAL" ? { profileId: userId } : { schoolId },
+//             include: { subPlan: true }
+//         });
+//         if (!res) return null;
+
+//         const txs = await prisma.subscriptionTransaction.findMany({
+//             where: schoolId === "INDIVIDUAL" ? { initiatedBy: userId } : { schoolId },
+//             orderBy: { createdAt: 'desc' }
+//         });
+
+//         return {
+//             id: res.id,
+//             plan: res.plan,
+//             status: res.status,
+//             currentPeriodEnd: res.currentPeriodEnd,
+//             amountNGN: res.amountNGN,
+//             paidAt: res.paidAt,
+//             subPlan: res.subPlan,
+//             transactions: txs.map(t => ({
+//                 id: t.id,
+//                 planName: t.planName,
+//                 amountNGN: t.amountNGN,
+//                 status: t.status,
+//                 paidAt: t.paidAt,
+//                 createdAt: t.createdAt
+//             }))
+//         };
+//     } catch { return null; }
+// }
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
@@ -1238,14 +1512,10 @@ import { getErrorMessage } from '@/lib/error-handler'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { logActivity } from '@/app/actions/activitylog'
-import { Role, ActivityType, TxStatus, Prisma } from '@prisma/client'
+import { TxStatus, ActivityType } from '@prisma/client'
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
-/**
- * Rule 15: Synced strictly with schema.prisma
- * priceUSD is a Float in the DB, mapped here as number.
- */
 export interface SubscriptionPlanItem {
     id:           string
     name:         string
@@ -1286,7 +1556,27 @@ export interface SubscriptionWithHistory {
     transactions:     PaymentHistoryEntry[]
 }
 
-// ── Actions ───────────────────────────────────────────────────────────────────
+// ── Auth Helper Hub ──────────────────────────────────────────────────────────
+
+/**
+ * RESOLVED TS2339: Added 'email' to the selection registry.
+ */
+async function getAuthenticatedActor() {
+    try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return null
+        return await prisma.profile.findUnique({
+            where: { id: user.id },
+            // ✅ Rule 11: Selecting the authoritative email identity
+            select: { id: true, schoolId: true, role: true, name: true, email: true }
+        })
+    } catch {
+        return null
+    }
+}
+
+// ── Actions (Rule 12: Server-First) ──────────────────────────────────────────
 
 export async function getSubscriptionPlans(): Promise<SubscriptionPlanItem[]> {
     try {
@@ -1294,22 +1584,22 @@ export async function getSubscriptionPlans(): Promise<SubscriptionPlanItem[]> {
             where:   { active: true },
             orderBy: { sortOrder: 'asc' },
         });
-        return plans as SubscriptionPlanItem[];
+        return (plans as unknown) as SubscriptionPlanItem[];
     } catch (err: unknown) {
+        getErrorMessage(err)
         return [];
     }
 }
 
 export async function initiateIndividualPayment(planId: string) {
     try {
-        const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) throw new Error("Unauthorized");
+        const actor = await getAuthenticatedActor();
+        if (!actor) throw new Error("Registry Error: Identity session expired.");
 
         const plan = await prisma.subscriptionPlan.findUnique({ where: { id: planId } });
         if (!plan || !plan.active) throw new Error("Plan not found or inactive");
 
-        const reference = `indiv_${user.id.slice(0, 8)}_${Date.now()}`;
+        const reference = `indiv_${actor.id.slice(0, 8)}_${Date.now()}`;
 
         await prisma.$transaction([
             prisma.subscriptionTransaction.create({
@@ -1321,14 +1611,14 @@ export async function initiateIndividualPayment(planId: string) {
                     amountKobo: plan.priceKobo,
                     reference,
                     status: TxStatus.PENDING,
-                    initiatedBy: user.id,
+                    initiatedBy: actor.id,
                 }
             }),
             prisma.subscription.upsert({
-                where: { profileId: user.id },
+                where: { profileId: actor.id },
                 update: { paystackReference: reference },
                 create: {
-                    profileId: user.id,
+                    profileId: actor.id,
                     schoolId: "INDIVIDUAL", 
                     plan: plan.name,
                     planId: plan.id,
@@ -1339,6 +1629,15 @@ export async function initiateIndividualPayment(planId: string) {
             })
         ]);
 
+        await logActivity({
+            schoolId: null,
+            actorId: actor.id,
+            actorRole: actor.role,
+            type: ActivityType.SETTINGS_UPDATED,
+            title: "License Sync Initiated",
+            description: `Started individual payment protocol for ${plan.name} hub.`
+        });
+
         const response = await fetch('https://api.paystack.co/transaction/initialize', {
             method:  'POST',
             headers: {
@@ -1346,11 +1645,11 @@ export async function initiateIndividualPayment(planId: string) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                email: user.email,
+                email: actor.email, // ✅ RESOLVED: Property now exists on the actor type
                 amount: plan.priceKobo,
                 reference,
                 currency: 'NGN',
-                metadata: { userId: user.id, planId: plan.id, tier: 'INDIVIDUAL' },
+                metadata: { userId: actor.id, planId: plan.id, tier: 'INDIVIDUAL' },
                 callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing/verify?reference=${reference}`,
             }),
         });
@@ -1364,12 +1663,11 @@ export async function initiateIndividualPayment(planId: string) {
 
 export async function initiateSubscriptionPayment(schoolId: string, planId: string) {
     try {
-        const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) throw new Error("Unauthorized");
+        const actor = await getAuthenticatedActor();
+        if (!actor) throw new Error("Registry Error: Identity session expired.");
 
         const plan = await prisma.subscriptionPlan.findUnique({ where: { id: planId } });
-        if (!plan) throw new Error("Plan not found");
+        if (!plan) throw new Error("Plan not discovered.");
 
         const reference = `school_${schoolId.slice(0, 8)}_${Date.now()}`;
 
@@ -1383,7 +1681,7 @@ export async function initiateSubscriptionPayment(schoolId: string, planId: stri
                     amountKobo: plan.priceKobo,
                     reference,
                     status: TxStatus.PENDING,
-                    initiatedBy: user.id,
+                    initiatedBy: actor.id,
                 }
             }),
             prisma.subscription.upsert({
@@ -1400,6 +1698,15 @@ export async function initiateSubscriptionPayment(schoolId: string, planId: stri
             })
         ]);
 
+        await logActivity({
+            schoolId: schoolId,
+            actorId: actor.id,
+            actorRole: actor.role,
+            type: ActivityType.SETTINGS_UPDATED,
+            title: "Hub License Sync Initiated",
+            description: `Started institutional billing protocol for ${plan.name} hub.`
+        });
+
         const response = await fetch('https://api.paystack.co/transaction/initialize', {
             method:  'POST',
             headers: {
@@ -1407,7 +1714,7 @@ export async function initiateSubscriptionPayment(schoolId: string, planId: stri
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                email: user.email,
+                email: actor.email, // ✅ RESOLVED: Property now exists on the actor type
                 amount: plan.priceKobo,
                 reference,
                 currency: 'NGN',
@@ -1430,7 +1737,7 @@ export async function verifySubscriptionPayment(reference: string) {
             include: { plan: true }
         });
 
-        if (!transaction) throw new Error("Transaction missing.");
+        if (!transaction) throw new Error("Registry Error: Transaction missing.");
         if (transaction.status === TxStatus.SUCCESS) return { success: true };
 
         const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
@@ -1440,7 +1747,7 @@ export async function verifySubscriptionPayment(reference: string) {
         const paystackData = await response.json();
         if (!paystackData.status || paystackData.data.status !== 'success') {
             await prisma.subscriptionTransaction.update({ where: { reference }, data: { status: TxStatus.FAILED } });
-            return { success: false, error: "Payment verification failed." };
+            return { success: false, error: "Payment verification protocol failed." };
         }
 
         const now = new Date();
@@ -1465,6 +1772,15 @@ export async function verifySubscriptionPayment(reference: string) {
             }
         });
 
+        await logActivity({
+            schoolId: transaction.schoolId === "INDIVIDUAL" ? null : transaction.schoolId,
+            actorId: transaction.initiatedBy!,
+            type: ActivityType.SETTINGS_UPDATED,
+            title: "Hub License Synchronized",
+            description: `Successfully verified and activated ${transaction.planName} tier.`
+        });
+
+        revalidatePath('/', 'layout');
         return { success: true, planName: transaction.planName };
     } catch (err: unknown) {
         return { success: false, error: getErrorMessage(err) };
@@ -1491,7 +1807,7 @@ export async function getSchoolSubscription(schoolId: string, userId: string): P
             currentPeriodEnd: res.currentPeriodEnd,
             amountNGN: res.amountNGN,
             paidAt: res.paidAt,
-            subPlan: res.subPlan,
+            subPlan: (res.subPlan as unknown) as SubscriptionWithHistory['subPlan'],
             transactions: txs.map(t => ({
                 id: t.id,
                 planName: t.planName,

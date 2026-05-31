@@ -208,7 +208,7 @@ import { prisma } from "@/lib/prisma";
 import { getErrorMessage } from "@/lib/error-handler";
 import { transformParentLesson } from "@/lib/lessons/transformParentsView";
 import { Assessment, Subject, GradeSubject, Prisma } from "@prisma/client";
-import { type EnhancedLessonContent } from "@/components/TeacherDashboard/ai-learning-planner";
+import { type EnhancedLessonContent } from "@/app/actions/ai-generator";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 

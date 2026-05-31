@@ -548,11 +548,9 @@ import {
 } from '@/app/actions/subject-allocation'
 import {
     BookOpen, Users, Loader2, 
-    Zap, ChevronDown, Info,
-    GraduationCap, CheckCircle2,
-    ShieldCheck, Trash2, Save
+    Zap, ChevronDown, Save
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { getErrorMessage } from '@/lib/error-handler'

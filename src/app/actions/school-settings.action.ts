@@ -845,16 +845,668 @@
 // }
 
 
-'use server'
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { createClient } from '@/lib/supabase/server'
+// import { revalidatePath } from 'next/cache'
+// import { Role, ActivityType, Prisma } from '@prisma/client'
+// import { logActivity } from "@/lib/activitylogger";
+
+// // ── Types ──────────────────────────────────────────────────────────────────────
+
+// export interface SchoolProfileInput {
+//     name:           string
+//     primaryColor:   string
+//     secondaryColor: string
+// }
+
+// export interface CurriculumLabelsInput {
+//     subjectLabel: string
+//     termLabel:    string
+//     yearLabel:    string
+// }
+
+// export interface WhatsAppSettingsInput {
+//     whatsappCredits: number
+// }
+
+// export interface UpdateTermDatesInput {
+//     termId:    string
+//     startDate: Date
+//     endDate:   Date
+// }
+
+// export interface SchoolSettingsData {
+//     school: {
+//         id:              string
+//         name:            string
+//         whatsappCredits: number
+//         subscription: {
+//             plan:             string
+//             status:           string
+//             currentPeriodEnd: Date
+//         } | null
+//     }
+//     curriculum: {
+//         id:           string
+//         name:         string
+//         subjectLabel: string
+//         termLabel:    string
+//         yearLabel:    string
+//         isGlobal:     boolean
+//     } | null
+//     terms: {
+//         id:          string
+//         displayName: string
+//         index:       number
+//         startDate:   Date | null
+//         endDate:     Date | null
+//         gradeId:     string
+//         grade: {
+//             displayName: string
+//         }
+//     }[]
+// }
+
+// interface ActionResult {
+//     success: boolean
+//     error?:  string
+// }
+
+// // ── Auth helper ────────────────────────────────────────────────────────────────
+
+// async function getAuthenticatedActor() {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user } } = await supabase.auth.getUser()
+//         if (!user) return null
+//         return await prisma.profile.findUnique({
+//             where: { id: user.id },
+//             select: { id: true, schoolId: true, role: true, name: true }
+//         })
+//     } catch {
+//         return null
+//     }
+// }
+
+// // ── Queries ───────────────────────────────────────────────────────────────────
+
+// /**
+//  * FETCH INSTITUTIONAL SETTINGS
+//  * Rule 7: Resolves Curriculum and Terms within the school's context.
+//  */
+// export async function getSchoolSettings(
+//     schoolId: string
+// ): Promise<SchoolSettingsData | null> {
+//     try {
+//         const school = await prisma.school.findUnique({
+//             where:  { id: schoolId },
+//             include: {
+//                 subscription: {
+//                     select: { plan: true, status: true, currentPeriodEnd: true },
+//                 },
+//                 curriculum: {
+//                     select: { id: true, name: true, subjectLabel: true, termLabel: true, yearLabel: true, schoolId: true },
+//                 },
+//             },
+//         })
+
+//         if (!school) return null
+
+//         // Rule 7: Find terms belonging to this school across all its grades
+//         const schoolTerms = await prisma.term.findMany({
+//             where: { schoolId: school.id },
+//             orderBy: [
+//                 { grade: { level: 'asc' } },
+//                 { index:  'asc'          },
+//             ],
+//             include: { grade: { select: { displayName: true } } }
+//         })
+
+//         return {
+//             school: {
+//                 id:              school.id,
+//                 name:            school.name,
+//                 whatsappCredits: school.whatsappCredits,
+//                 subscription:    school.subscription,
+//             },
+//             curriculum: school.curriculum ? {
+//                 ...school.curriculum,
+//                 isGlobal: school.curriculum.schoolId === null
+//             } : null,
+//             terms: schoolTerms,
+//         }
+//     } catch (err: unknown) {
+//         console.error('getSchoolSettings error:', getErrorMessage(err))
+//         return null
+//     }
+// }
+
+// // ── Mutations ──────────────────────────────────────────────────────────────────
+
+// /**
+//  * UPDATE SCHOOL PROFILE
+//  * Rule 5: Strict isolation. Actor must belong to the school.
+//  */
+// export async function updateSchoolProfile(
+//     schoolId: string,
+//     input:    SchoolProfileInput
+// ): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor || actor.schoolId !== schoolId || actor.role !== Role.SCHOOL_ADMIN) {
+//             return { success: false, error: 'Unauthorized institutional access.' }
+//         }
+
+//         await prisma.school.update({
+//             where: { id: schoolId },
+//             data: { name: input.name.trim() }
+//         })
+
+//         // Branding logic: Update the colors on the admin's profile (as per schema)
+//         await prisma.profile.update({
+//             where: { id: actor.id },
+//             data: {
+//                 primaryColor: input.primaryColor,
+//                 secondaryColor: input.secondaryColor,
+//             }
+//         })
+
+//         await logActivity({
+//             schoolId: schoolId,
+//             actorId: actor.id,
+//             actorRole: actor.role,
+//             type: ActivityType.SETTINGS_UPDATED,
+//             title: 'School Profile Updated',
+//             description: `Modified name and branding colors for the workspace.`
+//         })
+
+//         revalidatePath('/admin/settings')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// /**
+//  * UPDATE CURRICULUM LABELS
+//  * Rule 4: Admin cannot modify GLOBAL labels.
+//  * Only allowed if the curriculum is school-owned.
+//  */
+// export async function updateCurriculumLabels(
+//     curriculumId: string,
+//     input:        CurriculumLabelsInput
+// ): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor || actor.role !== Role.SCHOOL_ADMIN) return { success: false, error: 'Unauthorized.' }
+
+//         const curriculum = await prisma.curriculum.findUnique({ where: { id: curriculumId } })
+        
+//         if (!curriculum || curriculum.schoolId !== actor.schoolId) {
+//             return { success: false, error: 'Access Denied: Cannot modify Global Curriculum Core. Contact support.' }
+//         }
+
+//         await prisma.curriculum.update({
+//             where: { id: curriculumId },
+//             data: {
+//                 subjectLabel: input.subjectLabel.trim(),
+//                 termLabel:    input.termLabel.trim(),
+//                 yearLabel:    input.yearLabel.trim(),
+//             },
+//         })
+
+//         await logActivity({
+//             schoolId: actor.schoolId!,
+//             actorId: actor.id,
+//             actorRole: actor.role,
+//             type: ActivityType.SETTINGS_UPDATED,
+//             title: 'Curriculum Labels Updated',
+//             description: `Modified terminology for subjects, terms, and academic years.`
+//         })
+
+//         revalidatePath('/admin/settings')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// /**
+//  * SYNC INSTITUTIONAL TERM DATES
+//  * Rule 11: Transactional sync for school terms only.
+//  */
+// export async function syncInstitutionalTermDates(
+//     schoolId:  string,
+//     termIndex: number,
+//     startDate: Date,
+//     endDate:   Date,
+// ): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor || actor.schoolId !== schoolId || actor.role !== Role.SCHOOL_ADMIN) {
+//             return { success: false, error: 'Unauthorized.' }
+//         }
+
+//         if (startDate >= endDate) throw new Error("Timeline error: Start must precede End.");
+
+//         const result = await prisma.term.updateMany({
+//             where: {
+//                 schoolId: schoolId, // Rule 5: Only modify institutional copies
+//                 index: termIndex,
+//             },
+//             data: { startDate, endDate },
+//         })
+
+//         await logActivity({
+//             schoolId: schoolId,
+//             actorId: actor.id,
+//             actorRole: actor.role,
+//             type: ActivityType.TERM_DATES_UPDATED,
+//             title: 'Institutional Calendar Sync',
+//             description: `Updated all Term ${termIndex} dates across school grades.`
+//         })
+
+//         revalidatePath('/admin/settings')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// /**
+//  * UPDATE SPECIFIC TERM DATE
+//  */
+// export async function updateTermDates(
+//     input: UpdateTermDatesInput
+// ): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor || actor.role !== Role.SCHOOL_ADMIN) return { success: false, error: 'Unauthorized.' }
+
+//         const term = await prisma.term.findUnique({ where: { id: input.termId } })
+//         if (!term || term.schoolId !== actor.schoolId) {
+//             return { success: false, error: 'Access Denied: Record is part of Global Core.' }
+//         }
+
+//         await prisma.term.update({
+//             where: { id: input.termId },
+//             data:  { startDate: input.startDate, endDate: input.endDate },
+//         })
+
+//         revalidatePath('/admin/settings')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// /**
+//  * UPDATE WHATSAPP CREDITS (SUPER_ADMIN ONLY)
+//  * Rule 10: Prevents school admins from adding their own credits.
+//  */
+// export async function updateWhatsAppCredits(
+//     schoolId: string,
+//     input:    WhatsAppSettingsInput
+// ): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor || actor.role !== Role.SUPER_ADMIN) {
+//             return { success: false, error: 'Unauthorized: Billing modification restricted to Super Admin.' }
+//         }
+
+//         await prisma.school.update({
+//             where: { id: schoolId },
+//             data:  { whatsappCredits: input.whatsappCredits },
+//         })
+
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// /**
+//  * RESET SCHOOL COLORS
+//  */
+// export async function resetSchoolColors(
+//     schoolId: string
+// ): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor || actor.schoolId !== schoolId || actor.role !== Role.SCHOOL_ADMIN) {
+//             return { success: false, error: 'Unauthorized.' }
+//         }
+
+//         await prisma.profile.update({
+//             where: { id: actor.id },
+//             data: {
+//                 primaryColor:   '#f59e0b',
+//                 secondaryColor: '#1e293b',
+//             },
+//         })
+
+//         revalidatePath('/admin/settings')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+
+// 'use server';
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { createClient } from '@/lib/supabase/server'
+// import { revalidatePath } from 'next/cache'
+// import { Role, ActivityType } from '@prisma/client'
+// import { logActivity } from "@/app/actions/activitylog";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// export interface SchoolProfileInput {
+//     name:           string
+//     primaryColor:   string
+//     secondaryColor: string
+// }
+
+// export interface CurriculumLabelsInput {
+//     subjectLabel: string
+//     termLabel:    string
+//     yearLabel:    string
+// }
+
+// export interface WhatsAppSettingsInput {
+//     whatsappCredits: number
+// }
+
+// export interface UpdateTermDatesInput {
+//     termId:    string
+//     startDate: Date
+//     endDate:   Date
+// }
+
+// export interface SchoolSettingsData {
+//     school: {
+//         id:              string
+//         name:            string
+//         whatsappCredits: number
+//         primaryColor:    string // ✅ Tier 2 Hub Attribute
+//         secondaryColor:  string // ✅ Tier 2 Hub Attribute
+//         subscription: {
+//             plan:             string
+//             status:           string
+//             currentPeriodEnd: Date
+//         } | null
+//     }
+//     curriculum: {
+//         id:           string
+//         name:         string
+//         subjectLabel: string
+//         termLabel:    string
+//         yearLabel:    string
+//         isGlobal:     boolean
+//     } | null
+//     terms: {
+//         id:          string
+//         displayName: string
+//         index:       number
+//         startDate:   Date | null
+//         endDate:     Date | null
+//         gradeId:     string
+//         grade: {
+//             displayName: string
+//         }
+//     }[]
+// }
+
+// interface ActionResult {
+//     success: boolean
+//     error?:  string
+// }
+
+// // ── Auth Helper ──────────────────────────────────────────────────────────────
+
+// async function getAuthenticatedActor() {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user } } = await supabase.auth.getUser()
+//         if (!user) return null
+//         return await prisma.profile.findUnique({
+//             where: { id: user.id },
+//             select: { id: true, schoolId: true, role: true, name: true }
+//         })
+//     } catch {
+//         return null
+//     }
+// }
+
+// // ── Queries (Rule 12: Server-First Hub Logic) ────────────────────────────────
+
+// /**
+//  * FETCH INSTITUTIONAL SETTINGS
+//  * Rule 7: Resolves Hub Branding and Academic Timelines.
+//  */
+// export async function getSchoolSettings(
+//     schoolId: string
+// ): Promise<SchoolSettingsData | null> {
+//     try {
+//         const school = await prisma.school.findUnique({
+//             where:  { id: schoolId },
+//             include: {
+//                 subscription: {
+//                     select: { plan: true, status: true, currentPeriodEnd: true },
+//                 },
+//                 curriculum: {
+//                     select: { id: true, name: true, subjectLabel: true, termLabel: true, yearLabel: true, schoolId: true },
+//                 },
+//             },
+//         })
+
+//         if (!school) return null
+
+//         const schoolTerms = await prisma.term.findMany({
+//             where: { schoolId: school.id },
+//             orderBy: [
+//                 { grade: { level: 'asc' } },
+//                 { index:  'asc'          },
+//             ],
+//             include: { grade: { select: { displayName: true } } }
+//         })
+
+//         return {
+//             school: {
+//                 id:              school.id,
+//                 name:            school.name,
+//                 whatsappCredits: school.whatsappCredits,
+//                 primaryColor:    school.primaryColor,
+//                 secondaryColor:  school.secondaryColor,
+//                 subscription:    school.subscription,
+//             },
+//             curriculum: school.curriculum ? {
+//                 ...school.curriculum,
+//                 isGlobal: school.curriculum.schoolId === null
+//             } : null,
+//             terms: schoolTerms,
+//         }
+//     } catch (err: unknown) {
+//         console.error('[REGISTRY_FETCH_FAULT]:', getErrorMessage(err))
+//         return null
+//     }
+// }
+
+// // ── Mutations (Rule 11: Transactional Truth) ─────────────────────────────────
+
+// /**
+//  * UPDATE SCHOOL PROFILE (Hub Branding)
+//  * Rule 5: Strict Isolation.
+//  * Rule 11: Final System Truth - Updates the School table, not Profile.
+//  * ✅ RESOLVED TS2353: Removed branding updates from Profile model.
+//  */
+// export async function updateSchoolProfile(
+//     schoolId: string,
+//     input:    SchoolProfileInput
+// ): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor || actor.schoolId !== schoolId || actor.role !== Role.SCHOOL_ADMIN) {
+//             return { success: false, error: 'Unauthorized hub access.' }
+//         }
+
+//         // ✅ Corrected: Saving branding to the School Hub entity
+//         await prisma.school.update({
+//             where: { id: schoolId },
+//             data: { 
+//                 name: input.name.trim(),
+//                 primaryColor: input.primaryColor,
+//                 secondaryColor: input.secondaryColor
+//             }
+//         })
+
+//         await logActivity({
+//             schoolId: schoolId,
+//             actorId: actor.id,
+//             actorRole: actor.role,
+//             type: ActivityType.SETTINGS_UPDATED,
+//             title: 'Hub Identity Synchronized',
+//             description: `Modified name and branding for institutional hub: ${schoolId}`
+//         })
+
+//         revalidatePath('/admin/settings')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// /**
+//  * RESET HUB BRANDING
+//  * ✅ RESOLVED TS2353: Now targets the School table.
+//  */
+// export async function resetSchoolColors(
+//     schoolId: string
+// ): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor || actor.schoolId !== schoolId || actor.role !== Role.SCHOOL_ADMIN) {
+//             return { success: false, error: 'Unauthorized.' }
+//         }
+
+//         // ✅ Reset mathematical branding at the Hub source
+//         await prisma.school.update({
+//             where: { id: schoolId },
+//             data: {
+//                 primaryColor:   '#f59e0b',
+//                 secondaryColor: '#1e293b',
+//             },
+//         })
+
+//         revalidatePath('/admin/settings')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// /**
+//  * SYNC TIMELINE HUB
+//  */
+// export async function syncInstitutionalTermDates(
+//     termIndex: number,
+//     startDate: Date,
+//     endDate:   Date,
+// ): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor || !actor.schoolId || actor.role !== Role.SCHOOL_ADMIN) {
+//             return { success: false, error: 'Unauthorized.' }
+//         }
+
+//         if (startDate >= endDate) throw new Error("Timeline Error: Term termination must follow commencement.");
+
+//         await prisma.term.updateMany({
+//             where: {
+//                 schoolId: actor.schoolId,
+//                 index: termIndex,
+//             },
+//             data: { startDate, endDate },
+//         })
+
+//         await logActivity({
+//             schoolId: actor.schoolId,
+//             actorId: actor.id,
+//             actorRole: actor.role,
+//             type: ActivityType.TERM_DATES_UPDATED,
+//             title: 'Timeline Hub Sync',
+//             description: `Synchronized Term ${termIndex} across institutional hub.`
+//         })
+
+//         revalidatePath('/admin/settings')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+
+// export async function updateCurriculumLabels(
+//     curriculumId: string,
+//     input:        CurriculumLabelsInput
+// ): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor || actor.role !== Role.SCHOOL_ADMIN) return { success: false, error: 'Unauthorized.' }
+
+//         const curriculum = await prisma.curriculum.findUnique({ where: { id: curriculumId } })
+        
+//         if (!curriculum || curriculum.schoolId !== actor.schoolId) {
+//             return { success: false, error: 'Access Denied: Cannot modify Global Curriculum Core. Contact support.' }
+//         }
+
+//         await prisma.curriculum.update({
+//             where: { id: curriculumId },
+//             data: {
+//                 subjectLabel: input.subjectLabel.trim(),
+//                 termLabel:    input.termLabel.trim(),
+//                 yearLabel:    input.yearLabel.trim(),
+//             },
+//         })
+
+//         await logActivity({
+//             schoolId: actor.schoolId!,
+//             actorId: actor.id,
+//             actorRole: actor.role,
+//             type: ActivityType.SETTINGS_UPDATED,
+//             title: 'Curriculum Labels Updated',
+//             description: `Modified terminology for subjects, terms, and academic years.`
+//         })
+
+//         revalidatePath('/admin/settings')
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+
+// // Rest of the file maintained with strict typing (Curriculum labels, Credits, etc.)...
+
+
+
+
+'use server';
 
 import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { Role, ActivityType, Prisma } from '@prisma/client'
-import { logActivity } from "@/lib/activitylogger";
+import { Role, ActivityType } from '@prisma/client'
+import { logActivity } from "@/app/actions/activitylog";
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 export interface SchoolProfileInput {
     name:           string
@@ -883,6 +1535,8 @@ export interface SchoolSettingsData {
         id:              string
         name:            string
         whatsappCredits: number
+        primaryColor:    string
+        secondaryColor:  string
         subscription: {
             plan:             string
             status:           string
@@ -915,7 +1569,7 @@ interface ActionResult {
     error?:  string
 }
 
-// ── Auth helper ────────────────────────────────────────────────────────────────
+// ── Auth Helper Hub ──────────────────────────────────────────────────────────
 
 async function getAuthenticatedActor() {
     try {
@@ -931,11 +1585,11 @@ async function getAuthenticatedActor() {
     }
 }
 
-// ── Queries ───────────────────────────────────────────────────────────────────
+// ── Queries (Rule 12: Server-First) ──────────────────────────────────────────
 
 /**
  * FETCH INSTITUTIONAL SETTINGS
- * Rule 7: Resolves Curriculum and Terms within the school's context.
+ * Rule 7: Resolves Curriculum Hub and Timeline Hubs.
  */
 export async function getSchoolSettings(
     schoolId: string
@@ -955,7 +1609,6 @@ export async function getSchoolSettings(
 
         if (!school) return null
 
-        // Rule 7: Find terms belonging to this school across all its grades
         const schoolTerms = await prisma.term.findMany({
             where: { schoolId: school.id },
             orderBy: [
@@ -970,6 +1623,9 @@ export async function getSchoolSettings(
                 id:              school.id,
                 name:            school.name,
                 whatsappCredits: school.whatsappCredits,
+                // ✅ Tier 2: Branding now pulled from School Source of Truth
+                primaryColor:    school.primaryColor,
+                secondaryColor:  school.secondaryColor,
                 subscription:    school.subscription,
             },
             curriculum: school.curriculum ? {
@@ -979,16 +1635,17 @@ export async function getSchoolSettings(
             terms: schoolTerms,
         }
     } catch (err: unknown) {
-        console.error('getSchoolSettings error:', getErrorMessage(err))
+        console.error('[SETTINGS_FETCH_FAULT]:', getErrorMessage(err))
         return null
     }
 }
 
-// ── Mutations ──────────────────────────────────────────────────────────────────
+// ── Mutations (Rule 11: System Truth Synchronization) ───────────────────────
 
 /**
- * UPDATE SCHOOL PROFILE
- * Rule 5: Strict isolation. Actor must belong to the school.
+ * UPDATE SCHOOL PROFILE (Hub Identity & Branding)
+ * Rule 5: Strict Institutional Isolation.
+ * ✅ RESOLVED: Branding now exclusively persists in the School table.
  */
 export async function updateSchoolProfile(
     schoolId: string,
@@ -997,20 +1654,16 @@ export async function updateSchoolProfile(
     try {
         const actor = await getAuthenticatedActor()
         if (!actor || actor.schoolId !== schoolId || actor.role !== Role.SCHOOL_ADMIN) {
-            return { success: false, error: 'Unauthorized institutional access.' }
+            return { success: false, error: 'Unauthorized hub access.' }
         }
 
+        // Rule 11: Transactional commitment to the Institutional source
         await prisma.school.update({
             where: { id: schoolId },
-            data: { name: input.name.trim() }
-        })
-
-        // Branding logic: Update the colors on the admin's profile (as per schema)
-        await prisma.profile.update({
-            where: { id: actor.id },
-            data: {
+            data: { 
+                name: input.name.trim(),
                 primaryColor: input.primaryColor,
-                secondaryColor: input.secondaryColor,
+                secondaryColor: input.secondaryColor
             }
         })
 
@@ -1019,8 +1672,8 @@ export async function updateSchoolProfile(
             actorId: actor.id,
             actorRole: actor.role,
             type: ActivityType.SETTINGS_UPDATED,
-            title: 'School Profile Updated',
-            description: `Modified name and branding colors for the workspace.`
+            title: 'Hub Identity Synchronized',
+            description: `Modified identity and branding for institutional hub.`
         })
 
         revalidatePath('/admin/settings')
@@ -1032,8 +1685,7 @@ export async function updateSchoolProfile(
 
 /**
  * UPDATE CURRICULUM LABELS
- * Rule 4: Admin cannot modify GLOBAL labels.
- * Only allowed if the curriculum is school-owned.
+ * Rule 4: Prevents modification of Global Blueprint Hubs.
  */
 export async function updateCurriculumLabels(
     curriculumId: string,
@@ -1046,7 +1698,7 @@ export async function updateCurriculumLabels(
         const curriculum = await prisma.curriculum.findUnique({ where: { id: curriculumId } })
         
         if (!curriculum || curriculum.schoolId !== actor.schoolId) {
-            return { success: false, error: 'Access Denied: Cannot modify Global Curriculum Core. Contact support.' }
+            return { success: false, error: 'Protocol Error: Access Denied to Global Blueprint.' }
         }
 
         await prisma.curriculum.update({
@@ -1063,8 +1715,8 @@ export async function updateCurriculumLabels(
             actorId: actor.id,
             actorRole: actor.role,
             type: ActivityType.SETTINGS_UPDATED,
-            title: 'Curriculum Labels Updated',
-            description: `Modified terminology for subjects, terms, and academic years.`
+            title: 'Terminology Hub Updated',
+            description: `Modified labeling for academic modules and hubs.`
         })
 
         revalidatePath('/admin/settings')
@@ -1075,38 +1727,37 @@ export async function updateCurriculumLabels(
 }
 
 /**
- * SYNC INSTITUTIONAL TERM DATES
- * Rule 11: Transactional sync for school terms only.
+ * SYNC INSTITUTIONAL TIMELINE HUB
+ * Rule 11: Transactional timeline sync across all grade hubs.
  */
 export async function syncInstitutionalTermDates(
-    schoolId:  string,
     termIndex: number,
     startDate: Date,
     endDate:   Date,
 ): Promise<ActionResult> {
     try {
         const actor = await getAuthenticatedActor()
-        if (!actor || actor.schoolId !== schoolId || actor.role !== Role.SCHOOL_ADMIN) {
+        if (!actor || !actor.schoolId || actor.role !== Role.SCHOOL_ADMIN) {
             return { success: false, error: 'Unauthorized.' }
         }
 
-        if (startDate >= endDate) throw new Error("Timeline error: Start must precede End.");
+        if (startDate >= endDate) throw new Error("Timeline Protocol Error: Start must precede End.");
 
-        const result = await prisma.term.updateMany({
+        await prisma.term.updateMany({
             where: {
-                schoolId: schoolId, // Rule 5: Only modify institutional copies
+                schoolId: actor.schoolId,
                 index: termIndex,
             },
             data: { startDate, endDate },
         })
 
         await logActivity({
-            schoolId: schoolId,
+            schoolId: actor.schoolId,
             actorId: actor.id,
             actorRole: actor.role,
             type: ActivityType.TERM_DATES_UPDATED,
-            title: 'Institutional Calendar Sync',
-            description: `Updated all Term ${termIndex} dates across school grades.`
+            title: 'Timeline Hub Sync',
+            description: `Synchronized dates for Term ${termIndex} across the institutional hub.`
         })
 
         revalidatePath('/admin/settings')
@@ -1117,7 +1768,7 @@ export async function syncInstitutionalTermDates(
 }
 
 /**
- * UPDATE SPECIFIC TERM DATE
+ * UPDATE SPECIFIC TIMELINE HUB DATE
  */
 export async function updateTermDates(
     input: UpdateTermDatesInput
@@ -1128,7 +1779,7 @@ export async function updateTermDates(
 
         const term = await prisma.term.findUnique({ where: { id: input.termId } })
         if (!term || term.schoolId !== actor.schoolId) {
-            return { success: false, error: 'Access Denied: Record is part of Global Core.' }
+            return { success: false, error: 'Access Denied: Blueprint belongs to Global Core.' }
         }
 
         await prisma.term.update({
@@ -1145,7 +1796,6 @@ export async function updateTermDates(
 
 /**
  * UPDATE WHATSAPP CREDITS (SUPER_ADMIN ONLY)
- * Rule 10: Prevents school admins from adding their own credits.
  */
 export async function updateWhatsAppCredits(
     schoolId: string,
@@ -1154,7 +1804,7 @@ export async function updateWhatsAppCredits(
     try {
         const actor = await getAuthenticatedActor()
         if (!actor || actor.role !== Role.SUPER_ADMIN) {
-            return { success: false, error: 'Unauthorized: Billing modification restricted to Super Admin.' }
+            return { success: false, error: 'Protocol Breach: Authorization restricted to Super Admin.' }
         }
 
         await prisma.school.update({
@@ -1169,7 +1819,8 @@ export async function updateWhatsAppCredits(
 }
 
 /**
- * RESET SCHOOL COLORS
+ * RESET HUB BRANDING
+ * ✅ RESOLVED: Branding now resets at the School Hub source.
  */
 export async function resetSchoolColors(
     schoolId: string
@@ -1180,8 +1831,9 @@ export async function resetSchoolColors(
             return { success: false, error: 'Unauthorized.' }
         }
 
-        await prisma.profile.update({
-            where: { id: actor.id },
+        // ✅ Reset mathematical branding at the Hub source
+        await prisma.school.update({
+            where: { id: schoolId },
             data: {
                 primaryColor:   '#f59e0b',
                 secondaryColor: '#1e293b',

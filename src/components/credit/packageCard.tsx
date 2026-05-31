@@ -277,7 +277,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Loader2, Star } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useProfileStore } from "@/store/profileStore"
+
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
@@ -304,7 +304,7 @@ interface PackageCardProps {
  * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function PackageCard({ pkg, isProcessing, isAnyLoading, onSelect }: PackageCardProps) {
-    const { profile } = useProfileStore();
+ 
 
     // Rule 21: Dynamic CSS Variable logic for the selection glow
     const cardStyle = useMemo(() => {

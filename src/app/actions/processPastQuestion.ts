@@ -1028,6 +1028,257 @@
 
 
 
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { 
+//     Question, 
+//     Role, 
+//     QuestionType, 
+//     QuestionCategory, 
+//     Prisma, 
+//     ActivityType 
+// } from "@prisma/client";
+// import { logActivity } from "@/app/actions/activitylog";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { uploadToGCS } from "@/lib/academics/pastQuestionConverter";
+// import { academicCoreScope } from "@/lib/content-scope";
+// import { revalidatePath } from "next/cache";
+
+// // ─── Types ───────────────────────────────────────────────────────────────────
+
+// export interface ScannedBankFilter {
+//   subjectId?: string;
+//   topicId?: string;
+//   year?: number;
+//   examBody?: string;
+//   schoolId: string | null;
+//   userId: string;
+// }
+
+// interface QuestionPart {
+//   number: string;
+//   text: string;
+//   marks?: string | null;
+// }
+
+// // interface ExtractedData {
+// //   subject: string;
+// //   year: string;
+// //   examBody: string;
+// //   grade: string;
+// //   questions: QuestionPart[];
+// // }
+
+// // interface AIResolvedQuestion {
+// //     number: string;
+// //     text: string;
+// //     answer: string;
+// //     explanation: string;
+// //     topicId: string; // The ID assigned by AI from our provided list
+// //     marks: number;
+// // }
+
+// interface ProcessResult {
+//   success: boolean;
+//   count?: number;
+//   imageUrl?: string | null;
+//   error?: string;
+// }
+
+// // ─── AI Constants ─────────────────────────────────────────────────────────────
+
+// const GEMINI_API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
+// const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+
+// // ─── AI Processing Logic ──────────────────────────────────────────────────────
+
+// async function callGemini(prompt: string, inlineData?: { mimeType: string, data: string }) {
+//   // Use pro for complex classification tasks
+//   const model = "gemini-1.5-pro"; 
+//   const body = {
+//     contents: [{
+//       parts: [
+//         ...(inlineData ? [{ inlineData }] : []),
+//         { text: prompt }
+//       ]
+//     }],
+//     generationConfig: { 
+//         temperature: 0.1, 
+//         responseMimeType: "application/json" 
+//     }
+//   };
+
+//   const res = await fetch(`${GEMINI_BASE}/${model}:generateContent?key=${GEMINI_API_KEY}`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(body),
+//   });
+
+//   if (!res.ok) throw new Error(`AI Registry Error: ${res.statusText}`);
+//   const json = await res.json();
+//   const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+//   if (!text) throw new Error("AI returned empty context.");
+//   return JSON.parse(text);
+// }
+
+// // ─── Main Server Actions ──────────────────────────────────────────────────────
+
+// /**
+//  * FETCH SCANNED REGISTRY
+//  * Rule 5: School users see institutional scans.
+//  * Rule 6: Individuals see personal scans linked via creatorId.
+//  * Rule 11: System Truth - real-time filtering based on registry metadata.
+//  */
+// export async function getScannedQuestions(params: ScannedBankFilter): Promise<Question[]> {
+//   const { subjectId, topicId, year, examBody, schoolId, userId } = params;
+
+//   try {
+//     return await prisma.question.findMany({
+//       where: {
+//         category: QuestionCategory.SCANNED,
+//         subjectId: subjectId || undefined,
+//         topicId: topicId || undefined, 
+//         year: year || undefined,
+//         examBody: examBody || undefined,
+//         OR: [
+//           // Tier 2: Institutional Ownership
+//           schoolId ? { schoolId: schoolId } : { id: 'FORBIDDEN' },
+//           // Tier 3: Personal Ownership (Creator match + No school context)
+//           {
+//             AND: [
+//               { creatorId: userId },
+//               { schoolId: null }
+//             ]
+//           }
+//         ]
+//       },
+//       orderBy: { createdAt: 'desc' }
+//     });
+//   } catch (error: unknown) {
+//     console.error("Scanned Bank Fetch Error:", getErrorMessage(error));
+//     return [];
+//   }
+// }
+
+// /**
+//  * PROCESS & DIGITIZE SUBJECT PAPER
+//  * Rule 8: AI performs subject-wide analysis.
+//  * Rule 11: AI dynamically maps questions to Topic IDs from our database registry.
+//  */
+// export async function processPastQuestion(params: {
+//   formData: FormData;
+//   userId: string;
+//   schoolId: string | null;
+//   userRole: Role;
+//   subjectId: string; // Selection is now at Subject Level
+// }): Promise<ProcessResult> {
+//   const { formData, userId, schoolId, userRole, subjectId } = params;
+
+//   try {
+//     const imageFile = formData.get("image") as File;
+//     if (!imageFile) return { success: false, error: "No image payload provided." };
+
+//     const buffer = Buffer.from(await imageFile.arrayBuffer());
+//     const base64Image = buffer.toString("base64");
+
+//     // 1. Fetch available syllabus nodes for this subject (Rule 7)
+//     // This allows the AI to correctly categorize questions for our DB.
+//     const syllabusNodes = await prisma.topic.findMany({
+//         where: {
+//             gradeSubject: { subjectId },
+//             ...academicCoreScope({ schoolId })
+//         },
+//         select: { id: true, title: true }
+//     });
+
+//     if (syllabusNodes.length === 0) {
+//         throw new Error("Target subject syllabus is empty. Please define topics first.");
+//     }
+
+//     // 2. Prepare metadata for AI classification
+//     const syllabusList = syllabusNodes.map(n => `[ID: ${n.id}] Title: ${n.title}`).join("\n");
+
+//     // 3. Storage Logic (Rule 11 Pathing)
+//     const storagePath = schoolId ? `schools/${schoolId}/scans` : `users/${userId}/scans`;
+//     const fileName = `${storagePath}/${Date.now()}-${imageFile.name}`;
+//     try {
+//         await uploadToGCS(buffer, fileName, imageFile.type);
+//     } catch (e) {
+//         console.warn("GCS sync failed, proceeding with local analysis...");
+//         getErrorMessage(e)
+//     }
+
+//     // 4. AI Synthesis & Classification
+//     const prompt = `
+//         You are a Senior Academic Examiner. Analyze this ${imageFile.type} scan of a ${imageFile.name} paper.
+        
+//         TASK:
+//         1. Extract all questions.
+//         2. Solve them using official educational standards.
+//         3. CLASSIFICATION: For every question, you MUST select the most relevant Topic ID from this syllabus registry:
+//         ${syllabusList}
+
+//         RETURN ONLY A JSON ARRAY:
+//         [{ "number": "1", "text": "...", "answer": "...", "explanation": "...", "topicId": "ID_FROM_LIST", "marks": 5, "year": 2023, "examBody": "WAEC" }]
+//     `;
+
+//     const aiResults = await callGemini(prompt, { mimeType: imageFile.type, data: base64Image }) as any[];
+
+//     // 5. Persistence Transaction (Rule 11)
+//     const count = await prisma.$transaction(async (tx) => {
+//       const questionRecords: Prisma.QuestionCreateManyInput[] = aiResults.map((res: any) => {
+//         return {
+//           text: res.text,
+//           correctAnswer: res.answer,
+//           explanation: res.explanation,
+          
+//           // AI Assigned topic classification (Rule 11)
+//           topicId: res.topicId, 
+//           subjectId: subjectId,
+          
+//           // Metadata for retrieval
+//           year: parseInt(res.year) || null,
+//           examBody: res.examBody || "External Registry",
+//           points: parseInt(res.marks) || 1,
+
+//           // Tiered Ownership
+//           schoolId: schoolId as string, 
+//           isGlobal: false,
+//           creatorId: userId,
+          
+//           type: QuestionType.ESSAY,
+//           category: QuestionCategory.SCANNED,
+//           options: [] as Prisma.InputJsonValue,
+//         };
+//       });
+
+//       const batch = await tx.question.createMany({ data: questionRecords });
+
+//       // 6. Activity Logging
+//       await logActivity({
+//         schoolId: schoolId,
+//         actorId: userId,
+//         actorRole: userRole,
+//         type: ActivityType.SETTINGS_UPDATED,
+//         title: "Syllabus Paper Digitized",
+//         description: `Successfully converted and classified ${batch.count} nodes for subject registry.`
+//       });
+
+//       return batch.count;
+//     });
+
+//     revalidatePath("/pastQuestions");
+//     return { success: true, count };
+
+//   } catch (error: unknown) {
+//     console.error("Vision Architect Failure:", error);
+//     return { success: false, error: getErrorMessage(error) };
+//   }
+// }
+
+
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -1039,13 +1290,13 @@ import {
     Prisma, 
     ActivityType 
 } from "@prisma/client";
-import { logActivity } from "@/app/_actions/activity-log";
+import { logActivity } from "@/app/actions/activitylog";
 import { getErrorMessage } from "@/lib/error-handler";
-import { uploadToGCS } from "@/lib/academics/past-question-storage";
+import { uploadToGCS } from "@/lib/academics/pastQuestionConverter";
 import { academicCoreScope } from "@/lib/content-scope";
 import { revalidatePath } from "next/cache";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 export interface ScannedBankFilter {
   subjectId?: string;
@@ -1056,27 +1307,18 @@ export interface ScannedBankFilter {
   userId: string;
 }
 
-interface QuestionPart {
-  number: string;
-  text: string;
-  marks?: string | null;
-}
-
-interface ExtractedData {
-  subject: string;
-  year: string;
-  examBody: string;
-  grade: string;
-  questions: QuestionPart[];
-}
-
-interface AIResolvedQuestion {
+/**
+ * Interface representing the high-fidelity output from the AI Synthesis Hub.
+ */
+interface AIResolvedModule {
     number: string;
     text: string;
     answer: string;
     explanation: string;
-    topicId: string; // The ID assigned by AI from our provided list
+    topicId: string; // The ID assigned by AI from our provided Hub list
     marks: number;
+    year: number;
+    examBody: string;
 }
 
 interface ProcessResult {
@@ -1086,15 +1328,14 @@ interface ProcessResult {
   error?: string;
 }
 
-// ─── AI Constants ─────────────────────────────────────────────────────────────
+// ── AI Hub Constants ─────────────────────────────────────────────────────────
 
 const GEMINI_API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
-// ─── AI Processing Logic ──────────────────────────────────────────────────────
+// ── AI Synthesis Protocol ────────────────────────────────────────────────────
 
 async function callGemini(prompt: string, inlineData?: { mimeType: string, data: string }) {
-  // Use pro for complex classification tasks
   const model = "gemini-1.5-pro"; 
   const body = {
     contents: [{
@@ -1118,17 +1359,19 @@ async function callGemini(prompt: string, inlineData?: { mimeType: string, data:
   if (!res.ok) throw new Error(`AI Registry Error: ${res.statusText}`);
   const json = await res.json();
   const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("AI returned empty context.");
-  return JSON.parse(text);
+  if (!text) throw new Error("AI Hub returned empty context.");
+  
+  // Rule 15: Safe bridge to our strict interface
+  return JSON.parse(text) as AIResolvedModule[];
 }
 
-// ─── Main Server Actions ──────────────────────────────────────────────────────
+// ── Main Server Actions ──────────────────────────────────────────────────────
 
 /**
  * FETCH SCANNED REGISTRY
- * Rule 5: School users see institutional scans.
- * Rule 6: Individuals see personal scans linked via creatorId.
- * Rule 11: System Truth - real-time filtering based on registry metadata.
+ * Rule 5: School users see institutional hubs.
+ * Rule 6: Individuals see personal hubs linked via creatorId.
+ * Rule 11: System Truth - authoritative filtering.
  */
 export async function getScannedQuestions(params: ScannedBankFilter): Promise<Question[]> {
   const { subjectId, topicId, year, examBody, schoolId, userId } = params;
@@ -1142,9 +1385,9 @@ export async function getScannedQuestions(params: ScannedBankFilter): Promise<Qu
         year: year || undefined,
         examBody: examBody || undefined,
         OR: [
-          // Tier 2: Institutional Ownership
-          schoolId ? { schoolId: schoolId } : { id: 'FORBIDDEN' },
-          // Tier 3: Personal Ownership (Creator match + No school context)
+          // Tier 2: Institutional Hub Ownership
+          schoolId ? { schoolId: schoolId } : { id: 'FORBIDDEN_RESTRICTED' },
+          // Tier 3: Personal Registry Ownership
           {
             AND: [
               { creatorId: userId },
@@ -1156,35 +1399,35 @@ export async function getScannedQuestions(params: ScannedBankFilter): Promise<Qu
       orderBy: { createdAt: 'desc' }
     });
   } catch (error: unknown) {
-    console.error("Scanned Bank Fetch Error:", getErrorMessage(error));
+    console.error("[REGISTRY_FETCH_FAULT]:", getErrorMessage(error));
     return [];
   }
 }
 
 /**
  * PROCESS & DIGITIZE SUBJECT PAPER
- * Rule 8: AI performs subject-wide analysis.
- * Rule 11: AI dynamically maps questions to Topic IDs from our database registry.
+ * Rule 8: AI performs subject-wide module synthesis.
+ * Rule 11: Transactional commitment to the institutional hub.
+ * Rule 15: Resolved TS-Explicit-Any by mapping strictly to AIResolvedModule.
  */
 export async function processPastQuestion(params: {
   formData: FormData;
   userId: string;
   schoolId: string | null;
   userRole: Role;
-  subjectId: string; // Selection is now at Subject Level
+  subjectId: string; 
 }): Promise<ProcessResult> {
   const { formData, userId, schoolId, userRole, subjectId } = params;
 
   try {
     const imageFile = formData.get("image") as File;
-    if (!imageFile) return { success: false, error: "No image payload provided." };
+    if (!imageFile) return { success: false, error: "Protocol Breach: Image payload missing." };
 
     const buffer = Buffer.from(await imageFile.arrayBuffer());
     const base64Image = buffer.toString("base64");
 
-    // 1. Fetch available syllabus nodes for this subject (Rule 7)
-    // This allows the AI to correctly categorize questions for our DB.
-    const syllabusNodes = await prisma.topic.findMany({
+    // 1. Fetch available syllabus modules for this subject (Rule 7)
+    const syllabusModules = await prisma.topic.findMany({
         where: {
             gradeSubject: { subjectId },
             ...academicCoreScope({ schoolId })
@@ -1192,12 +1435,12 @@ export async function processPastQuestion(params: {
         select: { id: true, title: true }
     });
 
-    if (syllabusNodes.length === 0) {
-        throw new Error("Target subject syllabus is empty. Please define topics first.");
+    if (syllabusModules.length === 0) {
+        throw new Error("Registry Error: Target subject syllabus is empty. Define modules first.");
     }
 
     // 2. Prepare metadata for AI classification
-    const syllabusList = syllabusNodes.map(n => `[ID: ${n.id}] Title: ${n.title}`).join("\n");
+    const moduleList = syllabusModules.map(m => `[ID: ${m.id}] Hub Title: ${m.title}`).join("\n");
 
     // 3. Storage Logic (Rule 11 Pathing)
     const storagePath = schoolId ? `schools/${schoolId}/scans` : `users/${userId}/scans`;
@@ -1205,45 +1448,47 @@ export async function processPastQuestion(params: {
     try {
         await uploadToGCS(buffer, fileName, imageFile.type);
     } catch (e) {
-        console.warn("GCS sync failed, proceeding with local analysis...");
+      getErrorMessage(e)
+        console.warn("GCS synchronization timeout, proceeding with logic analysis...");
     }
 
-    // 4. AI Synthesis & Classification
+    // 4. AI Synthesis Hub Protocol
     const prompt = `
         You are a Senior Academic Examiner. Analyze this ${imageFile.type} scan of a ${imageFile.name} paper.
         
         TASK:
         1. Extract all questions.
-        2. Solve them using official educational standards.
-        3. CLASSIFICATION: For every question, you MUST select the most relevant Topic ID from this syllabus registry:
-        ${syllabusList}
+        2. Solve them using verified educational standards.
+        3. CLASSIFICATION: You MUST select the most relevant Module ID from this syllabus registry:
+        ${moduleList}
 
         RETURN ONLY A JSON ARRAY:
         [{ "number": "1", "text": "...", "answer": "...", "explanation": "...", "topicId": "ID_FROM_LIST", "marks": 5, "year": 2023, "examBody": "WAEC" }]
     `;
 
-    const aiResults = await callGemini(prompt, { mimeType: imageFile.type, data: base64Image }) as any[];
+    // ✅ RESOLVED: Strict type alignment for AI results
+    const aiResults = await callGemini(prompt, { mimeType: imageFile.type, data: base64Image });
 
-    // 5. Persistence Transaction (Rule 11)
+    // 5. ATOMIC REGISTRY TRANSACTION (Rule 11)
     const count = await prisma.$transaction(async (tx) => {
-      const questionRecords: Prisma.QuestionCreateManyInput[] = aiResults.map((res: any) => {
+      const questionRecords: Prisma.QuestionCreateManyInput[] = aiResults.map((res: AIResolvedModule) => {
         return {
           text: res.text,
           correctAnswer: res.answer,
           explanation: res.explanation,
           
-          // AI Assigned topic classification (Rule 11)
+          // AI Assigned module classification
           topicId: res.topicId, 
           subjectId: subjectId,
           
-          // Metadata for retrieval
-          year: parseInt(res.year) || null,
+          // Metadata for retrieval hub
+          year: Number(res.year) || null,
           examBody: res.examBody || "External Registry",
-          points: parseInt(res.marks) || 1,
+          points: Number(res.marks) || 1,
 
-          // Tiered Ownership
-          schoolId: schoolId as string, 
-          isGlobal: false,
+          // Tiered Ownership Hubs
+          schoolId: schoolId, 
+          isGlobal: schoolId === null,
           creatorId: userId,
           
           type: QuestionType.ESSAY,
@@ -1254,14 +1499,14 @@ export async function processPastQuestion(params: {
 
       const batch = await tx.question.createMany({ data: questionRecords });
 
-      // 6. Activity Logging
+      // 6. Hub Activity Logging (Rule 22)
       await logActivity({
         schoolId: schoolId,
         actorId: userId,
         actorRole: userRole,
         type: ActivityType.SETTINGS_UPDATED,
-        title: "Syllabus Paper Digitized",
-        description: `Successfully converted and classified ${batch.count} nodes for subject registry.`
+        title: "Syllabus Hub Digitized",
+        description: `Successfully converted and classified ${batch.count} modules for institutional hub.`
       });
 
       return batch.count;
@@ -1271,7 +1516,7 @@ export async function processPastQuestion(params: {
     return { success: true, count };
 
   } catch (error: unknown) {
-    console.error("Vision Architect Failure:", error);
+    console.error("[VISION_HUB_FAULT]:", error);
     return { success: false, error: getErrorMessage(error) };
   }
 }

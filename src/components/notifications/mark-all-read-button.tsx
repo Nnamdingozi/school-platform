@@ -112,8 +112,8 @@ import { useRouter } from 'next/navigation'
 import { markAllNotificationsReadAction } from '@/app/actions/notifications'
 import { CheckCircle2, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { useProfileStore } from '@/store/profileStore'
 import { cn } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/error-handler'
 
 interface MarkAllReadButtonProps {
     unreadCount: number;
@@ -129,7 +129,6 @@ interface MarkAllReadButtonProps {
  */
 export function MarkAllReadButton({ unreadCount }: MarkAllReadButtonProps) {
     const router = useRouter();
-    const { profile } = useProfileStore();
     const [isPending, startTransition] = useTransition();
 
     const hasUnread = unreadCount > 0;
@@ -150,6 +149,7 @@ export function MarkAllReadButton({ unreadCount }: MarkAllReadButtonProps) {
                     toast.error('Registry sync failed.');
                 }
             } catch (error: unknown) {
+                getErrorMessage(error)
                 toast.error('Critical registry connection failure.');
             }
         });

@@ -151,7 +151,6 @@ import {
   GraduationCap,
   School,
   ClipboardCheck,
-  FileText,
   Settings,
   ChevronLeft,
   ChevronRight,

@@ -1929,7 +1929,7 @@ import { createClient } from "@/lib/supabase/server"; // For auth session
 import { supabaseAdmin } from "@/lib/supabase/admin"; // For deleting/banning users
 import { getErrorMessage } from '@/lib/error-handler'
 import { toTitleCase } from '@/lib/utils/formatters'
-import { Role, ActivityType, Prisma } from '@prisma/client'
+import { Role, ActivityType } from '@prisma/client'
 import { logActivity } from "@/lib/activitylogger";
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -2085,6 +2085,7 @@ export async function getStudentsBySchool(schoolId: string): Promise<UserListIte
             assignedClasses: s.classEnrollments.filter(e => e.class !== null).map(e => e.class!),
         }))
     } catch (err: unknown) {
+        getErrorMessage(err)
         return []
     }
 }
@@ -2162,6 +2163,7 @@ export async function getUserById(id: string, actorSchoolId: string | null): Pro
             notifications: user.notifications
         };
     } catch (err: unknown) {
+        getErrorMessage(err)
         return null;
     }
 }

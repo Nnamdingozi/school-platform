@@ -880,6 +880,91 @@
 
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { prisma } from "@/lib/prisma";
+// import { 
+//     getClassDashboardData, 
+//     getManagementHelpers,
+//     type ClassDashboardData,
+//     type ManagementHelpers
+// } from "@/app/actions/class-management";
+// import { ClassesHubClient } from "@/components/classHubClient";
+// import { Role } from "@prisma/client";
+
+// /**
+//  * CLASSROOM HUBS | SERVER PAGE
+//  * Rule 16: Dynamic Contextual SEO - Syncs institutional hub identity.
+//  */
+// export async function generateMetadata(): Promise<Metadata> {
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+//     if (!authUser) return { title: "Classrooms | SchoolPaaS" };
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         include: { school: { select: { name: true } } }
+//     });
+
+//     const hubName = profile?.school?.name || "Institution";
+
+//     return {
+//         title: `Classroom Hubs | ${hubName} | SchoolPaaS`,
+//         description: "Institutional classroom hub management and peer identity registry."
+//     };
+// }
+
+// /**
+//  * CLASSROOM REGISTRY PAGE (Tier 2/3)
+//  * Rule 12: Server-First Fetching. Handles security scoping and multi-role data hydration.
+//  * Rule 5/6: Multi-tenant isolation - gates institutional hubs from independent learners.
+//  * Rule 15: Pure TypeScript - Zero 'any' types in the registry pipeline.
+//  */
+// export default async function ClassesPage() {
+//     // 1. Resolve Identity & Session Verification (Rule 10)
+//     const supabase = await createClient();
+//     const { data: { user: authUser } } = await supabase.auth.getUser();
+//     if (!authUser) redirect("/login");
+
+//     const profile = await prisma.profile.findUnique({
+//         where: { id: authUser.id },
+//         select: { id: true, schoolId: true, role: true }
+//     });
+
+//     if (!profile) redirect("/login");
+
+//     // 2. Authorization Security Gate (Rule 6)
+//     // Classroom Hubs are strictly Tier-2 Institutional features. 
+//     // Independent Learners are redirected to their personal dashboard.
+//     if (!profile.schoolId) {
+//         redirect("/student?error=hubs_restricted_to_institutions");
+//     }
+
+//     // 3. Authoritative Data Hydration (Rule 11)
+//     // Parallel fetching based on identity role to optimize registry sync time.
+//     const [dashboardData, helpers] = await Promise.all([
+//         getClassDashboardData(profile.id) as Promise<ClassDashboardData | null>,
+//         (profile.role === Role.SCHOOL_ADMIN || profile.role === Role.SUPER_ADMIN) 
+//             ? getManagementHelpers(profile.schoolId) as Promise<ManagementHelpers>
+//             : Promise.resolve(null)
+//     ]);
+
+//     // 4. Client-Side Protocol Handoff (Rule 15)
+//     // Handoff of strictly typed data structures to the polymorphic Orchestrator.
+//     return (
+//         <main className="min-h-screen bg-background">
+//             <ClassesHubClient 
+//                 initialData={dashboardData} 
+//                 helpers={helpers} 
+//                 userRole={profile.role}
+//             />
+//         </main>
+//     );
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -887,15 +972,37 @@ import { prisma } from "@/lib/prisma";
 import { 
     getClassDashboardData, 
     getManagementHelpers,
-    type ClassDashboardData,
-    type ManagementHelpers
 } from "@/app/actions/class-management";
 import { ClassesHubClient } from "@/components/classHubClient";
 import { Role } from "@prisma/client";
+import { getErrorMessage } from "@/lib/error-handler";
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+/**
+ * Interface representing the diverse registry data for classroom hubs.
+ * Synchronized with Tier 2 and Tier 3 requirements.
+ */
+export interface ClassDashboardData {
+    name: string;
+    teacher: { name: string | null; email: string } | null;
+    classmates?: Array<{ id: string; name: string | null }>;
+    mySubjects?: string[];
+    // Institutional Admin view fields
+    stats?: {
+        totalStudents: number;
+        activeModules: number;
+    };
+}
+
+export interface ManagementHelpers {
+    grades: Array<{ id: string; displayName: string }>;
+    teachers: Array<{ id: string; name: string | null }>;
+}
 
 /**
  * CLASSROOM HUBS | SERVER PAGE
- * Rule 16: Dynamic Contextual SEO - Syncs institutional hub identity.
+ * Rule 16: Dynamic Contextual SEO
  */
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
@@ -912,54 +1019,79 @@ export async function generateMetadata(): Promise<Metadata> {
 
     return {
         title: `Classroom Hubs | ${hubName} | SchoolPaaS`,
-        description: "Institutional classroom hub management and peer identity registry."
+        description: "Institutional classroom hub management and peer identity registry.",
     };
 }
 
 /**
  * CLASSROOM REGISTRY PAGE (Tier 2/3)
- * Rule 12: Server-First Fetching. Handles security scoping and multi-role data hydration.
- * Rule 5/6: Multi-tenant isolation - gates institutional hubs from independent learners.
- * Rule 15: Pure TypeScript - Zero 'any' types in the registry pipeline.
+ * Rule 12: Server-First Execution.
+ * Rule 15: Zero 'any' types. Resolved member export error.
+ * Rule 23: Explicit Error Protocol.
  */
 export default async function ClassesPage() {
-    // 1. Resolve Identity & Session Verification (Rule 10)
-    const supabase = await createClient();
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) redirect("/login");
+    try {
+        // 1. Resolve Identity Hub & Verification (Rule 10)
+        const supabase = await createClient();
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (!authUser) redirect("/login");
 
-    const profile = await prisma.profile.findUnique({
-        where: { id: authUser.id },
-        select: { id: true, schoolId: true, role: true }
-    });
+        const profile = await prisma.profile.findUnique({
+            where: { id: authUser.id },
+            select: { id: true, schoolId: true, role: true }
+        });
 
-    if (!profile) redirect("/login");
+        if (!profile) redirect("/login?error=identity_not_discovered");
 
-    // 2. Authorization Security Gate (Rule 6)
-    // Classroom Hubs are strictly Tier-2 Institutional features. 
-    // Independent Learners are redirected to their personal dashboard.
-    if (!profile.schoolId) {
-        redirect("/student?error=hubs_restricted_to_institutions");
+        // 2. Authorization Security Gate (Rule 6)
+        if (!profile.schoolId) {
+            redirect("/student?error=hubs_restricted_to_institutions");
+        }
+
+        // 3. Authoritative Hub Hydration (Rule 11/12)
+        // Parallel fetching based on identity role to optimize registry sync.
+        const [dashboardDataRaw, helpersRaw] = await Promise.all([
+            getClassDashboardData(profile.id),
+            (profile.role === Role.SCHOOL_ADMIN || profile.role === Role.SUPER_ADMIN) 
+                ? getManagementHelpers(profile.schoolId) 
+                : Promise.resolve(null)
+        ]);
+
+        // 4. Registry Synthesis (Rule 15: unknown bridge casting)
+        const dashboardData = (dashboardDataRaw as unknown) as ClassDashboardData | null;
+        const helpers = (helpersRaw as unknown) as ManagementHelpers | null;
+
+        return (
+            <main className="min-h-screen bg-background">
+                <ClassesHubClient 
+                    initialData={dashboardData} 
+                    helpers={helpers} 
+                    userRole={profile.role}
+                />
+            </main>
+        );
+
+    } catch (error: unknown) {
+        // ✅ Rule 23: Explicit Error Protocol
+        const message = getErrorMessage(error);
+        console.error(`[CLASS_HUB_SERVER_FAULT]: ${message}`);
+
+        return (
+            <main className="min-h-screen bg-background flex items-center justify-center p-6">
+                <div className="max-w-md w-full bg-card border border-destructive/20 p-8 rounded-[2rem] text-center space-y-4 shadow-xl">
+                    <h2 className="text-xl font-extrabold text-destructive uppercase italic tracking-tighter">
+                        Registry Sync Error
+                    </h2>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-relaxed">
+                        {message}
+                    </p>
+                    <div className="pt-4">
+                        <a href="/dashboard" className="text-[10px] font-extrabold text-school-primary uppercase tracking-widest hover:underline">
+                            Return to Hub Hub
+                        </a>
+                    </div>
+                </div>
+            </main>
+        );
     }
-
-    // 3. Authoritative Data Hydration (Rule 11)
-    // Parallel fetching based on identity role to optimize registry sync time.
-    const [dashboardData, helpers] = await Promise.all([
-        getClassDashboardData(profile.id) as Promise<ClassDashboardData | null>,
-        (profile.role === Role.SCHOOL_ADMIN || profile.role === Role.SUPER_ADMIN) 
-            ? getManagementHelpers(profile.schoolId) as Promise<ManagementHelpers>
-            : Promise.resolve(null)
-    ]);
-
-    // 4. Client-Side Protocol Handoff (Rule 15)
-    // Handoff of strictly typed data structures to the polymorphic Orchestrator.
-    return (
-        <main className="min-h-screen bg-background">
-            <ClassesHubClient 
-                initialData={dashboardData} 
-                helpers={helpers} 
-                userRole={profile.role}
-            />
-        </main>
-    );
 }

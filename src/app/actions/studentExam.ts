@@ -113,7 +113,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { ExamStatus, Prisma } from "@prisma/client";
+import { ExamStatus } from "@prisma/client";
 import { getErrorMessage } from "@/lib/error-handler";
 import { schoolOnlyScope } from "@/lib/content-scope";
 

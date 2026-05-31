@@ -238,13 +238,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Check, Zap, School, Building2, User, ShieldCheck, Globe } from "lucide-react";
+import { Check, Zap, School, Building2, User, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useProfileStore } from "@/store/profileStore";
+
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
@@ -328,7 +328,6 @@ const cardVariants = {
  */
 export function PricingClient() {
   const router = useRouter();
-  const { profile } = useProfileStore();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">("monthly");
   
   return (

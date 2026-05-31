@@ -1079,18 +1079,18 @@
 import React, { useState, useTransition, useEffect } from 'react'
 import { format } from 'date-fns'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+
 import {
     Calendar as CalendarIcon, RefreshCcw,
-    Loader2, CheckCircle2, ArrowRight, ChevronDown
+    Loader2, ArrowRight, ChevronDown
 } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { syncInstitutionalTermDates } from '@/app/actions/term.action'
 import { type SchoolSettingsData } from '@/app/actions/school-settings.action'
-import { useProfileStore } from '@/store/profileStore'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/error-handler'
 
 interface TermsSectionProps {
     data: SchoolSettingsData
@@ -1105,7 +1105,6 @@ interface TermsSectionProps {
  * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function TermsSection({ data, onUpdate }: TermsSectionProps) {
-    const { profile } = useProfileStore();
     const [isPending, startTransition] = useTransition();
     const [syncingId, setSyncingId] = useState<number | null>(null);
     
@@ -1162,6 +1161,7 @@ export function TermsSection({ data, onUpdate }: TermsSectionProps) {
                     toast.error("Registry synchronization failed.");
                 }
             } catch (err: unknown) {
+                getErrorMessage(err)
                 toast.error("Critical failure during calendar sync.");
             } finally {
                 setSyncingId(null);

@@ -373,7 +373,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getErrorMessage } from '@/lib/error-handler'
-import { Role, Prisma } from '@prisma/client'
+import { Role } from '@prisma/client'
 
 /**
  * FETCH UNIVERSAL REGISTRY PROFILE

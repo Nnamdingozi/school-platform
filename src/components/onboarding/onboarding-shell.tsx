@@ -775,85 +775,239 @@
 
 
 
+// 'use client';
+
+// import React, { useEffect } from 'react';
+// import { useOnboardingStore } from '@/store/onboardingStore';
+// import { AdminStep } from '@/app/steps/admin-step';
+// import { PaymentStep } from '@/app/steps/payment-step';
+// import { SchoolStep } from '@/app/steps/school-step';
+// import { ConfirmationScreen } from '@/app/steps/confrimation-screen';
+// import { cn } from '@/lib/utils';
+// import { Loader2, Lock  } from 'lucide-react';
+// import { useHydrated } from '@/hooks/useHydrate';
+
+// export function OnboardingShell({ initialCurricula, initialPlans }: any) {
+//     const hydrated = useHydrated(); // ✅ Call it first
+//     const { step, paymentStatus, setPlans, setCurricula } = useOnboardingStore();
+
+//     // Push server data into store
+//     useEffect(() => {
+//         if (hydrated) {
+//             if (initialPlans?.length > 0) setPlans(initialPlans);
+//             if (initialCurricula?.length > 0) setCurricula(initialCurricula);
+//         }
+//     }, [hydrated, initialPlans, initialCurricula, setPlans, setCurricula]);
+
+//     const hasPaid = paymentStatus === 'paid';
+
+//     // ── CRITICAL FIX ──
+//     // If not hydrated, return a simple loader that matches exactly what 
+//     // the server will send. Do NOT render any "steps" or "store data" yet.
+//     if (!hydrated) {
+//         return (
+//             <div className="min-h-[60vh] flex items-center justify-center w-full">
+//                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/20" />
+//             </div>
+//         );
+//     }
+
+//     const renderStep = () => {
+//         if (hasPaid) return <ConfirmationScreen />;
+
+//         switch (step) {
+//             case 1: return <AdminStep />;
+//             case 2: return <SchoolStep curricula={initialCurricula} />;
+//             case 3: return <PaymentStep plans={initialPlans} />;
+//             default: return <AdminStep />;
+//         }
+//     };
+
+//     return (
+//         <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
+//             {!hasPaid && (
+//                 <div className="flex justify-between mb-12 relative max-w-xs mx-auto">
+//                     {[1, 2, 3].map((i) => (
+//                         <div key={i} className="flex flex-col items-center z-10">
+//                             <div className={cn(
+//                                 "h-8 w-8 rounded-full flex items-center justify-center text-[10px] font-black transition-all",
+//                                 step >= i ? "bg-school-primary text-white" : "bg-surface border border-border text-muted-foreground"
+//                             )}>
+//                                 {i}
+//                             </div>
+//                         </div>
+//                     ))}
+//                     <div className="absolute top-4 left-0 w-full h-[1px] bg-border -z-0" />
+//                 </div>
+//             )}
+
+//             {hasPaid && (
+//                 <div className="flex items-center justify-center gap-2 mb-8 animate-pulse">
+//                     <Lock className="h-3 w-3 text-emerald-500" />
+//                     <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-600">
+//                         Registry Provisioned & Locked
+//                     </span>
+//                 </div>
+//             )}
+
+//             <div className="relative">
+//                 {renderStep()}
+//             </div>
+//         </div>
+//     );
+// }
+
+
 'use client';
 
 import React, { useEffect } from 'react';
-import { useOnboardingStore, type CurriculumTemplate } from '@/store/onboardingStore';
+import { useOnboardingStore } from '@/store/onboardingStore';
 import { type SubscriptionPlanItem } from '@/app/actions/subscription.actions';
 import { AdminStep } from '@/app/steps/admin-step';
 import { PaymentStep } from '@/app/steps/payment-step';
 import { SchoolStep } from '@/app/steps/school-step';
 import { ConfirmationScreen } from '@/app/steps/confrimation-screen';
 import { cn } from '@/lib/utils';
-import { Check, GraduationCap, ShieldCheck, Loader2, Lock  } from 'lucide-react';
+import { Loader2, Lock, Check, ShieldCheck } from 'lucide-react';
 import { useHydrated } from '@/hooks/useHydrate';
+import { getErrorMessage } from '@/lib/error-handler';
 
-export function OnboardingShell({ initialCurricula, initialPlans }: any) {
-    const hydrated = useHydrated(); // ✅ Call it first
-    const { step, paymentStatus, setPlans, setCurricula } = useOnboardingStore();
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
-    // Push server data into store
+interface CurriculumTemplate {
+    id: string;
+    name: string;
+    yearLabel: string;
+    termLabel: string;
+}
+
+interface OnboardingShellProps {
+    initialCurricula: CurriculumTemplate[];
+    initialPlans: SubscriptionPlanItem[];
+}
+
+/**
+ * INSTITUTIONAL ONBOARDING SHELL (Tier 2)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 15: Pure TypeScript - Zero 'any' types.
+ * Rule 18: Semantic Flip (bg-background, bg-surface, border-border).
+ * Rule 19: Standardized Geometry (rounded-2xl, rounded-[2rem]).
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
+ * Rule 23: Explicit Error Protocol via getErrorMessage.
+ */
+export function OnboardingShell({ initialCurricula, initialPlans }: OnboardingShellProps) {
+    const hydrated = useHydrated(); 
+    const { step, isProvisioned, setPlans, setCurricula, setError } = useOnboardingStore();
+
+    // ── HUB HYDRATION (Rule 17/23) ──
     useEffect(() => {
         if (hydrated) {
-            if (initialPlans?.length > 0) setPlans(initialPlans);
-            if (initialCurricula?.length > 0) setCurricula(initialCurricula);
+            try {
+                if (initialPlans?.length > 0) setPlans(initialPlans);
+                if (initialCurricula?.length > 0) setCurricula(initialCurricula);
+            } catch (error: unknown) {
+                // ✅ Rule 23: Standardized Error Extraction
+                const message = getErrorMessage(error);
+                console.error(`[ONBOARDING_HYDRATION_FAULT]: ${message}`);
+                setError(message);
+            }
         }
-    }, [hydrated, initialPlans, initialCurricula, setPlans, setCurricula]);
+    }, [hydrated, initialPlans, initialCurricula, setPlans, setCurricula, setError]);
 
-    const hasPaid = paymentStatus === 'paid';
-
-    // ── CRITICAL FIX ──
-    // If not hydrated, return a simple loader that matches exactly what 
-    // the server will send. Do NOT render any "steps" or "store data" yet.
+    // ── HYDRATION GUARD (Rule 14) ──
     if (!hydrated) {
         return (
-            <div className="min-h-[60vh] flex items-center justify-center w-full">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/20" />
+            <div className="min-h-[60vh] flex flex-col items-center justify-center w-full gap-6">
+                <div className="relative">
+                    <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
+                    {/* Rule 21 mathematical tint */}
+                    <div className="absolute inset-0 blur-xl bg-school-primary-50 -z-10" />
+                </div>
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-muted-foreground animate-pulse italic">
+                    Initializing_Registry_Terminal...
+                </p>
             </div>
         );
     }
 
-    const renderStep = () => {
-        if (hasPaid) return <ConfirmationScreen />;
+    const renderStepHub = () => {
+        if (isProvisioned) return <ConfirmationScreen />;
 
         switch (step) {
             case 1: return <AdminStep />;
-            case 2: return <SchoolStep curricula={initialCurricula} />;
-            case 3: return <PaymentStep plans={initialPlans} />;
+            case 2: return <SchoolStep />;
+            case 3: return <PaymentStep />;
             default: return <AdminStep />;
         }
     };
 
     return (
-        <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
-            {!hasPaid && (
-                <div className="flex justify-between mb-12 relative max-w-xs mx-auto">
-                    {[1, 2, 3].map((i) => (
-                        <div key={i} className="flex flex-col items-center z-10">
-                            <div className={cn(
-                                "h-8 w-8 rounded-full flex items-center justify-center text-[10px] font-black transition-all",
-                                step >= i ? "bg-school-primary text-white" : "bg-surface border border-border text-muted-foreground"
-                            )}>
-                                {i}
+        <div className="max-w-4xl mx-auto px-4 py-12 md:py-20 animate-in fade-in duration-700">
+            
+            {/* ── STEP INDICATOR HUB (Rule 19/21) ── */}
+            {!isProvisioned && (
+                <div className="flex justify-between mb-20 relative max-w-sm mx-auto">
+                    {[1, 2, 3].map((i) => {
+                        const isActive = step === i;
+                        const isCompleted = step > i;
+
+                        return (
+                            <div key={i} className="flex flex-col items-center z-10 gap-3">
+                                <div className={cn(
+                                    "h-12 w-12 rounded-2xl flex items-center justify-center text-xs font-extrabold transition-all duration-500 border shadow-lg",
+                                    isCompleted ? "bg-school-primary text-on-school-primary border-school-primary" :
+                                    isActive ? "bg-school-primary-50 border-school-primary text-school-primary scale-110 shadow-school-primary-200" : 
+                                    "bg-surface border-border text-muted-foreground"
+                                )}>
+                                    {isCompleted ? <Check className="h-6 w-6 stroke-[3]" /> : `0${i}`}
+                                </div>
+                                <span className={cn(
+                                    "text-[9px] font-bold uppercase tracking-widest italic transition-colors duration-500",
+                                    isActive ? "text-foreground" : "text-muted-foreground/20"
+                                )}>
+                                    {i === 1 ? 'Identity' : i === 2 ? 'Hub' : 'License'}
+                                </span>
                             </div>
+                        );
+                    })}
+                    {/* Progress Track Hub (Rule 18) */}
+                    <div className="absolute top-6 left-0 w-full h-[1.5px] bg-border -z-0" />
+                </div>
+            )}
+
+            {/* ── PROVISIONING STATUS (Rule 21) ── */}
+            {isProvisioned && (
+                <div className="flex items-center justify-center gap-4 mb-12 animate-in zoom-in-95 duration-500">
+                    <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">
+                        <Lock className="h-5 w-5 text-emerald-600" />
+                    </div>
+                    <div className="space-y-1">
+                        <h2 className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 italic">
+                            Institutional Hub Sealed
+                        </h2>
+                        <div className="flex items-center gap-2">
+                             <ShieldCheck className="h-3 w-3 text-emerald-500/40" />
+                             <p className="text-[8px] font-bold text-muted-foreground/40 uppercase tracking-widest">Protocol Verified</p>
                         </div>
-                    ))}
-                    <div className="absolute top-4 left-0 w-full h-[1px] bg-border -z-0" />
+                    </div>
                 </div>
             )}
 
-            {hasPaid && (
-                <div className="flex items-center justify-center gap-2 mb-8 animate-pulse">
-                    <Lock className="h-3 w-3 text-emerald-500" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-600">
-                        Registry Provisioned & Locked
-                    </span>
-                </div>
-            )}
-
+            {/* ── TERMINAL HUB CONTENT ── */}
             <div className="relative">
-                {renderStep()}
+                {renderStepHub()}
             </div>
+
+            {/* ── FOOTER PROTOCOL ── */}
+            {!isProvisioned && (
+                <div className="mt-24 flex justify-center items-center gap-5 opacity-20 grayscale transition-all hover:opacity-100 hover:grayscale-0">
+                    <div className="h-[1px] w-12 bg-border" />
+                    <p className="text-[8px] font-bold uppercase tracking-[0.4em] text-muted-foreground">
+                        Institutional_Registry_Protocol_v2.4
+                    </p>
+                    <div className="h-[1px] w-12 bg-border" />
+                </div>
+            )}
         </div>
     );
 }

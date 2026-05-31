@@ -1,7 +1,7 @@
 "use server";
 
+import { getErrorMessage } from "@/lib/error-handler";
 import { prisma } from "@/lib/prisma";
-import { academicCoreScope } from "@/lib/content-scope";
 
 /**
  * Fetches questions from a specific exam year and subject.
@@ -32,6 +32,7 @@ export async function getQuestionsByYear(params: {
       orderBy: { topicId: 'asc' }
     });
   } catch (error) {
+    getErrorMessage(error)
     return [];
   }
 }

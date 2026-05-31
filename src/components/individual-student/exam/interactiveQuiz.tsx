@@ -131,7 +131,7 @@
 "use client"
 
 import { useState } from "react"
-import { Question, Role } from "@prisma/client"
+import { Question } from "@prisma/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "sonner"

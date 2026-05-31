@@ -116,11 +116,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Bell, GraduationCap, ChevronDown, Settings, User, ShieldCheck } from "lucide-react"
+import { Bell, GraduationCap, ChevronDown, Settings, User } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useProfileStore } from "@/store/profileStore"
 import { LogoutButton } from "@/components/shared/logOutButton"
-import { cn } from "@/lib/utils"
 
 interface HeaderProps {
   studentName?: string

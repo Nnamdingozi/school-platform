@@ -875,7 +875,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { getErrorMessage } from "@/lib/error-handler"
-import { Prisma, Role, ActivityType } from "@prisma/client"
+import { Prisma, Role } from "@prisma/client"
 import { logActivity } from "@/lib/activitylogger";
 
 // ── Types ───────────────────────────────────────────────────────────────────

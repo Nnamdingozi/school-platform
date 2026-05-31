@@ -334,7 +334,7 @@ import { toast } from "sonner"
 import { 
   ArrowRight, Loader2, ArrowLeft, BookOpen, Layers, 
   Settings, Calendar, FileText,
-  ShieldCheck, ChevronRight
+  ShieldCheck
 } from "lucide-react"
 
 import {
@@ -357,7 +357,6 @@ import { SettingsSidebar } from "@/components/TeacherDashboard/exams/settingsSid
 import { ExamDocumentPreview } from "@/components/TeacherDashboard/exams/ExamDocumentPreview"
 import { AssessmentType, Class, Role, QuestionCategory } from "@prisma/client"
 import { getErrorMessage } from "@/lib/error-handler"
-import { cn } from "@/lib/utils"
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 

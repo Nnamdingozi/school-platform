@@ -665,7 +665,7 @@ import {
 import { type ManagementHelpers } from "@/app/actions/class-management";
 import { SyllabusDrawer } from "@/components/admin-dasboard/syllabusDrawer";
 import { 
-  Plus, Save, Loader2, X, GraduationCap, Search,
+  Plus, Loader2, X, GraduationCap, Search,
   ArrowRight, Download, ListPlus
 } from "lucide-react";
 import { toast } from "sonner";

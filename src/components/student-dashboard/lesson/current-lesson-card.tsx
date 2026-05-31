@@ -103,9 +103,7 @@
 import React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Play, BookOpen, Users, Clock, Radio } from "lucide-react"
-import { useProfileStore } from "@/store/profileStore"
+import {  BookOpen, Users, Clock, Radio } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
@@ -136,7 +134,7 @@ export function CurrentLessonCard({
   duration = "45 min",
   isLive = true,
 }: Partial<CurrentLessonProps>) {
-  const { profile } = useProfileStore();
+
 
   return (
     <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl transition-all hover:border-school-primary-200 group">

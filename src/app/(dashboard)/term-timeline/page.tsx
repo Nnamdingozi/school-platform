@@ -270,7 +270,6 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { getGlobalTermSchedule } from "@/app/actions/termly-schedule";
 import { RoadmapHubClient } from "@/components/TeacherDashboard/term/termScheduleClient";
-import { Role } from "@prisma/client";
 
 /**
  * Rule 16: Dynamic Contextual SEO

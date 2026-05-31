@@ -400,7 +400,6 @@ import React from 'react'
 import { type UserListItem } from '@/app/actions/user-management'
 import { Mail, Phone, BookOpen, AlertCircle, ChevronRight, UserPlus, SearchX } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { useProfileStore } from '@/store/profileStore'
 import { cn } from '@/lib/utils'
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
@@ -417,7 +416,6 @@ interface UserCardProps {
  * Rule 19: Standardized Geometry [2rem].
  */
 export function UserCard({ user, onClick }: UserCardProps) {
-    const { profile } = useProfileStore();
 
     const initials = (user.name ?? user.email)
         .split(' ')

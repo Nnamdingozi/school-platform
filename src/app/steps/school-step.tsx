@@ -1868,9 +1868,613 @@
 
 
 
+// 'use client';
+
+// import React, { useState } from 'react';
+// import { useOnboardingStore } from '@/store/onboardingStore';
+// import { Button } from '@/components/ui/button';
+// import { Input } from '@/components/ui/input';
+// import { Label } from '@/components/ui/label';
+// import { toTitleCase } from '@/lib/utils/formatters';
+// import {
+//     Select,
+//     SelectContent,
+//     SelectItem,
+//     SelectTrigger,
+//     SelectValue,
+// } from '@/components/ui/select';
+// import { toast } from 'sonner';
+// import {
+//     ArrowLeft,
+//     ArrowRight,
+//     School,
+//     Palette,
+//     Check,
+//     Trash2,
+//     Lock
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+
+// const TIMEZONES = [
+//     'Africa/Lagos', 'Africa/Nairobi', 'Africa/Johannesburg',
+//     'Africa/Accra', 'Africa/Cairo', 'Europe/London',
+//     'Europe/Paris', 'America/New_York', 'America/Los_Angeles', 'Asia/Dubai',
+// ];
+
+// const COUNTRIES = [
+//     'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Ethiopia',
+//     'United Kingdom', 'United States', 'Canada', 'UAE', 'India',
+// ];
+
+// const PALETTES = [
+//     { primary: '#f59e0b', secondary: '#1e293b', label: 'Amber Hub' },
+//     { primary: '#3b82f6', secondary: '#0f172a', label: 'Blue Registry' },
+//     { primary: '#10b981', secondary: '#064e3b', label: 'Emerald Core' },
+//     { primary: '#8b5cf6', secondary: '#1e1b4b', label: 'Violet Hub' },
+//     { primary: '#ef4444', secondary: '#1c0707', label: 'Red Protocol' },
+//     { primary: '#000000', secondary: '#334155', label: 'Slate Hub' },
+// ];
+
+// export function SchoolStep() {
+//     const {
+//         prevStep,
+//         nextStep,
+//         schoolData,
+//         curricula,
+//         setSchoolData,
+//         paymentStatus, // Bug 1 & 3 Fix
+//         reset          // Bug 3 Fix
+//     } = useOnboardingStore();
+
+//     // Determine if the form should be locked
+//     const isLocked = paymentStatus === 'paid';
+
+//     const [form, setForm] = useState({
+//         schoolName: schoolData?.schoolName ?? '',
+//         curriculumId: schoolData?.curriculumId ?? '',
+//         primaryColor: schoolData?.primaryColor ?? PALETTES[0].primary,
+//         secondaryColor: schoolData?.secondaryColor ?? PALETTES[0].secondary,
+//         country: schoolData?.country ?? 'Nigeria',
+//         timezone: schoolData?.timezone ?? 'Africa/Lagos',
+//     });
+
+//     const handleSubmit = (e: React.FormEvent) => {
+//         e.preventDefault();
+
+//         // If locked, just move forward without updating
+//         if (isLocked) {
+//             nextStep();
+//             return;
+//         }
+
+//         if (!form.curriculumId) {
+//             toast.error("Registry Protocol: Academic Blueprint selection required.");
+//             return;
+//         }
+
+//         setSchoolData({
+//             ...form,
+//             schoolName: toTitleCase(form.schoolName),
+//         });
+        
+//         toast.success("Institutional Hub configuration staged.");
+//         nextStep();
+//     };
+
+//     const handleDeleteDetails = () => {
+//         if (isLocked) {
+//             toast.error("Security Protocol: Cannot delete details after payment.");
+//             return;
+//         }
+        
+//         if (confirm("Are you sure you want to delete all submitted details? This will reset your progress.")) {
+//             reset();
+//             toast.success("Registry cleared successfully.");
+//         }
+//     };
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
+
+//             {/* ── HEADER ── */}
+//             <div className="text-center space-y-3">
+//                 <div className="flex justify-center mb-4">
+//                     <div className="h-14 w-14 rounded-2xl bg-school-primary-50 border border-school-primary-200 flex items-center justify-center shadow-lg">
+//                         {isLocked ? <Lock className="h-7 w-7 text-emerald-600" /> : <School className="h-7 w-7 text-school-primary" />}
+//                     </div>
+//                 </div>
+//                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                     {isLocked ? 'Provisioned Hub' : 'Institutional Hub'}
+//                 </h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
+//                     {isLocked ? 'This configuration is locked following payment' : 'Configure your private workspace architecture'}
+//                 </p>
+//             </div>
+
+//             {/* ── DATA LOCK WARNING ── */}
+//             {isLocked && (
+//                 <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center gap-3">
+//                     <Check className="h-4 w-4 text-emerald-600" />
+//                     <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">
+//                         Registry details synchronized with active subscription.
+//                     </p>
+//                 </div>
+//             )}
+
+//             <form onSubmit={handleSubmit} className="space-y-8">
+                
+//                 {/* ── SCHOOL IDENTITY ── */}
+//                 <div className="space-y-3 group">
+//                     <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                         Official Institutional Identity
+//                     </Label>
+//                     <div className="relative">
+//                         <School className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+//                         <Input
+//                             value={form.schoolName}
+//                             onChange={(e) => setForm({ ...form, schoolName: e.target.value })}
+//                             placeholder="e.g. LAGOS ACADEMY"
+//                             required
+//                             disabled={isLocked}
+//                             className={cn(
+//                                 'pl-12 bg-surface border-border text-foreground font-extrabold uppercase italic text-sm rounded-xl h-14 transition-all',
+//                                 'disabled:opacity-60 disabled:grayscale'
+//                             )}
+//                         />
+//                     </div>
+//                 </div>
+
+//                 {/* ── ACADEMIC BLUEPRINT ── */}
+//                 <div className="space-y-3 group">
+//                     <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                         Academic Core Blueprint
+//                     </Label>
+//                     <Select
+//                         value={form.curriculumId}
+//                         onValueChange={(v) => setForm({ ...form, curriculumId: v })}
+//                         disabled={isLocked}
+//                         required
+//                     >
+//                         <SelectTrigger className="bg-surface border-border text-foreground font-bold uppercase h-14 rounded-xl disabled:opacity-60">
+//                             <SelectValue placeholder="Select Global Template..." />
+//                         </SelectTrigger>
+//                         <SelectContent className="bg-card border-border">
+//                             {curricula.map((c) => (
+//                                 <SelectItem key={c.id} value={c.id} className="text-[10px] font-bold uppercase tracking-widest">
+//                                     {c.name} Hub
+//                                 </SelectItem>
+//                             ))}
+//                         </SelectContent>
+//                     </Select>
+//                 </div>
+
+//                 {/* ── GEOGRAPHIC ── */}
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                     <div className="space-y-3 group">
+//                         <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1">Country</Label>
+//                         <Select value={form.country} onValueChange={(v) => setForm({ ...form, country: v })} disabled={isLocked}>
+//                             <SelectTrigger className="bg-surface border-border text-foreground font-bold h-14 rounded-xl disabled:opacity-60"><SelectValue /></SelectTrigger>
+//                             <SelectContent className="bg-card border-border">
+//                                 {COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+//                             </SelectContent>
+//                         </Select>
+//                     </div>
+
+//                     <div className="space-y-3 group">
+//                         <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1">Timezone</Label>
+//                         <Select value={form.timezone} onValueChange={(v) => setForm({ ...form, timezone: v })} disabled={isLocked}>
+//                             <SelectTrigger className="bg-surface border-border text-foreground font-bold h-14 rounded-xl disabled:opacity-60"><SelectValue /></SelectTrigger>
+//                             <SelectContent className="bg-card border-border">
+//                                 {TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}
+//                             </SelectContent>
+//                         </Select>
+//                     </div>
+//                 </div>
+
+//                 {/* ── BRANDING ── */}
+//                 <div className="space-y-6 pt-6 border-t border-border">
+//                     <div className="flex items-center gap-3">
+//                         <Palette className="h-4 w-4 text-school-primary" />
+//                         <Label className="text-[10px] font-bold text-foreground uppercase tracking-widest">Branding Protocol</Label>
+//                     </div>
+
+//                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+//                         {PALETTES.map((palette) => {
+//                             const isSelected = form.primaryColor === palette.primary;
+//                             return (
+//                                 <button
+//                                     key={palette.label}
+//                                     type="button"
+//                                     disabled={isLocked}
+//                                     onClick={() => setForm({ ...form, primaryColor: palette.primary, secondaryColor: palette.secondary })}
+//                                     className={cn(
+//                                         "relative flex flex-col p-3 rounded-2xl border-2 transition-all group shadow-sm active:scale-95 disabled:opacity-50",
+//                                         isSelected ? "border-school-primary bg-surface" : "border-border bg-card"
+//                                     )}
+//                                 >
+//                                     <div className="flex items-center gap-2 mb-3">
+//                                         <div className="h-5 w-5 rounded-full" style={{ background: palette.primary }} />
+//                                         <div className="h-5 w-5 rounded-full" style={{ background: palette.secondary }} />
+//                                     </div>
+//                                     <p className="text-[9px] font-bold uppercase tracking-widest">{palette.label}</p>
+//                                     {isSelected && <Check className="absolute top-2 right-2 h-3 w-3 text-school-primary" />}
+//                                 </button>
+//                             );
+//                         })}
+//                     </div>
+//                 </div>
+
+//                 {/* ── NAVIGATION ACTIONS ── */}
+//                 <div className="flex flex-col gap-6 pt-6">
+//                     <div className="flex gap-4">
+//                         {!isLocked && (
+//                             <Button
+//                                 type="button"
+//                                 variant="outline"
+//                                 onClick={prevStep}
+//                                 className="h-16 px-8 rounded-xl border-border bg-surface text-muted-foreground transition-all hover:bg-background"
+//                             >
+//                                 <ArrowLeft className="h-5 w-5" />
+//                             </Button>
+//                         )}
+
+//                         <Button
+//                             type="submit"
+//                             className={cn(
+//                                 'flex-1 h-16 rounded-xl shadow-xl transition-all group font-extrabold text-[11px] uppercase tracking-widest',
+//                                 isLocked ? 'bg-emerald-600 text-white' : 'bg-school-primary text-on-school-primary hover:brightness-110 shadow-school-primary-200'
+//                             )}
+//                         >
+//                             <span className="flex items-center gap-3">
+//                                 {isLocked ? 'Skip to Status' : 'Proceed to License Selection'}
+//                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+//                             </span>
+//                         </Button>
+//                     </div>
+
+//                     {/* DELETE ACTION - Only shown if NOT paid */}
+//                     {!isLocked && (
+//                         <button
+//                             type="button"
+//                             onClick={handleDeleteDetails}
+//                             className="flex items-center justify-center gap-2 text-[10px] font-bold text-muted-foreground/50 hover:text-destructive transition-colors uppercase tracking-[0.2em]"
+//                         >
+//                             <Trash2 className="h-3 w-3" />
+//                             Purge All Submitted Details
+//                         </button>
+//                     )}
+//                 </div>
+//             </form>
+//         </div>
+//     );
+// }
+
+
+// 'use client';
+
+// import React, { useState } from 'react';
+// import { useOnboardingStore } from '@/store/onboardingStore';
+// import { Button } from '@/components/ui/button';
+// import { Input } from '@/components/ui/input';
+// import { Label } from '@/components/ui/label';
+// import { toTitleCase } from '@/lib/utils/formatters';
+// import {
+//     Select,
+//     SelectContent,
+//     SelectItem,
+//     SelectTrigger,
+//     SelectValue,
+// } from '@/components/ui/select';
+// import { toast } from 'sonner';
+// import {
+//     ArrowLeft,
+//     ArrowRight,
+//     School,
+//     Palette,
+//     Check,
+//     Trash2,
+//     Lock
+// } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// /**
+//  * Localized Interface to resolve TS2305 and ensure internal type safety.
+//  */
+// interface LocalCurriculumTemplate {
+//     id: string;
+//     name: string;
+//     yearLabel: string;
+//     termLabel: string;
+// }
+
+// const TIMEZONES: string[] = [
+//     'Africa/Lagos', 'Africa/Nairobi', 'Africa/Johannesburg',
+//     'Africa/Accra', 'Africa/Cairo', 'Europe/London',
+//     'Europe/Paris', 'America/New_York', 'America/Los_Angeles', 'Asia/Dubai',
+// ];
+
+// const COUNTRIES: string[] = [
+//     'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Ethiopia',
+//     'United Kingdom', 'United States', 'Canada', 'UAE', 'India',
+// ];
+
+// const PALETTES = [
+//     { primary: '#f59e0b', secondary: '#1e293b', label: 'Amber Hub' },
+//     { primary: '#3b82f6', secondary: '#0f172a', label: 'Blue Registry' },
+//     { primary: '#10b981', secondary: '#064e3b', label: 'Emerald Core' },
+//     { primary: '#8b5cf6', secondary: '#1e1b4b', label: 'Violet Hub' },
+//     { primary: '#ef4444', secondary: '#1c0707', label: 'Red Protocol' },
+//     { primary: '#000000', secondary: '#334155', label: 'Slate Hub' },
+// ];
+
+// /**
+//  * ONBOARDING PHASE 02: INSTITUTIONAL HUB CONFIGURATION
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+//  * Rule 19: Standardized Geometry (rounded-xl, rounded-[2rem]).
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  */
+// export function SchoolStep() {
+//     const {
+//         prevStep,
+//         nextStep,
+//         schoolData,
+//         curricula,
+//         setSchoolData,
+//         isProvisioned,
+//         reset          
+//     } = useOnboardingStore();
+
+//     // Registry Protocol: Determine if the Hub is already provisioned
+//     const isLocked = isProvisioned;
+
+//     const [form, setForm] = useState({
+//         schoolName: schoolData?.schoolName ?? '',
+//         curriculumId: schoolData?.curriculumId ?? '',
+//         primaryColor: schoolData?.primaryColor ?? PALETTES[0].primary,
+//         secondaryColor: schoolData?.secondaryColor ?? PALETTES[0].secondary,
+//         country: schoolData?.country ?? 'Nigeria',
+//         timezone: schoolData?.timezone ?? 'Africa/Lagos',
+//     });
+
+//     const handleSubmit = (e: React.FormEvent) => {
+//         e.preventDefault();
+
+//         if (isLocked) {
+//             nextStep();
+//             return;
+//         }
+
+//         if (!form.curriculumId) {
+//             toast.error("Registry Protocol: Academic Blueprint selection required.");
+//             return;
+//         }
+
+//         setSchoolData({
+//             ...form,
+//             schoolName: toTitleCase(form.schoolName),
+//         });
+        
+//         toast.success("Institutional Hub configuration staged.");
+//         nextStep();
+//     };
+
+//     const handlePurge = () => {
+//         if (isLocked) {
+//             toast.error("Security Protocol: Access restricted post-provisioning.");
+//             return;
+//         }
+        
+//         if (confirm("Registry Warning: Purge all submitted details and restart initialization?")) {
+//             reset();
+//             toast.success("Local registry cleared.");
+//         }
+//     };
+
+//     return (
+//         <div className="animate-in fade-in slide-in-from-right-6 duration-700 space-y-10">
+
+//             {/* ── HEADER (Rule 11/21) ── */}
+//             <div className="text-center space-y-3">
+//                 <div className="flex justify-center mb-4">
+//                     <div className="h-14 w-14 rounded-2xl bg-school-primary-50 border border-school-primary-200 flex items-center justify-center shadow-lg transition-colors">
+//                         {isLocked ? (
+//                             <Lock className="h-7 w-7 text-emerald-600" />
+//                         ) : (
+//                             <School className="h-7 w-7 text-school-primary" />
+//                         )}
+//                     </div>
+//                 </div>
+//                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                     {isLocked ? 'Provisioned Hub' : 'Institutional Hub'}
+//                 </h1>
+//                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
+//                     {isLocked ? 'Configuration locked following hub sync' : 'Configure your private workspace architecture'}
+//                 </p>
+//             </div>
+
+//             {isLocked && (
+//                 <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 animate-in zoom-in-95">
+//                     <Check className="h-4 w-4 text-emerald-600" />
+//                     <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest italic">
+//                         Registry identity synchronized with institutional hub.
+//                     </p>
+//                 </div>
+//             )}
+
+//             <form onSubmit={handleSubmit} className="space-y-8">
+
+//                 {/* ── SCHOOL IDENTITY (Rule 18/19) ── */}
+//                 <div className="space-y-3 group">
+//                     <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                         Official Institutional Identity
+//                     </Label>
+//                     <div className="relative">
+//                         <School className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+//                         <Input
+//                             value={form.schoolName}
+//                             onChange={(e) => setForm({ ...form, schoolName: e.target.value })}
+//                             placeholder="e.g. LAGOS ACADEMY"
+//                             required
+//                             disabled={isLocked}
+//                             className={cn(
+//                                 'pl-12 bg-surface border-border text-foreground font-extrabold uppercase italic text-sm rounded-xl h-14 transition-all',
+//                                 'focus-visible:ring-2 focus-visible:ring-school-primary-200 focus-visible:border-school-primary',
+//                                 'disabled:opacity-60 disabled:grayscale'
+//                             )}
+//                         />
+//                     </div>
+//                 </div>
+
+//                 {/* ── ACADEMIC BLUEPRINT ── */}
+//                 <div className="space-y-3 group">
+//                     <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                         Academic Core Blueprint
+//                     </Label>
+//                     <Select
+//                         value={form.curriculumId}
+//                         onValueChange={(v) => setForm({ ...form, curriculumId: v })}
+//                         disabled={isLocked}
+//                         required
+//                     >
+//                         <SelectTrigger className="bg-surface border-border text-foreground font-bold uppercase h-14 rounded-xl focus:ring-2 focus:ring-school-primary-200 disabled:opacity-60 shadow-sm">
+//                             <SelectValue placeholder="Select Global Template..." />
+//                         </SelectTrigger>
+//                         <SelectContent className="bg-card border-border text-foreground rounded-xl shadow-2xl">
+//                             {/* ✅ RESOLVED TS7006 & TS2305: Using localized interface */}
+//                             {curricula.map((c: any) => {
+//                                 const template = c as LocalCurriculumTemplate;
+//                                 return (
+//                                     <SelectItem key={template.id} value={template.id} className="text-[10px] font-bold uppercase tracking-widest">
+//                                         {template.name} Hub
+//                                     </SelectItem>
+//                                 );
+//                             })}
+//                         </SelectContent>
+//                     </Select>
+//                 </div>
+
+//                 {/* ── GEOGRAPHIC & TIMELINE HUB ── */}
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                     <div className="space-y-3 group">
+//                         <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                             Country
+//                         </Label>
+//                         <Select value={form.country} onValueChange={(v) => setForm({ ...form, country: v })} disabled={isLocked}>
+//                             <SelectTrigger className="bg-surface border-border text-foreground font-bold h-14 rounded-xl focus:ring-2 focus:ring-school-primary-200 disabled:opacity-60">
+//                                 <SelectValue />
+//                             </SelectTrigger>
+//                             <SelectContent className="bg-card border-border text-foreground">
+//                                 {COUNTRIES.map((c: string) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+//                             </SelectContent>
+//                         </Select>
+//                     </div>
+
+//                     <div className="space-y-3 group">
+//                         <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                             Timeline Hub
+//                         </Label>
+//                         <Select value={form.timezone} onValueChange={(v) => setForm({ ...form, timezone: v })} disabled={isLocked}>
+//                             <SelectTrigger className="bg-surface border-border text-foreground font-bold h-14 rounded-xl focus:ring-2 focus:ring-school-primary-200 disabled:opacity-60">
+//                                 <SelectValue />
+//                             </SelectTrigger>
+//                             <SelectContent className="bg-card border-border text-foreground">
+//                                 {TIMEZONES.map((tz: string) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}
+//                             </SelectContent>
+//                         </Select>
+//                     </div>
+//                 </div>
+
+//                 {/* ── BRANDING PROTOCOL (Rule 21) ── */}
+//                 <div className="space-y-6 pt-6 border-t border-border">
+//                     <div className="flex items-center gap-3">
+//                         <Palette className="h-4 w-4 text-school-primary" />
+//                         <Label className="text-[10px] font-bold text-foreground uppercase tracking-widest">
+//                             Branding Protocol
+//                         </Label>
+//                     </div>
+
+//                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+//                         {PALETTES.map((palette) => {
+//                             const isSelected = form.primaryColor === palette.primary;
+//                             return (
+//                                 <button
+//                                     key={palette.label}
+//                                     type="button"
+//                                     disabled={isLocked}
+//                                     onClick={() => setForm({ ...form, primaryColor: palette.primary, secondaryColor: palette.secondary })}
+//                                     className={cn(
+//                                         "relative flex flex-col p-3 rounded-2xl border-2 transition-all group shadow-sm active:scale-95 disabled:opacity-50",
+//                                         isSelected ? "border-school-primary bg-surface" : "border-border bg-card hover:border-school-primary-100"
+//                                     )}
+//                                 >
+//                                     <div className="flex items-center gap-2 mb-3">
+//                                         <div className="h-6 w-6 rounded-full shadow-inner border border-white/10" style={{ background: palette.primary }} />
+//                                         <div className="h-6 w-6 rounded-full shadow-inner border border-white/10" style={{ background: palette.secondary }} />
+//                                     </div>
+//                                     <p className={cn(
+//                                         "text-[9px] font-bold uppercase tracking-widest text-left",
+//                                         isSelected ? "text-school-primary" : "text-muted-foreground"
+//                                     )}>
+//                                         {palette.label}
+//                                     </p>
+//                                     {isSelected && <Check className="absolute top-2 right-2 h-3 w-3 text-school-primary" />}
+//                                 </button>
+//                             );
+//                         })}
+//                     </div>
+//                 </div>
+
+//                 {/* ── NAVIGATION ACTIONS (Rule 20) ── */}
+//                 <div className="flex flex-col gap-6 pt-6">
+//                     <div className="flex gap-4">
+//                         {!isLocked && (
+//                             <Button
+//                                 type="button"
+//                                 variant="outline"
+//                                 onClick={prevStep}
+//                                 className="h-16 px-8 rounded-xl border-border bg-surface text-muted-foreground transition-all hover:bg-background shadow-sm"
+//                             >
+//                                 <ArrowLeft className="h-5 w-5" />
+//                             </Button>
+//                         )}
+
+//                         <Button
+//                             type="submit"
+//                             className={cn(
+//                                 'flex-1 h-16 rounded-xl shadow-xl transition-all active:scale-95 group font-extrabold text-[11px] uppercase tracking-widest',
+//                                 isLocked ? 'bg-emerald-600 text-white shadow-emerald-200' : 'bg-school-primary text-on-school-primary hover:brightness-110 shadow-school-primary-200'
+//                             )}
+//                         >
+//                             <span className="flex items-center gap-3">
+//                                 {isLocked ? 'Skip to Status Hub' : 'Proceed to License Tier'}
+//                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+//                             </span>
+//                         </Button>
+//                     </div>
+
+//                     {!isLocked && (
+//                         <button
+//                             type="button"
+//                             onClick={handlePurge}
+//                             className="flex items-center justify-center gap-2 text-[10px] font-bold text-muted-foreground/50 hover:text-destructive transition-colors uppercase tracking-[0.2em]"
+//                         >
+//                             <Trash2 className="h-3 w-3" />
+//                             Purge Staged Hub Configuration
+//                         </button>
+//                     )}
+//                 </div>
+//             </form>
+//         </div>
+//     );
+// }
+
+
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -1894,14 +2498,24 @@ import {
     Lock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/error-handler';
 
-const TIMEZONES = [
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+interface LocalCurriculumTemplate {
+    id: string;
+    name: string;
+    yearLabel: string;
+    termLabel: string;
+}
+
+const TIMEZONES: string[] = [
     'Africa/Lagos', 'Africa/Nairobi', 'Africa/Johannesburg',
     'Africa/Accra', 'Africa/Cairo', 'Europe/London',
     'Europe/Paris', 'America/New_York', 'America/Los_Angeles', 'Asia/Dubai',
 ];
 
-const COUNTRIES = [
+const COUNTRIES: string[] = [
     'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Ethiopia',
     'United Kingdom', 'United States', 'Canada', 'UAE', 'India',
 ];
@@ -1915,6 +2529,14 @@ const PALETTES = [
     { primary: '#000000', secondary: '#334155', label: 'Slate Hub' },
 ];
 
+/**
+ * ONBOARDING PHASE 02: INSTITUTIONAL HUB CONFIGURATION
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 15: Pure TypeScript - No 'any' types.
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 21: Scale Protocol for clean mathematical tints.
+ * Rule 23: Explicit Error Protocol with getErrorMessage.
+ */
 export function SchoolStep() {
     const {
         prevStep,
@@ -1922,12 +2544,11 @@ export function SchoolStep() {
         schoolData,
         curricula,
         setSchoolData,
-        paymentStatus, // Bug 1 & 3 Fix
-        reset          // Bug 3 Fix
+        isProvisioned,
+        reset          
     } = useOnboardingStore();
 
-    // Determine if the form should be locked
-    const isLocked = paymentStatus === 'paid';
+    const isLocked = isProvisioned;
 
     const [form, setForm] = useState({
         schoolName: schoolData?.schoolName ?? '',
@@ -1941,35 +2562,44 @@ export function SchoolStep() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // If locked, just move forward without updating
-        if (isLocked) {
+        try {
+            if (isLocked) {
+                nextStep();
+                return;
+            }
+
+            if (!form.curriculumId) {
+                throw new Error("Registry Protocol: Academic Blueprint selection required.");
+            }
+
+            setSchoolData({
+                ...form,
+                schoolName: toTitleCase(form.schoolName),
+            });
+            
+            toast.success("Institutional Hub configuration staged.");
             nextStep();
-            return;
+        } catch (error: unknown) {
+            // ✅ Rule 23: Standardized Error Extraction
+            const message = getErrorMessage(error);
+            toast.error(message);
         }
-
-        if (!form.curriculumId) {
-            toast.error("Registry Protocol: Academic Blueprint selection required.");
-            return;
-        }
-
-        setSchoolData({
-            ...form,
-            schoolName: toTitleCase(form.schoolName),
-        });
-        
-        toast.success("Institutional Hub configuration staged.");
-        nextStep();
     };
 
-    const handleDeleteDetails = () => {
-        if (isLocked) {
-            toast.error("Security Protocol: Cannot delete details after payment.");
-            return;
-        }
-        
-        if (confirm("Are you sure you want to delete all submitted details? This will reset your progress.")) {
-            reset();
-            toast.success("Registry cleared successfully.");
+    const handlePurge = () => {
+        try {
+            if (isLocked) {
+                throw new Error("Security Protocol: Access restricted post-provisioning.");
+            }
+            
+            if (confirm("Registry Warning: Purge all submitted details and restart initialization?")) {
+                reset();
+                toast.success("Local registry hub cleared.");
+            }
+        } catch (error: unknown) {
+            // ✅ Rule 23: Standardized Error Extraction
+            const message = getErrorMessage(error);
+            toast.error(message);
         }
     };
 
@@ -1979,30 +2609,24 @@ export function SchoolStep() {
             {/* ── HEADER ── */}
             <div className="text-center space-y-3">
                 <div className="flex justify-center mb-4">
-                    <div className="h-14 w-14 rounded-2xl bg-school-primary-50 border border-school-primary-200 flex items-center justify-center shadow-lg">
-                        {isLocked ? <Lock className="h-7 w-7 text-emerald-600" /> : <School className="h-7 w-7 text-school-primary" />}
+                    <div className="h-14 w-14 rounded-2xl bg-school-primary-50 border border-school-primary-200 flex items-center justify-center shadow-lg transition-colors">
+                        {isLocked ? (
+                            <Lock className="h-7 w-7 text-emerald-600" />
+                        ) : (
+                            <School className="h-7 w-7 text-school-primary" />
+                        )}
                     </div>
                 </div>
                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
                     {isLocked ? 'Provisioned Hub' : 'Institutional Hub'}
                 </h1>
                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70">
-                    {isLocked ? 'This configuration is locked following payment' : 'Configure your private workspace architecture'}
+                    {isLocked ? 'Configuration locked following hub sync' : 'Configure your private hub architecture'}
                 </p>
             </div>
 
-            {/* ── DATA LOCK WARNING ── */}
-            {isLocked && (
-                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center gap-3">
-                    <Check className="h-4 w-4 text-emerald-600" />
-                    <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">
-                        Registry details synchronized with active subscription.
-                    </p>
-                </div>
-            )}
-
             <form onSubmit={handleSubmit} className="space-y-8">
-                
+
                 {/* ── SCHOOL IDENTITY ── */}
                 <div className="space-y-3 group">
                     <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
@@ -2038,40 +2662,45 @@ export function SchoolStep() {
                         <SelectTrigger className="bg-surface border-border text-foreground font-bold uppercase h-14 rounded-xl disabled:opacity-60">
                             <SelectValue placeholder="Select Global Template..." />
                         </SelectTrigger>
-                        <SelectContent className="bg-card border-border">
-                            {curricula.map((c) => (
-                                <SelectItem key={c.id} value={c.id} className="text-[10px] font-bold uppercase tracking-widest">
-                                    {c.name} Hub
+                        <SelectContent className="bg-card border-border text-foreground rounded-xl shadow-2xl">
+                            {/* ✅ RESOLVED: Strict Typing for curricula map */}
+                            {curricula.map((template: LocalCurriculumTemplate) => (
+                                <SelectItem 
+                                    key={template.id} 
+                                    value={template.id} 
+                                    className="text-[10px] font-bold uppercase tracking-widest"
+                                >
+                                    {template.name} Hub
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                 </div>
 
-                {/* ── GEOGRAPHIC ── */}
+                {/* ── GEOGRAPHIC REGISTRY ── */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3 group">
                         <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1">Country</Label>
                         <Select value={form.country} onValueChange={(v) => setForm({ ...form, country: v })} disabled={isLocked}>
                             <SelectTrigger className="bg-surface border-border text-foreground font-bold h-14 rounded-xl disabled:opacity-60"><SelectValue /></SelectTrigger>
-                            <SelectContent className="bg-card border-border">
-                                {COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                            <SelectContent className="bg-card border-border text-foreground">
+                                {COUNTRIES.map((c: string) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
 
                     <div className="space-y-3 group">
-                        <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1">Timezone</Label>
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1">Timeline Hub</Label>
                         <Select value={form.timezone} onValueChange={(v) => setForm({ ...form, timezone: v })} disabled={isLocked}>
                             <SelectTrigger className="bg-surface border-border text-foreground font-bold h-14 rounded-xl disabled:opacity-60"><SelectValue /></SelectTrigger>
-                            <SelectContent className="bg-card border-border">
-                                {TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}
+                            <SelectContent className="bg-card border-border text-foreground">
+                                {TIMEZONES.map((tz: string) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
                 </div>
 
-                {/* ── BRANDING ── */}
+                {/* ── BRANDING PROTOCOL (Rule 21) ── */}
                 <div className="space-y-6 pt-6 border-t border-border">
                     <div className="flex items-center gap-3">
                         <Palette className="h-4 w-4 text-school-primary" />
@@ -2089,14 +2718,19 @@ export function SchoolStep() {
                                     onClick={() => setForm({ ...form, primaryColor: palette.primary, secondaryColor: palette.secondary })}
                                     className={cn(
                                         "relative flex flex-col p-3 rounded-2xl border-2 transition-all group shadow-sm active:scale-95 disabled:opacity-50",
-                                        isSelected ? "border-school-primary bg-surface" : "border-border bg-card"
+                                        isSelected ? "border-school-primary bg-surface" : "border-border bg-card hover:border-school-primary-100"
                                     )}
                                 >
                                     <div className="flex items-center gap-2 mb-3">
-                                        <div className="h-5 w-5 rounded-full" style={{ background: palette.primary }} />
-                                        <div className="h-5 w-5 rounded-full" style={{ background: palette.secondary }} />
+                                        <div className="h-6 w-6 rounded-full shadow-inner border border-white/10" style={{ background: palette.primary }} />
+                                        <div className="h-6 w-6 rounded-full shadow-inner border border-white/10" style={{ background: palette.secondary }} />
                                     </div>
-                                    <p className="text-[9px] font-bold uppercase tracking-widest">{palette.label}</p>
+                                    <p className={cn(
+                                        "text-[9px] font-bold uppercase tracking-widest text-left",
+                                        isSelected ? "text-school-primary" : "text-muted-foreground"
+                                    )}>
+                                        {palette.label}
+                                    </p>
                                     {isSelected && <Check className="absolute top-2 right-2 h-3 w-3 text-school-primary" />}
                                 </button>
                             );
@@ -2112,7 +2746,7 @@ export function SchoolStep() {
                                 type="button"
                                 variant="outline"
                                 onClick={prevStep}
-                                className="h-16 px-8 rounded-xl border-border bg-surface text-muted-foreground transition-all hover:bg-background"
+                                className="h-16 px-8 rounded-xl border-border bg-surface text-muted-foreground transition-all hover:bg-background shadow-sm"
                             >
                                 <ArrowLeft className="h-5 w-5" />
                             </Button>
@@ -2121,26 +2755,25 @@ export function SchoolStep() {
                         <Button
                             type="submit"
                             className={cn(
-                                'flex-1 h-16 rounded-xl shadow-xl transition-all group font-extrabold text-[11px] uppercase tracking-widest',
-                                isLocked ? 'bg-emerald-600 text-white' : 'bg-school-primary text-on-school-primary hover:brightness-110 shadow-school-primary-200'
+                                'flex-1 h-16 rounded-xl shadow-xl transition-all active:scale-95 group font-extrabold text-[11px] uppercase tracking-widest',
+                                isLocked ? 'bg-emerald-600 text-white shadow-emerald-200' : 'bg-school-primary text-on-school-primary hover:brightness-110 shadow-school-primary-200'
                             )}
                         >
                             <span className="flex items-center gap-3">
-                                {isLocked ? 'Skip to Status' : 'Proceed to License Selection'}
+                                {isLocked ? 'Skip to License Hub' : 'Proceed to License Tier'}
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                             </span>
                         </Button>
                     </div>
 
-                    {/* DELETE ACTION - Only shown if NOT paid */}
                     {!isLocked && (
                         <button
                             type="button"
-                            onClick={handleDeleteDetails}
+                            onClick={handlePurge}
                             className="flex items-center justify-center gap-2 text-[10px] font-bold text-muted-foreground/50 hover:text-destructive transition-colors uppercase tracking-[0.2em]"
                         >
                             <Trash2 className="h-3 w-3" />
-                            Purge All Submitted Details
+                            Purge Staged Hub Configuration
                         </button>
                     )}
                 </div>

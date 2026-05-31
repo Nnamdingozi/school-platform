@@ -832,11 +832,9 @@ import React from "react";
 import { 
   CheckCircle2, Clock, PlayCircle,
   Calendar, Archive, GraduationCap,
-  BookOpen, ChevronRight, Activity
+  BookOpen, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Progress } from "@/components/ui/progress";
-import { useProfileStore } from "@/store/profileStore";
 import { type TermScheduleResponse } from "@/app/actions/termly-schedule";
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────

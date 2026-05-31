@@ -84,7 +84,7 @@ import { BillingSection } from '@/components/settings/billingSection'
 import { CreditCard, ShieldCheck, Zap } from 'lucide-react'
 import { type SchoolSettingsData } from '@/app/actions/school-settings.action'
 import { Role } from '@prisma/client'
-import { cn } from '@/lib/utils'
+
 
 interface BillingHubClientProps {
     initialData: SchoolSettingsData;

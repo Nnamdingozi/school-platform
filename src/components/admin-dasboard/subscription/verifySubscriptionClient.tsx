@@ -101,7 +101,7 @@ import { useRouter } from 'next/navigation'
 import { CheckCircle2, XCircle, ShieldCheck, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useProfileStore } from '@/store/profileStore'
-import { cn } from '@/lib/utils'
+
 
 interface VerifySubscriptionClientProps {
     initialStatus: 'success' | 'error';

@@ -171,11 +171,663 @@
 
 
 
+// "use client";
+
+// import React, { useState } from "react";
+// import Link from "next/link";
+// import { useProfileStore } from "@/store/profileStore";
+
+// // Components
+// import { Header } from "@/components/student-dashboard/header";
+// import { Navigation } from "@/components/student-dashboard/navigation";
+// import { WhatsDueWidget } from "@/components/student-dashboard/whats-due-widget";
+// import { CurrentLessonCard } from "@/components/student-dashboard/lesson/current-lesson-card";
+// import { RecentFeedback } from "@/components/student-dashboard/recent-feedback";
+// import { TeacherContact } from "@/components/student-dashboard/teacher-contact";
+// import { QuickStats } from "@/components/student-dashboard/quick-stats";
+// import { SubjectsGrid } from "@/components/student-dashboard/subjects-grid";
+// import { Sparkles, Zap, Globe, ShieldCheck } from "lucide-react";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// interface StudentDashboardClientProps {
+//   initialData: {
+//     student: any;
+//     school: { name: string } | null;
+//     classroom: {
+//         id: string;
+//         name: string;
+//         grade: { level: number; displayName: string };
+//         teacher: { name: string | null; email: string } | null;
+//     } | null;
+//     subjects: any[];
+//     recentAssessments: any[];
+//     upcomingExams: any[];
+//     isIndependent: boolean;
+//   };
+// }
+
+// /**
+//  * UNIFIED STUDENT HUB (Tier 3)
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Flip (bg-background, bg-card, border-border).
+//  * Rule 19: Standardized Geometry [2rem] and [3rem].
+//  * Rule 20: Compulsory Responsiveness with fluid padding.
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  */
+// export function StudentDashboardClient({ initialData }: StudentDashboardClientProps) {
+//   const { profile } = useProfileStore();
+//   const [activeNav, setActiveNav] = useState<string>("dashboard");
+
+//   const { student, school, classroom, subjects, recentAssessments, upcomingExams, isIndependent } = initialData;
+
+//   return (
+//     <div className="min-h-screen bg-background text-foreground animate-in fade-in duration-700">
+//       {/* ── GLOBAL HUD ── */}
+//       <Header
+//         studentName={student?.name || "Learner"}
+//         schoolName={isIndependent ? "Global Learning Registry" : (school?.name || "Institution")}
+//         grade={isIndependent ? "Self-Paced Core" : (classroom?.name || "Registry Pending")} 
+//       />
+
+//       <Navigation activeItem={activeNav} onNavigate={setActiveNav} />
+
+//       <main className="max-w-7xl mx-auto w-full p-4 md:p-8 lg:p-12 space-y-10 md:space-y-16">
+        
+//         {/* ── WELCOME STRIP (Rule 11/21) ── */}
+//         <div className="space-y-4">
+//           <div className="flex items-center gap-3">
+//             <div className="p-2 rounded-lg bg-school-primary-50 border border-school-primary-200">
+//                 {isIndependent ? (
+//                     <Globe className="h-4 w-4 text-school-primary" />
+//                 ) : (
+//                     <Sparkles className="h-4 w-4 text-school-primary" />
+//                 )}
+//             </div>
+//             <span className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-school-primary italic">
+//                 {isIndependent ? "Global Tier Registry" : "Institutional Hub Active"}
+//             </span>
+//           </div>
+//           <div>
+//             <h1 className="text-4xl md:text-5xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//               Welcome, {student?.name?.split(" ")[0]}
+//             </h1>
+//             <p className="text-muted-foreground text-sm font-semibold uppercase tracking-widest italic mt-3 opacity-70">
+//               {isIndependent ? "Personal Knowledge Dashboard" : `${classroom?.name} — Current Term Registry`}
+//             </p>
+//           </div>
+//         </div>
+
+//         {/* ── TELEMETRY TILES ── */}
+//         <QuickStats assessments={recentAssessments} />
+
+//         {/* ── SUBJECT MATRIX (Tier 1 + 2) ── */}
+//         <div className="w-full">
+//             <SubjectsGrid 
+//                 subjects={subjects} 
+//                 classTeacherName={isIndependent ? "Platform AI" : (classroom?.teacher?.name || "Registry Lead")} 
+//                 gradeLevel={classroom?.grade?.level || 10} 
+//                 isIndependent={isIndependent}
+//             />
+//         </div>
+
+//         <div className="grid gap-8 lg:grid-cols-3 items-start">
+//           {/* ── PRIMARY WORKSPACE ── */}
+//           <div className="space-y-10 lg:col-span-2">
+            
+//             {/* Rule 6: Contextual Interaction Hubs */}
+//             {!isIndependent ? (
+//                 <WhatsDueWidget exams={upcomingExams} />
+//             ) : (
+//                 <Card className="border-none rounded-[2rem] overflow-hidden shadow-2xl bg-school-primary text-on-school-primary relative">
+//                   {/* Rule 21 Decoration */}
+//                   <div className="absolute top-0 right-0 p-8 opacity-10">
+//                     <Zap className="h-32 w-32 fill-current" />
+//                   </div>
+                  
+//                   <CardContent className="p-8 md:p-12 space-y-8 relative z-10">
+//                       <div className="h-14 w-14 bg-on-school-primary/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-on-school-primary/20 shadow-inner">
+//                         <Zap className="h-7 w-7 text-on-school-primary animate-pulse" />
+//                       </div>
+//                       <div className="space-y-2">
+//                         <h2 className="text-3xl font-extrabold uppercase italic tracking-tighter leading-none">Practice Engine</h2>
+//                         <p className="text-on-school-primary/70 text-[10px] font-bold uppercase tracking-widest italic leading-relaxed">
+//                             Initialize a self-paced assessment hub from the global question bank.
+//                         </p>
+//                       </div>
+//                       <Link href="/student/practice" className="block pt-4">
+//                         <Button className="w-full bg-surface text-foreground hover:bg-background font-extrabold rounded-2xl py-8 shadow-xl text-[11px] uppercase tracking-[0.3em] transition-all active:scale-95 border-none">
+//                             Initialize Test Engine
+//                         </Button>
+//                       </Link>
+//                   </CardContent>
+//                 </Card>
+//             )}
+
+//             <RecentFeedback assessments={recentAssessments} />
+//           </div>
+
+//           {/* ── SIDEBAR TELEMETRY HUB ── */}
+//           <div className="space-y-8">
+//             {!isIndependent && classroom?.teacher && (
+//                 <TeacherContact teacher={classroom.teacher} />
+//             )}
+
+//             <CurrentLessonCard
+//               topic={subjects[0]?.topics[0]?.title || "Exploration Hub"}
+//               subject={subjects[0]?.subject.name || "Global Core"}
+//               progress={0} 
+//               isLive={false}
+//             />
+
+//             {/* ── REGISTRY OPERATIONS (Rule 18/19) ── */}
+//             <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl">
+//               <CardHeader className="bg-surface/50 p-6 border-b border-border">
+//                 <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground italic">
+//                     Registry Operations Hub
+//                 </CardTitle>
+//               </CardHeader>
+//               <CardContent className="flex flex-col gap-8 p-8 md:p-10">
+//                 <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-widest leading-relaxed italic opacity-70">
+//                   Modify your registered academic modules to synchronize your personal learning roadmap with current goals.
+//                 </p>
+//                 <Button asChild className="h-14 bg-surface border border-border text-school-primary hover:bg-school-primary hover:text-on-school-primary font-extrabold rounded-2xl text-[10px] uppercase tracking-widest shadow-md transition-all active:scale-95">
+//                   <Link href="/subjects/manage">
+//                     {isIndependent ? "Sync Global Catalogue" : "Update Syllabus Hub"}
+//                   </Link>
+//                 </Button>
+//               </CardContent>
+//             </Card>
+//           </div>
+//         </div>
+//       </main>
+
+//       {/* ── FOOTER (Rule 18) ── */}
+//       <footer className="border-t border-border py-16 mt-20 bg-surface/30">
+//         <div className="px-6 md:px-8 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+//           <div className="flex items-center gap-3 text-muted-foreground/30">
+//             <ShieldCheck className="h-4 w-4" />
+//             <p className="text-[9px] font-bold uppercase tracking-[0.5em] italic">
+//                {isIndependent ? "GLOBAL_USER_HUB_v2.1" : "INSTITUTIONAL_ENVIRONMENT_v2.1"}
+//             </p>
+//           </div>
+//           <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-4 text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+//             <button className="hover:text-school-primary transition-colors">Registry Compliance</button>
+//             <button className="hover:text-school-primary transition-colors">Identity Privacy Hub</button>
+//             <button className="hover:text-school-primary transition-colors">Technical Support</button>
+//           </div>
+//         </div>
+//       </footer>
+//     </div>
+//   );
+// }
+
+
+
+// "use client";
+
+// import React, { useState } from "react";
+// import Link from "next/link";
+
+
+// // Components
+// import { Header } from "@/components/student-dashboard/header";
+// import { Navigation } from "@/components/student-dashboard/navigation";
+// import { WhatsDueWidget } from "@/components/student-dashboard/whats-due-widget";
+// import { CurrentLessonCard } from "@/components/student-dashboard/lesson/current-lesson-card";
+// import { RecentFeedback } from "@/components/student-dashboard/recent-feedback";
+// import { TeacherContact } from "@/components/student-dashboard/teacher-contact";
+// import { QuickStats } from "@/components/student-dashboard/quick-stats";
+// import { SubjectsGrid } from "@/components/student-dashboard/subjects-grid";
+// import { Sparkles, Zap, Globe, ShieldCheck, Activity } from "lucide-react";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { AssessmentType, ExamStatus } from "@prisma/client";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// /**
+//  * Validated Assessment Hub Record
+//  */
+// interface AssessmentHubNode {
+//   id: string;
+//   score: number | null;
+//   maxScore: number | null;
+//   type: string;
+// }
+
+// /**
+//  * Module Registry Interface
+//  * ✅ RESOLVED TS2322: Added 'type' to assessment nodes to match GradeSubject requirements.
+//  */
+// interface RegistrySubject {
+//   id: string;
+//   subject: { name: string };
+//   topics: Array<{ id: string; title: string }>;
+//   assessments: AssessmentHubNode[];
+// }
+
+// interface StudentDashboardClientProps {
+//   initialData: {
+//     student: { id: string; name: string | null; email: string };
+//     school: { name: string } | null;
+//     classroom: {
+//         id: string;
+//         name: string;
+//         grade: { level: number; displayName: string };
+//         teacher: { name: string | null; email: string; avatar?: string } | null;
+//     } | null;
+//     subjects: RegistrySubject[];
+//     recentAssessments: any[]; // Mapped by RecentFeedback
+//     upcomingExams: any[];     // Mapped by WhatsDueWidget
+//     isIndependent: boolean;
+//   };
+// }
+
+// /**
+//  * UNIFIED STUDENT HUB (Tier 3)
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 15: Pure TypeScript - Zero 'any' types.
+//  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+//  * Rule 19: Standardized Geometry [2rem].
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  * Rule 23: Explicit Error Protocol with getErrorMessage.
+//  */
+// export function StudentDashboardClient({ initialData }: StudentDashboardClientProps) {
+//   const [activeNav, setActiveNav] = useState<string>("dashboard");
+
+//   const { student, school, classroom, subjects, recentAssessments, upcomingExams, isIndependent } = initialData;
+
+//   /**
+//    * Rule 23: Hub Navigation Protection
+//    */
+//   const handleNavigationSync = (item: string) => {
+//     try {
+//         setActiveNav(item);
+//     } catch (error: unknown) {
+//         const message = getErrorMessage(error);
+//         console.error(`[HUB_NAVIGATION_FAULT]: ${message}`);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-background text-foreground animate-in fade-in duration-700 pb-24">
+//       {/* ── GLOBAL HUD HUB ── */}
+//       <Header
+//         studentName={student?.name || "Learner"}
+//         schoolName={isIndependent ? "Global Learning Hub" : (school?.name || "Institutional Hub")}
+//         grade={isIndependent ? "Self-Paced Core" : (classroom?.name || "Registry Pending")} 
+//       />
+
+//       <Navigation activeItem={activeNav} onNavigate={handleNavigationSync} />
+
+//       <main className="max-w-7xl mx-auto w-full p-4 md:p-8 lg:p-12 space-y-10 md:space-y-16">
+        
+//         {/* ── WELCOME STRIP (Rule 11/21) ── */}
+//         <div className="space-y-4">
+//           <div className="flex items-center gap-3">
+//             <div className="p-2 rounded-lg bg-school-primary-50 border border-school-primary-200 shadow-sm transition-colors">
+//                 {isIndependent ? <Globe className="h-4 w-4 text-school-primary" /> : <Sparkles className="h-4 w-4 text-school-primary" />}
+//             </div>
+//             <span className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-school-primary italic">
+//                 {isIndependent ? "Global Tier Registry" : "Institutional Hub Active"}
+//             </span>
+//           </div>
+//           <div>
+//             <h1 className="text-4xl md:text-5xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//               Welcome, {student?.name?.split(" ")[0]}
+//             </h1>
+//             <p className="text-muted-foreground text-sm font-semibold uppercase tracking-widest italic mt-3 opacity-70">
+//               {isIndependent ? "Personal Knowledge Dashboard" : `${classroom?.name} Hub — Current Term Registry`}
+//             </p>
+//           </div>
+//         </div>
+
+//         {/* ── TELEMETRY TILES ── */}
+//         <QuickStats assessments={recentAssessments} />
+
+//         {/* ── SUBJECT MATRIX (Tier 1 + 2) ── */}
+//         <div className="w-full">
+//             <SubjectsGrid 
+//                 subjects={subjects} 
+//                 classTeacherName={isIndependent ? "Registry AI Core" : (classroom?.teacher?.name || "Academic Lead")} 
+//                 gradeLevel={classroom?.grade?.level || 10} 
+//                 isIndependent={isIndependent}
+//             />
+//         </div>
+
+//         <div className="grid gap-8 lg:grid-cols-3 items-start">
+//           {/* ── PRIMARY WORKSPACE (Rule 20) ── */}
+//           <div className="space-y-10 lg:col-span-2">
+//             {!isIndependent ? (
+//                 <WhatsDueWidget exams={upcomingExams} />
+//             ) : (
+//                 <Card className="border-none rounded-[2rem] overflow-hidden shadow-2xl bg-school-primary text-on-school-primary relative group">
+//                   <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+//                     <Zap className="h-32 w-32 fill-current" />
+//                   </div>
+//                   <CardContent className="p-8 md:p-12 space-y-8 relative z-10">
+//                       <div className="h-14 w-14 bg-on-school-primary/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-on-school-primary/20 shadow-inner">
+//                         <Zap className="h-7 w-7 text-on-school-primary animate-pulse" />
+//                       </div>
+//                       <div className="space-y-2">
+//                         <h2 className="text-3xl font-extrabold uppercase italic tracking-tighter leading-none">Practice Engine</h2>
+//                         <p className="text-on-school-primary/70 text-[10px] font-bold uppercase tracking-widest italic leading-relaxed">
+//                             Initialize a self-paced assessment hub from the global question bank.
+//                         </p>
+//                       </div>
+//                       <Link href="/student/practice" className="block pt-4">
+//                         <Button className="w-full h-16 bg-surface text-foreground hover:bg-background font-extrabold rounded-2xl py-8 shadow-xl text-[11px] uppercase tracking-[0.3em] transition-all active:scale-95 border-none">
+//                             Initialize Test Hub
+//                         </Button>
+//                       </Link>
+//                   </CardContent>
+//                 </Card>
+//             )}
+//             <RecentFeedback assessments={recentAssessments} />
+//           </div>
+
+//           {/* ── SIDEBAR TELEMETRY HUB ── */}
+//           <div className="space-y-8">
+//             {!isIndependent && classroom?.teacher && (
+//                 <TeacherContact teacher={classroom.teacher} />
+//             )}
+
+//             <CurrentLessonCard
+//               topic={subjects[0]?.topics[0]?.title || "Exploration Hub"}
+//               subject={subjects[0]?.subject.name || "Global Core"}
+//               progress={0} 
+//               isLive={false}
+//             />
+
+//             <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl group">
+//               <CardHeader className="bg-surface/50 p-6 border-b border-border">
+//                 <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground italic flex items-center gap-3">
+//                     <Activity className="h-3.5 w-3.5 text-school-primary" />
+//                     Registry Operations Hub
+//                 </CardTitle>
+//               </CardHeader>
+//               <CardContent className="flex flex-col gap-8 p-8 md:p-10">
+//                 <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-widest leading-relaxed italic opacity-70">
+//                   Synchronize your registered academic modules to update your personal learning roadmap.
+//                 </p>
+//                 <Button asChild className="h-14 bg-surface border border-border text-school-primary hover:bg-school-primary hover:text-on-school-primary font-extrabold rounded-2xl text-[10px] uppercase tracking-widest shadow-md transition-all active:scale-95">
+//                   <Link href="/subjects/manage">
+//                     {isIndependent ? "Sync Global Catalogue" : "Update Syllabus Hub"}
+//                   </Link>
+//                 </Button>
+//               </CardContent>
+//             </Card>
+//           </div>
+//         </div>
+//       </main>
+
+//       {/* ── FOOTER PROTOCOL ── */}
+//       <footer className="border-t border-border py-16 mt-20 bg-surface/30">
+//         <div className="px-6 md:px-8 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 text-muted-foreground/40">
+//           <div className="flex items-center gap-3">
+//             <ShieldCheck className="h-4 w-4" />
+//             <p className="text-[9px] font-bold uppercase tracking-[0.5em] italic">
+//                {isIndependent ? "GLOBAL_USER_HUB_v2.1" : "INSTITUTIONAL_ENVIRONMENT_v2.1"}
+//             </p>
+//           </div>
+//         </div>
+//       </footer>
+//     </div>
+//   );
+
+// }
+
+
+
+
+// "use client";
+
+// import React, { useState } from "react";
+// import Link from "next/link";
+
+// // Components
+// import { Header } from "@/components/student-dashboard/header";
+// import { Navigation } from "@/components/student-dashboard/navigation";
+// import { WhatsDueWidget } from "@/components/student-dashboard/whats-due-widget";
+// import { CurrentLessonCard } from "@/components/student-dashboard/lesson/current-lesson-card";
+// import { RecentFeedback } from "@/components/student-dashboard/recent-feedback";
+// import { TeacherContact } from "@/components/student-dashboard/teacher-contact";
+// import { QuickStats } from "@/components/student-dashboard/quick-stats";
+// import { SubjectsGrid } from "@/components/student-dashboard/subjects-grid";
+// import { Sparkles, Zap, Globe, ShieldCheck, Activity } from "lucide-react";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { AssessmentType, ExamStatus } from "@prisma/client";
+
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// interface AssessmentHubNode {
+//   id: string;
+//   score: number | null;
+//   maxScore: number | null;
+//   type: string;
+// }
+
+// interface RegistrySubject {
+//   id: string;
+//   subject: { name: string };
+//   topics: Array<{ id: string; title: string }>;
+//   assessments: AssessmentHubNode[];
+// }
+
+// /**
+//  * Interface for qualitative feedback records.
+//  */
+// interface FeedbackHubRecord {
+//     id: string;
+//     score: number | null;
+//     maxScore: number | null;
+//     gradeSubject?: {
+//         subject?: {
+//             name: string;
+//         };
+//     };
+//     feedbacks?: {
+//         message: string | null;
+//         sentAt: Date | string | null;
+//     }[];
+// }
+
+// /**
+//  * Interface for upcoming CBT Hubs.
+//  */
+// interface UpcomingExamHub {
+//   id: string;
+//   title: string;
+//   type: AssessmentType;
+//   duration: number;
+//   status: ExamStatus;
+//   startTime: Date | null;
+// }
+
+// interface StudentDashboardClientProps {
+//   initialData: {
+//     student: { id: string; name: string | null; email: string };
+//     school: { name: string } | null;
+//     classroom: {
+//         id: string;
+//         name: string;
+//         grade: { level: number; displayName: string };
+//         teacher: { name: string | null; email: string; avatar?: string } | null;
+//     } | null;
+//     subjects: RegistrySubject[];
+//     recentAssessments: FeedbackHubRecord[]; // ✅ Resolved 'any' type
+//     upcomingExams: UpcomingExamHub[];      // ✅ Resolved 'any' type
+//     isIndependent: boolean;
+//   };
+// }
+
+// /**
+//  * UNIFIED STUDENT HUB (Tier 3)
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 15: Zero 'any' types. All arrays mapped to strict interfaces.
+//  * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+//  * Rule 19: Standardized Geometry [2rem].
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  * Rule 23: Explicit Error Protocol with getErrorMessage.
+//  */
+// export function StudentDashboardClient({ initialData }: StudentDashboardClientProps) {
+//   const [activeNav, setActiveNav] = useState<string>("dashboard");
+
+//   const { student, school, classroom, subjects, recentAssessments, upcomingExams, isIndependent } = initialData;
+
+//   /**
+//    * Rule 23: Hub Navigation Protection
+//    */
+//   const handleNavigationSync = (item: string) => {
+//     try {
+//         setActiveNav(item);
+//     } catch (error: unknown) {
+//         // ✅ Rule 23: Standardized Error Extraction
+//         const message = getErrorMessage(error);
+//         console.error(`[HUB_NAVIGATION_FAULT]: ${message}`);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-background text-foreground animate-in fade-in duration-700 pb-24">
+//       {/* ── GLOBAL HUD HUB ── */}
+//       <Header
+//         studentName={student?.name || "Learner"}
+//         schoolName={isIndependent ? "Global Learning Hub" : (school?.name || "Institutional Hub")}
+//         grade={isIndependent ? "Self-Paced Core" : (classroom?.name || "Registry Pending")} 
+//       />
+
+//       <Navigation activeItem={activeNav} onNavigate={handleNavigationSync} />
+
+//       <main className="max-w-7xl mx-auto w-full p-4 md:p-8 lg:p-12 space-y-10 md:space-y-16">
+        
+//         {/* ── WELCOME STRIP (Rule 11/21) ── */}
+//         <div className="space-y-4">
+//           <div className="flex items-center gap-3">
+//             <div className="p-2 rounded-lg bg-school-primary-50 border border-school-primary-200 shadow-sm transition-colors">
+//                 {isIndependent ? <Globe className="h-4 w-4 text-school-primary" /> : <Sparkles className="h-4 w-4 text-school-primary" />}
+//             </div>
+//             <span className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-school-primary italic">
+//                 {isIndependent ? "Global Tier Registry" : "Institutional Hub Active"}
+//             </span>
+//           </div>
+//           <div>
+//             <h1 className="text-4xl md:text-5xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//               Welcome, {student?.name?.split(" ")[0]}
+//             </h1>
+//             <p className="text-muted-foreground text-sm font-semibold uppercase tracking-widest italic mt-3 opacity-70">
+//               {isIndependent ? "Personal Knowledge Dashboard" : `${classroom?.name} Hub — Current Term Registry`}
+//             </p>
+//           </div>
+//         </div>
+
+//         {/* ── TELEMETRY TILES ── */}
+//         <QuickStats assessments={recentAssessments} />
+
+//         {/* ── SUBJECT MATRIX ── */}
+//         <div className="w-full">
+//             <SubjectsGrid 
+//                 subjects={subjects} 
+//                 classTeacherName={isIndependent ? "Registry AI Core" : (classroom?.teacher?.name || "Academic Lead")} 
+//                 gradeLevel={classroom?.grade?.level || 10} 
+//                 isIndependent={isIndependent}
+//             />
+//         </div>
+
+//         <div className="grid gap-8 lg:grid-cols-3 items-start">
+//           {/* ── PRIMARY WORKSPACE ── */}
+//           <div className="space-y-10 lg:col-span-2">
+//             {!isIndependent ? (
+//                 <WhatsDueWidget exams={upcomingExams} />
+//             ) : (
+//                 <Card className="border-none rounded-[2rem] overflow-hidden shadow-2xl bg-school-primary text-on-school-primary relative group">
+//                   <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+//                     <Zap className="h-32 w-32 fill-current" />
+//                   </div>
+//                   <CardContent className="p-8 md:p-12 space-y-8 relative z-10">
+//                       <div className="h-14 w-14 bg-on-school-primary/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-on-school-primary/20 shadow-inner">
+//                         <Zap className="h-7 w-7 text-on-school-primary animate-pulse" />
+//                       </div>
+//                       <div className="space-y-2">
+//                         <h2 className="text-3xl font-extrabold uppercase italic tracking-tighter leading-none">Practice Engine</h2>
+//                         <p className="text-on-school-primary/70 text-[10px] font-bold uppercase tracking-widest italic leading-relaxed">
+//                             Initialize a self-paced assessment hub from the global question bank.
+//                         </p>
+//                       </div>
+//                       <Link href="/student/practice" className="block pt-4">
+//                         <Button className="w-full h-16 bg-surface text-foreground hover:bg-background font-extrabold rounded-2xl py-8 shadow-xl text-[11px] uppercase tracking-[0.3em] transition-all active:scale-95 border-none">
+//                             Initialize Test Hub
+//                         </Button>
+//                       </Link>
+//                   </CardContent>
+//                 </Card>
+//             )}
+//             <RecentFeedback assessments={recentAssessments} />
+//           </div>
+
+//           {/* ── SIDEBAR TELEMETRY HUB ── */}
+//           <div className="space-y-8">
+//             {!isIndependent && classroom?.teacher && (
+//                 <TeacherContact teacher={classroom.teacher} />
+//             )}
+
+//             <CurrentLessonCard
+//               topic={subjects[0]?.topics[0]?.title || "Exploration Hub"}
+//               subject={subjects[0]?.subject.name || "Global Core"}
+//               progress={0} 
+//               isLive={false}
+//             />
+
+//             <Card className="bg-card border-border rounded-[2rem] shadow-xl group">
+//               <CardHeader className="bg-surface/50 p-6 border-b border-border">
+//                 <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground italic flex items-center gap-3">
+//                     <Activity className="h-3.5 w-3.5 text-school-primary" />
+//                     Registry Operations Hub
+//                 </CardTitle>
+//               </CardHeader>
+//               <CardContent className="flex flex-col gap-8 p-8 md:p-10">
+//                 <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-widest leading-relaxed italic opacity-70">
+//                   Synchronize your registered academic modules to update your personal learning roadmap.
+//                 </p>
+//                 <Button asChild className="h-14 bg-surface border border-border text-school-primary hover:bg-school-primary hover:text-on-school-primary font-extrabold rounded-2xl text-[10px] uppercase tracking-widest shadow-md transition-all active:scale-95">
+//                   <Link href="/subjects/manage">
+//                     {isIndependent ? "Sync Global Catalogue" : "Update Syllabus Hub"}
+//                   </Link>
+//                 </Button>
+//               </CardContent>
+//             </Card>
+//           </div>
+//         </div>
+//       </main>
+
+//       {/* ── FOOTER PROTOCOL ── */}
+//       <footer className="border-t border-border py-16 mt-20 bg-surface/30">
+//         <div className="px-6 md:px-8 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 text-muted-foreground/40">
+//           <div className="flex items-center gap-3">
+//             <ShieldCheck className="h-4 w-4" />
+//             <p className="text-[9px] font-bold uppercase tracking-[0.5em] italic">
+//                {isIndependent ? "GLOBAL_USER_HUB_v2.1" : "INSTITUTIONAL_ENVIRONMENT_v2.1"}
+//             </p>
+//           </div>
+//         </div>
+//       </footer>
+//     </div>
+//   );
+// }
+
+
 "use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useProfileStore } from "@/store/profileStore";
 
 // Components
 import { Header } from "@/components/student-dashboard/header";
@@ -186,26 +838,80 @@ import { RecentFeedback } from "@/components/student-dashboard/recent-feedback";
 import { TeacherContact } from "@/components/student-dashboard/teacher-contact";
 import { QuickStats } from "@/components/student-dashboard/quick-stats";
 import { SubjectsGrid } from "@/components/student-dashboard/subjects-grid";
-import { Sparkles, BookOpen, Zap, Globe, History, ShieldCheck, Layout } from "lucide-react";
+import { Sparkles, Zap, Globe, ShieldCheck, Activity } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { getErrorMessage } from "@/lib/error-handler";
+import { AssessmentType, ExamStatus } from "@prisma/client";
+
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
+interface AssessmentHubNode {
+  id: string;
+  score: number | null;
+  maxScore: number | null;
+  type: string;
+}
+
+interface RegistrySubject {
+  id: string;
+  subject: { name: string };
+  topics: Array<{ id: string; title: string }>;
+  assessments: AssessmentHubNode[];
+}
+
+/**
+ * Interface for qualitative feedback records.
+ */
+interface FeedbackHubRecord {
+    id: string;
+    score: number | null;
+    maxScore: number | null;
+    gradeSubject?: {
+        subject?: {
+            name: string;
+        };
+    };
+    feedbacks?: {
+        message: string | null;
+        sentAt: Date | string | null;
+    }[];
+}
+
+/**
+ * Interface for upcoming CBT Hubs.
+ * ✅ FIXED TS2322: Expanded interface to include all required Prisma-aligned properties.
+ */
+interface UpcomingExamHub {
+  id: string;
+  title: string;
+  type: AssessmentType;
+  duration: number;
+  status: ExamStatus;
+  startTime: Date | null;
+  endTime: Date | null;
+  schoolId: string;
+  termId: string;
+  classId: string;
+  creatorId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface StudentDashboardClientProps {
   initialData: {
-    student: any;
+    student: { id: string; name: string | null; email: string };
     school: { name: string } | null;
     classroom: {
         id: string;
         name: string;
         grade: { level: number; displayName: string };
-        teacher: { name: string | null; email: string } | null;
+        teacher: { name: string | null; email: string; avatar?: string } | null;
     } | null;
-    subjects: any[];
-    recentAssessments: any[];
-    upcomingExams: any[];
+    subjects: RegistrySubject[];
+    recentAssessments: FeedbackHubRecord[]; 
+    upcomingExams: UpcomingExamHub[];      
     isIndependent: boolean;
   };
 }
@@ -213,39 +919,47 @@ interface StudentDashboardClientProps {
 /**
  * UNIFIED STUDENT HUB (Tier 3)
  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
- * Rule 18: Semantic Flip (bg-background, bg-card, border-border).
- * Rule 19: Standardized Geometry [2rem] and [3rem].
- * Rule 20: Compulsory Responsiveness with fluid padding.
+ * Rule 15: Zero 'any' types. All arrays mapped to strict interfaces.
+ * Rule 18: Semantic Flip (bg-background, bg-card, bg-surface).
+ * Rule 19: Standardized Geometry [2rem].
  * Rule 21: Scale Protocol for clean mathematical brand tints.
+ * Rule 23: Explicit Error Protocol with getErrorMessage.
  */
 export function StudentDashboardClient({ initialData }: StudentDashboardClientProps) {
-  const { profile } = useProfileStore();
   const [activeNav, setActiveNav] = useState<string>("dashboard");
 
   const { student, school, classroom, subjects, recentAssessments, upcomingExams, isIndependent } = initialData;
 
+  /**
+   * Rule 23: Hub Navigation Protection
+   */
+  const handleNavigationSync = (item: string) => {
+    try {
+        setActiveNav(item);
+    } catch (error: unknown) {
+        const message = getErrorMessage(error);
+        console.error(`[HUB_NAVIGATION_FAULT]: ${message}`);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground animate-in fade-in duration-700">
-      {/* ── GLOBAL HUD ── */}
+    <div className="min-h-screen bg-background text-foreground animate-in fade-in duration-700 pb-24">
+      {/* ── GLOBAL HUD HUB ── */}
       <Header
         studentName={student?.name || "Learner"}
-        schoolName={isIndependent ? "Global Learning Registry" : (school?.name || "Institution")}
+        schoolName={isIndependent ? "Global Learning Hub" : (school?.name || "Institutional Hub")}
         grade={isIndependent ? "Self-Paced Core" : (classroom?.name || "Registry Pending")} 
       />
 
-      <Navigation activeItem={activeNav} onNavigate={setActiveNav} />
+      <Navigation activeItem={activeNav} onNavigate={handleNavigationSync} />
 
       <main className="max-w-7xl mx-auto w-full p-4 md:p-8 lg:p-12 space-y-10 md:space-y-16">
         
         {/* ── WELCOME STRIP (Rule 11/21) ── */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-school-primary-50 border border-school-primary-200">
-                {isIndependent ? (
-                    <Globe className="h-4 w-4 text-school-primary" />
-                ) : (
-                    <Sparkles className="h-4 w-4 text-school-primary" />
-                )}
+            <div className="p-2 rounded-lg bg-school-primary-50 border border-school-primary-200 shadow-sm transition-colors">
+                {isIndependent ? <Globe className="h-4 w-4 text-school-primary" /> : <Sparkles className="h-4 w-4 text-school-primary" />}
             </div>
             <span className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-school-primary italic">
                 {isIndependent ? "Global Tier Registry" : "Institutional Hub Active"}
@@ -256,7 +970,7 @@ export function StudentDashboardClient({ initialData }: StudentDashboardClientPr
               Welcome, {student?.name?.split(" ")[0]}
             </h1>
             <p className="text-muted-foreground text-sm font-semibold uppercase tracking-widest italic mt-3 opacity-70">
-              {isIndependent ? "Personal Knowledge Dashboard" : `${classroom?.name} — Current Term Registry`}
+              {isIndependent ? "Personal Knowledge Dashboard" : `${classroom?.name} Hub — Current Term Registry`}
             </p>
           </div>
         </div>
@@ -264,11 +978,11 @@ export function StudentDashboardClient({ initialData }: StudentDashboardClientPr
         {/* ── TELEMETRY TILES ── */}
         <QuickStats assessments={recentAssessments} />
 
-        {/* ── SUBJECT MATRIX (Tier 1 + 2) ── */}
+        {/* ── SUBJECT MATRIX ── */}
         <div className="w-full">
             <SubjectsGrid 
                 subjects={subjects} 
-                classTeacherName={isIndependent ? "Platform AI" : (classroom?.teacher?.name || "Registry Lead")} 
+                classTeacherName={isIndependent ? "Registry AI Core" : (classroom?.teacher?.name || "Academic Lead")} 
                 gradeLevel={classroom?.grade?.level || 10} 
                 isIndependent={isIndependent}
             />
@@ -277,17 +991,13 @@ export function StudentDashboardClient({ initialData }: StudentDashboardClientPr
         <div className="grid gap-8 lg:grid-cols-3 items-start">
           {/* ── PRIMARY WORKSPACE ── */}
           <div className="space-y-10 lg:col-span-2">
-            
-            {/* Rule 6: Contextual Interaction Hubs */}
             {!isIndependent ? (
                 <WhatsDueWidget exams={upcomingExams} />
             ) : (
-                <Card className="border-none rounded-[2rem] overflow-hidden shadow-2xl bg-school-primary text-on-school-primary relative">
-                  {/* Rule 21 Decoration */}
-                  <div className="absolute top-0 right-0 p-8 opacity-10">
+                <Card className="border-none rounded-[2rem] overflow-hidden shadow-2xl bg-school-primary text-on-school-primary relative group">
+                  <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
                     <Zap className="h-32 w-32 fill-current" />
                   </div>
-                  
                   <CardContent className="p-8 md:p-12 space-y-8 relative z-10">
                       <div className="h-14 w-14 bg-on-school-primary/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-on-school-primary/20 shadow-inner">
                         <Zap className="h-7 w-7 text-on-school-primary animate-pulse" />
@@ -299,14 +1009,13 @@ export function StudentDashboardClient({ initialData }: StudentDashboardClientPr
                         </p>
                       </div>
                       <Link href="/student/practice" className="block pt-4">
-                        <Button className="w-full bg-surface text-foreground hover:bg-background font-extrabold rounded-2xl py-8 shadow-xl text-[11px] uppercase tracking-[0.3em] transition-all active:scale-95 border-none">
-                            Initialize Test Engine
+                        <Button className="w-full h-16 bg-surface text-foreground hover:bg-background font-extrabold rounded-2xl py-8 shadow-xl text-[11px] uppercase tracking-[0.3em] transition-all active:scale-95 border-none">
+                            Initialize Test Hub
                         </Button>
                       </Link>
                   </CardContent>
                 </Card>
             )}
-
             <RecentFeedback assessments={recentAssessments} />
           </div>
 
@@ -323,16 +1032,16 @@ export function StudentDashboardClient({ initialData }: StudentDashboardClientPr
               isLive={false}
             />
 
-            {/* ── REGISTRY OPERATIONS (Rule 18/19) ── */}
-            <Card className="bg-card border-border rounded-[2rem] overflow-hidden shadow-xl">
+            <Card className="bg-card border-border rounded-[2rem] shadow-xl group">
               <CardHeader className="bg-surface/50 p-6 border-b border-border">
-                <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground italic">
+                <CardTitle className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground italic flex items-center gap-3">
+                    <Activity className="h-3.5 w-3.5 text-school-primary" />
                     Registry Operations Hub
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-8 p-8 md:p-10">
                 <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-widest leading-relaxed italic opacity-70">
-                  Modify your registered academic modules to synchronize your personal learning roadmap with current goals.
+                  Synchronize your registered academic modules to update your personal learning roadmap.
                 </p>
                 <Button asChild className="h-14 bg-surface border border-border text-school-primary hover:bg-school-primary hover:text-on-school-primary font-extrabold rounded-2xl text-[10px] uppercase tracking-widest shadow-md transition-all active:scale-95">
                   <Link href="/subjects/manage">
@@ -345,19 +1054,14 @@ export function StudentDashboardClient({ initialData }: StudentDashboardClientPr
         </div>
       </main>
 
-      {/* ── FOOTER (Rule 18) ── */}
+      {/* ── FOOTER PROTOCOL ── */}
       <footer className="border-t border-border py-16 mt-20 bg-surface/30">
-        <div className="px-6 md:px-8 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-3 text-muted-foreground/30">
+        <div className="px-6 md:px-8 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 text-muted-foreground/40">
+          <div className="flex items-center gap-3">
             <ShieldCheck className="h-4 w-4" />
             <p className="text-[9px] font-bold uppercase tracking-[0.5em] italic">
                {isIndependent ? "GLOBAL_USER_HUB_v2.1" : "INSTITUTIONAL_ENVIRONMENT_v2.1"}
             </p>
-          </div>
-          <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-4 text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
-            <button className="hover:text-school-primary transition-colors">Registry Compliance</button>
-            <button className="hover:text-school-primary transition-colors">Identity Privacy Hub</button>
-            <button className="hover:text-school-primary transition-colors">Technical Support</button>
           </div>
         </div>
       </footer>

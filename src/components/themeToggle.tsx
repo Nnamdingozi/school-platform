@@ -74,7 +74,6 @@
 import { useState, useEffect, useTransition } from 'react'
 import { Sun, Moon, Loader2 } from 'lucide-react'
 import { updateUserTheme, type ThemeValue } from '@/app/actions/profile'
-import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 interface ThemeToggleProps {

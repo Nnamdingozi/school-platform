@@ -68,10 +68,9 @@ import {
   BarChart3, 
   FolderOpen, 
   MessageSquare,
-  Home,
-  Layout
+  Home
 } from "lucide-react"
-import { useProfileStore } from "@/store/profileStore"
+
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
@@ -98,7 +97,7 @@ const navItems = [
  * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function Navigation({ activeItem, onNavigate }: NavigationProps) {
-  const { profile } = useProfileStore();
+
 
   return (
     <nav className="sticky top-16 z-40 w-full border-b border-border bg-surface/50 backdrop-blur-md">

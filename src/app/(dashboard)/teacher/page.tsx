@@ -430,7 +430,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getRegistryProfile } from "@/app/actions/profileRegistry";
 import { type ProfileInStore } from '@/types/profile';
-import TeacherDashboardContent from "@/components/TeacherDashboard/teacherDashBoardContent";
+import {TeacherDashboardContent} from "@/components/TeacherDashboard/teacherDashBoardContent";
 import { type DashboardSubject } from '@/store/teacherDataStore';
 import { getErrorMessage } from '@/lib/error-handler';
 

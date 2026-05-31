@@ -1071,17 +1071,293 @@
 
 
 
+// "use client"
+
+// import { useState, useEffect, useMemo, useTransition, useCallback } from "react"
+// import { useRouter } from "next/navigation"
+// import {
+//     MoreHorizontal, Filter, Search,
+//     ChevronDown, Loader2, Users, GraduationCap
+// } from "lucide-react"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Button } from "@/components/ui/button"
+// import { Input } from "@/components/ui/input"
+// import {
+//     Table, TableBody, TableCell,
+//     TableHead, TableHeader, TableRow,
+// } from "@/components/ui/table"
+// import {
+//     DropdownMenu, DropdownMenuContent,
+//     DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu"
+// import {
+//     Popover, PopoverContent, PopoverTrigger,
+// } from "@/components/ui/popover"
+// import {
+//     Select, SelectContent, SelectItem,
+//     SelectTrigger, SelectValue,
+// } from "@/components/ui/select"
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+// import { useProfileStore } from "@/store/profileStore"
+// import { getStudentsBySchool, UserListItem } from "@/app/actions/user-management"
+// import { UserActionsModal } from "@/components/admin-dasboard/user-modal"
+// import { useUserAction } from "@/hooks/useUserAction"
+// import { toast } from "sonner"
+
+
+// /**
+//  * MODULAR STUDENT REGISTRY TABLE (Tier 2)
+//  * Rule 18: Semantic Tokens (bg-card, border-border).
+//  * Rule 19: Refined Typography (font-extrabold headers).
+//  * Rule 20: Responsive hidden columns for mobile-first display.
+//  */
+// export function StudentsTable() {
+//     const router = useRouter();
+//     const { profile } = useProfileStore();
+//     const [isPending, startTransition] = useTransition();
+
+//     const [students, setStudents] = useState<UserListItem[]>([]);
+//     const [loading, setLoading] = useState(true);
+//     const [searchQuery, setSearchQuery] = useState('');
+//     const [selectedClass, setSelectedClass] = useState('All Classes');
+//     const [selectedGrade, setSelectedGrade] = useState('All Grades');
+
+//     const { actionState, triggerAction, closeAction } = useUserAction();
+
+//     const schoolId = profile?.schoolId ?? '';
+//     const primaryColor = profile?.primaryColor || "#f59e0b";
+
+//     // ── Rule 11: Fetch Registry Truth ──
+//     const loadStudents = useCallback(async () => {
+//         if (!schoolId) return;
+//         try {
+//             setLoading(true);
+//             const data = await getStudentsBySchool(schoolId);
+//             setStudents(data);
+//         } catch (err) {
+//             toast.error('Identity sync failure: Could not load registry.');
+//         } finally {
+//             setLoading(false);
+//         }
+//     }, [schoolId]);
+
+//     useEffect(() => {
+//         loadStudents();
+//     }, [loadStudents]);
+
+//     function handleActionSuccess() {
+//         closeAction();
+//         startTransition(async () => {
+//             await loadStudents();
+//         });
+//     }
+
+//     // ── Logic: Matrix Filtering ──
+//     const allGrades = ['All Grades', ...Array.from(new Set(students.flatMap(s => s.assignedClasses.map(c => c.grade.displayName)))).sort()];
+//     const allClasses = ['All Classes', ...Array.from(new Set(students.flatMap(s => s.assignedClasses.map(c => c.name)))).sort()];
+
+//     const filtered = useMemo(() => {
+//         const q = searchQuery.toLowerCase().trim();
+//         return students.filter(s => {
+//             const matchesSearch = !q || (s.name?.toLowerCase().includes(q) || s.email.toLowerCase().includes(q));
+//             const matchesGrade = selectedGrade === 'All Grades' || s.assignedClasses.some(c => c.grade.displayName === selectedGrade);
+//             const matchesClass = selectedClass === 'All Classes' || s.assignedClasses.some(c => c.name === selectedClass);
+//             return matchesSearch && matchesGrade && matchesClass;
+//         });
+//     }, [students, searchQuery, selectedGrade, selectedClass]);
+
+//     const getInitials = (name: string | null, email: string) =>
+//         (name ?? email).split(' ').filter(Boolean).map(n => n[0]).slice(0, 2).join('').toUpperCase();
+
+//     return (
+//         <div className="space-y-6 animate-in fade-in duration-700">
+//             <Card className="bg-card border-border rounded-[2rem] shadow-2xl overflow-hidden">
+                
+//                 {/* ── TOOLBAR ── */}
+//                 <CardHeader className="p-6 md:p-8 border-b border-border bg-background/50">
+//                     <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+//                         <div className="space-y-1">
+//                             <CardTitle className="text-lg font-extrabold text-foreground uppercase italic tracking-tighter">
+//                                 Student Identities
+//                             </CardTitle>
+//                             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
+//                                 {loading ? 'Querying Registry...' : `${filtered.length} of ${students.length} provisioned nodes`}
+//                             </p>
+//                         </div>
+
+//                         <div className="flex flex-wrap items-center gap-3">
+//                             {/* Search Registry */}
+//                             <div className="relative group flex-1 sm:flex-none">
+//                                 <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-school-primary transition-colors" style={{ color: primaryColor }} />
+//                                 <Input
+//                                     placeholder="Search Registry..."
+//                                     value={searchQuery}
+//                                     onChange={(e) => setSearchQuery(e.target.value)}
+//                                     className="w-full sm:w-56 pl-10 h-11 bg-background border-border text-xs font-bold uppercase tracking-widest rounded-xl focus:ring-1 transition-all"
+//                                     style={{ '--tw-ring-color': primaryColor } as any}
+//                                 />
+//                             </div>
+
+//                             {/* Filter Matrix */}
+//                             <Popover>
+//                                 <PopoverTrigger asChild>
+//                                     <Button variant="outline" className="h-11 rounded-xl border-border bg-background px-4 gap-2 text-[10px] font-black uppercase tracking-widest hover:border-school-primary transition-all">
+//                                         <Filter className="h-3.5 w-3.5" />
+//                                         <span className="hidden md:inline">Matrix Filters</span>
+//                                         <ChevronDown className="h-3 w-3 opacity-30" />
+//                                     </Button>
+//                                 </PopoverTrigger>
+//                                 <PopoverContent className="w-64 p-6 bg-card border-border rounded-2xl shadow-2xl space-y-6" align="end">
+//                                     <div className="space-y-4">
+//                                         <div className="space-y-2">
+//                                             <label className="text-[9px] font-black text-muted-foreground uppercase">Target Level</label>
+//                                             <Select value={selectedGrade} onValueChange={setSelectedGrade}>
+//                                                 <SelectTrigger className="h-10 bg-background border-border text-xs font-bold uppercase">
+//                                                     <SelectValue />
+//                                                 </SelectTrigger>
+//                                                 <SelectContent className="bg-card border-border">
+//                                                     {allGrades.map(g => <SelectItem key={g} value={g} className="text-xs uppercase font-bold">{g}</SelectItem>)}
+//                                                 </SelectContent>
+//                                             </Select>
+//                                         </div>
+//                                         <div className="space-y-2">
+//                                             <label className="text-[9px] font-black text-muted-foreground uppercase">Classroom Node</label>
+//                                             <Select value={selectedClass} onValueChange={setSelectedClass}>
+//                                                 <SelectTrigger className="h-10 bg-background border-border text-xs font-bold uppercase">
+//                                                     <SelectValue />
+//                                                 </SelectTrigger>
+//                                                 <SelectContent className="bg-card border-border">
+//                                                     {allClasses.map(c => <SelectItem key={c} value={c} className="text-xs uppercase font-bold">{c}</SelectItem>)}
+//                                                 </SelectContent>
+//                                             </Select>
+//                                         </div>
+//                                     </div>
+//                                     <Button 
+//                                         variant="ghost" 
+//                                         className="w-full text-[9px] font-black uppercase text-muted-foreground hover:text-foreground"
+//                                         onClick={() => { setSelectedGrade('All Grades'); setSelectedClass('All Classes'); }}
+//                                     >
+//                                         Clear Parameters
+//                                     </Button>
+//                                 </PopoverContent>
+//                             </Popover>
+
+//                             <Button
+//                                 size="sm"
+//                                 onClick={() => router.push('/admin/invite')}
+//                                 className="h-11 px-6 bg-school-primary text-on-school-primary font-black text-[10px] uppercase tracking-widest rounded-xl shadow-lg"
+//                                 style={{ backgroundColor: primaryColor }}
+//                             >
+//                                 Enroll Student
+//                             </Button>
+//                         </div>
+//                     </div>
+//                 </CardHeader>
+
+//                 <CardContent className="p-0">
+//                     {loading ? (
+//                         <div className="flex flex-col items-center justify-center py-24 gap-4">
+//                             <Loader2 className="h-8 w-8 animate-spin" style={{ color: primaryColor }} />
+//                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Querying_Registry_Nodes...</p>
+//                         </div>
+//                     ) : filtered.length === 0 ? (
+//                         <div className="py-24 text-center space-y-4 px-6">
+//                             <Users className="h-12 w-12 text-muted-foreground mx-auto opacity-20" />
+//                             <p className="text-sm font-bold text-foreground uppercase italic tracking-tighter">No identities discovered matching current matrix parameters.</p>
+//                         </div>
+//                     ) : (
+//                         <div className="overflow-x-auto">
+//                             <Table>
+//                                 <TableHeader className="bg-background/40">
+//                                     <TableRow className="border-border hover:bg-transparent">
+//                                         <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Identity</TableHead>
+//                                         <TableHead className="hidden md:table-cell px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Registry Node</TableHead>
+//                                         <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Placement</TableHead>
+//                                         <TableHead className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">Logic</TableHead>
+//                                     </TableRow>
+//                                 </TableHeader>
+//                                 <TableBody>
+//                                     {filtered.map(student => (
+//                                         <TableRow 
+//                                             key={student.id} 
+//                                             className="border-border hover:bg-white/[0.02] transition-colors cursor-pointer group"
+//                                             onClick={() => router.push(`/admin/students/${student.id}`)}
+//                                         >
+//                                             <TableCell className="px-8 py-6">
+//                                                 <div className="flex items-center gap-4">
+//                                                     <Avatar className="h-10 w-10 border border-border shadow-inner">
+//                                                         <AvatarFallback className="bg-background text-[10px] font-black uppercase" style={{ color: primaryColor }}>
+//                                                             {getInitials(student.name, student.email)}
+//                                                         </AvatarFallback>
+//                                                     </Avatar>
+//                                                     <div className="min-w-0">
+//                                                         <p className="text-sm font-extrabold text-foreground uppercase italic leading-none">{student.name || 'Anonymous'}</p>
+//                                                         <p className="md:hidden text-[9px] text-muted-foreground uppercase mt-1 truncate">{student.email}</p>
+//                                                     </div>
+//                                                 </div>
+//                                             </TableCell>
+//                                             <TableCell className="hidden md:table-cell px-8 py-6 text-[11px] font-mono font-bold text-muted-foreground lowercase">
+//                                                 {student.email}
+//                                             </TableCell>
+//                                             <TableCell className="px-8 py-6">
+//                                                 {student.assignedClasses.length === 0 ? (
+//                                                     <span className="inline-flex px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[8px] font-black uppercase">Unassigned</span>
+//                                                 ) : (
+//                                                     <div className="flex items-center gap-2 text-foreground font-bold uppercase text-[10px]">
+//                                                         <GraduationCap className="h-4 w-4 opacity-20" style={{ color: primaryColor }} />
+//                                                         {student.assignedClasses[0].name}
+//                                                     </div>
+//                                                 )}
+//                                             </TableCell>
+//                                             <TableCell className="px-8 py-6 text-right" onClick={e => e.stopPropagation()}>
+//                                                 <DropdownMenu>
+//                                                     <DropdownMenuTrigger asChild>
+//                                                         <Button variant="ghost" size="icon" className="h-9 w-9 border border-border bg-background rounded-xl hover:border-school-primary transition-all">
+//                                                             <MoreHorizontal className="h-4 w-4" />
+//                                                         </Button>
+//                                                     </DropdownMenuTrigger>
+//                                                     <DropdownMenuContent align="end" className="bg-card border-border rounded-xl shadow-2xl">
+//                                                         <DropdownMenuItem onClick={() => router.push(`/admin/students/${student.id}`)} className="text-[10px] font-bold uppercase tracking-widest">View Profile</DropdownMenuItem>
+//                                                         <DropdownMenuSeparator className="bg-border" />
+//                                                         <DropdownMenuItem onClick={() => triggerAction('deactivate', student.id, student.name, student.email)} className="text-[10px] font-bold uppercase text-amber-500">Deactivate Node</DropdownMenuItem>
+//                                                         <DropdownMenuItem onClick={() => triggerAction('delete', student.id, student.name, student.email)} className="text-[10px] font-bold uppercase text-red-500">Purge Record</DropdownMenuItem>
+//                                                     </DropdownMenuContent>
+//                                                 </DropdownMenu>
+//                                             </TableCell>
+//                                         </TableRow>
+//                                     ))}
+//                                 </TableBody>
+//                             </Table>
+//                         </div>
+//                     )}
+//                 </CardContent>
+//             </Card>
+
+//             {/* System Modals */}
+//             {actionState && (
+//                 <UserActionsModal
+//                     userId={actionState.userId}
+//                     userName={actionState.userName}
+//                     userEmail={actionState.userEmail}
+//                     action={actionState.action}
+//                     onClose={closeAction}
+//                     onSuccess={handleActionSuccess}
+//                 />
+//             )}
+//         </div>
+//     )
+// }
+
+
 "use client"
 
-import { useState, useEffect, useMemo, useTransition, useCallback } from "react"
+import React, { useState, useEffect, useMemo, useTransition, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import {
     MoreHorizontal, Filter, Search,
-    ChevronDown, Loader2, Users,
-    Trash2, UserX, UserCheck, X, GraduationCap
+    ChevronDown, Loader2, Users, X
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
     Table, TableBody, TableCell,
@@ -1100,17 +1376,19 @@ import {
 } from "@/components/ui/select"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useProfileStore } from "@/store/profileStore"
-import { getStudentsBySchool, UserListItem } from "@/app/actions/user-management"
+import { getStudentsBySchool, type UserListItem } from "@/app/actions/user-management"
 import { UserActionsModal } from "@/components/admin-dasboard/user-modal"
 import { useUserAction } from "@/hooks/useUserAction"
 import { toast } from "sonner"
-import { cn } from "@/lib/utils"
+import { getErrorMessage } from "@/lib/error-handler"
 
 /**
- * MODULAR STUDENT REGISTRY TABLE (Tier 2)
- * Rule 18: Semantic Tokens (bg-card, border-border).
- * Rule 19: Refined Typography (font-extrabold headers).
- * Rule 20: Responsive hidden columns for mobile-first display.
+ * MODULAR STUDENT REGISTRY HUB (Tier 2)
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 15: Resolved 'any' and 'unused-vars' linting errors.
+ * Rule 18: Semantic Flip (bg-background, bg-card, border-border).
+ * Rule 19: Standardized Geometry [2rem].
+ * Rule 21: Scale Protocol for clean mathematical brand tints.
  */
 export function StudentsTable() {
     const router = useRouter();
@@ -1126,30 +1404,31 @@ export function StudentsTable() {
     const { actionState, triggerAction, closeAction } = useUserAction();
 
     const schoolId = profile?.schoolId ?? '';
-    const primaryColor = profile?.primaryColor || "#f59e0b";
 
-    // ── Rule 11: Fetch Registry Truth ──
-    const loadStudents = useCallback(async () => {
+    // ── Rule 11: Hub Re-Synchronization ──
+    const loadRegistry = useCallback(async () => {
         if (!schoolId) return;
         try {
             setLoading(true);
             const data = await getStudentsBySchool(schoolId);
             setStudents(data);
-        } catch (err) {
-            toast.error('Identity sync failure: Could not load registry.');
+        } catch (error: unknown) {
+            // ✅ RESOLVED: Utilizing 'error' via handler
+            toast.error(getErrorMessage(error));
         } finally {
             setLoading(false);
         }
     }, [schoolId]);
 
     useEffect(() => {
-        loadStudents();
-    }, [loadStudents]);
+        loadRegistry();
+    }, [loadRegistry]);
 
     function handleActionSuccess() {
         closeAction();
+        // ✅ RESOLVED: Utilizing 'isPending' for registry refresh feedback
         startTransition(async () => {
-            await loadStudents();
+            await loadRegistry();
         });
     }
 
@@ -1170,50 +1449,60 @@ export function StudentsTable() {
     const getInitials = (name: string | null, email: string) =>
         (name ?? email).split(' ').filter(Boolean).map(n => n[0]).slice(0, 2).join('').toUpperCase();
 
+    // ✅ RESOLVED TS2322: Strict CSSProperties for dynamic focus
+    const inputFocusStyle: React.CSSProperties = {
+        "--ring-color": "var(--school-primary)"
+    } as React.CSSProperties;
+
     return (
         <div className="space-y-6 animate-in fade-in duration-700">
-            <Card className="bg-card border-border rounded-[2rem] shadow-2xl overflow-hidden">
+            <Card className="bg-card border-border rounded-[2rem] shadow-xl overflow-hidden">
                 
-                {/* ── TOOLBAR ── */}
-                <CardHeader className="p-6 md:p-8 border-b border-border bg-background/50">
-                    <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                {/* ── TOOLBAR (Rule 11/18) ── */}
+                <CardHeader className="p-6 md:p-8 border-b border-border bg-surface/50">
+                    <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                         <div className="space-y-1">
-                            <CardTitle className="text-lg font-extrabold text-foreground uppercase italic tracking-tighter">
-                                Student Identities
+                            <CardTitle className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter">
+                                Student Registry Hub
                             </CardTitle>
-                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
-                                {loading ? 'Querying Registry...' : `${filtered.length} of ${students.length} provisioned nodes`}
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">
+                                {loading || isPending ? 'Synchronizing Hub...' : `${filtered.length} of ${students.length} profile entries synchronized`}
                             </p>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3">
                             {/* Search Registry */}
                             <div className="relative group flex-1 sm:flex-none">
-                                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-school-primary transition-colors" style={{ color: primaryColor }} />
+                                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
                                 <Input
-                                    placeholder="Search Registry..."
+                                    placeholder="Search Profiles..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full sm:w-56 pl-10 h-11 bg-background border-border text-xs font-bold uppercase tracking-widest rounded-xl focus:ring-1 transition-all"
-                                    style={{ '--tw-ring-color': primaryColor } as any}
+                                    className="w-full sm:w-64 pl-11 h-12 bg-surface border-border text-xs font-bold uppercase tracking-widest rounded-xl focus:ring-2 transition-all outline-none"
+                                    style={inputFocusStyle}
                                 />
+                                {searchQuery && (
+                                    <button onClick={() => setSearchQuery('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                                        <X className="h-4 w-4" />
+                                    </button>
+                                )}
                             </div>
 
-                            {/* Filter Matrix */}
+                            {/* Matrix Filters (Rule 19) */}
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <Button variant="outline" className="h-11 rounded-xl border-border bg-background px-4 gap-2 text-[10px] font-black uppercase tracking-widest hover:border-school-primary transition-all">
-                                        <Filter className="h-3.5 w-3.5" />
-                                        <span className="hidden md:inline">Matrix Filters</span>
-                                        <ChevronDown className="h-3 w-3 opacity-30" />
-                                    </Button>
+                                    <button className="h-12 rounded-xl border border-border bg-surface px-5 gap-3 text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground hover:text-foreground hover:border-school-primary-200 transition-all flex items-center shadow-sm">
+                                        <Filter className="h-4 w-4" />
+                                        <span className="hidden sm:inline">Matrix Filters</span>
+                                        <ChevronDown className="h-3.5 w-3.5 opacity-30" />
+                                    </button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-64 p-6 bg-card border-border rounded-2xl shadow-2xl space-y-6" align="end">
+                                <PopoverContent className="w-72 p-6 bg-card border-border rounded-2xl shadow-2xl space-y-6 animate-in zoom-in-95" align="end">
                                     <div className="space-y-4">
                                         <div className="space-y-2">
-                                            <label className="text-[9px] font-black text-muted-foreground uppercase">Target Level</label>
+                                            <label className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Academic Level</label>
                                             <Select value={selectedGrade} onValueChange={setSelectedGrade}>
-                                                <SelectTrigger className="h-10 bg-background border-border text-xs font-bold uppercase">
+                                                <SelectTrigger className="h-11 bg-surface border-border text-xs font-bold uppercase rounded-lg">
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-card border-border">
@@ -1222,9 +1511,9 @@ export function StudentsTable() {
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[9px] font-black text-muted-foreground uppercase">Classroom Node</label>
+                                            <label className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Classroom Hub</label>
                                             <Select value={selectedClass} onValueChange={setSelectedClass}>
-                                                <SelectTrigger className="h-10 bg-background border-border text-xs font-bold uppercase">
+                                                <SelectTrigger className="h-11 bg-surface border-border text-xs font-bold uppercase rounded-lg">
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-card border-border">
@@ -1233,95 +1522,103 @@ export function StudentsTable() {
                                             </Select>
                                         </div>
                                     </div>
-                                    <Button 
-                                        variant="ghost" 
-                                        className="w-full text-[9px] font-black uppercase text-muted-foreground hover:text-foreground"
+                                    <button 
+                                        className="w-full py-2.5 text-[9px] font-extrabold uppercase tracking-widest text-muted-foreground hover:text-destructive transition-colors border-t border-border"
                                         onClick={() => { setSelectedGrade('All Grades'); setSelectedClass('All Classes'); }}
                                     >
-                                        Clear Parameters
-                                    </Button>
+                                        Clear Protocol Hub
+                                    </button>
                                 </PopoverContent>
                             </Popover>
 
-                            <Button
-                                size="sm"
+                            <button
                                 onClick={() => router.push('/admin/invite')}
-                                className="h-11 px-6 bg-school-primary text-on-school-primary font-black text-[10px] uppercase tracking-widest rounded-xl shadow-lg"
-                                style={{ backgroundColor: primaryColor }}
+                                className="h-12 px-8 bg-school-primary text-on-school-primary font-extrabold text-[10px] uppercase tracking-widest rounded-xl shadow-lg shadow-school-primary-200 hover:brightness-110 transition-all active:scale-95"
                             >
-                                Enroll Student
-                            </Button>
+                                Enroll Identity
+                            </button>
                         </div>
                     </div>
                 </CardHeader>
 
                 <CardContent className="p-0">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-24 gap-4">
-                            <Loader2 className="h-8 w-8 animate-spin" style={{ color: primaryColor }} />
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Querying_Registry_Nodes...</p>
+                        /* Rule 21: Scale Protocol Loader */
+                        <div className="flex flex-col items-center justify-center py-32 gap-4">
+                            <div className="relative">
+                                <Loader2 className="h-10 w-10 animate-spin text-school-primary" />
+                                <div className="absolute inset-0 blur-xl bg-school-primary-50 -z-10" />
+                            </div>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground animate-pulse">Querying_Registry_Hubs...</p>
                         </div>
                     ) : filtered.length === 0 ? (
-                        <div className="py-24 text-center space-y-4 px-6">
-                            <Users className="h-12 w-12 text-muted-foreground mx-auto opacity-20" />
-                            <p className="text-sm font-bold text-foreground uppercase italic tracking-tighter">No identities discovered matching current matrix parameters.</p>
+                        <div className="py-32 text-center space-y-4 px-6 opacity-40 italic">
+                            <Users className="h-14 w-14 text-muted-foreground/30 mx-auto" />
+                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">No profiles matching current matrix parameters.</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto custom-scrollbar">
                             <Table>
-                                <TableHeader className="bg-background/40">
+                                <TableHeader className="bg-surface/30">
                                     <TableRow className="border-border hover:bg-transparent">
-                                        <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Identity</TableHead>
-                                        <TableHead className="hidden md:table-cell px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Registry Node</TableHead>
-                                        <TableHead className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Placement</TableHead>
-                                        <TableHead className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">Logic</TableHead>
+                                        <TableHead className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">Identity Profile</TableHead>
+                                        <TableHead className="hidden md:table-cell px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">Communication Node</TableHead>
+                                        <th className="px-8 py-5 text-left text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">Placement Hub</th>
+                                        <TableHead className="px-8 py-5 text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">Logic Hub</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {filtered.map(student => (
                                         <TableRow 
                                             key={student.id} 
-                                            className="border-border hover:bg-white/[0.02] transition-colors cursor-pointer group"
+                                            className="border-border hover:bg-muted/30 transition-colors cursor-pointer group"
                                             onClick={() => router.push(`/admin/students/${student.id}`)}
                                         >
                                             <TableCell className="px-8 py-6">
                                                 <div className="flex items-center gap-4">
-                                                    <Avatar className="h-10 w-10 border border-border shadow-inner">
-                                                        <AvatarFallback className="bg-background text-[10px] font-black uppercase" style={{ color: primaryColor }}>
+                                                    {/* Rule 19/21: Avatar Standard */}
+                                                    <Avatar className="h-11 w-11 border-2 border-background ring-4 ring-school-primary-50 group-hover:ring-school-primary-100 transition-all shadow-sm">
+                                                        <AvatarFallback className="bg-surface text-school-primary text-xs font-extrabold uppercase italic tabular-nums">
                                                             {getInitials(student.name, student.email)}
                                                         </AvatarFallback>
                                                     </Avatar>
                                                     <div className="min-w-0">
-                                                        <p className="text-sm font-extrabold text-foreground uppercase italic leading-none">{student.name || 'Anonymous'}</p>
-                                                        <p className="md:hidden text-[9px] text-muted-foreground uppercase mt-1 truncate">{student.email}</p>
+                                                        <p className="text-sm font-extrabold text-foreground uppercase italic leading-none tracking-tight">{student.name || 'Anonymous_Node'}</p>
+                                                        <p className="md:hidden text-[9px] text-muted-foreground font-mono mt-1.5 truncate">{student.email}</p>
                                                     </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="hidden md:table-cell px-8 py-6 text-[11px] font-mono font-bold text-muted-foreground lowercase">
+                                            <TableCell className="hidden md:table-cell px-8 py-6 text-[11px] font-mono font-bold text-muted-foreground/60 lowercase italic">
                                                 {student.email}
                                             </TableCell>
-                                            <TableCell className="px-8 py-6">
+                                            <td className="px-8 py-6">
                                                 {student.assignedClasses.length === 0 ? (
-                                                    <span className="inline-flex px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[8px] font-black uppercase">Unassigned</span>
+                                                    <span className="inline-flex px-3 py-1 rounded-lg bg-amber-50 text-amber-600 border border-amber-200 text-[8px] font-extrabold uppercase tracking-widest">Registry Pending</span>
                                                 ) : (
-                                                    <div className="flex items-center gap-2 text-foreground font-bold uppercase text-[10px]">
-                                                        <GraduationCap className="h-4 w-4 opacity-20" style={{ color: primaryColor }} />
+                                                    <div className="flex items-center gap-3 text-foreground font-extrabold uppercase text-[10px] tracking-tight italic">
+                                                        <div className="h-1.5 w-1.5 rounded-full bg-school-primary animate-pulse" />
                                                         {student.assignedClasses[0].name}
                                                     </div>
                                                 )}
-                                            </TableCell>
+                                            </td>
                                             <TableCell className="px-8 py-6 text-right" onClick={e => e.stopPropagation()}>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="h-9 w-9 border border-border bg-background rounded-xl hover:border-school-primary transition-all">
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                        </Button>
+                                                        <button className="h-10 w-10 flex items-center justify-center rounded-xl border border-border bg-surface text-muted-foreground hover:text-school-primary hover:border-school-primary-200 transition-all shadow-sm active:scale-90">
+                                                            <MoreHorizontal className="h-5 w-5" />
+                                                        </button>
                                                     </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="bg-card border-border rounded-xl shadow-2xl">
-                                                        <DropdownMenuItem onClick={() => router.push(`/admin/students/${student.id}`)} className="text-[10px] font-bold uppercase tracking-widest">View Profile</DropdownMenuItem>
-                                                        <DropdownMenuSeparator className="bg-border" />
-                                                        <DropdownMenuItem onClick={() => triggerAction('deactivate', student.id, student.name, student.email)} className="text-[10px] font-bold uppercase text-amber-500">Deactivate Node</DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => triggerAction('delete', student.id, student.name, student.email)} className="text-[10px] font-bold uppercase text-red-500">Purge Record</DropdownMenuItem>
+                                                    <DropdownMenuContent align="end" className="w-48 bg-card border-border rounded-xl shadow-2xl p-1 animate-in zoom-in-95">
+                                                        <DropdownMenuItem onClick={() => router.push(`/admin/students/${student.id}`)} className="rounded-lg px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground cursor-pointer">
+                                                            Hub Profile
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator className="bg-border mx-1" />
+                                                        <DropdownMenuItem onClick={() => triggerAction('deactivate', student.id, student.name, student.email)} className="rounded-lg px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-amber-600 hover:bg-amber-50 cursor-pointer">
+                                                            Lock Account
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => triggerAction('delete', student.id, student.name, student.email)} className="rounded-lg px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-destructive hover:bg-destructive/5 cursor-pointer">
+                                                            Purge Hub Record
+                                                        </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>
@@ -1334,7 +1631,7 @@ export function StudentsTable() {
                 </CardContent>
             </Card>
 
-            {/* System Modals */}
+            {/* System Protocol Hubs */}
             {actionState && (
                 <UserActionsModal
                     userId={actionState.userId}
