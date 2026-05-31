@@ -596,7 +596,7 @@ model Notification {
 
 model Subscription {
   id                String    @id @default(uuid())
-  schoolId          String    @unique
+  schoolId          String?   @unique
   plan              String
   profileId         String?   @unique
   status            String
@@ -611,7 +611,7 @@ model Subscription {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @default(now()) @updatedAt
 
-  school  School            @relation(fields: [schoolId], references: [id])
+  school  School?           @relation(fields: [schoolId], references: [id])
   profile Profile?          @relation("ProfileSubscription", fields: [profileId], references: [id])
   subPlan SubscriptionPlan? @relation(fields: [planId], references: [id])
 

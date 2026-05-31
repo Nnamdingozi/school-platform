@@ -871,6 +871,7 @@ import { cn } from '@/lib/utils';
 import { Loader2, Lock, Check, ShieldCheck } from 'lucide-react';
 import { useHydrated } from '@/hooks/useHydrate';
 import { getErrorMessage } from '@/lib/error-handler';
+import { updateOnboardingEmail } from '@/app/actions/onboarding';
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
@@ -897,7 +898,7 @@ interface OnboardingShellProps {
  */
 export function OnboardingShell({ initialCurricula, initialPlans }: OnboardingShellProps) {
     const hydrated = useHydrated(); 
-    const { step, isProvisioned, setPlans, setCurricula, setError } = useOnboardingStore();
+    const { step, isProvisioned, setPlans, setCurricula, setError, confirmedEmail, setConfirmedEmail, paymentData } = useOnboardingStore();
 
     // ── HUB HYDRATION (Rule 17/23) ──
     useEffect(() => {
@@ -931,8 +932,17 @@ export function OnboardingShell({ initialCurricula, initialPlans }: OnboardingSh
     }
 
     const renderStepHub = () => {
-        if (isProvisioned) return <ConfirmationScreen />;
-
+        if (isProvisioned) {
+            return (
+                <ConfirmationScreen
+                    email={confirmedEmail ?? ''}
+                    paymentReference={paymentData?.reference ?? ''}
+                    onEmailUpdate={updateOnboardingEmail}
+                    onEmailChange={setConfirmedEmail}
+                />
+            );
+        }
+    
         switch (step) {
             case 1: return <AdminStep />;
             case 2: return <SchoolStep />;

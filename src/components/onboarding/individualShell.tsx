@@ -373,13 +373,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRegisterStore } from '@/store/individualOnboardingStore';
 import { RegisterAccountStep } from '@/app/steps/individual/accountRegisterStep';
-import { RegisterPlanStep } from '@/app/steps/individual/individualPayment'; // Ensure path is correct
+import { RegisterPlanStep } from '@/app/steps/individual/individualPayment';
 import { ConfirmationScreen } from '@/app/steps/confrimation-screen';
+import { updateIndividualEmail } from '@/app/actions/individualOnboarding';
 import { GraduationCap, Loader2 } from 'lucide-react';
 import { type SubscriptionPlanItem } from '@/app/actions/subscription.actions';
 
 export function IndividulalShell({ initialPlans }: { initialPlans: SubscriptionPlanItem[] }) {
-    const { step, isRegistered, setPlans } = useRegisterStore();
+    const { step, isRegistered, paymentStatus, setPlans, email, paymentReference, name, curriculumId, setIdentity } = useRegisterStore();
     const [mounted, setMounted] = useState<boolean>(false);
 
     useEffect(() => {
@@ -394,8 +395,17 @@ export function IndividulalShell({ initialPlans }: { initialPlans: SubscriptionP
             </div>
         );
     }
-    
-    if (isRegistered) return <ConfirmationScreen />;
+
+    if (isRegistered || paymentStatus === 'paid') {
+        return (
+            <ConfirmationScreen
+                email={email}
+                paymentReference={paymentReference ?? ''}
+                onEmailUpdate={updateIndividualEmail}
+                onEmailChange={(newEmail) => setIdentity(name, newEmail, curriculumId)}
+            />
+        );
+    }
 
     return (
         <div className="w-full max-w-md space-y-10 animate-in fade-in duration-700">
@@ -406,7 +416,7 @@ export function IndividulalShell({ initialPlans }: { initialPlans: SubscriptionP
                 <h1 className="text-3xl font-extrabold text-white uppercase italic tracking-tighter">Personal Hub</h1>
                 <p className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.3em] italic">Registry Identity Provisioning</p>
             </div>
-            
+
             <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden shadow-2xl">
                 <div className="relative z-10">
                     {step === 1 ? <RegisterAccountStep /> : <RegisterPlanStep />}

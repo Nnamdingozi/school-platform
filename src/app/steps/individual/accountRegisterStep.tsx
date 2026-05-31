@@ -527,30 +527,33 @@
 
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useRegisterStore } from '@/store/individualOnboardingStore';
-import { useOnboardingStore } from '@/store/onboardingStore'; 
-import { registerUser } from '@/app/actions/auth';
+import { getCurricula } from '@/app/actions/onboarding';
+import { registerIndividualLearner } from '@/app/actions/individualOnboarding';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Mail, Lock,  Loader2, BookOpen } from 'lucide-react';
+import { User, Mail, Lock, Loader2, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
-import { Role } from '@prisma/client';
 import { getErrorMessage } from '@/lib/error-handler';
 
+interface CurriculumOption { id: string; name: string; }
 
 export function RegisterAccountStep() {
     const { nextStep, setIdentity } = useRegisterStore();
-    const { curricula } = useOnboardingStore(); 
     const [isPending, startTransition] = useTransition();
-    
-    const [form, setForm] = useState({ 
-        name: '', 
-        email: '', 
-        password: '',
-        curriculumId: '' 
-    });
+    const [curricula, setCurricula] = useState<CurriculumOption[]>([]);
+    const [loadingCurricula, setLoadingCurricula] = useState(true);
+    const [form, setForm] = useState({ name: '', email: '', password: '', curriculumId: '' });
+
+    useEffect(() => {
+        getCurricula().then(res => {
+            if (res.success) setCurricula(res.data ?? []);
+            else toast.error('Failed to load academic blueprints.');
+            setLoadingCurricula(false);
+        });
+    }, []);
 
     const handleNext = (e: React.FormEvent) => {
         e.preventDefault();
@@ -562,17 +565,14 @@ export function RegisterAccountStep() {
             toast.error("Security Protocol: Access credentials must be at least 8 characters.");
             return;
         }
-
         startTransition(async () => {
             try {
-                const res = await registerUser({
+                const res = await registerIndividualLearner({
                     name: form.name.trim(),
                     email: form.email.trim().toLowerCase(),
                     password: form.password,
-                    role: Role.INDIVIDUAL_LEARNER,
-                    curriculumId: form.curriculumId 
+                    curriculumId: form.curriculumId,
                 });
-
                 if (res.success) {
                     setIdentity(form.name, form.email, form.curriculumId);
                     toast.success("Identity profile initialized.");
@@ -588,60 +588,63 @@ export function RegisterAccountStep() {
 
     return (
         <form onSubmit={handleNext} className="space-y-6 animate-in slide-in-from-right-6 duration-700">
-            <div className="space-y-2 group">
+            <div className="space-y-2">
                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Full Identification</Label>
                 <div className="relative">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                    <input 
-                        required placeholder="e.g. ALEX RIDER"
+                    <input required placeholder="e.g. ALEX RIDER"
                         className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-extrabold uppercase italic text-sm outline-none focus:ring-2 focus:ring-school-primary-200"
-                        value={form.name} onChange={e => setForm({...form, name: e.target.value})}
-                    />
+                        value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
                 </div>
             </div>
 
-            <div className="space-y-2 group">
+            <div className="space-y-2">
                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Primary Email Node</Label>
                 <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                    <input 
-                        required type="email" placeholder="learner@registry.node"
+                    <input required type="email" placeholder="learner@registry.node"
                         className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-mono text-sm outline-none focus:ring-2 focus:ring-school-primary-200"
-                        value={form.email} onChange={e => setForm({...form, email: e.target.value})}
-                    />
+                        value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
                 </div>
             </div>
 
-            <div className="space-y-2 group">
+            <div className="space-y-2">
                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Academic Blueprint</Label>
-                <Select value={form.curriculumId} onValueChange={(val: string) => setForm({...form, curriculumId: val})}>
+                <Select value={form.curriculumId} onValueChange={(val) => setForm({ ...form, curriculumId: val })} disabled={loadingCurricula}>
                     <SelectTrigger className="w-full h-14 bg-slate-950 border-slate-800 rounded-xl text-white font-bold uppercase italic text-xs px-4">
                         <div className="flex items-center gap-3">
-                            <BookOpen className="h-4 w-4 text-slate-500" />
-                            <SelectValue placeholder="Select Global Blueprint..." />
+                            <BookOpen className="h-4 w-4 text-slate-500 shrink-0" />
+                            {loadingCurricula
+                                ? <span className="text-slate-500 text-[10px] tracking-widest">Loading Blueprints...</span>
+                                : <SelectValue placeholder="Select Global Blueprint..." />
+                            }
                         </div>
                     </SelectTrigger>
                     <SelectContent className="bg-slate-900 border-slate-800 text-white">
-                        {curricula.map((c) => (
-                            <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px] tracking-widest">{c.name} Hub</SelectItem>
-                        ))}
+                        {curricula.length === 0 && !loadingCurricula
+                            ? <div className="px-4 py-3 text-[10px] uppercase tracking-widest text-slate-500">No blueprints available</div>
+                            : curricula.map(c => (
+                                <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px] tracking-widest">
+                                    {c.name} Hub
+                                </SelectItem>
+                            ))
+                        }
                     </SelectContent>
                 </Select>
             </div>
 
-            <div className="space-y-2 group">
+            <div className="space-y-2">
                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Access Secret Key</Label>
                 <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                    <input 
-                        required type="password" placeholder="••••••••"
+                    <input required type="password" placeholder="••••••••"
                         className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white outline-none focus:ring-2 focus:ring-school-primary-200"
-                        value={form.password} onChange={e => setForm({...form, password: e.target.value})}
-                    />
+                        value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
                 </div>
             </div>
 
-            <Button disabled={isPending} className="w-full h-16 bg-school-primary text-on-school-primary font-extrabold rounded-2xl uppercase text-[11px] tracking-widest shadow-xl active:scale-95">
+            <Button disabled={isPending || loadingCurricula}
+                className="w-full h-16 bg-school-primary text-on-school-primary font-extrabold rounded-2xl uppercase text-[11px] tracking-widest shadow-xl active:scale-95">
                 {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Personalize Learning Plan"}
             </Button>
         </form>
