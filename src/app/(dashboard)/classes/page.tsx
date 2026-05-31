@@ -977,6 +977,9 @@ import { ClassesHubClient } from "@/components/classHubClient";
 import { Role } from "@prisma/client";
 import { getErrorMessage } from "@/lib/error-handler";
 
+export const dynamic = "force-dynamic";
+
+
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 /**

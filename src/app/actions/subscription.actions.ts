@@ -1528,6 +1528,7 @@ export interface SubscriptionPlanItem {
     features:     string[]
     popular:      boolean
     sortOrder:    number
+    active?:       boolean
 }
 
 export interface PaymentHistoryEntry {

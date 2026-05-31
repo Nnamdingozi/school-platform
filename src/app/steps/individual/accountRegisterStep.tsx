@@ -232,39 +232,332 @@
 
 
 
+// 'use client';
+
+// import React, { useState, useTransition } from 'react';
+// import { useRegisterStore } from '@/store/individualOnboardingStore';
+// import { registerUser } from '@/app/actions/auth';
+// import { Button } from '@/components/ui/button';
+// import { Label } from '@/components/ui/label';
+// import { User, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+// import { toast } from 'sonner';
+// import { Role } from '@prisma/client';
+// import { getErrorMessage } from '@/lib/error-handler';
+// import { cn } from '@/lib/utils';
+
+// /**
+//  * INDIVIDUAL IDENTITY PROVISIONING (Tier 3)
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Flip (bg-surface, bg-card, border-border).
+//  * Rule 19: Standardized Geometry (rounded-xl/2xl).
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  */
+// export function RegisterAccountStep() {
+//     const { nextStep, setIdentity } = useRegisterStore();
+//     const [isPending, startTransition] = useTransition();
+    
+//     const [form, setForm] = useState({ 
+//         name: '', 
+//         email: '', 
+//         password: '' 
+//     });
+
+//     const handleNext = (e: React.FormEvent) => {
+//         e.preventDefault();
+        
+//         if (form.password.length < 8) {
+//             toast.error("Security Protocol: Access credentials must be at least 8 characters.");
+//             return;
+//         }
+
+//         startTransition(async () => {
+//             try {
+//                 // Rule 11: System Truth - Creating the Individual Learner profile in Tier 3
+//                 const res = await registerUser({
+//                     name: form.name.trim(),
+//                     email: form.email.trim().toLowerCase(),
+//                     password: form.password,
+//                     role: Role.INDIVIDUAL_LEARNER,
+//                     // Tier 1 Default: Mapping to the global curriculum core
+//                     curriculumId: "generic-curriculum-id" 
+//                 });
+
+//                 if (res.success) {
+//                     setIdentity(form.name, form.email);
+//                     toast.success("Identity profile initialized.");
+//                     nextStep();
+//                 } else {
+//                     toast.error(res.error || "Identity creation protocol failed.");
+//                 }
+//             } catch (err: unknown) {
+//                 toast.error(getErrorMessage(err));
+//             }
+//         });
+//     };
+
+//     return (
+//         <form onSubmit={handleNext} className="space-y-8 animate-in slide-in-from-right-6 duration-700">
+            
+//             {/* ── NAME ENTRY (Rule 11/18) ── */}
+//             <div className="space-y-3 group">
+//                 <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                     Full Identification
+//                 </Label>
+//                 <div className="relative">
+//                     <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+//                     <input 
+//                         required
+//                         placeholder="e.g. ALEX RIDER"
+//                         className={cn(
+//                             "w-full h-14 bg-surface border border-border rounded-xl pl-12 pr-6 py-4 text-foreground outline-none transition-all",
+//                             "focus:ring-2 focus:ring-school-primary-200 focus:border-school-primary",
+//                             "font-extrabold uppercase italic text-sm placeholder:text-muted-foreground/20"
+//                         )}
+//                         value={form.name}
+//                         onChange={e => setForm({...form, name: e.target.value})}
+//                     />
+//                 </div>
+//             </div>
+
+//             {/* ── EMAIL ENTRY (Rule 18/21) ── */}
+//             <div className="space-y-3 group">
+//                 <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                     Primary Email Node
+//                 </Label>
+//                 <div className="relative">
+//                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+//                     <input 
+//                         required
+//                         type="email"
+//                         placeholder="learner@registry.node"
+//                         className={cn(
+//                             "w-full h-14 bg-surface border border-border rounded-xl pl-12 pr-6 py-4 text-foreground outline-none transition-all",
+//                             "focus:ring-2 focus:ring-school-primary-200 focus:border-school-primary",
+//                             "font-mono text-sm lowercase placeholder:text-muted-foreground/20"
+//                         )}
+//                         value={form.email}
+//                         onChange={e => setForm({...form, email: e.target.value})}
+//                     />
+//                 </div>
+//             </div>
+
+//             {/* ── PASSWORD ENTRY ── */}
+//             <div className="space-y-3 group">
+//                 <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
+//                     Security Credentials
+//                 </Label>
+//                 <div className="relative">
+//                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+//                     <input 
+//                         required
+//                         type="password"
+//                         placeholder="••••••••"
+//                         className={cn(
+//                             "w-full h-14 bg-surface border border-border rounded-xl pl-12 pr-6 py-4 text-foreground outline-none transition-all",
+//                             "focus:ring-2 focus:ring-school-primary-200 focus:border-school-primary",
+//                             "font-bold text-sm placeholder:text-muted-foreground/20"
+//                         )}
+//                         value={form.password}
+//                         onChange={e => setForm({...form, password: e.target.value})}
+//                     />
+//                 </div>
+//             </div>
+
+//             {/* ── ACTION BUTTON (Rule 21) ── */}
+//             <div className="pt-4">
+//                 <Button 
+//                     disabled={isPending}
+//                     className={cn(
+//                         "w-full h-16 bg-school-primary text-on-school-primary font-extrabold rounded-2xl transition-all",
+//                         "uppercase text-[11px] tracking-widest hover:brightness-110 active:scale-95",
+//                         "shadow-xl shadow-school-primary-200 disabled:opacity-20 flex items-center justify-center gap-3"
+//                     )}
+//                 >
+//                     {isPending ? (
+//                         <>
+//                             <Loader2 className="h-4 w-4 animate-spin" />
+//                             Synchronizing...
+//                         </>
+//                     ) : (
+//                         <>
+//                             Select License Tier <ArrowRight className="h-4 w-4" />
+//                         </>
+//                     )}
+//                 </Button>
+//             </div>
+
+//             <p className="text-center text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60 leading-relaxed italic">
+//                 By initializing this profile, you accept the Registry Protocols & Privacy Shield infrastructure.
+//             </p>
+//         </form>
+//     );
+// }
+
+
+
+// src/app/steps/individual/accountRegisterStep.tsx
+// 'use client';
+
+// import React, { useState, useTransition } from 'react';
+// import { useRegisterStore } from '@/store/individualOnboardingStore';
+// import { useOnboardingStore } from '@/store/onboardingStore'; 
+// import { registerUser } from '@/app/actions/auth';
+// import { Button } from '@/components/ui/button';
+// import { Label } from '@/components/ui/label';
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// import { User, Mail, Lock, ArrowRight, Loader2, BookOpen } from 'lucide-react';
+// import { toast } from 'sonner';
+// import { Role } from '@prisma/client';
+// import { getErrorMessage } from '@/lib/error-handler';
+// import { cn } from '@/lib/utils';
+
+// /**
+//  * ✅ FIXED TS2724: Explicitly exporting 'RegisterAccountStep'
+//  */
+// export function RegisterAccountStep() {
+//     const { nextStep, setIdentity } = useRegisterStore();
+//     const { curricula } = useOnboardingStore(); 
+//     const [isPending, startTransition] = useTransition();
+    
+//     const [form, setForm] = useState({ 
+//         name: '', 
+//         email: '', 
+//         password: '',
+//         curriculumId: '' 
+//     });
+
+//     const handleNext = (e: React.FormEvent) => {
+//         e.preventDefault();
+//         if (!form.curriculumId) {
+//             toast.error("Registry Protocol: Academic Blueprint selection required.");
+//             return;
+//         }
+//         if (form.password.length < 8) {
+//             toast.error("Security Protocol: Access credentials must be at least 8 characters.");
+//             return;
+//         }
+
+//         startTransition(async () => {
+//             try {
+//                 const res = await registerUser({
+//                     name: form.name.trim(),
+//                     email: form.email.trim().toLowerCase(),
+//                     password: form.password,
+//                     role: Role.INDIVIDUAL_LEARNER,
+//                     curriculumId: form.curriculumId 
+//                 });
+
+//                 if (res.success) {
+//                     // ✅ FIXED TS2554: Passing all 3 arguments
+//                     setIdentity(form.name, form.email, form.curriculumId);
+//                     toast.success("Identity profile initialized.");
+//                     nextStep();
+//                 } else {
+//                     toast.error(res.error || "Identity creation protocol failed.");
+//                 }
+//             } catch (err: unknown) {
+//                 toast.error(getErrorMessage(err));
+//             }
+//         });
+//     };
+
+//     return (
+//         <form onSubmit={handleNext} className="space-y-6 animate-in slide-in-from-right-6 duration-700">
+//             <div className="space-y-2 group">
+//                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Full Identification</Label>
+//                 <div className="relative">
+//                     <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+//                     <input 
+//                         required placeholder="ALEX RIDER"
+//                         className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-extrabold uppercase italic text-sm outline-none focus:ring-2 focus:ring-school-primary-200"
+//                         value={form.name} onChange={e => setForm({...form, name: e.target.value})}
+//                     />
+//                 </div>
+//             </div>
+
+//             <div className="space-y-2 group">
+//                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Email Node</Label>
+//                 <div className="relative">
+//                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+//                     <input 
+//                         required type="email" placeholder="learner@registry.node"
+//                         className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-mono text-sm outline-none focus:ring-2 focus:ring-school-primary-200"
+//                         value={form.email} onChange={e => setForm({...form, email: e.target.value})}
+//                     />
+//                 </div>
+//             </div>
+
+//             <div className="space-y-2 group">
+//                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Academic Blueprint</Label>
+//                 <Select value={form.curriculumId} onValueChange={(val: string) => setForm({...form, curriculumId: val})}>
+//                     <SelectTrigger className="w-full h-14 bg-slate-950 border-slate-800 rounded-xl text-white font-bold uppercase italic text-xs px-4">
+//                         <div className="flex items-center gap-3">
+//                             <BookOpen className="h-4 w-4 text-slate-500" />
+//                             <SelectValue placeholder="Select Global Blueprint..." />
+//                         </div>
+//                     </SelectTrigger>
+//                     <SelectContent className="bg-slate-900 border-slate-800 text-white">
+//                         {curricula.map((c) => (
+//                             <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px] tracking-widest">{c.name} Hub</SelectItem>
+//                         ))}
+//                     </SelectContent>
+//                 </Select>
+//             </div>
+
+//             <div className="space-y-2 group">
+//                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Access Secret Key</Label>
+//                 <div className="relative">
+//                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+//                     <input 
+//                         required type="password" placeholder="••••••••"
+//                         className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white outline-none focus:ring-2 focus:ring-school-primary-200"
+//                         value={form.password} onChange={e => setForm({...form, password: e.target.value})}
+//                     />
+//                 </div>
+//             </div>
+
+//             <Button disabled={isPending} className="w-full h-16 bg-school-primary text-on-school-primary font-extrabold rounded-2xl uppercase text-[11px] tracking-widest shadow-xl active:scale-95">
+//                 {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Personalize Learning Plan"}
+//             </Button>
+//         </form>
+//     );
+// }
+
+
+
 'use client';
 
 import React, { useState, useTransition } from 'react';
 import { useRegisterStore } from '@/store/individualOnboardingStore';
+import { useOnboardingStore } from '@/store/onboardingStore'; 
 import { registerUser } from '@/app/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { User, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { User, Mail, Lock,  Loader2, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 import { Role } from '@prisma/client';
 import { getErrorMessage } from '@/lib/error-handler';
-import { cn } from '@/lib/utils';
 
-/**
- * INDIVIDUAL IDENTITY PROVISIONING (Tier 3)
- * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
- * Rule 18: Semantic Flip (bg-surface, bg-card, border-border).
- * Rule 19: Standardized Geometry (rounded-xl/2xl).
- * Rule 21: Scale Protocol for clean mathematical brand tints.
- */
+
 export function RegisterAccountStep() {
     const { nextStep, setIdentity } = useRegisterStore();
+    const { curricula } = useOnboardingStore(); 
     const [isPending, startTransition] = useTransition();
     
     const [form, setForm] = useState({ 
         name: '', 
         email: '', 
-        password: '' 
+        password: '',
+        curriculumId: '' 
     });
 
     const handleNext = (e: React.FormEvent) => {
         e.preventDefault();
-        
+        if (!form.curriculumId) {
+            toast.error("Registry Protocol: Academic Blueprint selection required.");
+            return;
+        }
         if (form.password.length < 8) {
             toast.error("Security Protocol: Access credentials must be at least 8 characters.");
             return;
@@ -272,18 +565,16 @@ export function RegisterAccountStep() {
 
         startTransition(async () => {
             try {
-                // Rule 11: System Truth - Creating the Individual Learner profile in Tier 3
                 const res = await registerUser({
                     name: form.name.trim(),
                     email: form.email.trim().toLowerCase(),
                     password: form.password,
                     role: Role.INDIVIDUAL_LEARNER,
-                    // Tier 1 Default: Mapping to the global curriculum core
-                    curriculumId: "generic-curriculum-id" 
+                    curriculumId: form.curriculumId 
                 });
 
                 if (res.success) {
-                    setIdentity(form.name, form.email);
+                    setIdentity(form.name, form.email, form.curriculumId);
                     toast.success("Identity profile initialized.");
                     nextStep();
                 } else {
@@ -296,99 +587,63 @@ export function RegisterAccountStep() {
     };
 
     return (
-        <form onSubmit={handleNext} className="space-y-8 animate-in slide-in-from-right-6 duration-700">
-            
-            {/* ── NAME ENTRY (Rule 11/18) ── */}
-            <div className="space-y-3 group">
-                <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
-                    Full Identification
-                </Label>
+        <form onSubmit={handleNext} className="space-y-6 animate-in slide-in-from-right-6 duration-700">
+            <div className="space-y-2 group">
+                <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Full Identification</Label>
                 <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                     <input 
-                        required
-                        placeholder="e.g. ALEX RIDER"
-                        className={cn(
-                            "w-full h-14 bg-surface border border-border rounded-xl pl-12 pr-6 py-4 text-foreground outline-none transition-all",
-                            "focus:ring-2 focus:ring-school-primary-200 focus:border-school-primary",
-                            "font-extrabold uppercase italic text-sm placeholder:text-muted-foreground/20"
-                        )}
-                        value={form.name}
-                        onChange={e => setForm({...form, name: e.target.value})}
+                        required placeholder="e.g. ALEX RIDER"
+                        className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-extrabold uppercase italic text-sm outline-none focus:ring-2 focus:ring-school-primary-200"
+                        value={form.name} onChange={e => setForm({...form, name: e.target.value})}
                     />
                 </div>
             </div>
 
-            {/* ── EMAIL ENTRY (Rule 18/21) ── */}
-            <div className="space-y-3 group">
-                <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
-                    Primary Email Node
-                </Label>
+            <div className="space-y-2 group">
+                <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Primary Email Node</Label>
                 <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                     <input 
-                        required
-                        type="email"
-                        placeholder="learner@registry.node"
-                        className={cn(
-                            "w-full h-14 bg-surface border border-border rounded-xl pl-12 pr-6 py-4 text-foreground outline-none transition-all",
-                            "focus:ring-2 focus:ring-school-primary-200 focus:border-school-primary",
-                            "font-mono text-sm lowercase placeholder:text-muted-foreground/20"
-                        )}
-                        value={form.email}
-                        onChange={e => setForm({...form, email: e.target.value})}
+                        required type="email" placeholder="learner@registry.node"
+                        className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-mono text-sm outline-none focus:ring-2 focus:ring-school-primary-200"
+                        value={form.email} onChange={e => setForm({...form, email: e.target.value})}
                     />
                 </div>
             </div>
 
-            {/* ── PASSWORD ENTRY ── */}
-            <div className="space-y-3 group">
-                <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest ml-1 transition-colors group-focus-within:text-school-primary">
-                    Security Credentials
-                </Label>
+            <div className="space-y-2 group">
+                <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Academic Blueprint</Label>
+                <Select value={form.curriculumId} onValueChange={(val: string) => setForm({...form, curriculumId: val})}>
+                    <SelectTrigger className="w-full h-14 bg-slate-950 border-slate-800 rounded-xl text-white font-bold uppercase italic text-xs px-4">
+                        <div className="flex items-center gap-3">
+                            <BookOpen className="h-4 w-4 text-slate-500" />
+                            <SelectValue placeholder="Select Global Blueprint..." />
+                        </div>
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                        {curricula.map((c) => (
+                            <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px] tracking-widest">{c.name} Hub</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div className="space-y-2 group">
+                <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Access Secret Key</Label>
                 <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                     <input 
-                        required
-                        type="password"
-                        placeholder="••••••••"
-                        className={cn(
-                            "w-full h-14 bg-surface border border-border rounded-xl pl-12 pr-6 py-4 text-foreground outline-none transition-all",
-                            "focus:ring-2 focus:ring-school-primary-200 focus:border-school-primary",
-                            "font-bold text-sm placeholder:text-muted-foreground/20"
-                        )}
-                        value={form.password}
-                        onChange={e => setForm({...form, password: e.target.value})}
+                        required type="password" placeholder="••••••••"
+                        className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white outline-none focus:ring-2 focus:ring-school-primary-200"
+                        value={form.password} onChange={e => setForm({...form, password: e.target.value})}
                     />
                 </div>
             </div>
 
-            {/* ── ACTION BUTTON (Rule 21) ── */}
-            <div className="pt-4">
-                <Button 
-                    disabled={isPending}
-                    className={cn(
-                        "w-full h-16 bg-school-primary text-on-school-primary font-extrabold rounded-2xl transition-all",
-                        "uppercase text-[11px] tracking-widest hover:brightness-110 active:scale-95",
-                        "shadow-xl shadow-school-primary-200 disabled:opacity-20 flex items-center justify-center gap-3"
-                    )}
-                >
-                    {isPending ? (
-                        <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Synchronizing...
-                        </>
-                    ) : (
-                        <>
-                            Select License Tier <ArrowRight className="h-4 w-4" />
-                        </>
-                    )}
-                </Button>
-            </div>
-
-            <p className="text-center text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60 leading-relaxed italic">
-                By initializing this profile, you accept the Registry Protocols & Privacy Shield infrastructure.
-            </p>
+            <Button disabled={isPending} className="w-full h-16 bg-school-primary text-on-school-primary font-extrabold rounded-2xl uppercase text-[11px] tracking-widest shadow-xl active:scale-95">
+                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Personalize Learning Plan"}
+            </Button>
         </form>
     );
 }

@@ -1642,6 +1642,9 @@ import { Activity } from "lucide-react";
  * Interface representing a qualitative assessment record for the feedback ledger.
  * ✅ RESOLVED TS2322: Changed '| null' to optional '?' to match client expectations.
  */
+
+export const dynamic = "force-dynamic";
+
 interface AssessmentHubRecord {
     id: string;
     score: number | null;
@@ -1738,6 +1741,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * STUDENT DASHBOARD PAGE (Tier 3)
  */
 export default async function StudentDashboardPage() {
+    
     try {
         const supabase = await createClient();
         const { data: { user: authUser } } = await supabase.auth.getUser();

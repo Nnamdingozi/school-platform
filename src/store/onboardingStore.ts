@@ -1072,7 +1072,7 @@ import { SubscriptionPlanItem } from '@/app/actions/subscription.actions';
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
-export type PlanType = 'starter' | 'pro' | 'enterprise' | 'individual' | null;
+export type PlanType = 'starter' | 'pro' | 'enterprise' | 'individual';
 export type PaymentProvider = 'paystack' | 'stripe' | null;
 
 export interface CurriculumTemplate {

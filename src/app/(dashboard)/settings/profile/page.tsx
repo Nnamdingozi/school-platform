@@ -487,6 +487,8 @@ import { type AnyProfile } from "@/types/profile";
  * IDENTITY REGISTRY | SERVER PAGE
  * Rule 16: Dynamic Contextual SEO
  */
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();

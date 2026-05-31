@@ -151,99 +151,265 @@
 // }
 
 
+// 'use client';
+
+// import React, { useEffect } from 'react';
+// import { useRegisterStore } from '@/store/individualOnboardingStore';
+// import { RegisterAccountStep } from '@/app/steps/individual/accountRegisterStep';
+// import { RegisterPlanStep } from '@/app/steps/individual/planStep';
+// import { ConfirmationScreen } from '@/app/steps/confrimation-screen';
+// import { GraduationCap, ShieldCheck, Globe } from 'lucide-react';
+// import { type SubscriptionPlanItem } from '@/app/actions/subscription.actions';
+// import { getErrorMessage } from '@/lib/error-handler';
+
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// interface RegisterShellProps {
+//     initialPlans: SubscriptionPlanItem[]; // ✅ Resolved 'any' type
+// }
+
+// /**
+//  * PERSONAL REGISTRY SHELL (Tier 3)
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 18: Semantic Flip (bg-background, bg-card, border-border).
+//  * Rule 19: Standardized Geometry [2.5rem].
+//  * Rule 21: Scale Protocol for clean mathematical brand tints.
+//  * Rule 23: Explicit Error Protocol via getErrorMessage.
+//  */
+// export function IndividualShell({ initialPlans }: RegisterShellProps) {
+//     const { step, isRegistered, setPlans } = useRegisterStore();
+
+//     useEffect(() => {
+//         try {
+//             // Rule 11: Synchronize Tier-1 Global plans into the local state hub
+//             setPlans(initialPlans);
+//         } catch (error: unknown) {
+//             // ✅ Rule 23: Explicit Error Protocol
+//             const message = getErrorMessage(error);
+//             console.error(`[PERSONAL_HUB_HYDRATION_FAULT]: ${message}`);
+//         }
+//     }, [initialPlans, setPlans]);
+
+//     if (isRegistered) {
+//         return (
+//             <div className="w-full max-w-md animate-in zoom-in-95 duration-700">
+//                 <ConfirmationScreen />
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="w-full max-w-md space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+            
+//             {/* ── HEADER (Rule 11/21) ── */}
+//             <div className="text-center space-y-4">
+//                 <div 
+//                     className="h-20 w-20 bg-school-primary rounded-2xl flex items-center justify-center mx-auto shadow-2xl shadow-school-primary-200 transition-transform hover:scale-105 duration-500"
+//                 >
+//                     <GraduationCap className="h-10 w-10 text-on-school-primary" strokeWidth={2.5} />
+//                 </div>
+//                 <div className="space-y-2">
+//                     <h1 className="text-3xl md:text-4xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
+//                         Personal Hub
+//                     </h1>
+//                     <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mt-2">
+//                         Identity Hub Initialization
+//                     </p>
+//                 </div>
+//             </div>
+
+//             {/* ── STEP CONTAINER (Rule 18/19/21) ── */}
+//             <div className="bg-card border border-border rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
+//                 {/* Rule 21: Scale Protocol mathematical tint */}
+//                 <div className="absolute -top-24 -right-24 h-48 w-48 bg-school-primary-50 rounded-full blur-3xl opacity-40 pointer-events-none" />
+                
+//                 <div className="relative z-10">
+//                     {/* Multi-step Protocol Routing */}
+//                     {step === 1 ? <RegisterAccountStep /> : <RegisterPlanStep />}
+//                 </div>
+//             </div>
+
+//             {/* ── GLOBAL INDICATORS (Rule 20) ── */}
+//             <div className="flex flex-wrap justify-center items-center gap-y-4 gap-x-8 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+//                 <div className="flex items-center gap-2.5">
+//                     <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+//                     <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
+//                         Global Tier-3 Hub
+//                     </span>
+//                 </div>
+//                 <div className="h-1 w-1 rounded-full bg-border" />
+//                 <div className="flex items-center gap-2.5">
+//                     <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
+//                     <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
+//                         Registry Encrypted
+//                     </span>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+
+
+// 'use client';
+
+// import React, { useEffect, useState } from 'react';
+// import { useRegisterStore } from '@/store/individualOnboardingStore';
+// import { RegisterAccountStep } from '@/app/steps/individual/accountRegisterStep';
+// import { RegisterPlanStep } from '@/app/steps/individual/planStep';
+// import { ConfirmationScreen } from '@/components/onboarding/steps/ConfirmationScreen'; // Unified confirmation
+// import { GraduationCap, ShieldCheck, Globe, Loader2 } from 'lucide-react';
+// import { type SubscriptionPlanItem } from '@/app/actions/subscription.actions';
+// import { getErrorMessage } from '@/lib/error-handler';
+
+// // ── Types (Rule 28: Strict Type Sovereignty) ──────────────────────────────────
+
+// interface RegisterShellProps {
+//     initialPlans: SubscriptionPlanItem[];
+// }
+
+// /**
+//  * PERSONAL REGISTRY SHELL (Tier 3)
+//  * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+//  * Rule 24: Financial Gatekeeping - Transition to Confirmation restricted until payment verification.
+//  * Rule 28: Zero 'any' tolerance.
+//  */
+// export function Shell({ initialPlans }: RegisterShellProps) {
+//     const { step, isRegistered, setPlans } = useRegisterStore();
+    
+//     // ── HYDRATION PROTECTION ──
+//     const [mounted, setMounted] = useState<boolean>(false);
+
+//     useEffect(() => {
+//         setMounted(true);
+//         try {
+//             // Rule 11: Synchronize Tier-1 Global plans into the local state hub
+//             if (initialPlans && initialPlans.length > 0) {
+//                 setPlans(initialPlans);
+//             }
+//         } catch (error: unknown) {
+//             const message = getErrorMessage(error);
+//             console.error(`[PERSONAL_HUB_HYDRATION_FAULT]: ${message}`);
+//         }
+//     }, [initialPlans, setPlans]);
+
+//     // Prevent hydration mismatch between server-rendered default and local storage state
+//     if (!mounted) {
+//         return (
+//             <div className="w-full max-w-md h-96 flex items-center justify-center">
+//                 <Loader2 className="h-8 w-8 animate-spin text-school-primary/20" />
+//             </div>
+//         );
+//     }
+
+//     /**
+//      * Rule 24: Mandatory Settlement
+//      * If the store marks registration as complete, we show the confirmation UI.
+//      * The steps inside will ensure this only happens after payment verification.
+//      */
+//     if (isRegistered) {
+//         return (
+//             <div className="w-full max-w-md animate-in zoom-in-95 duration-700">
+//                 <ConfirmationScreen />
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="w-full max-w-md space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700 pb-12">
+            
+//             {/* ── HEADER (Rule 26: Persona-Based Labeling) ── */}
+//             <div className="text-center space-y-4">
+//                 <div 
+//                     className="h-20 w-20 bg-school-primary rounded-2xl flex items-center justify-center mx-auto shadow-2xl shadow-school-primary-200"
+//                 >
+//                     <GraduationCap className="h-10 w-10 text-on-school-primary" strokeWidth={2.5} />
+//                 </div>
+//                 <div className="space-y-2">
+//                     <h1 className="text-3xl md:text-4xl font-extrabold text-white uppercase italic tracking-tighter leading-none">
+//                         Personal Hub
+//                     </h1>
+//                     <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-2">
+//                         Registry Node initialization
+//                     </p>
+//                 </div>
+//             </div>
+
+//             {/* ── STEP CONTAINER (Rule 18/19/21) ── */}
+//             <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
+//                 {/* Rule 21: Scale Protocol mathematical tint */}
+//                 <div className="absolute -top-24 -right-24 h-48 w-48 bg-school-primary-50 rounded-full blur-3xl opacity-10 pointer-events-none" />
+                
+//                 <div className="relative z-10">
+//                     {/* Multi-step Protocol Routing */}
+//                     {step === 1 ? <RegisterAccountStep /> : <RegisterPlanStep />}
+//                 </div>
+//             </div>
+
+//             {/* ── GLOBAL INDICATORS (Rule 20) ── */}
+//             <div className="flex flex-wrap justify-center items-center gap-y-4 gap-x-8 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+//                 <div className="flex items-center gap-2.5">
+//                     <Globe className="h-3.5 w-3.5 text-white" />
+//                     <span className="text-[9px] font-bold text-white uppercase tracking-widest leading-none">
+//                         Global Tier-3 Hub
+//                     </span>
+//                 </div>
+//                 <div className="h-1 w-1 rounded-full bg-slate-800" />
+//                 <div className="flex items-center gap-2.5">
+//                     <ShieldCheck className="h-3.5 w-3.5 text-white" />
+//                     <span className="text-[9px] font-bold text-white uppercase tracking-widest leading-none">
+//                         Registry Encrypted
+//                     </span>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRegisterStore } from '@/store/individualOnboardingStore';
 import { RegisterAccountStep } from '@/app/steps/individual/accountRegisterStep';
-import { RegisterPlanStep } from '@/app/steps/individual/planStep';
+import { RegisterPlanStep } from '@/app/steps/individual/individualPayment'; // Ensure path is correct
 import { ConfirmationScreen } from '@/app/steps/confrimation-screen';
-import { GraduationCap, ShieldCheck, Globe } from 'lucide-react';
+import { GraduationCap, Loader2 } from 'lucide-react';
 import { type SubscriptionPlanItem } from '@/app/actions/subscription.actions';
-import { getErrorMessage } from '@/lib/error-handler';
 
-
-// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
-
-interface RegisterShellProps {
-    initialPlans: SubscriptionPlanItem[]; // ✅ Resolved 'any' type
-}
-
-/**
- * PERSONAL REGISTRY SHELL (Tier 3)
- * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
- * Rule 18: Semantic Flip (bg-background, bg-card, border-border).
- * Rule 19: Standardized Geometry [2.5rem].
- * Rule 21: Scale Protocol for clean mathematical brand tints.
- * Rule 23: Explicit Error Protocol via getErrorMessage.
- */
-export function RegisterShell({ initialPlans }: RegisterShellProps) {
+export function IndividulalShell({ initialPlans }: { initialPlans: SubscriptionPlanItem[] }) {
     const { step, isRegistered, setPlans } = useRegisterStore();
+    const [mounted, setMounted] = useState<boolean>(false);
 
     useEffect(() => {
-        try {
-            // Rule 11: Synchronize Tier-1 Global plans into the local state hub
-            setPlans(initialPlans);
-        } catch (error: unknown) {
-            // ✅ Rule 23: Explicit Error Protocol
-            const message = getErrorMessage(error);
-            console.error(`[PERSONAL_HUB_HYDRATION_FAULT]: ${message}`);
-        }
+        setMounted(true);
+        if (initialPlans?.length > 0) setPlans(initialPlans);
     }, [initialPlans, setPlans]);
 
-    if (isRegistered) {
+    if (!mounted) {
         return (
-            <div className="w-full max-w-md animate-in zoom-in-95 duration-700">
-                <ConfirmationScreen />
+            <div className="w-full max-w-md h-96 flex items-center justify-center bg-slate-950 border border-slate-800 rounded-[2.5rem]">
+                <Loader2 className="h-8 w-8 animate-spin text-school-primary/20" />
             </div>
         );
     }
+    
+    if (isRegistered) return <ConfirmationScreen />;
 
     return (
-        <div className="w-full max-w-md space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
-            
-            {/* ── HEADER (Rule 11/21) ── */}
+        <div className="w-full max-w-md space-y-10 animate-in fade-in duration-700">
             <div className="text-center space-y-4">
-                <div 
-                    className="h-20 w-20 bg-school-primary rounded-2xl flex items-center justify-center mx-auto shadow-2xl shadow-school-primary-200 transition-transform hover:scale-105 duration-500"
-                >
+                <div className="h-20 w-20 bg-school-primary rounded-2xl flex items-center justify-center mx-auto shadow-2xl shadow-school-primary-200">
                     <GraduationCap className="h-10 w-10 text-on-school-primary" strokeWidth={2.5} />
                 </div>
-                <div className="space-y-2">
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
-                        Personal Hub
-                    </h1>
-                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mt-2">
-                        Identity Hub Initialization
-                    </p>
-                </div>
+                <h1 className="text-3xl font-extrabold text-white uppercase italic tracking-tighter">Personal Hub</h1>
+                <p className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.3em] italic">Registry Identity Provisioning</p>
             </div>
-
-            {/* ── STEP CONTAINER (Rule 18/19/21) ── */}
-            <div className="bg-card border border-border rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
-                {/* Rule 21: Scale Protocol mathematical tint */}
-                <div className="absolute -top-24 -right-24 h-48 w-48 bg-school-primary-50 rounded-full blur-3xl opacity-40 pointer-events-none" />
-                
+            
+            <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden shadow-2xl">
                 <div className="relative z-10">
-                    {/* Multi-step Protocol Routing */}
                     {step === 1 ? <RegisterAccountStep /> : <RegisterPlanStep />}
-                </div>
-            </div>
-
-            {/* ── GLOBAL INDICATORS (Rule 20) ── */}
-            <div className="flex flex-wrap justify-center items-center gap-y-4 gap-x-8 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                <div className="flex items-center gap-2.5">
-                    <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
-                        Global Tier-3 Hub
-                    </span>
-                </div>
-                <div className="h-1 w-1 rounded-full bg-border" />
-                <div className="flex items-center gap-2.5">
-                    <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
-                        Registry Encrypted
-                    </span>
                 </div>
             </div>
         </div>
