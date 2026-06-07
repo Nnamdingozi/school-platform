@@ -1297,6 +1297,7 @@ import { academicCoreScope } from "@/lib/content-scope";
 import { revalidatePath } from "next/cache";
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+export const maxDuration = 60;
 
 export interface ScannedBankFilter {
   subjectId?: string;
