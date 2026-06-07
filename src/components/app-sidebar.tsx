@@ -1404,7 +1404,7 @@ export function AppSidebar() {
                             <NavItem href="/student/subject" icon={BookOpen} label="Academic Modules" />
                             <NavItem href="/subjects/manage" icon={Layers} label="Manage Catalogue" />
                             <NavItem href="/term-timeline" icon={Calendar} label="Study Roadmap" />
-                            <NavItem href="/pastQuestions" icon={History} label="Archive Ledger" />
+                            <NavItem href="/pastQuestions" icon={History} label="Scanned Questions " />
                         </NavGroup>
 
                         <NavGroup label="Proficiency Lab">
@@ -1451,7 +1451,7 @@ export function AppSidebar() {
                             <NavItem href="/subjects/manage" icon={BookOpen} label="Assigned Modules" />
                             <NavItem href="/teacher/allocation" icon={TableProperties} label="Subject Matrix" />
                             <NavItem href="/term-timeline" icon={Calendar} label="Timeline Hub" />
-                            <NavItem href="/pastQuestions" icon={History} label="Archive Ledger" />
+                            <NavItem href="/pastQuestions" icon={History} label="Scanned Questions " />
                         </NavGroup>
 
                         <NavGroup label="Content Logic">

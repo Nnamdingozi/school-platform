@@ -1335,34 +1335,83 @@ const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
 // ── AI Synthesis Protocol ────────────────────────────────────────────────────
 
-async function callGemini(prompt: string, inlineData?: { mimeType: string, data: string }) {
-  const model = "gemini-1.5-pro"; 
+// async function callGemini(prompt: string, inlineData?: { mimeType: string, data: string }) {
+//   const model = "gemini-1.5-pro"; 
+//   const body = {
+//     contents: [{
+//       parts: [
+//         ...(inlineData ? [{ inlineData }] : []),
+//         { text: prompt }
+//       ]
+//     }],
+//     generationConfig: { 
+//         temperature: 0.1, 
+//         responseMimeType: "application/json" 
+//     }
+//   };
+
+//   const res = await fetch(`${GEMINI_BASE}/${model}:generateContent?key=${GEMINI_API_KEY}`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(body),
+//   });
+
+//   if (!res.ok) throw new Error(`AI Registry Error: ${res.statusText}`);
+//   const json = await res.json();
+//   const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+//   if (!text) throw new Error("AI Hub returned empty context.");
+  
+//   // Rule 15: Safe bridge to our strict interface
+//   return JSON.parse(text) as AIResolvedModule[];
+// }
+
+
+
+async function callGemini(
+  prompt: string, 
+  inlineData?: { mimeType: string; data: string }
+): Promise<AIResolvedModule[]> {
+  const model = "gemini-1.5-pro";
   const body = {
-    contents: [{
-      parts: [
-        ...(inlineData ? [{ inlineData }] : []),
-        { text: prompt }
-      ]
-    }],
-    generationConfig: { 
-        temperature: 0.1, 
-        responseMimeType: "application/json" 
-    }
+      contents: [{
+          parts: [
+              ...(inlineData ? [{ inlineData }] : []),
+              { text: prompt }
+          ]
+      }],
+      generationConfig: {
+          temperature: 0.1,
+          responseMimeType: "application/json"
+      }
   };
 
-  const res = await fetch(`${GEMINI_BASE}/${model}:generateContent?key=${GEMINI_API_KEY}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  const res = await fetch(
+      `${GEMINI_BASE}/${model}:generateContent?key=${GEMINI_API_KEY}`,
+      {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+          cache: "no-store",
+      }
+  );
 
-  if (!res.ok) throw new Error(`AI Registry Error: ${res.statusText}`);
+  if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Gemini API error ${res.status}: ${errText}`);
+  }
+
   const json = await res.json();
   const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("AI Hub returned empty context.");
-  
-  // Rule 15: Safe bridge to our strict interface
-  return JSON.parse(text) as AIResolvedModule[];
+
+  if (!text) throw new Error("AI Hub returned empty response.");
+
+  try {
+      const parsed = JSON.parse(text);
+      if (!Array.isArray(parsed)) throw new Error("AI response was not an array.");
+      return parsed as AIResolvedModule[];
+  } catch {
+      throw new Error(`AI returned unparseable JSON: ${text.slice(0, 200)}`);
+  }
 }
 
 // ── Main Server Actions ──────────────────────────────────────────────────────
@@ -1410,113 +1459,237 @@ export async function getScannedQuestions(params: ScannedBankFilter): Promise<Qu
  * Rule 11: Transactional commitment to the institutional hub.
  * Rule 15: Resolved TS-Explicit-Any by mapping strictly to AIResolvedModule.
  */
+// export async function processPastQuestion(params: {
+//   formData: FormData;
+//   userId: string;
+//   schoolId: string | null;
+//   userRole: Role;
+//   subjectId: string; 
+// }): Promise<ProcessResult> {
+//   const { formData, userId, schoolId, userRole, subjectId } = params;
+
+//   try {
+//     const imageFile = formData.get("image") as File;
+//     if (!imageFile) return { success: false, error: "Protocol Breach: Image payload missing." };
+
+//     const buffer = Buffer.from(await imageFile.arrayBuffer());
+//     const base64Image = buffer.toString("base64");
+
+//     // 1. Fetch available syllabus modules for this subject (Rule 7)
+//     const syllabusModules = await prisma.topic.findMany({
+//         where: {
+//             gradeSubject: { subjectId },
+//             ...academicCoreScope({ schoolId })
+//         },
+//         select: { id: true, title: true }
+//     });
+
+//     if (syllabusModules.length === 0) {
+//         throw new Error("Registry Error: Target subject syllabus is empty. Define modules first.");
+//     }
+
+//     // 2. Prepare metadata for AI classification
+//     const moduleList = syllabusModules.map(m => `[ID: ${m.id}] Hub Title: ${m.title}`).join("\n");
+
+//     // 3. Storage Logic (Rule 11 Pathing)
+//     const storagePath = schoolId ? `schools/${schoolId}/scans` : `users/${userId}/scans`;
+//     const fileName = `${storagePath}/${Date.now()}-${imageFile.name}`;
+//     try {
+//         await uploadToGCS(buffer, fileName, imageFile.type);
+//     } catch (e) {
+//       getErrorMessage(e)
+//         console.warn("GCS synchronization timeout, proceeding with logic analysis...");
+//     }
+
+//     // 4. AI Synthesis Hub Protocol
+//     const prompt = `
+//         You are a Senior Academic Examiner. Analyze this ${imageFile.type} scan of a ${imageFile.name} paper.
+        
+//         TASK:
+//         1. Extract all questions.
+//         2. Solve them using verified educational standards.
+//         3. CLASSIFICATION: You MUST select the most relevant Module ID from this syllabus registry:
+//         ${moduleList}
+
+//         RETURN ONLY A JSON ARRAY:
+//         [{ "number": "1", "text": "...", "answer": "...", "explanation": "...", "topicId": "ID_FROM_LIST", "marks": 5, "year": 2023, "examBody": "WAEC" }]
+//     `;
+
+//     // ✅ RESOLVED: Strict type alignment for AI results
+//     const aiResults = await callGemini(prompt, { mimeType: imageFile.type, data: base64Image });
+
+//     // 5. ATOMIC REGISTRY TRANSACTION (Rule 11)
+//     const count = await prisma.$transaction(async (tx) => {
+//       const questionRecords: Prisma.QuestionCreateManyInput[] = aiResults.map((res: AIResolvedModule) => {
+//         return {
+//           text: res.text,
+//           correctAnswer: res.answer,
+//           explanation: res.explanation,
+          
+//           // AI Assigned module classification
+//           topicId: res.topicId, 
+//           subjectId: subjectId,
+          
+//           // Metadata for retrieval hub
+//           year: Number(res.year) || null,
+//           examBody: res.examBody || "External Registry",
+//           points: Number(res.marks) || 1,
+
+//           // Tiered Ownership Hubs
+//           schoolId: schoolId, 
+//           isGlobal: schoolId === null,
+//           creatorId: userId,
+          
+//           type: QuestionType.ESSAY,
+//           category: QuestionCategory.SCANNED,
+//           options: [] as Prisma.InputJsonValue,
+//         };
+//       });
+
+//       const batch = await tx.question.createMany({ data: questionRecords });
+
+//       // 6. Hub Activity Logging (Rule 22)
+//       await logActivity({
+//         schoolId: schoolId,
+//         actorId: userId,
+//         actorRole: userRole,
+//         type: ActivityType.SETTINGS_UPDATED,
+//         title: "Syllabus Hub Digitized",
+//         description: `Successfully converted and classified ${batch.count} modules for institutional hub.`
+//       });
+
+//       return batch.count;
+//     });
+
+//     revalidatePath("/pastQuestions");
+//     return { success: true, count };
+
+//   } catch (error: unknown) {
+//     console.error("[VISION_HUB_FAULT]:", error);
+//     return { success: false, error: getErrorMessage(error) };
+//   }
+// }
+
+
 export async function processPastQuestion(params: {
   formData: FormData;
   userId: string;
   schoolId: string | null;
   userRole: Role;
-  subjectId: string; 
+  subjectId: string;
 }): Promise<ProcessResult> {
   const { formData, userId, schoolId, userRole, subjectId } = params;
 
+  // Guard: fail fast with a clean message if API key is missing
+  if (!GEMINI_API_KEY) {
+      return { 
+          success: false, 
+          error: "AI service is not configured. Contact support." 
+      };
+  }
+
   try {
-    const imageFile = formData.get("image") as File;
-    if (!imageFile) return { success: false, error: "Protocol Breach: Image payload missing." };
+      const imageFile = formData.get("image") as File;
+      if (!imageFile) return { success: false, error: "Protocol Breach: Image payload missing." };
 
-    const buffer = Buffer.from(await imageFile.arrayBuffer());
-    const base64Image = buffer.toString("base64");
+      const buffer = Buffer.from(await imageFile.arrayBuffer());
+      const base64Image = buffer.toString("base64");
 
-    // 1. Fetch available syllabus modules for this subject (Rule 7)
-    const syllabusModules = await prisma.topic.findMany({
-        where: {
-            gradeSubject: { subjectId },
-            ...academicCoreScope({ schoolId })
-        },
-        select: { id: true, title: true }
-    });
-
-    if (syllabusModules.length === 0) {
-        throw new Error("Registry Error: Target subject syllabus is empty. Define modules first.");
-    }
-
-    // 2. Prepare metadata for AI classification
-    const moduleList = syllabusModules.map(m => `[ID: ${m.id}] Hub Title: ${m.title}`).join("\n");
-
-    // 3. Storage Logic (Rule 11 Pathing)
-    const storagePath = schoolId ? `schools/${schoolId}/scans` : `users/${userId}/scans`;
-    const fileName = `${storagePath}/${Date.now()}-${imageFile.name}`;
-    try {
-        await uploadToGCS(buffer, fileName, imageFile.type);
-    } catch (e) {
-      getErrorMessage(e)
-        console.warn("GCS synchronization timeout, proceeding with logic analysis...");
-    }
-
-    // 4. AI Synthesis Hub Protocol
-    const prompt = `
-        You are a Senior Academic Examiner. Analyze this ${imageFile.type} scan of a ${imageFile.name} paper.
-        
-        TASK:
-        1. Extract all questions.
-        2. Solve them using verified educational standards.
-        3. CLASSIFICATION: You MUST select the most relevant Module ID from this syllabus registry:
-        ${moduleList}
-
-        RETURN ONLY A JSON ARRAY:
-        [{ "number": "1", "text": "...", "answer": "...", "explanation": "...", "topicId": "ID_FROM_LIST", "marks": 5, "year": 2023, "examBody": "WAEC" }]
-    `;
-
-    // ✅ RESOLVED: Strict type alignment for AI results
-    const aiResults = await callGemini(prompt, { mimeType: imageFile.type, data: base64Image });
-
-    // 5. ATOMIC REGISTRY TRANSACTION (Rule 11)
-    const count = await prisma.$transaction(async (tx) => {
-      const questionRecords: Prisma.QuestionCreateManyInput[] = aiResults.map((res: AIResolvedModule) => {
-        return {
-          text: res.text,
-          correctAnswer: res.answer,
-          explanation: res.explanation,
-          
-          // AI Assigned module classification
-          topicId: res.topicId, 
-          subjectId: subjectId,
-          
-          // Metadata for retrieval hub
-          year: Number(res.year) || null,
-          examBody: res.examBody || "External Registry",
-          points: Number(res.marks) || 1,
-
-          // Tiered Ownership Hubs
-          schoolId: schoolId, 
-          isGlobal: schoolId === null,
-          creatorId: userId,
-          
-          type: QuestionType.ESSAY,
-          category: QuestionCategory.SCANNED,
-          options: [] as Prisma.InputJsonValue,
-        };
+      const syllabusModules = await prisma.topic.findMany({
+          where: {
+              gradeSubject: { subjectId },
+              ...academicCoreScope({ schoolId })
+          },
+          select: { id: true, title: true }
       });
 
-      const batch = await tx.question.createMany({ data: questionRecords });
+      if (syllabusModules.length === 0) {
+          return { 
+              success: false, 
+              error: "Registry Error: Target subject syllabus is empty. Define modules first." 
+          };
+      }
 
-      // 6. Hub Activity Logging (Rule 22)
-      await logActivity({
-        schoolId: schoolId,
-        actorId: userId,
-        actorRole: userRole,
-        type: ActivityType.SETTINGS_UPDATED,
-        title: "Syllabus Hub Digitized",
-        description: `Successfully converted and classified ${batch.count} modules for institutional hub.`
+      const moduleList = syllabusModules
+          .map(m => `[ID: ${m.id}] Hub Title: ${m.title}`)
+          .join("\n");
+
+      // GCS upload — fully isolated, never blocks the main flow
+      try {
+          const storagePath = schoolId ? `schools/${schoolId}/scans` : `users/${userId}/scans`;
+          const fileName = `${storagePath}/${Date.now()}-${imageFile.name}`;
+          await uploadToGCS(buffer, fileName, imageFile.type);
+      } catch (gcsError) {
+          console.warn("[GCS_UPLOAD_WARN]:", getErrorMessage(gcsError));
+          // Non-fatal — continue without storage
+      }
+
+      const prompt = `
+          You are a Senior Academic Examiner. Analyze this ${imageFile.type} scan of a past paper.
+          
+          TASK:
+          1. Extract all questions.
+          2. Solve them using verified educational standards.
+          3. CLASSIFICATION: You MUST select the most relevant Module ID from this syllabus registry:
+          ${moduleList}
+
+          RETURN ONLY A JSON ARRAY with no markdown, no backticks, no preamble:
+          [{ "number": "1", "text": "...", "answer": "...", "explanation": "...", "topicId": "ID_FROM_LIST", "marks": 5, "year": 2023, "examBody": "WAEC" }]
+      `;
+
+      const aiResults = await callGemini(
+          prompt, 
+          { mimeType: imageFile.type, data: base64Image }
+      );
+
+      if (!Array.isArray(aiResults) || aiResults.length === 0) {
+          return { 
+              success: false, 
+              error: "AI returned no questions. Try a clearer image." 
+          };
+      }
+
+      const count = await prisma.$transaction(async (tx) => {
+          const questionRecords: Prisma.QuestionCreateManyInput[] = aiResults.map(
+              (res: AIResolvedModule) => ({
+                  text: res.text,
+                  correctAnswer: res.answer,
+                  explanation: res.explanation,
+                  topicId: res.topicId,
+                  subjectId,
+                  year: Number(res.year) || null,
+                  examBody: res.examBody || "External Registry",
+                  points: Number(res.marks) || 1,
+                  schoolId,
+                  isGlobal: schoolId === null,
+                  creatorId: userId,
+                  type: QuestionType.ESSAY,
+                  category: QuestionCategory.SCANNED,
+                  options: [] as Prisma.InputJsonValue,
+              })
+          );
+
+          const batch = await tx.question.createMany({ data: questionRecords });
+
+          await logActivity({
+              schoolId,
+              actorId: userId,
+              actorRole: userRole,
+              type: ActivityType.SETTINGS_UPDATED,
+              title: "Syllabus Hub Digitized",
+              description: `Converted and classified ${batch.count} modules.`,
+          });
+
+          return batch.count;
       });
 
-      return batch.count;
-    });
-
-    revalidatePath("/pastQuestions");
-    return { success: true, count };
+      revalidatePath("/pastQuestions");
+      return { success: true, count };
 
   } catch (error: unknown) {
-    console.error("[VISION_HUB_FAULT]:", error);
-    return { success: false, error: getErrorMessage(error) };
+      // Guarantee a plain serializable string — never let Error objects cross the boundary
+      const message = getErrorMessage(error);
+      console.error("[VISION_HUB_FAULT]:", message);
+      return { success: false, error: message };
   }
 }
