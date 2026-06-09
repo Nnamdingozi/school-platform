@@ -544,6 +544,7 @@ import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { School, User, Activity, Sparkles } from "lucide-react";
 import { motion, Variants } from "framer-motion";
+import { cn } from '@/lib/utils';
 
 
 // ── Animation Variants ────────────────────────────────────────────────────────
@@ -594,17 +595,17 @@ export function Hero() {
               className="mb-4 inline-flex self-center lg:self-start items-center gap-2 rounded-full border border-school-primary-200 bg-school-primary-50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-school-primary"
             >
               <Sparkles className="h-3.5 w-3.5 animate-pulse" />
-              Intelligence Registry v1.2
+              Educational Inteligence v1.2
             </motion.div>
 
             {/* Rule 11: Tightened Header */}
             <motion.h1
               variants={fadeUpZoom}
-              className="text-balance text-4xl md:text-5xl xl:text-6xl font-extrabold leading-[1.05] tracking-tighter text-foreground uppercase italic"
+              className="text-balance text-4xl md:text-5xl xl:text-5xl font-extrabold leading-[1.05] tracking-tighter text-foreground uppercase italic"
             >
-              The Multicurricular <br/>
+            The Future of Education <br/>
               <span className="text-school-primary underline decoration-border/20 underline-offset-4">
-                AI Academic Core
+              Powered by AI.
               </span>
             </motion.h1>
 
@@ -612,8 +613,9 @@ export function Hero() {
               variants={fadeUpZoom}
               className="mx-auto mt-4 max-w-md text-sm xl:text-base font-semibold uppercase tracking-widest leading-relaxed text-muted-foreground lg:mx-0 italic opacity-80"
             >
-              Centralized knowledge synthesis for modern schools and learners. 
-              Deploy logic across global curriculums instantly.
+               One platform for Schools, Teachers, and Independent Learners.
+               Generate lessons, track mastery, and bridge the parent-teacher gap
+             with automated WhatsApp feedback.
             </motion.p>
 
             {/* ── CTAs (High-Visibility Position) ── */}
@@ -622,25 +624,39 @@ export function Hero() {
               className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start"
             >
               <Link href="/onboarding" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  className="w-full h-14 gap-3 bg-school-primary text-on-school-primary font-extrabold text-[10px] uppercase tracking-widest transition-all hover:scale-105 shadow-lg shadow-school-primary-200 rounded-2xl"
-                >
-                  <School className="h-4 w-4" />
-                  Register Your School
-                </Button>
-              </Link>
+  <Button
+    size="lg"
+    className="w-full h-14 gap-3 bg-school-primary text-on-school-primary font-extrabold text-[10px] uppercase tracking-widest transition-all hover:scale-105 shadow-lg shadow-school-primary-200 rounded-2xl hover: text-on-school-secondary"
+  >
+    <School className="h-4 w-4" />
+    Register Your School
+  </Button>
+</Link>
 
-              <Link href="/onboarding/individual" className="w-full sm:w-auto">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full h-14 gap-3 border-border bg-surface text-foreground px-8 text-[10px] font-extrabold uppercase tracking-widest hover:bg-school-primary-50 rounded-2xl transition-all"
-                >
-                  <User className="h-4 w-4 text-school-primary" />
-                  I am a Student
-                </Button>
-              </Link>
+<Link href="/onboarding/individual" className="w-full sm:w-auto">
+  <Button
+    variant="outline"
+    size="lg"
+    // We use group to coordinate the icon color change
+    className={cn(
+      "group w-full h-14 gap-3 px-8 rounded-2xl transition-all hover:scale-105",
+      "border-border bg-surface text-foreground", // Initial state
+      // HOVER STATE:
+      "hover:text-on-school-primary",      // Turns text to Amber-contrast color
+      "hover:border-school-primary",       // Makes border match background
+      "hover:shadow-lg hover:shadow-school-primary-200" // Adds Amber glow
+    )}
+  >
+    <User className={cn(
+      "h-4 w-4 transition-colors",
+      "text-school-primary",              // Initial icon color (Amber)
+      "group-hover:text-on-school-primary" // Icon color on hover (Contrast)
+    )} />
+    <span className="text-[10px] font-extrabold uppercase tracking-widest">
+      Individual Learner
+    </span>
+  </Button>
+</Link>
             </motion.div>
           </motion.div>
 

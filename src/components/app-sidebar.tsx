@@ -1401,16 +1401,16 @@ export function AppSidebar() {
                 {isIndividual && (
                     <>
                         <NavGroup label="Personal Syllabus">
-                            <NavItem href="/student/subject" icon={BookOpen} label="Academic Modules" />
-                            <NavItem href="/subjects/manage" icon={Layers} label="Manage Catalogue" />
-                            <NavItem href="/term-timeline" icon={Calendar} label="Study Roadmap" />
+                            <NavItem href="/student/subject" icon={BookOpen} label="Subjects" />
+                            <NavItem href="/subjects/manage" icon={Layers} label="Manage Sub" />
+                            <NavItem href="/term-timeline" icon={Calendar} label="Termly Planner" />
                             <NavItem href="/pastQuestions" icon={History} label="Scanned Questions " />
                         </NavGroup>
 
                         <NavGroup label="Proficiency Lab">
-                            <NavItem href="/student/quizzes" icon={Trophy} label="AI Challenges" />
-                            <NavItem href="/student/grades" icon={BarChart2} label="Academic Record" />
-                            <NavItem href="/student/assessment" icon={ClipboardList} label="Test History" />
+                            <NavItem href="/student/quizzes" icon={Trophy} label="Take Quizzes" />
+                            <NavItem href="/student/grades" icon={BarChart2} label="Academic Progress" />
+                            <NavItem href="/student/assessment" icon={ClipboardList} label="Assessment History" />
                         </NavGroup>
 
                         <NavGroup label="Registry Control">
@@ -1423,22 +1423,22 @@ export function AppSidebar() {
                 {isAdmin && (
                     <>
                         <NavGroup label="Institutional Control">
-                            <NavItem href="/admin/settings" icon={School} label="Registry Settings" />
-                            <NavItem href="/admin/invite-users" icon={UserPlus} label="Identity Dispatch" />
-                            <NavItem href="/admin/users" icon={Users} label="User Registry" />
-                            <NavItem href="/admin/users/parent-linking" icon={Users} label="Family Relations" />
+                            <NavItem href="/admin/settings" icon={School} label="Settings" />
+                            <NavItem href="/admin/invite-users" icon={UserPlus} label="Invite Users" />
+                            <NavItem href="/admin/users" icon={Users} label="User Management" />
+                            <NavItem href="/admin/users/parent-linking" icon={Users} label="Parent-Child Linker" />
                             <NavItem href="/admin/communication" icon={MessageCircle} label="WhatsApp Hub" />
                             <NavItem href="/classes" icon={Layers} label="Classroom Hubs" />
                         </NavGroup>
 
                         <NavGroup label="Academic Logic">
-                            <NavItem href="/admin/curriculum" icon={BookMarked} label="Master Syllabus" />
+                            <NavItem href="/admin/curriculum" icon={BookMarked} label="Curriculum Hub" />
                             <NavItem href="/admin/curriculum/allocation" icon={TableProperties} label="Subject Matrix" />
                             <NavItem href="/admin/catalogue" icon={BookOpen} label="Course Catalogue" />
                         </NavGroup>
 
                         <NavGroup label="Financial Hub">
-                            <NavItem href="/admin/assessments" icon={ClipboardList} label="Exam Registry" />
+                            <NavItem href="/admin/assessments" icon={ClipboardList} label="Assessment Hub" />
                             <NavItem href="/admin/billing" icon={CreditCard} label="License & Billing" />
                         </NavGroup>
                     </>
@@ -1448,14 +1448,14 @@ export function AppSidebar() {
                     <>
                         <NavGroup label="Hub Operations">
                             <NavItem href="/classes" icon={Layers} label="My Classrooms" />
-                            <NavItem href="/subjects/manage" icon={BookOpen} label="Assigned Modules" />
+                            <NavItem href="/subjects/manage" icon={BookOpen} label="Subjects" />
                             <NavItem href="/teacher/allocation" icon={TableProperties} label="Subject Matrix" />
-                            <NavItem href="/term-timeline" icon={Calendar} label="Timeline Hub" />
+                            <NavItem href="/term-timeline" icon={Calendar} label="Termly Planner" />
                             <NavItem href="/pastQuestions" icon={History} label="Scanned Questions " />
                         </NavGroup>
 
                         <NavGroup label="Content Logic">
-                            <NavItem href="/teacher#ai-planner" icon={FileText} label="AI Syllabus Hub" />
+                            <NavItem href="/teacher#ai-planner" icon={FileText} label="Lesson Planner" />
                             <NavItem href="/teacher/assessment" icon={ClipboardList} label="Assessments" />
                             <NavItem href="/teacher/students" icon={GraduationCap} label="Student Ledger" />
                             <NavItem href="/teacher/assessmentView" icon={BarChart2} label="Performance Hub" />
@@ -1466,13 +1466,13 @@ export function AppSidebar() {
                 {isStudent && (
                     <>
                         <NavGroup label="Study Hub">
-                            <NavItem href="/student/class" icon={Layers} label="Classroom Registry" />
-                            <NavItem href="/student/subject" icon={BookOpen} label="Academic Modules" />
-                            <NavItem href="/student/subject/elective" icon={TableProperties} label="Module Selection" />
-                            <NavItem href="/term-timeline" icon={Calendar} label="Hub Roadmap" />
+                            <NavItem href="/student/class" icon={Layers} label="My Classroom" />
+                            <NavItem href="/student/subject" icon={BookOpen} label="Subjects" />
+                            <NavItem href="/student/subject/elective" icon={TableProperties} label="Elective Subjects" />
+                            <NavItem href="/term-timeline" icon={Calendar} label="Termly Planner" />
                         </NavGroup>
                         <NavGroup label="Proficiency">
-                            <NavItem href="/student/quizzes" icon={Trophy} label="AI Challenges" />
+                            <NavItem href="/student/quizzes" icon={Trophy} label="Take Quizzes" />
                             <NavItem href="/student/grades" icon={BarChart2} label="Academic Record" />
                         </NavGroup>
                     </>
@@ -1482,7 +1482,7 @@ export function AppSidebar() {
                     <NavGroup label="Guardian Terminal">
                         <NavItem href="/parent/children" icon={Users} label="Child Profiles" />
                         <NavItem href="/parent/grades" icon={BarChart2} label="Results Hub" />
-                        <NavItem href="/parent/feedback" icon={MessageSquare} label="Faculty Comms" />
+                        <NavItem href="/parent/feedback" icon={MessageSquare} label="Feedback Hub" />
                     </NavGroup>
                 )}
 
@@ -1501,7 +1501,7 @@ export function AppSidebar() {
                         <p className="text-[11px] font-extrabold text-school-primary uppercase tracking-widest group-hover:brightness-110 transition-all italic leading-none">
                             Profile Hub
                         </p>
-                        <p className="text-[9px] font-bold text-muted-foreground uppercase mt-1 truncate">Settings Registry</p>
+                        <p className="text-[9px] font-bold text-muted-foreground uppercase mt-1 truncate">Settings</p>
                     </div>
                     <UserCircle className="h-5 w-5 text-muted-foreground group-hover:text-school-primary transition-colors shrink-0" />
                 </Link>
