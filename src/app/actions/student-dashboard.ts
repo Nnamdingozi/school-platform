@@ -212,6 +212,17 @@ export async function getStudentDashboardData(studentId: string) {
       // Ensure topics are filtered to Tier-1 only
       topics: ss.gradeSubject.topics.filter(t => t.schoolId === null || t.isGlobal)
   }));
+  if (personalSubjects.length === 0) {
+    return {
+        student: profile,
+        school: null,
+        classroom: null,
+        subjects: [],
+        upcomingExams: [],
+        recentAssessments: profile.assessments,
+        isIndependent: true
+    };
+}
 
   return {
     student: profile,

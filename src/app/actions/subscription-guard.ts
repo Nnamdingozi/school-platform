@@ -75,7 +75,7 @@ export async function checkSubscription(
   // 4. Calculate Truth (Rule 11)
   const statusLower = subscription.status.toLowerCase();
   const isExpired = subscription.currentPeriodEnd < now;
-  const isActive = statusLower === "active" && !isExpired;
+  const isActive = (statusLower === "active" || statusLower === "trialing") && !isExpired;
 
   return {
     isActive,

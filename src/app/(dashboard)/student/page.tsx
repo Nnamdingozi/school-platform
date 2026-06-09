@@ -1755,7 +1755,11 @@ export default async function StudentDashboardPage() {
         if (!profile) redirect("/login?error=identity_not_discovered");
 
         const subStatus = await checkSubscription(profile.id, profile.schoolId);
-        if (!subStatus.isActive) redirect("/billing?reason=subscription_expired");
+        // if (!subStatus.isActive) redirect("/billing?reason=subscription_expired");
+        if (!subStatus.isActive) {
+            const tier = profile.schoolId ? "institutional" : "individual";
+            redirect(`/billing?reason=subscription_expired&tier=${tier}`);
+        }
 
         const dashboardData = await getStudentDashboardData(profile.id);
         

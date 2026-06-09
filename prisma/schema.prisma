@@ -264,16 +264,15 @@ model StudentSubject {
   id             String           @id @default(uuid())
   studentId      String?
   gradeSubjectId String
-  schoolId       String
+  schoolId       String?          // ← make optional
   status         EnrollmentStatus @default(APPROVED)
   isCompulsory   Boolean          @default(true)
 
-  student      Profile?  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  gradeSubject GradeSubject @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
-  school       School       @relation(fields: [schoolId], references: [id])
+  student      Profile?      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  gradeSubject GradeSubject  @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
+  school       School?       @relation(fields: [schoolId], references: [id]) // ← also optional
 
   @@unique([schoolId, studentId, gradeSubjectId])
-  
 }
 
 model Assessment {

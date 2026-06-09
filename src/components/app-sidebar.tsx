@@ -1353,7 +1353,7 @@ export function AppSidebar() {
     const dashboardHref =
         isAdmin      ? '/admin' :
         isTeacher    ? '/teacher' :
-        isIndividual ? '/individual-student' :
+        isIndividual ? '/student' :
         isStudent    ? '/student' :
         isParent     ? '/parent' : '/'
 

@@ -843,6 +843,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getErrorMessage } from "@/lib/error-handler";
 import { AssessmentType, ExamStatus } from "@prisma/client";
+import { IndividualSetupModal } from "@/components/student-dashboard/individualSetupModal";
+import { IndividualSetupBanner } from "@/components/student-dashboard/individualSetUpBanner";
 
 
 // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
@@ -901,7 +903,7 @@ interface UpcomingExamHub {
 
 interface StudentDashboardClientProps {
   initialData: {
-    student: { id: string; name: string | null; email: string };
+    student: { id: string; name: string | null; email: string,   curriculumId: string };
     school: { name: string } | null;
     classroom: {
         id: string;
@@ -914,6 +916,7 @@ interface StudentDashboardClientProps {
     upcomingExams: UpcomingExamHub[];      
     isIndependent: boolean;
   };
+
 }
 
 /**
@@ -927,6 +930,9 @@ interface StudentDashboardClientProps {
  */
 export function StudentDashboardClient({ initialData }: StudentDashboardClientProps) {
   const [activeNav, setActiveNav] = useState<string>("dashboard");
+  const [showSetup, setShowSetup] = useState(
+    initialData.isIndependent && initialData.subjects.length === 0
+);
 
   const { student, school, classroom, subjects, recentAssessments, upcomingExams, isIndependent } = initialData;
 
@@ -956,6 +962,18 @@ export function StudentDashboardClient({ initialData }: StudentDashboardClientPr
       <main className="max-w-7xl mx-auto w-full p-4 md:p-8 lg:p-12 space-y-10 md:space-y-16">
         
         {/* ── WELCOME STRIP (Rule 11/21) ── */}
+        {showSetup && (
+            <IndividualSetupModal
+                profileId={initialData.student.id}
+                curriculumId={initialData.student.curriculumId} // add to StudentDashboardData type
+                onComplete={() => setShowSetup(false)}
+            />
+        )}
+        
+        {/* show banner too if they dismissed modal but still have no subjects */}
+        {initialData.isIndependent && initialData.subjects.length === 0 && !showSetup && (
+            <IndividualSetupBanner onStart={() => setShowSetup(true)} />
+        )}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-school-primary-50 border border-school-primary-200 shadow-sm transition-colors">
