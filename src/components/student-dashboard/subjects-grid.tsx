@@ -3186,10 +3186,12 @@ function CurriculumView({ subject: gs, classTeacherName, onBack }: CurriculumVie
               </p>
             </div>
           ) : (
-            termMap[selectedTerm].map((topic, i) => (
-              <div
-                key={topic.id}
-                onClick={() => router.push(`/student/lessons/${topic.id}`)}
+            termMap[selectedTerm].map((topic, i) => {
+              console.log('[TOPIC_DEBUG]:', { id: topic.id, title: topic.title });
+              return (
+                  <div
+                      key={topic.id}
+                      onClick={() => router.push(`/student/lessons/${topic.id}`)}
                 className="flex items-center gap-6 p-6 rounded-[1.5rem] bg-surface border border-border cursor-pointer hover:border-school-primary-300 hover:shadow-lg transition-all group shadow-sm"
               >
                 {/* Hub Index (Rule 19) */}
@@ -3201,7 +3203,8 @@ function CurriculumView({ subject: gs, classTeacherName, onBack }: CurriculumVie
                 </p>
                 <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-school-primary group-hover:translate-x-1 transition-all" />
               </div>
-            ))
+            )
+          })
           )}
         </div>
       </Card>

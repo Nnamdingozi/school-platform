@@ -2124,6 +2124,223 @@
 
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { revalidatePath } from 'next/cache'
+// import { Prisma, LessonStatus, Role, ActivityType } from '@prisma/client'
+// import { type EnhancedLessonContent } from '@/app/actions/ai-generator'
+// import { contentScope } from '@/lib/content-scope'
+// import { logActivity } from "@/app/actions/activitylog";
+
+// /**
+//  * Standard registry error extractor
+//  */
+// function getErrorMessage(error: unknown): string {
+//   if (error instanceof Error) return error.message;
+//   return "An unknown registry protocol error occurred";
+// }
+
+// /**
+//  * GET STUDENT LESSON
+//  * Logic: Distinguishes between full curriculum access (Individual) 
+//  * and summary-only access (Institutional Student).
+//  */
+// export async function getStudentLesson(
+//   topicId: string, 
+//   schoolId: string | null, 
+//   userRole: Role
+// ) {
+//   try {
+//     // 1. Verify Topic existence
+//     const topic = await prisma.topic.findUnique({
+//       where: { id: topicId },
+//       include: { gradeSubject: { include: { subject: true } } }
+//     });
+
+//     if (!topic) return { success: false, error: "Topic not discovered in registry." };
+
+//     let rawContent: EnhancedLessonContent | null = null;
+//     let lessonId: string = "";
+
+//     // 2. Resolve Content Source (Institutional Custom vs Global Blueprint)
+//     if (schoolId) {
+//         const schoolLesson = await prisma.schoolLesson.findUnique({
+//             where: { topicId_schoolId: { topicId, schoolId } },
+//             include: { globalLesson: true }
+//         });
+
+//         if (schoolLesson && schoolLesson.status === LessonStatus.PUBLISHED) {
+//             lessonId = schoolLesson.id;
+//             rawContent = (schoolLesson.customContent ?? schoolLesson.globalLesson.aiContent) as unknown as EnhancedLessonContent;
+//         }
+//     }
+
+//     if (!rawContent) {
+//         const globalLesson = await prisma.globalLesson.findFirst({
+//             where: { topicId },
+//             orderBy: { isGlobal: 'desc' }
+//         });
+
+//         if (globalLesson) {
+//             lessonId = globalLesson.id;
+//             rawContent = (globalLesson.aiContent as unknown) as EnhancedLessonContent;
+//         }
+//     }
+
+//     // 3. Fallback: Topic exists but no AI content has been generated yet
+//     if (!rawContent) {
+//         return {
+//             success: true,
+//             isGenerated: false,
+//             topicMetadata: { title: topic.title, subject: topic.gradeSubject.subject.name },
+//             data: null
+//         };
+//     }
+
+//     // 4. ROLE-BASED CONTENT MASKING (Rule 8)
+//     // Individual Learners get the full high-fidelity node.
+//     // School Students get only the summary and objectives (Revision Mode).
+//     const processedContent: EnhancedLessonContent = {
+//         ...rawContent,
+//         studentContent: {
+//             ...rawContent.studentContent,
+//             // If they are a standard student, we mask the massive explanation and examples
+//             explanation: userRole === Role.STUDENT 
+//                 ? "Full explanation is restricted to the Classroom Hub. Use this summary for revision." 
+//                 : rawContent.studentContent.explanation,
+//             examples: userRole === Role.STUDENT ? [] : rawContent.studentContent.examples,
+//             visualAids: userRole === Role.STUDENT ? [] : rawContent.studentContent.visualAids,
+//             // Everyone gets summary, objectives, and vocabulary
+//         }
+//     };
+
+//     return {
+//       success: true,
+//       isGenerated: true,
+//       data: {
+//         id: lessonId,
+//         title: topic.title,
+//         aiContent: processedContent
+//       }
+//     };
+
+//   } catch (err) {
+//     return { success: false, error: getErrorMessage(err) };
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 2. FACULTY HUB: PUBLISH (Rule 11 & 12)
+// // ─────────────────────────────────────────────
+
+// /**
+//  * PUBLISH LESSON
+//  * Rule 11: Atomic registry synchronization.
+//  * Rule 15: Resolved 'no-unused-vars' warning.
+//  */
+// export async function publishLesson({
+//   topicId,
+//   schoolId,
+//   content,
+//   userId,
+//   userRole
+// }: {
+//   topicId: string
+//   schoolId: string
+//   content: EnhancedLessonContent,
+//   userId: string,
+//   userRole: Role
+// }) {
+//   try {
+//     // 1. Hub ID Resolution: Find the underlying Global Hub Blueprint first
+//     const blueprint = await prisma.globalLesson.findFirst({
+//         where: { topicId }
+//     });
+
+//     if (!blueprint) throw new Error("Registry Error: Underlying module hub blueprint not discovered.");
+
+//     // 2. Atomic Upsert Protocol (Rule 11)
+//     // ✅ RESOLVED: Removed unused 'lesson' variable assignment
+//     await prisma.schoolLesson.upsert({
+//       where: { topicId_schoolId: { topicId, schoolId } },
+//       update: {
+//         customContent: (content as unknown) as Prisma.InputJsonValue,
+//         status: LessonStatus.PUBLISHED,
+//         isCustomized: true,
+//       },
+//       create: {
+//         topicId,
+//         schoolId,
+//         globalLessonId: blueprint.id, // Successfully resolved ID
+//         customContent: (content as unknown) as Prisma.InputJsonValue,
+//         status: LessonStatus.PUBLISHED,
+//         isCustomized: true,
+//       }
+//     });
+
+//     // 3. Registry Audit (Rule 22)
+//     await logActivity({
+//         schoolId,
+//         actorId: userId,
+//         actorRole: userRole,
+//         type: ActivityType.SETTINGS_UPDATED,
+//         title: `Academic Hub Published`,
+//         description: `Customized institutional module published for module ID: ${topicId}`
+//     });
+
+//     revalidatePath(`/student/lessons/${topicId}`)
+//     return { success: true }
+
+//   } catch (err) {
+//     console.error("[HUB_PUBLISH_FAULT]:", err);
+//     return { success: false, error: getErrorMessage(err) }
+//   }
+// }
+
+// // ─────────────────────────────────────────────
+// // 3. FACULTY HUB FETCH (Rule 5 Isolation)
+// // ─────────────────────────────────────────────
+
+// /**
+//  * GET LESSON FOR TEACHER
+//  * Rule 5: Strictly isolated fetch for institutional curriculum management.
+//  */
+// export async function getLessonForTeacher(topicId: string, schoolId: string) {
+//     try {
+//       const schoolLesson = await prisma.schoolLesson.findUnique({
+//         where: { 
+//             // Note: schoolOnlyScope logic merged with composite key for clarity
+//             topicId_schoolId: { topicId, schoolId } 
+//         },
+//         include: { globalLesson: true }
+//       })
+  
+//       if (schoolLesson) return { success: true, data: schoolLesson }
+  
+//       // Registry Blueprint Lookup
+//       const globalLesson = await prisma.globalLesson.findFirst({
+//           where: { topicId, ...contentScope({ schoolId }) },
+//           orderBy: { schoolId: 'desc' }
+//       })
+  
+//       return {
+//         success: true,
+//         data: globalLesson ? { 
+//             id: "", 
+//             customContent: globalLesson.aiContent, 
+//             status: LessonStatus.DRAFT, 
+//             globalLesson 
+//         } : null
+//       }
+//     } catch (err) {
+//       return { success: false, error: getErrorMessage(err) }
+//     }
+//   }
+
+
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
@@ -2133,78 +2350,125 @@ import { type EnhancedLessonContent } from '@/app/actions/ai-generator'
 import { contentScope } from '@/lib/content-scope'
 import { logActivity } from "@/app/actions/activitylog";
 
-/**
- * Standard registry error extractor
- */
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return "An unknown registry protocol error occurred";
 }
 
-// ─────────────────────────────────────────────
-// 1. STUDENT HUB FETCH (Rule 6: Contextual View)
-// ─────────────────────────────────────────────
+// ── Explicit Return Type ──────────────────────────────────────────────────────
 
-/**
- * GET STUDENT LESSON
- * Rule 11: Fetches the authoritative module note from the institutional or global hub.
- */
-export async function getStudentLesson(topicId: string, schoolId: string | null) {
-  try {
-    // Tier 2: If Institutional User, prioritize customized Hub content
-    if (schoolId) {
-        const schoolLesson = await prisma.schoolLesson.findUnique({
-            where: { topicId_schoolId: { topicId, schoolId } },
-            include: { globalLesson: true }
-        })
-
-        if (schoolLesson && schoolLesson.status === LessonStatus.PUBLISHED) {
-            return {
-                success: true,
-                data: {
-                    id: schoolLesson.id,
-                    title: schoolLesson.globalLesson.title,
-                    // Rule 15: unknown bridge casting for JSON
-                    aiContent: (schoolLesson.customContent ?? schoolLesson.globalLesson.aiContent) as unknown as EnhancedLessonContent
-                }
-            }
-        }
+type GetStudentLessonResult =
+  | {
+      success: true;
+      isGenerated: boolean;
+      topicMetadata: { title: string; subject: string } | null;
+      data: { id: string; title: string; aiContent: EnhancedLessonContent } | null;
     }
+  | {
+      success: false;
+      error: string;
+      isGenerated: false;
+      topicMetadata: null;
+      data: null;
+    };
 
-    // Tier 1: Fallback to Global Hub Blueprint
-    const globalLesson = await prisma.globalLesson.findFirst({
-        where: { 
-            topicId,
-            ...contentScope({ schoolId }) 
-        },
-        orderBy: { isGlobal: 'desc' }
-    })
+export async function getStudentLesson(
+  topicId: string,
+  schoolId: string | null,
+  userRole: Role
+): Promise<GetStudentLessonResult> {
+  try {
+    // 1. Verify Topic existence
+    const topic = await prisma.topic.findUnique({
+      where: { id: topicId },
+      include: { gradeSubject: { include: { subject: true } } }
+    });
 
-    if (!globalLesson) return { success: true, data: null }
+    // ✅ Fixed: was missing isGenerated, topicMetadata, data fields
+    if (!topic) return {
+      success: false,
+      error: "Topic not discovered in registry.",
+      isGenerated: false,
+      topicMetadata: null,
+      data: null,
+    };
 
-    return {
-      success: true,
-      data: {
-        id: "",
-        title: globalLesson.title,
-        aiContent: (globalLesson.aiContent as unknown) as EnhancedLessonContent
+    let rawContent: EnhancedLessonContent | null = null;
+    let lessonId: string = "";
+
+    // 2. Resolve Content Source (Institutional Custom vs Global Blueprint)
+    if (schoolId) {
+      const schoolLesson = await prisma.schoolLesson.findUnique({
+        where: { topicId_schoolId: { topicId, schoolId } },
+        include: { globalLesson: true }
+      });
+
+      if (schoolLesson && schoolLesson.status === LessonStatus.PUBLISHED) {
+        lessonId = schoolLesson.id;
+        rawContent = (schoolLesson.customContent ?? schoolLesson.globalLesson.aiContent) as unknown as EnhancedLessonContent;
       }
     }
 
+    if (!rawContent) {
+      const globalLesson = await prisma.globalLesson.findFirst({
+        where: { topicId },
+        orderBy: { isGlobal: 'desc' }
+      });
+
+      if (globalLesson) {
+        lessonId = globalLesson.id;
+        rawContent = (globalLesson.aiContent as unknown) as EnhancedLessonContent;
+      }
+    }
+
+    // 3. Fallback: Topic exists but no AI content generated yet — unchanged
+    if (!rawContent) {
+      return {
+        success: true,
+        isGenerated: false,
+        topicMetadata: { title: topic.title, subject: topic.gradeSubject.subject.name },
+        data: null,
+      };
+    }
+
+    // 4. ROLE-BASED CONTENT MASKING — unchanged, your logic is correct
+    const processedContent: EnhancedLessonContent = {
+      ...rawContent,
+      studentContent: {
+        ...rawContent.studentContent,
+        explanation: userRole === Role.STUDENT
+          ? "Full explanation is restricted to the Classroom Hub. Use this summary for revision."
+          : rawContent.studentContent.explanation,
+        examples: userRole === Role.STUDENT ? [] : rawContent.studentContent.examples,
+        visualAids: userRole === Role.STUDENT ? [] : rawContent.studentContent.visualAids,
+      }
+    };
+
+    return {
+      success: true,
+      isGenerated: true,
+      topicMetadata: { title: topic.title, subject: topic.gradeSubject.subject.name },
+      data: {
+        id: lessonId,
+        title: topic.title,
+        aiContent: processedContent,
+      },
+    };
+
   } catch (err) {
-    return { success: false, error: getErrorMessage(err) }
+    // ✅ Fixed: was missing isGenerated, topicMetadata, data fields
+    return {
+      success: false,
+      error: getErrorMessage(err),
+      isGenerated: false,
+      topicMetadata: null,
+      data: null,
+    };
   }
 }
 
-// ─────────────────────────────────────────────
-// 2. FACULTY HUB: PUBLISH (Rule 11 & 12)
-// ─────────────────────────────────────────────
+// ── publishLesson — unchanged ─────────────────────────────────────────────────
 
-/**
- * PUBLISH LESSON
- * Rule 11: Atomic registry synchronization.
- * Rule 15: Resolved 'no-unused-vars' warning.
- */
 export async function publishLesson({
   topicId,
   schoolId,
@@ -2219,15 +2483,12 @@ export async function publishLesson({
   userRole: Role
 }) {
   try {
-    // 1. Hub ID Resolution: Find the underlying Global Hub Blueprint first
     const blueprint = await prisma.globalLesson.findFirst({
-        where: { topicId }
+      where: { topicId }
     });
 
     if (!blueprint) throw new Error("Registry Error: Underlying module hub blueprint not discovered.");
 
-    // 2. Atomic Upsert Protocol (Rule 11)
-    // ✅ RESOLVED: Removed unused 'lesson' variable assignment
     await prisma.schoolLesson.upsert({
       where: { topicId_schoolId: { topicId, schoolId } },
       update: {
@@ -2238,21 +2499,20 @@ export async function publishLesson({
       create: {
         topicId,
         schoolId,
-        globalLessonId: blueprint.id, // Successfully resolved ID
+        globalLessonId: blueprint.id,
         customContent: (content as unknown) as Prisma.InputJsonValue,
         status: LessonStatus.PUBLISHED,
         isCustomized: true,
       }
     });
 
-    // 3. Registry Audit (Rule 22)
     await logActivity({
-        schoolId,
-        actorId: userId,
-        actorRole: userRole,
-        type: ActivityType.SETTINGS_UPDATED,
-        title: `Academic Hub Published`,
-        description: `Customized institutional module published for module ID: ${topicId}`
+      schoolId,
+      actorId: userId,
+      actorRole: userRole,
+      type: ActivityType.SETTINGS_UPDATED,
+      title: `Academic Hub Published`,
+      description: `Customized institutional module published for module ID: ${topicId}`
     });
 
     revalidatePath(`/student/lessons/${topicId}`)
@@ -2264,42 +2524,34 @@ export async function publishLesson({
   }
 }
 
-// ─────────────────────────────────────────────
-// 3. FACULTY HUB FETCH (Rule 5 Isolation)
-// ─────────────────────────────────────────────
+// ── getLessonForTeacher — unchanged ──────────────────────────────────────────
 
-/**
- * GET LESSON FOR TEACHER
- * Rule 5: Strictly isolated fetch for institutional curriculum management.
- */
 export async function getLessonForTeacher(topicId: string, schoolId: string) {
-    try {
-      const schoolLesson = await prisma.schoolLesson.findUnique({
-        where: { 
-            // Note: schoolOnlyScope logic merged with composite key for clarity
-            topicId_schoolId: { topicId, schoolId } 
-        },
-        include: { globalLesson: true }
-      })
-  
-      if (schoolLesson) return { success: true, data: schoolLesson }
-  
-      // Registry Blueprint Lookup
-      const globalLesson = await prisma.globalLesson.findFirst({
-          where: { topicId, ...contentScope({ schoolId }) },
-          orderBy: { schoolId: 'desc' }
-      })
-  
-      return {
-        success: true,
-        data: globalLesson ? { 
-            id: "", 
-            customContent: globalLesson.aiContent, 
-            status: LessonStatus.DRAFT, 
-            globalLesson 
-        } : null
-      }
-    } catch (err) {
-      return { success: false, error: getErrorMessage(err) }
+  try {
+    const schoolLesson = await prisma.schoolLesson.findUnique({
+      where: {
+        topicId_schoolId: { topicId, schoolId }
+      },
+      include: { globalLesson: true }
+    })
+
+    if (schoolLesson) return { success: true, data: schoolLesson }
+
+    const globalLesson = await prisma.globalLesson.findFirst({
+      where: { topicId, ...contentScope({ schoolId }) },
+      orderBy: { schoolId: 'desc' }
+    })
+
+    return {
+      success: true,
+      data: globalLesson ? {
+        id: "",
+        customContent: globalLesson.aiContent,
+        status: LessonStatus.DRAFT,
+        globalLesson
+      } : null
     }
+  } catch (err) {
+    return { success: false, error: getErrorMessage(err) }
   }
+}

@@ -442,3 +442,18 @@ export async function logoutAction(): Promise<void> {
     // Always redirect to login page
     redirect('/login')
 }
+
+
+
+export async function checkEmailConfirmed(email: string): Promise<{ confirmed: boolean }> {
+    const supabase = await createClient()
+    try {
+        const { data: { users }, error } = await supabase.auth.admin.listUsers();
+        if (error) return { confirmed: false };
+
+        const user = users.find(u => u.email?.toLowerCase() === email.toLowerCase());
+        return { confirmed: !!user?.email_confirmed_at };
+    } catch {
+        return { confirmed: false };
+    }
+}

@@ -1,7 +1,7 @@
 // components/student-dashboard/IndividualSetupBanner.tsx
 'use client';
 
-import { useState } from 'react';
+
 import { Sparkles, ArrowRight } from 'lucide-react';
 
 export function IndividualSetupBanner({ onStart }: { onStart: () => void }) {

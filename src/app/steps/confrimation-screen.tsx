@@ -1096,35 +1096,226 @@
 // }
 
 
+// 'use client';
+
+// import React, { useState } from 'react';
+// import { createClient } from '@/lib/supabase/client';
+// import { toast } from 'sonner';
+// import { Loader2, ArrowRight, Zap, Edit3, ShieldCheck } from 'lucide-react';
+// import { Input } from '@/components/ui/input';
+// import { getErrorMessage } from '@/lib/error-handler';
+
+// interface ConfirmationScreenProps {
+//     email: string;
+//     paymentReference: string;
+//     onEmailUpdate: (oldEmail: string, newEmail: string, reference: string) => Promise<{ success: boolean; error?: string }>;
+//     onEmailChange?: (newEmail: string) => void; // update parent store
+// }
+
+// export function ConfirmationScreen({ 
+//     email, 
+//     paymentReference, 
+//     onEmailUpdate,
+//     onEmailChange 
+// }: ConfirmationScreenProps) {
+//     const [confirmedEmail, setConfirmedEmail] = useState(email);
+//     const [isResending, setIsResending] = useState(false);
+//     const [isEditing, setIsEditing] = useState(false);
+//     const [newEmail, setNewEmail] = useState(email);
+//     const [isUpdating, setIsUpdating] = useState(false);
+
+//     async function handleResend() {
+//         setIsResending(true);
+//         try {
+//             const supabase = createClient();
+//             const { error } = await supabase.auth.resend({
+//                 type: 'signup',
+//                 email: confirmedEmail,
+//                 options: { emailRedirectTo: `${window.location.origin}/confirm` },
+//             });
+//             if (error) throw error;
+//             toast.success("Security link re-transmitted.");
+//         } catch (err: unknown) {
+//             toast.error(getErrorMessage(err) || "Failed to resend. You may be rate-limited (3/hr).");
+//         } finally {
+//             setIsResending(false);
+//         }
+//     }
+
+//     async function handleEmailUpdate(e: React.FormEvent) {
+//         e.preventDefault();
+//         setIsUpdating(true);
+//         try {
+//             const res = await onEmailUpdate(confirmedEmail, newEmail, paymentReference);
+//             if (res.success) {
+//                 setConfirmedEmail(newEmail);
+//                 onEmailChange?.(newEmail);
+//                 setIsEditing(false);
+//                 toast.success("Identity updated. New link dispatched.");
+//             } else {
+//                 toast.error(res.error || "Update failed.");
+//             }
+//         } catch (err) {
+//             toast.error(getErrorMessage(err));
+//         } finally {
+//             setIsUpdating(false);
+//         }
+//     }
+
+//     return (
+//         <div className="flex flex-col items-center text-center py-10 gap-10 animate-in fade-in zoom-in-95">
+//             <div className="h-28 w-28 rounded-[2.5rem] border-4 border-emerald-200 bg-emerald-50 flex items-center justify-center shadow-2xl">
+//                 <ShieldCheck className="h-12 w-12 text-emerald-600" />
+//             </div>
+
+//             <div className="space-y-4 w-full max-w-sm">
+//                 <h2 className="text-3xl font-extrabold uppercase italic">Activation Pending</h2>
+//                 {!isEditing ? (
+//                     <div className="space-y-2">
+//                         <p className="text-muted-foreground text-[10px] font-bold uppercase">Link dispatched to:</p>
+//                         <div className="flex items-center justify-center gap-2">
+//                             <span className="text-foreground font-extrabold underline">{confirmedEmail}</span>
+//                             <button onClick={() => setIsEditing(true)} className="p-1 hover:text-school-primary">
+//                                 <Edit3 className="h-3 w-3" />
+//                             </button>
+//                         </div>
+//                     </div>
+//                 ) : (
+//                     <form onSubmit={handleEmailUpdate} className="space-y-4">
+//                         <Input value={newEmail} onChange={e => setNewEmail(e.target.value.toLowerCase())}
+//                             className="text-center font-bold h-12 rounded-xl" type="email" required />
+//                         <div className="flex gap-2">
+//                             <button type="button" onClick={() => setIsEditing(false)}
+//                                 className="flex-1 h-10 rounded-xl bg-muted font-bold text-[10px] uppercase">Cancel</button>
+//                             <button type="submit" disabled={isUpdating}
+//                                 className="flex-1 h-10 rounded-xl bg-school-primary text-white font-bold text-[10px] uppercase">
+//                                 {isUpdating ? <Loader2 className="animate-spin mx-auto" /> : "Update"}
+//                             </button>
+//                         </div>
+//                     </form>
+//                 )}
+//             </div>
+
+//             <div className="space-y-8 w-full">
+//                 <button onClick={handleResend} disabled={isResending || isEditing}
+//                     className="text-[11px] font-extrabold uppercase flex items-center gap-2 mx-auto text-school-primary">
+//                     {isResending ? <Loader2 className="animate-spin" /> : <Zap className="h-4 w-4 fill-current" />}
+//                     Re-transmit Link
+//                 </button>
+//                 <a href="/login" className="text-[10px] font-extrabold text-muted-foreground uppercase flex items-center justify-center gap-2">
+//                     Access Terminal <ArrowRight className="h-4 w-4" />
+//                 </a>
+//             </div>
+//         </div>
+//     );
+// }
+
+
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
-import { Loader2, ArrowRight, Zap, Edit3, ShieldCheck } from 'lucide-react';
+import { Loader2, ArrowRight, Zap, Edit3, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { getErrorMessage } from '@/lib/error-handler';
+import { checkEmailConfirmed } from '../actions/auth';
 
 interface ConfirmationScreenProps {
     email: string;
     paymentReference: string;
     onEmailUpdate: (oldEmail: string, newEmail: string, reference: string) => Promise<{ success: boolean; error?: string }>;
-    onEmailChange?: (newEmail: string) => void; // update parent store
+    onEmailChange?: (newEmail: string) => void;
 }
 
-export function ConfirmationScreen({ 
-    email, 
-    paymentReference, 
+export function ConfirmationScreen({
+    email,
+    paymentReference,
     onEmailUpdate,
-    onEmailChange 
+    onEmailChange
 }: ConfirmationScreenProps) {
+    const router = useRouter();
     const [confirmedEmail, setConfirmedEmail] = useState(email);
     const [isResending, setIsResending] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [newEmail, setNewEmail] = useState(email);
     const [isUpdating, setIsUpdating] = useState(false);
 
+    // ── Checking auth status on mount ──
+    const [checkingStatus, setCheckingStatus] = useState(true);
+    const [alreadyConfirmed, setAlreadyConfirmed] = useState(false);
+
+    // useEffect(() => {
+    //     async function checkEmailStatus() {
+    //         try {
+    //             const supabase = createClient();
+
+    //             // Refresh the session first — picks up confirmation that
+    //             // happened in a different tab/device since this page loaded
+    //             const { data: { user }, error } = await supabase.auth.getUser();
+
+    //             if (error) {
+    //                 console.error('[EMAIL_STATUS_CHECK_FAULT]:', error);
+    //                 setCheckingStatus(false);
+    //                 return;
+    //             }
+
+    //             if (user?.email_confirmed_at) {
+    //                 setAlreadyConfirmed(true);
+    //                 toast.success('Email already verified.');
+    //                 // Small delay so the success state is visible before redirect
+    //                 setTimeout(() => router.push('/login'), 1200);
+    //             } else {
+    //                 setCheckingStatus(false);
+    //             }
+    //         } catch (err) {
+    //             console.error('[EMAIL_STATUS_CHECK_FAULT]:', getErrorMessage(err));
+    //             setCheckingStatus(false);
+    //         }
+    //     }
+
+    //     checkEmailStatus();
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
+
+    useEffect(() => {
+        async function checkEmailStatus() {
+            try {
+                const supabase = createClient();
+                const { data: { user } } = await supabase.auth.getUser();
+    
+                if (user?.email_confirmed_at) {
+                    setAlreadyConfirmed(true);
+                    toast.success('Email already verified.');
+                    setTimeout(() => router.push('/login'), 1200);
+                    return;
+                }
+    
+                // No active session — check via server action using the email itself
+                const { confirmed } = await checkEmailConfirmed(confirmedEmail);
+                if (confirmed) {
+                    setAlreadyConfirmed(true);
+                    toast.success('Email already verified.');
+                    setTimeout(() => router.push('/login'), 1200);
+                } else {
+                    setCheckingStatus(false);
+                }
+            } catch (err) {
+                console.error('[EMAIL_STATUS_CHECK_FAULT]:', getErrorMessage(err));
+                setCheckingStatus(false);
+            }
+        }
+    
+        checkEmailStatus();
+    }, [confirmedEmail]);
+
+
     async function handleResend() {
+        if (!confirmedEmail) {
+            toast.error('No email on file. Please refresh and try again.');
+            return;
+        }
         setIsResending(true);
         try {
             const supabase = createClient();
@@ -1133,10 +1324,14 @@ export function ConfirmationScreen({
                 email: confirmedEmail,
                 options: { emailRedirectTo: `${window.location.origin}/confirm` },
             });
-            if (error) throw error;
-            toast.success("Security link re-transmitted.");
+            if (error) {
+                console.error('[RESEND_FAULT]:', error);
+                throw error;
+            }
+            toast.success('Security link re-transmitted.');
         } catch (err: unknown) {
-            toast.error(getErrorMessage(err) || "Failed to resend. You may be rate-limited (3/hr).");
+            console.error('[RESEND_CATCH]:', err);
+            toast.error(getErrorMessage(err) || 'Failed to resend. You may be rate-limited (3/hr).');
         } finally {
             setIsResending(false);
         }
@@ -1151,9 +1346,9 @@ export function ConfirmationScreen({
                 setConfirmedEmail(newEmail);
                 onEmailChange?.(newEmail);
                 setIsEditing(false);
-                toast.success("Identity updated. New link dispatched.");
+                toast.success('Identity updated. New link dispatched.');
             } else {
-                toast.error(res.error || "Update failed.");
+                toast.error(res.error || 'Update failed.');
             }
         } catch (err) {
             toast.error(getErrorMessage(err));
@@ -1162,6 +1357,37 @@ export function ConfirmationScreen({
         }
     }
 
+    // ── Loading state while checking confirmation status ──
+    if (checkingStatus) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 gap-6 animate-in fade-in">
+                <Loader2 className="h-8 w-8 animate-spin text-school-primary" />
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                    Checking verification status...
+                </p>
+            </div>
+        );
+    }
+
+    // ── Already confirmed — brief success state before redirect ──
+    if (alreadyConfirmed) {
+        return (
+            <div className="flex flex-col items-center text-center py-10 gap-8 animate-in fade-in zoom-in-95">
+                <div className="h-28 w-28 rounded-[2.5rem] border-4 border-emerald-200 bg-emerald-50 flex items-center justify-center shadow-2xl">
+                    <CheckCircle2 className="h-12 w-12 text-emerald-600" />
+                </div>
+                <div className="space-y-2">
+                    <h2 className="text-3xl font-extrabold uppercase italic">Email Verified</h2>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                        Redirecting to login...
+                    </p>
+                </div>
+                <Loader2 className="h-5 w-5 animate-spin text-emerald-500" />
+            </div>
+        );
+    }
+
+    // ── Default: pending confirmation UI ──
     return (
         <div className="flex flex-col items-center text-center py-10 gap-10 animate-in fade-in zoom-in-95">
             <div className="h-28 w-28 rounded-[2.5rem] border-4 border-emerald-200 bg-emerald-50 flex items-center justify-center shadow-2xl">

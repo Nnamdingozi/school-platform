@@ -52,6 +52,8 @@ model School {
   Exam          Exam[]
   GlobalLesson  GlobalLesson[]
   examQuestions ExamQuestion[]
+
+  invitations  Invitation[]
 }
 
 model Profile {
@@ -622,7 +624,7 @@ model Invitation {
   id           String    @id @default(uuid())
   email        String
   role         Role
-  schoolId     String?
+  schoolId     String
   token        String    @unique
   expiresAt    DateTime
   acceptedAt   DateTime?
@@ -630,10 +632,11 @@ model Invitation {
   createdAt    DateTime  @default(now())
   curriculumId String
 
+  school       School    @relation(fields: [schoolId], references: [id])
+
   @@index([token])
   @@index([email])
 }
-
 model ActivityLog {
   id          String       @id @default(uuid())
   schoolId    String? // 👈 Change to optional (String?)

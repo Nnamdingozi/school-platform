@@ -34,29 +34,54 @@ export async function getSubjectsForGrade(gradeId: string) {
     }
 }
 
+// export async function saveIndividualSetup(
+//     profileId: string,
+//     gradeSubjectIds: string[]
+// ): Promise<{ success: boolean; error?: string }> {
+//     try {
+//         // Upsert StudentSubject records — idempotent if they resubmit
+//         await prisma.$transaction(async (tx) => {
+//             // Clear existing selections first
+//             await tx.studentSubject.deleteMany({
+//                 where: { studentId: profileId }
+//             });
+
+//             // Insert new selections
+//             await tx.studentSubject.createMany({
+//                 data: gradeSubjectIds.map(gradeSubjectId => ({
+//                     studentId: profileId,
+//                     gradeSubjectId,
+//                     schoolId: null,
+//                 }))
+//             });
+//         });
+
+//         revalidatePath('/student-dashboard');
+//         return { success: true };
+//     } catch (err) {
+//         console.error("[INDIVIDUAL_SETUP_FAULT]:", getErrorMessage(err));
+//         return { success: false, error: getErrorMessage(err) };
+//     }
+// }
+
+
 export async function saveIndividualSetup(
     profileId: string,
     gradeSubjectIds: string[]
 ): Promise<{ success: boolean; error?: string }> {
     try {
-        // Upsert StudentSubject records — idempotent if they resubmit
-        await prisma.$transaction(async (tx) => {
-            // Clear existing selections first
-            await tx.studentSubject.deleteMany({
-                where: { studentId: profileId }
-            });
-
-            // Insert new selections
-            await tx.studentSubject.createMany({
-                data: gradeSubjectIds.map(gradeSubjectId => ({
-                    studentId: profileId,
-                    gradeSubjectId,
-                    schoolId: null,
-                }))
-            });
+        await prisma.profile.update({
+            where: { id: profileId },
+            data: {
+                selectedSubjects: {
+                    // set replaces all existing selections atomically
+                    set: gradeSubjectIds.map(id => ({ id }))
+                }
+            }
         });
 
-        revalidatePath('/student-dashboard');
+        revalidatePath('/student');
+        revalidatePath('/subjects');
         return { success: true };
     } catch (err) {
         console.error("[INDIVIDUAL_SETUP_FAULT]:", getErrorMessage(err));

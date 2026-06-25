@@ -1693,6 +1693,7 @@ export interface StudentDashboardData {
     id: string;
     name: string | null;
     email: string;
+    curriculumId: string; 
   };
   school: { 
     name: string;

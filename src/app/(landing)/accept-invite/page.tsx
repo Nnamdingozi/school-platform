@@ -344,66 +344,224 @@
 
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { prisma } from "@/lib/prisma";
+// import { createClient } from "@/lib/supabase/server";
+// import { SetPasswordForm } from "@/components/set-password-form";
+// import { getErrorMessage } from "@/lib/error-handler";
+
+// export const metadata: Metadata = {
+//     title: "Synchronize Identity | Registry | SchoolPaaS",
+//     description: "Finalizing institutional identity synchronization for the academic hub.",
+// };
+
+// interface PageProps {
+//     searchParams: Promise<{ 
+//         code?: string | string[];
+//         token?: string | string[];
+//         email?: string | string[];
+//         error?: string | string[];
+//         error_description?: string | string[];
+//     }>;
+// }
+
+// export default async function AcceptInvitePage({ searchParams }: PageProps) {
+//     const params = await searchParams;
+
+//     // ── Supabase error passed in URL ──────────────────────────────────────────
+//     const urlError = Array.isArray(params.error) ? params.error[0] : params.error;
+//     if (urlError) {
+//         const description = Array.isArray(params.error_description)
+//             ? params.error_description[0]
+//             : params.error_description;
+//         console.error(`[INVITE_URL_ERROR]: ${urlError} — ${description}`);
+//         redirect(`/login?error=${encodeURIComponent(description ?? urlError)}`);
+//     }
+
+//     try {
+//         const supabase = await createClient();
+
+//         // ── Stage 1: PKCE code exchange ───────────────────────────────────────
+//         // Supabase invite links land with ?code=xxx — must exchange before
+//         // any session exists. Without this, getUser() returns null always.
+//         const code = Array.isArray(params.code) ? params.code[0] : params.code;
+
+//         if (code) {
+//             const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+//             if (exchangeError) {
+//                 console.error('[INVITE_CODE_EXCHANGE_FAULT]:', exchangeError.message);
+//                 redirect('/login?error=invite_link_invalid_or_expired');
+//             }
+//         }
+
+//         // ── Stage 2: Verify session exists after exchange ─────────────────────
+//         const { data: { user }, error: userError } = await supabase.auth.getUser();
+//         if (userError || !user) {
+//             redirect('/login?error=session_not_established');
+//         }
+
+//         // ── Stage 3: Extract custom_token from user metadata ──────────────────
+//         // This was passed in `data` when calling inviteUserByEmail()
+//         const customToken = user.user_metadata?.custom_token as string | undefined;
+
+//         if (!customToken) {
+//             console.error('[INVITE_TOKEN_MISSING]: user metadata:', user.user_metadata);
+//             redirect('/login?error=invite_token_missing');
+//         }
+
+//         // ── Stage 4: Validate invitation in DB ────────────────────────────────
+//         const invitation = await prisma.invitation.findFirst({
+//             where: {
+//                 token: customToken,
+//                 acceptedAt: null,
+//                 expiresAt: { gt: new Date() },
+//             },
+//             include: {
+//                 school: { select: { id: true, name: true } }
+//             }
+//         });
+
+//         if (!invitation) {
+//             redirect('/login?error=invite_expired_or_already_used');
+//         }
+
+//         // ── Stage 5: Email sanity check ───────────────────────────────────────
+//         if (invitation.email !== user.email) {
+//             console.error(`[INVITE_EMAIL_MISMATCH]: expected ${invitation.email}, got ${user.email}`);
+//             redirect('/login?error=email_mismatch');
+//         }
+
+//         // ── Stage 6: Render password setup form ───────────────────────────────
+//         return (
+//             <section className="flex items-center justify-center py-20 px-4 animate-in fade-in duration-1000">
+//                 <div className="w-full max-w-md">
+//                     <SetPasswordForm
+//                         userEmail={user.email!}
+//                         invitationToken={customToken}
+//                         schoolName={invitation.school.name}
+//                     />
+//                 </div>
+//             </section>
+//         );
+
+//     } catch (error: unknown) {
+//         const message = getErrorMessage(error);
+//         console.error(`[INVITATION_HANDSHAKE_FAULT]: ${message}`);
+//         redirect(`/login?error=${encodeURIComponent(message)}`);
+//     }
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { createClient } from "@/lib/supabase/server";
 import { SetPasswordForm } from "@/components/set-password-form";
 import { getErrorMessage } from "@/lib/error-handler";
 
-/**
- * INVITATION SYNC HUB | SERVER PAGE
- * Rule 16: Dynamic Contextual SEO
- */
 export const metadata: Metadata = {
     title: "Synchronize Identity | Registry | SchoolPaaS",
     description: "Finalizing institutional identity synchronization for the academic hub.",
 };
 
 interface PageProps {
-    searchParams: Promise<{ token?: string | string[]; email?: string | string[] }>;
+    searchParams: Promise<{ 
+        code?: string | string[];
+        token?: string | string[];
+        email?: string | string[];
+        error?: string | string[];
+        error_description?: string | string[];
+    }>;
 }
 
-/**
- * ACCEPT INVITATION HUB (Tier 3)
- * Rule 12: Server-First Execution.
- * Rule 23: Explicit Error Protocol.
- * Rule 11: System Truth - Handshake validation.
- */
 export default async function AcceptInvitePage({ searchParams }: PageProps) {
     const params = await searchParams;
-    
-    // Normalization Protocol (Rule 15)
-    const token = Array.isArray(params.token) ? params.token[0] : params.token;
-    const email = Array.isArray(params.email) ? params.email[0] : params.email;
 
-    if (!token || !email) {
-        redirect("/login?error=protocol_metadata_missing");
+    // ── Supabase error passed in URL ──────────────────────────────────────────
+    const urlError = Array.isArray(params.error) ? params.error[0] : params.error;
+    if (urlError) {
+        const description = Array.isArray(params.error_description)
+            ? params.error_description[0]
+            : params.error_description;
+        console.error(`[INVITE_URL_ERROR]: ${urlError} — ${description}`);
+        redirect(`/login?error=${encodeURIComponent(description ?? urlError)}`);
     }
 
+    const supabase = await createClient();
+
+    // ── Stage 1: PKCE code exchange (only if code present) ───────────────────
+    const code = Array.isArray(params.code) ? params.code[0] : params.code;
+    if (code) {
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        if (exchangeError) {
+            console.error('[INVITE_CODE_EXCHANGE_FAULT]:', exchangeError.message);
+            redirect('/login?error=invite_link_invalid_or_expired');
+        }
+    }
+
+    // ── Stage 2: Verify session ───────────────────────────────────────────────
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+        redirect('/login?error=session_not_established');
+    }
+
+    // ── Stage 3: Extract token ────────────────────────────────────────────────
+    // Supabase invite links can deliver the token two ways:
+    // 1. Via URL param ?token=xxx (when redirectTo contains the token in the URL)
+    // 2. Via user_metadata.custom_token (after PKCE code exchange)
+    // We check both so either flow works.
+    const tokenFromUrl = Array.isArray(params.token) ? params.token[0] : params.token;
+    const tokenFromMetadata = user.user_metadata?.custom_token as string | undefined;
+    const customToken = tokenFromUrl ?? tokenFromMetadata;
+
+    if (!customToken) {
+        console.error('[INVITE_TOKEN_MISSING]: url params:', params, 'metadata:', user.user_metadata);
+        redirect('/login?error=invite_token_missing');
+    }
+
+    // ── Stage 4: Validate invitation in DB ────────────────────────────────────
+    const invitation = await prisma.invitation.findFirst({
+        where: {
+            token: customToken,
+            acceptedAt: null,
+            expiresAt: { gt: new Date() },
+        },
+        include: {
+            school: { select: { id: true, name: true } }
+        }
+    });
+
+    if (!invitation) {
+        redirect('/login?error=invite_expired_or_already_used');
+    }
+
+    // ── Stage 5: Email sanity check ───────────────────────────────────────────
+    if (invitation.email !== user.email) {
+        console.error(`[INVITE_EMAIL_MISMATCH]: expected ${invitation.email}, got ${user.email}`);
+        redirect('/login?error=email_mismatch');
+    }
+
+    // ── Stage 6: Render ───────────────────────────────────────────────────────
     try {
-        // Rule 11: Database Sync Check
-        const invitation = await prisma.invitation.findUnique({
-            where: { token }
-        });
-
-        if (!invitation || invitation.email !== email) {
-            throw new Error("Invitation Hub Error: Protocol mismatch or link expired.");
-        }
-
-        if (invitation.acceptedAt) {
-            redirect("/login?message=identity_already_synchronized");
-        }
-
         return (
             <section className="flex items-center justify-center py-20 px-4 animate-in fade-in duration-1000">
                 <div className="w-full max-w-md">
-                    <SetPasswordForm userEmail={email} />
+                    <SetPasswordForm
+                        userEmail={user.email!}
+                        invitationToken={customToken}
+                        schoolName={invitation.school.name}
+                    />
                 </div>
             </section>
         );
-
     } catch (error: unknown) {
-        // ✅ Rule 23: Explicit Error Protocol
+        if (
+            error instanceof Error &&
+            (error as { digest?: string }).digest?.startsWith('NEXT_REDIRECT')
+        ) {
+            throw error;
+        }
         const message = getErrorMessage(error);
         console.error(`[INVITATION_HANDSHAKE_FAULT]: ${message}`);
         redirect(`/login?error=${encodeURIComponent(message)}`);

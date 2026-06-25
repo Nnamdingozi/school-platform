@@ -1028,10 +1028,490 @@
 // }
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import {  supabaseAdmin } from '@/lib/supabase/admin'
+// import { createClient } from '@/lib/supabase/server'
+// import { Role, ActivityType } from '@prisma/client'
+// import { randomBytes } from 'crypto'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { logActivity } from '@/lib/activitylogger'
+
+// // ── Interfaces ──────────────────────────────────────────────────────────────
+
+// interface SendInviteParams {
+//     email: string
+//     role: Role
+//     schoolId: string
+// }
+
+// interface ActionResult {
+//     success: boolean
+//     error?: string
+// }
+
+
+
+// // ── Auth helper ─────────────────────────────────────────────────────────────
+
+// /**
+//  * Validates the currently logged-in user and returns their profile with school info.
+//  */
+// async function getAuthenticatedActor() {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user } } = await supabase.auth.getUser()
+//         if (!user) return null
+
+//         // Using findFirst to avoid 'never' type errors often seen in findUnique includes
+//         return await prisma.profile.findFirst({
+//             where: { id: user.id },
+//             include: { 
+//                 school: { 
+//                     select: { name: true } 
+//                 } 
+//             }
+//         });
+//     } catch {
+//         return null
+//     }
+// }
+
+// // ── Helper: delete stale unconfirmed placeholder user ─────────────────────────
+
+// async function deleteStaleAuthUser(email: string): Promise<void> {
+//     try {
+//         const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers({
+//             page: 1,
+//             perPage: 1000,
+//         })
+//         if (error) return;
+
+//         const existing = users.find(u => u.email === email)
+//         if (existing && !existing.last_sign_in_at) {
+//             await supabaseAdmin.auth.admin.deleteUser(existing.id)
+//         }
+//     } catch (err) {
+//         console.error('deleteStaleAuthUser error:', err)
+//     }
+// }
+
+// // ── Send Invite ────────────────────────────────────────────────────────────────
+
+// export async function sendInviteAction({
+//     email, role, schoolId
+// }: SendInviteParams): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+        
+//         // Rule 10: Security check - Only Admins/SuperAdmins can invite
+//         if (!actor || (actor.role !== Role.SCHOOL_ADMIN && actor.role !== Role.SUPER_ADMIN)) {
+//             return { success: false, error: 'Unauthorized: Insufficient permissions.' }
+//         }
+
+//         // Rule 5: Admins can only invite to their own school
+//         if (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== schoolId) {
+//             return { success: false, error: 'Unauthorized: You cannot invite users to another institution.' }
+//         }
+
+//         const trimmedEmail = email.trim().toLowerCase();
+
+//         // 1. Resolve Institutional Context
+//         const school = await prisma.school.findUnique({
+//             where: { id: schoolId },
+//             select: { curriculumId: true, name: true },
+//         })
+//         if (!school?.curriculumId) return { success: false, error: 'Target institution configuration incomplete.' }
+
+//         // 2. Prevent Duplicate Active Accounts
+//         const { data: { users: authUsers } } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 })
+//         const existingAuthUser = authUsers.find(u => u.email === trimmedEmail)
+        
+//         if (existingAuthUser?.last_sign_in_at) {
+//             return { success: false, error: 'This user already has an active account.' }
+//         }
+
+//         // 3. Cleanup pending invites/placeholders
+//         if (existingAuthUser) await deleteStaleAuthUser(trimmedEmail);
+//         await prisma.invitation.deleteMany({ where: { email: trimmedEmail, acceptedAt: null } });
+
+//         // 4. Create Invitation (Tier 2 Context)
+//         const token = randomBytes(32).toString('hex')
+//         const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48) // 48 hours
+
+//         const invitation = await prisma.invitation.create({
+//             data: {
+//                 email: trimmedEmail,
+//                 role,
+//                 schoolId,
+//                 curriculumId: school.curriculumId,
+//                 token,
+//                 expiresAt,
+//                 invitedBy: actor.id,
+//             },
+//         })
+
+//         // 5. Trigger Supabase Invite
+//         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+//         const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(trimmedEmail, {
+//             redirectTo: `${siteUrl}/accept-invite`,
+//             data: { custom_token: token, role, schoolId },
+//         })
+
+//         if (inviteError) {
+//             await prisma.invitation.delete({ where: { id: invitation.id } });
+//             return { success: false, error: inviteError.message };
+//         }
+
+//         // 6. Log Institutional Activity (Rule 11)
+//         await logActivity({
+//             schoolId,
+//             actorId: actor.id,
+//             actorName: actor.name,
+//             actorRole: actor.role,
+//             type: ActivityType.USER_INVITED,
+//             title: 'Invitation Sent',
+//             description: `Invited ${trimmedEmail} as ${role.toLowerCase().replace('_', ' ')} to ${school.name}.`
+//         });
+
+//         return { success: true }
+
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// // ── Resend Invite ──────────────────────────────────────────────────────────────
+
+// export async function resendInviteAction(email: string): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor) return { success: false, error: 'Unauthorized.' }
+
+//         const trimmedEmail = email.trim().toLowerCase();
+
+//         const existing = await prisma.invitation.findFirst({
+//             where: { email: trimmedEmail, acceptedAt: null }
+//         })
+
+//         if (!existing || (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== existing.schoolId)) {
+//             return { success: false, error: 'Invitation not found or access denied.' }
+//         }
+
+//         await deleteStaleAuthUser(trimmedEmail)
+
+//         const token = randomBytes(32).toString('hex')
+//         const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48)
+
+//         await prisma.invitation.update({
+//             where: { id: existing.id },
+//             data: { token, expiresAt },
+//         })
+
+//         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+//         await supabaseAdmin.auth.admin.inviteUserByEmail(trimmedEmail, {
+//             redirectTo: `${siteUrl}/accept-invite`,
+//             data: { custom_token: token, role: existing.role, schoolId: existing.schoolId },
+//         });
+
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// // ── Cancel Invite ──────────────────────────────────────────────────────────────
+
+// export async function cancelInviteAction(email: string): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor) return { success: false, error: 'Unauthorized.' }
+
+//         const trimmedEmail = email.trim().toLowerCase();
+
+//         const existing = await prisma.invitation.findFirst({
+//             where: { email: trimmedEmail, acceptedAt: null }
+//         });
+
+//         if (!existing || (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== existing.schoolId)) {
+//             return { success: false, error: 'Invitation not found.' }
+//         }
+
+//         await prisma.invitation.delete({ where: { id: existing.id } });
+//         await deleteStaleAuthUser(trimmedEmail);
+
+//         // Rule 11 Logging
+//         await logActivity({
+//             schoolId: existing.schoolId,
+//             actorId: actor.id,
+//             actorName: actor.name,
+//             actorRole: actor.role,
+//             type: ActivityType.USER_DELETED,
+//             title: 'Invitation Revoked',
+//             description: `Cancelled pending invitation for ${trimmedEmail}.`
+//         });
+
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+
+
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { supabaseAdmin } from '@/lib/supabase/admin'
+// import { createClient } from '@/lib/supabase/server'
+// import { Role, ActivityType } from '@prisma/client'
+// import { randomBytes } from 'crypto'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { logActivity } from '@/lib/activitylogger'
+
+// // ── Interfaces ──────────────────────────────────────────────────────────────
+
+// interface SendInviteParams {
+//     email: string
+//     role: Role
+//     schoolId: string
+// }
+
+// interface ActionResult {
+//     success: boolean
+//     error?: string
+// }
+
+// // ── Auth helper ─────────────────────────────────────────────────────────────
+
+// /**
+//  * Validates the currently logged-in user and returns their profile with school info.
+//  */
+// async function getAuthenticatedActor() {
+//     try {
+//         const supabase = await createClient()
+//         const { data: { user } } = await supabase.auth.getUser()
+//         if (!user) return null
+
+//         return await prisma.profile.findFirst({
+//             where: { id: user.id },
+//             include: { 
+//                 school: { 
+//                     select: { name: true } 
+//                 } 
+//             }
+//         });
+//     } catch {
+//         return null
+//     }
+// }
+
+// // ── Helper: delete stale unconfirmed placeholder user ─────────────────────────
+
+// async function deleteStaleAuthUser(email: string): Promise<void> {
+//     try {
+//         const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers({
+//             page: 1,
+//             perPage: 1000,
+//         })
+//         if (error) return;
+
+//         const existing = users.find(u => u.email === email)
+//         // If user exists but has never signed in, it is a stale placeholder
+//         if (existing && !existing.last_sign_in_at) {
+//             await supabaseAdmin.auth.admin.deleteUser(existing.id)
+//         }
+//     } catch (err) {
+//         console.error('deleteStaleAuthUser error:', err)
+//     }
+// }
+
+// // ── Send Invite ────────────────────────────────────────────────────────────────
+
+// export async function sendInviteAction({
+//     email, role, schoolId
+// }: SendInviteParams): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+        
+//         // Rule 10: Security check - Only Admins/SuperAdmins can invite
+//         if (!actor || (actor.role !== Role.SCHOOL_ADMIN && actor.role !== Role.SUPER_ADMIN)) {
+//             return { success: false, error: 'Unauthorized: Insufficient permissions.' }
+//         }
+
+//         // Rule 5: Admins can only invite to their own school
+//         if (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== schoolId) {
+//             return { success: false, error: 'Unauthorized: You cannot invite users to another institution.' }
+//         }
+
+//         const trimmedEmail = email.trim().toLowerCase();
+
+//         // 1. Resolve Institutional Context
+//         const school = await prisma.school.findUnique({
+//             where: { id: schoolId },
+//             select: { curriculumId: true, name: true },
+//         })
+//         if (!school?.curriculumId) return { success: false, error: 'Target institution configuration incomplete.' }
+
+//         // 2. Prevent Duplicate Active Accounts
+//         const { data: { users: authUsers } } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 })
+//         const existingAuthUser = authUsers.find(u => u.email === trimmedEmail)
+        
+//         if (existingAuthUser?.last_sign_in_at) {
+//             return { success: false, error: 'This user already has an active account.' }
+//         }
+
+//         // 3. Cleanup pending invites/placeholders
+//         if (existingAuthUser) await deleteStaleAuthUser(trimmedEmail);
+//         await prisma.invitation.deleteMany({ where: { email: trimmedEmail, acceptedAt: null } });
+
+//         // 4. Create Invitation (Tier 2 Context)
+//         const token = randomBytes(32).toString('hex')
+//         const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48) // 48 hours
+
+//         const invitation = await prisma.invitation.create({
+//             data: {
+//                 email: trimmedEmail,
+//                 role,
+//                 schoolId,
+//                 curriculumId: school.curriculumId,
+//                 token,
+//                 expiresAt,
+//                 invitedBy: actor.id,
+//             },
+//         })
+
+//         // 5. Trigger Supabase Invite with Dynamic Origin Protocol
+//         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+        
+//         // ✅ Constructing the specific URL with parameters to satisfy the accept-invite page logic
+//         const redirectUrl = new URL(`${siteUrl}/accept-invite`)
+//         redirectUrl.searchParams.set('token', token)
+//         redirectUrl.searchParams.set('email', trimmedEmail)
+
+//         const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(trimmedEmail, {
+//             redirectTo: redirectUrl.toString(),
+//             data: { custom_token: token, role, schoolId },
+//         })
+
+//         if (inviteError) {
+//             await prisma.invitation.delete({ where: { id: invitation.id } });
+//             return { success: false, error: inviteError.message };
+//         }
+
+//         // 6. Log Institutional Activity (Rule 11)
+//         await logActivity({
+//             schoolId,
+//             actorId: actor.id,
+//             actorName: actor.name,
+//             actorRole: actor.role,
+//             type: ActivityType.USER_INVITED,
+//             title: 'Invitation Sent',
+//             description: `Invited ${trimmedEmail} as ${role.toLowerCase().replace('_', ' ')} to ${school.name}.`
+//         });
+
+//         return { success: true }
+
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// // ── Resend Invite ──────────────────────────────────────────────────────────────
+
+// export async function resendInviteAction(email: string): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor) return { success: false, error: 'Unauthorized.' }
+
+//         const trimmedEmail = email.trim().toLowerCase();
+
+//         const existing = await prisma.invitation.findFirst({
+//             where: { email: trimmedEmail, acceptedAt: null }
+//         })
+
+//         if (!existing || (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== existing.schoolId)) {
+//             return { success: false, error: 'Invitation not found or access denied.' }
+//         }
+
+//         // Clean up any stale state in Supabase Auth before resending
+//         await deleteStaleAuthUser(trimmedEmail)
+
+//         const token = randomBytes(32).toString('hex')
+//         const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48)
+
+//         await prisma.invitation.update({
+//             where: { id: existing.id },
+//             data: { token, expiresAt },
+//         })
+
+//         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+        
+//         // ✅ Constructing the specific URL with parameters for resend
+//         const redirectUrl = new URL(`${siteUrl}/accept-invite`)
+//         redirectUrl.searchParams.set('token', token)
+//         redirectUrl.searchParams.set('email', trimmedEmail)
+
+//         const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(trimmedEmail, {
+//             redirectTo: redirectUrl.toString(),
+//             data: { custom_token: token, role: existing.role, schoolId: existing.schoolId },
+//         });
+
+//         if (inviteError) return { success: false, error: inviteError.message };
+
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+// // ── Cancel Invite ──────────────────────────────────────────────────────────────
+
+// export async function cancelInviteAction(email: string): Promise<ActionResult> {
+//     try {
+//         const actor = await getAuthenticatedActor()
+//         if (!actor) return { success: false, error: 'Unauthorized.' }
+
+//         const trimmedEmail = email.trim().toLowerCase();
+
+//         const existing = await prisma.invitation.findFirst({
+//             where: { email: trimmedEmail, acceptedAt: null }
+//         });
+
+//         if (!existing || (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== existing.schoolId)) {
+//             return { success: false, error: 'Invitation not found.' }
+//         }
+
+//         // Delete from Prisma
+//         await prisma.invitation.delete({ where: { id: existing.id } });
+        
+//         // Delete the placeholder from Supabase Auth
+//         await deleteStaleAuthUser(trimmedEmail);
+
+//         // Rule 11 Logging
+//         await logActivity({
+//             schoolId: existing.schoolId,
+//             actorId: actor.id,
+//             actorName: actor.name,
+//             actorRole: actor.role,
+//             type: ActivityType.USER_DELETED,
+//             title: 'Invitation Revoked',
+//             description: `Cancelled pending invitation for ${trimmedEmail}.`
+//         });
+
+//         return { success: true }
+//     } catch (err: unknown) {
+//         return { success: false, error: getErrorMessage(err) }
+//     }
+// }
+
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import {  supabaseAdmin } from '@/lib/supabase/admin'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { Role, ActivityType } from '@prisma/client'
 import { randomBytes } from 'crypto'
@@ -1051,32 +1531,24 @@ interface ActionResult {
     error?: string
 }
 
-// ── Auth helper ─────────────────────────────────────────────────────────────
+// ── Auth Helper ─────────────────────────────────────────────────────────────
 
-/**
- * Validates the currently logged-in user and returns their profile with school info.
- */
 async function getAuthenticatedActor() {
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return null
 
-        // Using findFirst to avoid 'never' type errors often seen in findUnique includes
         return await prisma.profile.findFirst({
             where: { id: user.id },
-            include: { 
-                school: { 
-                    select: { name: true } 
-                } 
-            }
+            include: { school: { select: { name: true } } }
         });
     } catch {
         return null
     }
 }
 
-// ── Helper: delete stale unconfirmed placeholder user ─────────────────────────
+// ── Helper: Delete Stale Unconfirmed Auth User ──────────────────────────────
 
 async function deleteStaleAuthUser(email: string): Promise<void> {
     try {
@@ -1087,54 +1559,76 @@ async function deleteStaleAuthUser(email: string): Promise<void> {
         if (error) return;
 
         const existing = users.find(u => u.email === email)
+        // Only delete if user has never signed in — i.e. a stale placeholder
         if (existing && !existing.last_sign_in_at) {
             await supabaseAdmin.auth.admin.deleteUser(existing.id)
         }
     } catch (err) {
-        console.error('deleteStaleAuthUser error:', err)
+        console.error('[DELETE_STALE_AUTH_USER_FAULT]:', getErrorMessage(err))
     }
 }
 
-// ── Send Invite ────────────────────────────────────────────────────────────────
+// ── Helper: Build Redirect URL ──────────────────────────────────────────────
+
+function buildRedirectUrl(token: string, email: string): string {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    const url = new URL(`${siteUrl}/accept-invite`)
+    url.searchParams.set('token', token)
+    url.searchParams.set('email', email)
+    return url.toString()
+}
+
+// ── Send Invite ─────────────────────────────────────────────────────────────
 
 export async function sendInviteAction({
     email, role, schoolId
 }: SendInviteParams): Promise<ActionResult> {
     try {
         const actor = await getAuthenticatedActor()
-        
-        // Rule 10: Security check - Only Admins/SuperAdmins can invite
+
         if (!actor || (actor.role !== Role.SCHOOL_ADMIN && actor.role !== Role.SUPER_ADMIN)) {
             return { success: false, error: 'Unauthorized: Insufficient permissions.' }
         }
 
-        // Rule 5: Admins can only invite to their own school
         if (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== schoolId) {
             return { success: false, error: 'Unauthorized: You cannot invite users to another institution.' }
         }
 
         const trimmedEmail = email.trim().toLowerCase();
 
-        // 1. Resolve Institutional Context
+        // 1. Resolve school context — schoolId is now guaranteed non-null
         const school = await prisma.school.findUnique({
             where: { id: schoolId },
             select: { curriculumId: true, name: true },
         })
-        if (!school?.curriculumId) return { success: false, error: 'Target institution configuration incomplete.' }
+        if (!school) {
+            return { success: false, error: 'Institution not found.' }
+        }
+        if (!school.curriculumId) {
+            return { success: false, error: 'Institution curriculum not configured.' }
+        }
 
-        // 2. Prevent Duplicate Active Accounts
-        const { data: { users: authUsers } } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 })
+        // 2. Check if user already has an active account
+        const { data: { users: authUsers }, error: listError } =
+            await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 })
+
+        if (listError) {
+            return { success: false, error: 'Failed to reach identity registry.' }
+        }
+
         const existingAuthUser = authUsers.find(u => u.email === trimmedEmail)
-        
+
         if (existingAuthUser?.last_sign_in_at) {
             return { success: false, error: 'This user already has an active account.' }
         }
 
-        // 3. Cleanup pending invites/placeholders
+        // 3. Clean up stale state before issuing fresh invite
         if (existingAuthUser) await deleteStaleAuthUser(trimmedEmail);
-        await prisma.invitation.deleteMany({ where: { email: trimmedEmail, acceptedAt: null } });
+        await prisma.invitation.deleteMany({
+            where: { email: trimmedEmail, acceptedAt: null }
+        });
 
-        // 4. Create Invitation (Tier 2 Context)
+        // 4. Create invitation record
         const token = randomBytes(32).toString('hex')
         const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48) // 48 hours
 
@@ -1142,7 +1636,7 @@ export async function sendInviteAction({
             data: {
                 email: trimmedEmail,
                 role,
-                schoolId,
+                schoolId,           // non-null — always tied to a school
                 curriculumId: school.curriculumId,
                 token,
                 expiresAt,
@@ -1150,19 +1644,22 @@ export async function sendInviteAction({
             },
         })
 
-        // 5. Trigger Supabase Invite
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-        const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(trimmedEmail, {
-            redirectTo: `${siteUrl}/accept-invite`,
-            data: { custom_token: token, role, schoolId },
-        })
+        // 5. Send Supabase invite email
+        const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
+            trimmedEmail,
+            {
+                redirectTo: buildRedirectUrl(token, trimmedEmail),
+                data: { custom_token: token, role, schoolId },
+            }
+        )
 
         if (inviteError) {
+            // Roll back invitation record if Supabase send failed
             await prisma.invitation.delete({ where: { id: invitation.id } });
             return { success: false, error: inviteError.message };
         }
 
-        // 6. Log Institutional Activity (Rule 11)
+        // 6. Log activity
         await logActivity({
             schoolId,
             actorId: actor.id,
@@ -1176,11 +1673,12 @@ export async function sendInviteAction({
         return { success: true }
 
     } catch (err: unknown) {
+        console.error('[SEND_INVITE_FAULT]:', getErrorMessage(err))
         return { success: false, error: getErrorMessage(err) }
     }
 }
 
-// ── Resend Invite ──────────────────────────────────────────────────────────────
+// ── Resend Invite ───────────────────────────────────────────────────────────
 
 export async function resendInviteAction(email: string): Promise<ActionResult> {
     try {
@@ -1193,12 +1691,19 @@ export async function resendInviteAction(email: string): Promise<ActionResult> {
             where: { email: trimmedEmail, acceptedAt: null }
         })
 
-        if (!existing || (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== existing.schoolId)) {
-            return { success: false, error: 'Invitation not found or access denied.' }
+        if (!existing) {
+            return { success: false, error: 'Invitation not found.' }
         }
 
+        // schoolId is non-null on Invitation — safe to compare directly
+        if (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== existing.schoolId) {
+            return { success: false, error: 'Access denied.' }
+        }
+
+        // Clean up stale Supabase auth user so they can be re-invited cleanly
         await deleteStaleAuthUser(trimmedEmail)
 
+        // Rotate token and extend expiry
         const token = randomBytes(32).toString('hex')
         const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48)
 
@@ -1207,19 +1712,25 @@ export async function resendInviteAction(email: string): Promise<ActionResult> {
             data: { token, expiresAt },
         })
 
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-        await supabaseAdmin.auth.admin.inviteUserByEmail(trimmedEmail, {
-            redirectTo: `${siteUrl}/accept-invite`,
-            data: { custom_token: token, role: existing.role, schoolId: existing.schoolId },
-        });
+        const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
+            trimmedEmail,
+            {
+                redirectTo: buildRedirectUrl(token, trimmedEmail),
+                data: { custom_token: token, role: existing.role, schoolId: existing.schoolId },
+            }
+        )
+
+        if (inviteError) return { success: false, error: inviteError.message };
 
         return { success: true }
+
     } catch (err: unknown) {
+        console.error('[RESEND_INVITE_FAULT]:', getErrorMessage(err))
         return { success: false, error: getErrorMessage(err) }
     }
 }
 
-// ── Cancel Invite ──────────────────────────────────────────────────────────────
+// ── Cancel Invite ───────────────────────────────────────────────────────────
 
 export async function cancelInviteAction(email: string): Promise<ActionResult> {
     try {
@@ -1232,14 +1743,18 @@ export async function cancelInviteAction(email: string): Promise<ActionResult> {
             where: { email: trimmedEmail, acceptedAt: null }
         });
 
-        if (!existing || (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== existing.schoolId)) {
+        if (!existing) {
             return { success: false, error: 'Invitation not found.' }
+        }
+
+        // schoolId non-null — safe direct comparison
+        if (actor.role !== Role.SUPER_ADMIN && actor.schoolId !== existing.schoolId) {
+            return { success: false, error: 'Access denied.' }
         }
 
         await prisma.invitation.delete({ where: { id: existing.id } });
         await deleteStaleAuthUser(trimmedEmail);
 
-        // Rule 11 Logging
         await logActivity({
             schoolId: existing.schoolId,
             actorId: actor.id,
@@ -1251,7 +1766,79 @@ export async function cancelInviteAction(email: string): Promise<ActionResult> {
         });
 
         return { success: true }
+
     } catch (err: unknown) {
+        console.error('[CANCEL_INVITE_FAULT]:', getErrorMessage(err))
         return { success: false, error: getErrorMessage(err) }
+    }
+}
+
+// ── Accept Invitation ───────────────────────────────────────────────────────
+
+export async function acceptInvitation(
+    token: string,
+    email: string,
+    userId: string
+): Promise<ActionResult> {
+    try {
+        // 1. Find valid, unexpired, unused invitation
+        const invitation = await prisma.invitation.findFirst({
+            where: {
+                token,
+                acceptedAt: null,
+                expiresAt: { gt: new Date() },
+            },
+        });
+
+        if (!invitation) {
+            return { success: false, error: 'Invitation has expired or has already been used.' };
+        }
+
+        // 2. Guard against token-swapping — email must match
+        if (invitation.email !== email.toLowerCase().trim()) {
+            return { success: false, error: 'Identity mismatch: email does not match invitation.' };
+        }
+
+        // 3. Atomic: mark accepted + provision profile
+        await prisma.$transaction(async (tx) => {
+            await tx.invitation.update({
+                where: { id: invitation.id },
+                data: { acceptedAt: new Date() },
+            });
+
+            // schoolId is non-null on Invitation — safe to use directly
+            await tx.profile.upsert({
+                where: { id: userId },
+                update: {
+                    role: invitation.role,
+                    schoolId: invitation.schoolId,
+                    curriculumId: invitation.curriculumId,
+                },
+                create: {
+                    id: userId,
+                    email: invitation.email,
+                    role: invitation.role,
+                    schoolId: invitation.schoolId,
+                    curriculumId: invitation.curriculumId,
+                },
+            });
+        });
+
+        // 4. Log acceptance
+        await logActivity({
+            schoolId: invitation.schoolId,
+            actorId: userId,
+            actorName: email,
+            actorRole: invitation.role,
+            type: ActivityType.USER_INVITED,
+            title: 'Invitation Accepted',
+            description: `${email} accepted their invitation as ${invitation.role.toLowerCase().replace('_', ' ')}.`
+        });
+
+        return { success: true };
+
+    } catch (err: unknown) {
+        console.error('[ACCEPT_INVITATION_FAULT]:', getErrorMessage(err));
+        return { success: false, error: getErrorMessage(err) };
     }
 }

@@ -431,35 +431,76 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { SetPasswordForm } from "@/components/set-password-form";
+
+// /**
+//  * Rule 16: Dynamic SEO
+//  */
+// export const metadata: Metadata = {
+//     title: "Security Protocol | Set Secret Key | SchoolPaaS",
+//     description: "Initialize your institutional access node and define registry credentials.",
+// };
+
+// /**
+//  * Rule 12: Server-First Execution
+//  * Rule 10: Backend Security - Verifies session before rendering any UI.
+//  */
+// export default async function Page() {
+//     const supabase = await createClient();
+//     const { data: { user } } = await supabase.auth.getUser();
+
+//     // Security Gate: Ensure there is a pending auth session (Invite or Reset)
+//     if (!user) {
+//         redirect("/login?error=session_expired");
+//     }
+
+//     return (
+//         <main className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+//             <SetPasswordForm userEmail={user.email ?? ""} />
+//         </main>
+//     );
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SetPasswordForm } from "@/components/set-password-form";
 
-/**
- * Rule 16: Dynamic SEO
- */
 export const metadata: Metadata = {
     title: "Security Protocol | Set Secret Key | SchoolPaaS",
     description: "Initialize your institutional access node and define registry credentials.",
 };
 
-/**
- * Rule 12: Server-First Execution
- * Rule 10: Backend Security - Verifies session before rendering any UI.
- */
-export default async function Page() {
+interface PageProps {
+    searchParams: Promise<{ token?: string; school?: string }>;
+}
+
+export default async function Page({ searchParams }: PageProps) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    // Security Gate: Ensure there is a pending auth session (Invite or Reset)
     if (!user) {
         redirect("/login?error=session_expired");
     }
 
+    const { token, school } = await searchParams;
+
+    // Guard: invitation token must be present
+    if (!token) {
+        redirect("/login?error=missing_token");
+    }
+
     return (
         <main className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-            <SetPasswordForm userEmail={user.email ?? ""} />
+            <SetPasswordForm
+                userEmail={user.email ?? ""}
+                invitationToken={token}
+                schoolName={school ?? "Your Institution"}
+            />
         </main>
     );
 }
