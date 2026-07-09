@@ -298,7 +298,7 @@ import { cn } from '@/lib/utils'
  */
 
 const INPUT_STYLES = cn(
-    "h-14 w-full bg-surface border-border rounded-2xl pl-12 pr-6 py-4 text-sm text-foreground transition-all",
+    "h-12 w-full bg-surface border-border rounded-2xl pl-10 pr-4 py-2 text-sm text-foreground transition-all",
     "focus-visible:ring-2 focus-visible:ring-school-primary-200 focus-visible:border-school-primary",
     "placeholder:text-muted-foreground/40 font-semibold"
 );
@@ -384,7 +384,7 @@ export function LoginForm() {
     }
 
     return (
-        <div className="w-full max-w-md bg-card border border-border rounded-[2rem] shadow-2xl p-8 md:p-12 relative overflow-hidden group animate-in fade-in zoom-in-95 duration-700">
+        <div className="w-full max-w-md bg-card border border-border rounded-[2rem] shadow-2xl p-6 md:p-8 relative overflow-hidden group animate-in fade-in zoom-in-95 duration-700">
             {/* Rule 21: Brand Scale Decoration */}
             <div className="absolute -top-24 -right-24 h-48 w-48 bg-school-primary-100 rounded-full blur-3xl opacity-50 pointer-events-none" aria-hidden />
 
@@ -398,25 +398,25 @@ export function LoginForm() {
             )}
 
             {/* ── HEADER (Rule 11) ── */}
-            <div className="text-center mb-10 space-y-4 relative">
-                <div className="h-16 w-16 bg-surface rounded-2xl flex items-center justify-center mx-auto border border-border shadow-inner">
-                    <Lock className="h-7 w-7 text-school-primary" />
+            <div className="text-center mb-6 space-y-2 relative">
+                <div className="h-12 w-12 bg-surface rounded-2xl flex items-center justify-center mx-auto border border-border shadow-inner">
+                    <Lock className="h-5 w-5 text-school-primary" />
                 </div>
                 <div>
                     <h1 className="text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
-                        Registry Access
+                        Login
                     </h1>
                     <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest mt-2">
-                        Institutional Synchronization Terminal
+                        Welcome back!
                     </p>
                 </div>
             </div>
 
             {/* ── FORM ── */}
-            <form onSubmit={handleLogin} className="space-y-6 relative">
+            <form onSubmit={handleLogin} className="space-y-4 relative">
                 <AuthField
                     id="email"
-                    label="Email Identity"
+                    label="Email"
                     icon={Mail}
                     type="email"
                     placeholder="identity@schoolpaas.com"
@@ -429,7 +429,7 @@ export function LoginForm() {
 
                 <AuthField
                     id="password"
-                    label="Secret Key"
+                    label="Password"
                     icon={Lock}
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
@@ -454,40 +454,40 @@ export function LoginForm() {
                     type="submit"
                     disabled={isLoading}
                     className={cn(
-                        'w-full py-8 bg-school-primary text-on-school-primary font-extrabold rounded-2xl',
-                        'text-[10px] uppercase tracking-[0.3em] hover:brightness-110 active:scale-95 transition-all',
+                        'w-full py-3 bg-school-primary text-on-school-primary font-extrabold rounded-2xl',
+                        'text-[13px] uppercase tracking-[0.3em] hover:brightness-110 active:scale-95 transition-all',
                         'shadow-xl shadow-school-primary-200 mt-4 disabled:opacity-50',
                     )}
                 >
                     {isLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                        'Initialize Session'
+                        'Login'
                     )}
                 </Button>
             </form>
 
             {/* ── FOOTER NAVIGATION ── */}
-            <div className="mt-10 pt-8 border-t border-border space-y-4">
+            <div className="mt-6 pt-5 border-t border-border space-y-4">
                 <Link
                     href="/forgot-password"
                     className="block text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest hover:text-school-primary transition-colors"
                 >
-                    Lost encryption key?
+                    Forgot Password?
                 </Link>
                 <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                    <span>Registry offline?</span>
+                    <span>Don't have an account?</span>
                     <Link
-                        href="/onboarding"
+                        href="/onboarding/onboardingOptions"
                         className="text-school-primary hover:underline italic font-extrabold"
                     >
-                        Provision workspace
+                        Sign Up
                     </Link>
                 </div>
             </div>
 
             {/* ── PROTOCOL BADGE ── */}
-            <div className="mt-8 flex justify-center items-center gap-2.5 text-muted-foreground/40">
+            <div className="mt-5 flex justify-center items-center gap-2.5 text-muted-foreground/40">
                 <ShieldCheck className="h-4 w-4 text-school-primary opacity-50" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em] italic">
                     Protocol_Secure_v1.2
