@@ -58,7 +58,7 @@ export function Navbar() {
             >
               {link.label}
             </a>
-          ))}
+          ))} 
         </div>
 
         {/* ── DESKTOP ACTIONS (Rule 19/21) ── */}
@@ -71,11 +71,11 @@ export function Navbar() {
               LogIn
             </Button>
           </Link>
-          <Link href="/onboarding">
+          <Link href="/onboardingSelector">
             <Button 
                 className="bg-school-primary text-on-school-primary font-extrabold text-[10px] uppercase tracking-widest rounded-xl px-6 hover:brightness-110 transition-all shadow-lg shadow-school-primary-200"
             >
-              Start Here
+              Get Started
             </Button>
           </Link>
           <div className="h-4 w-px bg-border mx-2" />

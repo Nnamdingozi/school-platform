@@ -856,7 +856,7 @@ export function AdminStep() {
                 <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-4 animate-in zoom-in-95">
                     <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
                     <div>
-                        <p className="text-emerald-700 text-[10px] font-bold uppercase tracking-widest">Registry Synchronized</p>
+                        <p className="text-emerald-700 text-[10px] font-bold uppercase tracking-widest">Identity Verified</p>
                         <p className="text-muted-foreground text-xs font-medium italic">Master profile locked for security.</p>
                     </div>
                 </div>
@@ -867,7 +867,7 @@ export function AdminStep() {
                 {/* ── NAME ENTRY ── */}
                 <div className="space-y-2 group">
                     <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 group-focus-within:text-school-primary">
-                        Full Legal Name
+                        Full  Name
                     </Label>
                     <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
@@ -885,7 +885,7 @@ export function AdminStep() {
                 {/* ── EMAIL ENTRY ── */}
                 <div className="space-y-2 group">
                     <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 group-focus-within:text-school-primary">
-                        Institutional Email
+                        School Email
                     </Label>
                     <div className="relative">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
@@ -903,7 +903,7 @@ export function AdminStep() {
                 {/* ── PHONE ENTRY ── */}
                 <div className="space-y-2 group">
                     <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 group-focus-within:text-school-primary">
-                        Contact Hub (Optional)
+                        Phone Number (Optional)
                     </Label>
                     <div className="relative">
                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
@@ -922,7 +922,7 @@ export function AdminStep() {
                     <div className="space-y-4">
                         <div className="space-y-2 group">
                             <Label className="text-[10px] font-semibold uppercase text-muted-foreground tracking-widest ml-1 group-focus-within:text-school-primary">
-                                Access Secret Key
+                                Password
                             </Label>
                             <div className="relative">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-school-primary transition-colors" />
@@ -976,7 +976,7 @@ export function AdminStep() {
                             <Loader2 className="h-5 w-5 animate-spin" />
                         ) : (
                             <span className="flex items-center gap-3">
-                                {isLocked ? 'PROCEED TO HUB CONFIG' : 'INITIALIZE SYNC'}
+                                {isLocked ? 'PROCEED TO LOGIN' : 'Next'}
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                             </span>
                         )}
@@ -990,7 +990,7 @@ export function AdminStep() {
                             className="w-full flex items-center justify-center gap-2 text-[10px] font-bold text-muted-foreground/40 hover:text-destructive transition-colors uppercase tracking-[0.2em]"
                         >
                             <Trash2 className="h-3 w-3" />
-                            Purge Identity Registry
+                            Clear Identity Information
                         </button>
                     )}
                 </div>

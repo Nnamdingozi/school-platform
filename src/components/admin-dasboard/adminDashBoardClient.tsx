@@ -168,7 +168,7 @@ export function AdminDashboardClient({
                     <div className="absolute inset-0 blur-2xl bg-school-primary-50 -z-10" />
                 </div>
                 <p className="mt-6 text-muted-foreground font-extrabold uppercase italic text-[11px] tracking-[0.3em] animate-pulse">
-                    Synchronizing_Institutional_Registry...
+                    Loading School Hub...
                 </p>
             </div>
         )

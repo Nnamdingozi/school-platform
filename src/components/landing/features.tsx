@@ -289,29 +289,29 @@ const features = [
     icon: Sparkles,
     title: "Syllabus Synthesis",
     description:
-      "Generate curriculum-aligned academic nodes, interactive quizzes, and lesson scripts in seconds. AI-driven logic for high-performance pedagogy.",
+      "Orchestrate standards-aligned instructional modules, rigorous assessments, and structured lesson frameworks with precision. A unified academic ecosystem designed to empower institutional excellence and independent mastery through intelligent instructional logic.",
     highlights: [
-      "Instant node generation",
+      "Instant module generation",
       "Auto-calibrated assessments",
       "Global core alignment",
     ],
   },
   {
     icon: BarChart3,
-    title: "Mastery Telemetry",
+    title: " Performance Intelligence",
     description:
-      "Track modular proficiency with real-time analytics. Identify knowledge gaps across entire cohorts or individual learning paths instantly.",
+      "Map modular proficiency via real-time data synthesis. Detect knowledge variances across entire student populations or dedicated learning tracks via a unified metric framework.",
     highlights: [
-      "Real-time proficiency tracking",
-      "Institutional broadsheets",
-      "Personal growth indexing",
+     "Real-time competency mapping",
+     " Automated institutional reporting",
+      "Longitudinal growth tracking"
     ],
   },
   {
     icon: MessageSquare,
-    title: "Registry Bridge",
+    title: "Competency Analytics",
     description:
-      "Automated transmission of reports and feedback directly to parents via WhatsApp. Seamless institutional-family synchronization.",
+      "Visualize academic progress through evidence-based metrics. Pinpoint specific learning requirements for student cohorts and individual learners to ensure curriculum mastery.",
     highlights: [
       "Automated report delivery",
       "Real-time family alerts",

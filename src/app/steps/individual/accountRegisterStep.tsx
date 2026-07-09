@@ -525,6 +525,134 @@
 
 
 
+// 'use client';
+
+// import React, { useState, useEffect, useTransition } from 'react';
+// import { useRegisterStore } from '@/store/individualOnboardingStore';
+// import { getCurricula } from '@/app/actions/onboarding';
+// import { registerIndividualLearner } from '@/app/actions/individualOnboarding';
+// import { Button } from '@/components/ui/button';
+// import { Label } from '@/components/ui/label';
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// import { User, Mail, Lock, Loader2, BookOpen } from 'lucide-react';
+// import { toast } from 'sonner';
+// import { getErrorMessage } from '@/lib/error-handler';
+
+// interface CurriculumOption { id: string; name: string; }
+
+// export function RegisterAccountStep() {
+//     const { nextStep, setIdentity } = useRegisterStore();
+//     const [isPending, startTransition] = useTransition();
+//     const [curricula, setCurricula] = useState<CurriculumOption[]>([]);
+//     const [loadingCurricula, setLoadingCurricula] = useState(true);
+//     const [form, setForm] = useState({ name: '', email: '', password: '', curriculumId: '' });
+
+//     useEffect(() => {
+//         getCurricula().then(res => {
+//             if (res.success) setCurricula(res.data ?? []);
+//             else toast.error('Failed to load academic blueprints.');
+//             setLoadingCurricula(false);
+//         });
+//     }, []);
+
+//     const handleNext = (e: React.FormEvent) => {
+//         e.preventDefault();
+//         if (!form.curriculumId) {
+//             toast.error("Registry Protocol: Academic Blueprint selection required.");
+//             return;
+//         }
+//         if (form.password.length < 8) {
+//             toast.error("Security Protocol: Access credentials must be at least 8 characters.");
+//             return;
+//         }
+//         startTransition(async () => {
+//             try {
+//                 const res = await registerIndividualLearner({
+//                     name: form.name.trim(),
+//                     email: form.email.trim().toLowerCase(),
+//                     password: form.password,
+//                     curriculumId: form.curriculumId,
+//                 });
+//                 if (res.success) {
+//                     setIdentity(form.name, form.email, form.curriculumId);
+//                     toast.success("Identity profile initialized.");
+//                     nextStep();
+//                 } else {
+//                     toast.error(res.error || "Identity creation protocol failed.");
+//                 }
+//             } catch (err: unknown) {
+//                 toast.error(getErrorMessage(err));
+//             }
+//         });
+//     };
+
+//     return (
+//         <form onSubmit={handleNext} className="space-y-6 animate-in slide-in-from-right-6 duration-700">
+//             <div className="space-y-2">
+//                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Full Identification</Label>
+//                 <div className="relative">
+//                     <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+//                     <input required placeholder="e.g. ALEX RIDER"
+//                         className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-extrabold uppercase italic text-sm outline-none focus:ring-2 focus:ring-school-primary-200"
+//                         value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+//                 </div>
+//             </div>
+
+//             <div className="space-y-2">
+//                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Primary Email Node</Label>
+//                 <div className="relative">
+//                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+//                     <input required type="email" placeholder="learner@registry.node"
+//                         className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-mono text-sm outline-none focus:ring-2 focus:ring-school-primary-200"
+//                         value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+//                 </div>
+//             </div>
+
+//             <div className="space-y-2">
+//                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Academic Blueprint</Label>
+//                 <Select value={form.curriculumId} onValueChange={(val) => setForm({ ...form, curriculumId: val })} disabled={loadingCurricula}>
+//                     <SelectTrigger className="w-full h-14 bg-slate-950 border-slate-800 rounded-xl text-white font-bold uppercase italic text-xs px-4">
+//                         <div className="flex items-center gap-3">
+//                             <BookOpen className="h-4 w-4 text-slate-500 shrink-0" />
+//                             {loadingCurricula
+//                                 ? <span className="text-slate-500 text-[10px] tracking-widest">Loading Blueprints...</span>
+//                                 : <SelectValue placeholder="Select Global Blueprint..." />
+//                             }
+//                         </div>
+//                     </SelectTrigger>
+//                     <SelectContent className="bg-slate-900 border-slate-800 text-white">
+//                         {curricula.length === 0 && !loadingCurricula
+//                             ? <div className="px-4 py-3 text-[10px] uppercase tracking-widest text-slate-500">No blueprints available</div>
+//                             : curricula.map(c => (
+//                                 <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px] tracking-widest">
+//                                     {c.name} Hub
+//                                 </SelectItem>
+//                             ))
+//                         }
+//                     </SelectContent>
+//                 </Select>
+//             </div>
+
+//             <div className="space-y-2">
+//                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Access Secret Key</Label>
+//                 <div className="relative">
+//                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+//                     <input required type="password" placeholder="••••••••"
+//                         className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white outline-none focus:ring-2 focus:ring-school-primary-200"
+//                         value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
+//                 </div>
+//             </div>
+
+//             <Button disabled={isPending || loadingCurricula}
+//                 className="w-full h-16 bg-school-primary text-on-school-primary font-extrabold rounded-2xl uppercase text-[11px] tracking-widest shadow-xl active:scale-95">
+//                 {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Personalize Learning Plan"}
+//             </Button>
+//         </form>
+//     );
+// }
+
+
+
 'use client';
 
 import React, { useState, useEffect, useTransition } from 'react';
@@ -538,42 +666,76 @@ import { User, Mail, Lock, Loader2, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/lib/error-handler';
 
-interface CurriculumOption { id: string; name: string; }
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
+interface CurriculumOption { 
+    id: string; 
+    name: string; 
+}
+
+/**
+ * REGISTER ACCOUNT STEP: INDIVIDUAL LEARNER
+ * Rule 11: High-fidelity Registry Typography (font-extrabold italic).
+ * Rule 15: Pure TypeScript - No 'any' types.
+ * Logic: Supports Primary and optional Secondary academic blueprints.
+ */
 export function RegisterAccountStep() {
     const { nextStep, setIdentity } = useRegisterStore();
     const [isPending, startTransition] = useTransition();
     const [curricula, setCurricula] = useState<CurriculumOption[]>([]);
-    const [loadingCurricula, setLoadingCurricula] = useState(true);
-    const [form, setForm] = useState({ name: '', email: '', password: '', curriculumId: '' });
+    const [loadingCurricula, setLoadingCurricula] = useState<boolean>(true);
+    
+    const [form, setForm] = useState({ 
+        name: '', 
+        email: '', 
+        password: '', 
+        curriculumId: '',
+        secondaryCurriculumId: 'none' // Default to string 'none' for select logic
+    });
 
     useEffect(() => {
-        getCurricula().then(res => {
-            if (res.success) setCurricula(res.data ?? []);
-            else toast.error('Failed to load academic blueprints.');
+        getCurricula().then((res: { success: boolean; data: CurriculumOption[]; error?: string }) => {
+            if (res.success) {
+                setCurricula(res.data ?? []);
+            } else {
+                toast.error('Failed to load academic blueprints.');
+            }
             setLoadingCurricula(false);
         });
     }, []);
 
+    // Filter secondary curricula to prevent selecting the same one as primary
+    const availableSecondaryCurricula: CurriculumOption[] = curricula.filter(
+        (c: CurriculumOption) => c.id !== form.curriculumId
+    );
+
     const handleNext = (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!form.curriculumId) {
-            toast.error("Registry Protocol: Academic Blueprint selection required.");
+            toast.error("Registry Protocol: Primary Academic Blueprint selection required.");
             return;
         }
+
         if (form.password.length < 8) {
             toast.error("Security Protocol: Access credentials must be at least 8 characters.");
             return;
         }
+
         startTransition(async () => {
             try {
-                const res = await registerIndividualLearner({
+                const secondaryId: string | null = form.secondaryCurriculumId === 'none' ? null : form.secondaryCurriculumId;
+
+                const res: { success: boolean; error?: string } = await registerIndividualLearner({
                     name: form.name.trim(),
                     email: form.email.trim().toLowerCase(),
                     password: form.password,
                     curriculumId: form.curriculumId,
+                    secondaryCurriculumId: secondaryId
                 });
+
                 if (res.success) {
+                    // Update local store state
                     setIdentity(form.name, form.email, form.curriculumId);
                     toast.success("Identity profile initialized.");
                     nextStep();
@@ -581,71 +743,135 @@ export function RegisterAccountStep() {
                     toast.error(res.error || "Identity creation protocol failed.");
                 }
             } catch (err: unknown) {
-                toast.error(getErrorMessage(err));
+                const message: string = getErrorMessage(err);
+                toast.error(message);
             }
         });
     };
 
     return (
         <form onSubmit={handleNext} className="space-y-6 animate-in slide-in-from-right-6 duration-700">
+            
+            {/* ── FULL IDENTIFICATION ── */}
             <div className="space-y-2">
                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Full Identification</Label>
                 <div className="relative">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                    <input required placeholder="e.g. ALEX RIDER"
-                        className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-extrabold uppercase italic text-sm outline-none focus:ring-2 focus:ring-school-primary-200"
-                        value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+                    <input 
+                        required 
+                        placeholder="e.g. ALEX RIDER"
+                        className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-extrabold uppercase italic text-sm outline-none focus:ring-2 focus:ring-school-primary-200 transition-all"
+                        value={form.name} 
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, name: e.target.value })} 
+                    />
                 </div>
             </div>
 
+            {/* ── EMAIL NODE ── */}
             <div className="space-y-2">
                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Primary Email Node</Label>
                 <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                    <input required type="email" placeholder="learner@registry.node"
-                        className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-mono text-sm outline-none focus:ring-2 focus:ring-school-primary-200"
-                        value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                    <input 
+                        required 
+                        type="email" 
+                        placeholder="learner@registry.node"
+                        className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white font-mono text-sm outline-none focus:ring-2 focus:ring-school-primary-200 transition-all"
+                        value={form.email} 
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, email: e.target.value })} 
+                    />
                 </div>
             </div>
 
-            <div className="space-y-2">
-                <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Academic Blueprint</Label>
-                <Select value={form.curriculumId} onValueChange={(val) => setForm({ ...form, curriculumId: val })} disabled={loadingCurricula}>
-                    <SelectTrigger className="w-full h-14 bg-slate-950 border-slate-800 rounded-xl text-white font-bold uppercase italic text-xs px-4">
-                        <div className="flex items-center gap-3">
-                            <BookOpen className="h-4 w-4 text-slate-500 shrink-0" />
-                            {loadingCurricula
-                                ? <span className="text-slate-500 text-[10px] tracking-widest">Loading Blueprints...</span>
-                                : <SelectValue placeholder="Select Global Blueprint..." />
-                            }
-                        </div>
-                    </SelectTrigger>
-                    <SelectContent className="bg-slate-900 border-slate-800 text-white">
-                        {curricula.length === 0 && !loadingCurricula
-                            ? <div className="px-4 py-3 text-[10px] uppercase tracking-widest text-slate-500">No blueprints available</div>
-                            : curricula.map(c => (
+            {/* ── DUAL CURRICULUM BLUEPRINTS ── */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Primary Curriculum */}
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Primary Blueprint</Label>
+                    <Select 
+                        value={form.curriculumId} 
+                        onValueChange={(val: string) => setForm({ 
+                            ...form, 
+                            curriculumId: val,
+                            secondaryCurriculumId: val === form.secondaryCurriculumId ? 'none' : form.secondaryCurriculumId 
+                        })} 
+                        disabled={loadingCurricula}
+                    >
+                        <SelectTrigger className="w-full h-14 bg-slate-950 border-slate-800 rounded-xl text-white font-bold uppercase italic text-[10px] px-4">
+                            <div className="flex items-center gap-3">
+                                <BookOpen className="h-4 w-4 text-slate-500 shrink-0" />
+                                {loadingCurricula
+                                    ? <span className="text-slate-500">Loading...</span>
+                                    : <SelectValue placeholder="Primary..." />
+                                }
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                            {curricula.map((c: CurriculumOption) => (
                                 <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px] tracking-widest">
-                                    {c.name} Hub
+                                    {c.name}
                                 </SelectItem>
-                            ))
-                        }
-                    </SelectContent>
-                </Select>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {/* Secondary Curriculum (Optional) */}
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Secondary (Optional)</Label>
+                    <Select 
+                        value={form.secondaryCurriculumId} 
+                        onValueChange={(val: string) => setForm({ ...form, secondaryCurriculumId: val })} 
+                        disabled={loadingCurricula || !form.curriculumId}
+                    >
+                        <SelectTrigger className="w-full h-14 bg-slate-950 border-slate-800 rounded-xl text-white font-bold uppercase italic text-[10px] px-4">
+                            <div className="flex items-center gap-3">
+                                <BookOpen className="h-4 w-4 text-slate-500 shrink-0" />
+                                <SelectValue placeholder="None" />
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                            <SelectItem value="none" className="font-bold uppercase text-[10px] tracking-widest text-slate-500">
+                                No Secondary
+                            </SelectItem>
+                            {availableSecondaryCurricula.map((c: CurriculumOption) => (
+                                <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px] tracking-widest">
+                                    {c.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
 
+            {/* ── ACCESS CREDENTIALS ── */}
             <div className="space-y-2">
                 <Label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest ml-1">Access Secret Key</Label>
                 <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                    <input required type="password" placeholder="••••••••"
-                        className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white outline-none focus:ring-2 focus:ring-school-primary-200"
-                        value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
+                    <input 
+                        required 
+                        type="password" 
+                        placeholder="••••••••"
+                        className="w-full h-14 bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-6 text-white outline-none focus:ring-2 focus:ring-school-primary-200 transition-all"
+                        value={form.password} 
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, password: e.target.value })} 
+                    />
                 </div>
             </div>
 
-            <Button disabled={isPending || loadingCurricula}
-                className="w-full h-16 bg-school-primary text-on-school-primary font-extrabold rounded-2xl uppercase text-[11px] tracking-widest shadow-xl active:scale-95">
-                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Personalize Learning Plan"}
+            <Button 
+                disabled={isPending || loadingCurricula}
+                className="w-full h-16 bg-school-primary text-on-school-primary font-extrabold rounded-2xl uppercase text-[11px] tracking-widest shadow-xl active:scale-95 transition-all"
+            >
+                {isPending ? (
+                    <div className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Initializing...</span>
+                    </div>
+                ) : (
+                    "Personalize Learning Plan"
+                )}
             </Button>
         </form>
     );

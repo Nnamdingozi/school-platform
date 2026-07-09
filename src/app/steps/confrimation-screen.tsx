@@ -1211,16 +1211,537 @@
 // }
 
 
+// 'use client';
+
+// import React, { useState, useEffect } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { toast } from 'sonner';
+// import { Loader2, ArrowRight, Zap, Edit3, ShieldCheck, CheckCircle2 } from 'lucide-react';
+// import { Input } from '@/components/ui/input';
+// import { getErrorMessage } from '@/lib/error-handler';
+// import { checkEmailConfirmed } from '../actions/auth';
+
+// interface ConfirmationScreenProps {
+//     email: string;
+//     paymentReference: string;
+//     onEmailUpdate: (oldEmail: string, newEmail: string, reference: string) => Promise<{ success: boolean; error?: string }>;
+//     onEmailChange?: (newEmail: string) => void;
+// }
+
+// export function ConfirmationScreen({
+//     email,
+//     paymentReference,
+//     onEmailUpdate,
+//     onEmailChange
+// }: ConfirmationScreenProps) {
+//     const router = useRouter();
+//     const [confirmedEmail, setConfirmedEmail] = useState(email);
+//     const [isResending, setIsResending] = useState(false);
+//     const [isEditing, setIsEditing] = useState(false);
+//     const [newEmail, setNewEmail] = useState(email);
+//     const [isUpdating, setIsUpdating] = useState(false);
+
+//     // ── Checking auth status on mount ──
+//     const [checkingStatus, setCheckingStatus] = useState(true);
+//     const [alreadyConfirmed, setAlreadyConfirmed] = useState(false);
+
+//     // useEffect(() => {
+//     //     async function checkEmailStatus() {
+//     //         try {
+//     //             const supabase = createClient();
+
+//     //             // Refresh the session first — picks up confirmation that
+//     //             // happened in a different tab/device since this page loaded
+//     //             const { data: { user }, error } = await supabase.auth.getUser();
+
+//     //             if (error) {
+//     //                 console.error('[EMAIL_STATUS_CHECK_FAULT]:', error);
+//     //                 setCheckingStatus(false);
+//     //                 return;
+//     //             }
+
+//     //             if (user?.email_confirmed_at) {
+//     //                 setAlreadyConfirmed(true);
+//     //                 toast.success('Email already verified.');
+//     //                 // Small delay so the success state is visible before redirect
+//     //                 setTimeout(() => router.push('/login'), 1200);
+//     //             } else {
+//     //                 setCheckingStatus(false);
+//     //             }
+//     //         } catch (err) {
+//     //             console.error('[EMAIL_STATUS_CHECK_FAULT]:', getErrorMessage(err));
+//     //             setCheckingStatus(false);
+//     //         }
+//     //     }
+
+//     //     checkEmailStatus();
+//     //     // eslint-disable-next-line react-hooks/exhaustive-deps
+//     // }, []);
+
+//     useEffect(() => {
+//         async function checkEmailStatus() {
+//             try {
+//                 const supabase = createClient();
+//                 const { data: { user } } = await supabase.auth.getUser();
+    
+//                 if (user?.email_confirmed_at) {
+//                     setAlreadyConfirmed(true);
+//                     toast.success('Email already verified.');
+//                     setTimeout(() => router.push('/login'), 1200);
+//                     return;
+//                 }
+    
+//                 // No active session — check via server action using the email itself
+//                 const { confirmed } = await checkEmailConfirmed(confirmedEmail);
+//                 if (confirmed) {
+//                     setAlreadyConfirmed(true);
+//                     toast.success('Email already verified.');
+//                     setTimeout(() => router.push('/login'), 1200);
+//                 } else {
+//                     setCheckingStatus(false);
+//                 }
+//             } catch (err) {
+//                 console.error('[EMAIL_STATUS_CHECK_FAULT]:', getErrorMessage(err));
+//                 setCheckingStatus(false);
+//             }
+//         }
+    
+//         checkEmailStatus();
+//     }, [confirmedEmail]);
+
+
+//     async function handleResend() {
+//         if (!confirmedEmail) {
+//             toast.error('No email on file. Please refresh and try again.');
+//             return;
+//         }
+//         setIsResending(true);
+//         try {
+//             const supabase = createClient();
+//             const { error } = await supabase.auth.resend({
+//                 type: 'signup',
+//                 email: confirmedEmail,
+//                 options: { emailRedirectTo: `${window.location.origin}/confirm` },
+//             });
+//             if (error) {
+//                 console.error('[RESEND_FAULT]:', error);
+//                 throw error;
+//             }
+//             toast.success('Security link re-transmitted.');
+//         } catch (err: unknown) {
+//             console.error('[RESEND_CATCH]:', err);
+//             toast.error(getErrorMessage(err) || 'Failed to resend. You may be rate-limited (3/hr).');
+//         } finally {
+//             setIsResending(false);
+//         }
+//     }
+
+//     async function handleEmailUpdate(e: React.FormEvent) {
+//         e.preventDefault();
+//         setIsUpdating(true);
+//         try {
+//             const res = await onEmailUpdate(confirmedEmail, newEmail, paymentReference);
+//             if (res.success) {
+//                 setConfirmedEmail(newEmail);
+//                 onEmailChange?.(newEmail);
+//                 setIsEditing(false);
+//                 toast.success('Identity updated. New link dispatched.');
+//             } else {
+//                 toast.error(res.error || 'Update failed.');
+//             }
+//         } catch (err) {
+//             toast.error(getErrorMessage(err));
+//         } finally {
+//             setIsUpdating(false);
+//         }
+//     }
+
+//     // ── Loading state while checking confirmation status ──
+//     if (checkingStatus) {
+//         return (
+//             <div className="flex flex-col items-center justify-center py-20 gap-6 animate-in fade-in">
+//                 <Loader2 className="h-8 w-8 animate-spin text-school-primary" />
+//                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+//                     Checking verification status...
+//                 </p>
+//             </div>
+//         );
+//     }
+
+//     // ── Already confirmed — brief success state before redirect ──
+//     if (alreadyConfirmed) {
+//         return (
+//             <div className="flex flex-col items-center text-center py-10 gap-8 animate-in fade-in zoom-in-95">
+//                 <div className="h-28 w-28 rounded-[2.5rem] border-4 border-emerald-200 bg-emerald-50 flex items-center justify-center shadow-2xl">
+//                     <CheckCircle2 className="h-12 w-12 text-emerald-600" />
+//                 </div>
+//                 <div className="space-y-2">
+//                     <h2 className="text-3xl font-extrabold uppercase italic">Email Verified</h2>
+//                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+//                         Redirecting to login...
+//                     </p>
+//                 </div>
+//                 <Loader2 className="h-5 w-5 animate-spin text-emerald-500" />
+//             </div>
+//         );
+//     }
+
+//     // ── Default: pending confirmation UI ──
+//     return (
+//         <div className="flex flex-col items-center text-center py-10 gap-10 animate-in fade-in zoom-in-95">
+//             <div className="h-28 w-28 rounded-[2.5rem] border-4 border-emerald-200 bg-emerald-50 flex items-center justify-center shadow-2xl">
+//                 <ShieldCheck className="h-12 w-12 text-emerald-600" />
+//             </div>
+
+//             <div className="space-y-4 w-full max-w-sm">
+//                 <h2 className="text-3xl font-extrabold uppercase italic">Email Verification Pending</h2>
+//                 {!isEditing ? (
+//                     <div className="space-y-2">
+//                         <p className="text-muted-foreground text-[10px] font-bold uppercase">Click Link sent to verify email:</p>
+//                         <div className="flex items-center justify-center gap-2">
+//                             <span className="text-foreground font-extrabold underline">{confirmedEmail}</span>
+//                             <button onClick={() => setIsEditing(true)} className="p-1 hover:text-school-primary">
+//                                 <Edit3 className="h-3 w-3" />
+//                             </button>
+//                         </div>
+//                     </div>
+//                 ) : (
+//                     <form onSubmit={handleEmailUpdate} className="space-y-4">
+//                         <Input value={newEmail} onChange={e => setNewEmail(e.target.value.toLowerCase())}
+//                             className="text-center font-bold h-12 rounded-xl" type="email" required />
+//                         <div className="flex gap-2">
+//                             <button type="button" onClick={() => setIsEditing(false)}
+//                                 className="flex-1 h-10 rounded-xl bg-muted font-bold text-[10px] uppercase">Cancel</button>
+//                             <button type="submit" disabled={isUpdating}
+//                                 className="flex-1 h-10 rounded-xl bg-school-primary text-white font-bold text-[10px] uppercase">
+//                                 {isUpdating ? <Loader2 className="animate-spin mx-auto" /> : "Update"}
+//                             </button>
+//                         </div>
+//                     </form>
+//                 )}
+//             </div>
+
+//             <div className="space-y-8 w-full">
+//                 <button onClick={handleResend} disabled={isResending || isEditing}
+//                     className="text-[11px] font-extrabold uppercase flex items-center gap-2 mx-auto text-school-primary">
+//                     {isResending ? <Loader2 className="animate-spin" /> : <Zap className="h-4 w-4 fill-current" />}
+//                     Resend Verification Link
+//                 </button>
+//                 <a href="/login" className="text-[10px] font-extrabold text-muted-foreground uppercase flex items-center justify-center gap-2">
+//                     Proceed to Login <ArrowRight className="h-4 w-4" />
+//                 </a>
+//             </div>
+//         </div>
+//     );
+// }
+
+
+
+// 'use client';
+
+// import React, { useState, useEffect } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { createClient } from '@/lib/supabase/client';
+// import { toast } from 'sonner';
+// import { 
+//     Loader2, 
+//     ArrowRight, 
+//     Zap, 
+//     Edit3, 
+//     ShieldCheck, 
+//     CheckCircle2, 
+//     Info,
+//     Hash,
+//     Layers,
+//     CreditCard
+// } from 'lucide-react';
+// import { Input } from '@/components/ui/input';
+// import { getErrorMessage } from '@/lib/error-handler';
+// import { checkEmailConfirmed } from '../actions/auth';
+// import { cn } from '@/lib/utils';
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// interface ConfirmationScreenProps {
+//     email: string;
+//     paymentReference: string;
+//     planName?: string;
+//     primaryCurriculum?: string;
+//     secondaryCurriculum?: string | null;
+//     onEmailUpdate: (oldEmail: string, newEmail: string, reference: string) => Promise<{ success: boolean; error?: string }>;
+//     onEmailChange?: (newEmail: string) => void;
+// }
+
+// /**
+//  * CONFIRMATION SCREEN
+//  * Logic: Handles email verification and corrections after school/individual registration.
+//  * Visuals: Features a clear summary of the user's selected plan and curriculum.
+//  */
+// export function ConfirmationScreen({
+//     email,
+//     paymentReference,
+//     planName = 'Standard Plan',
+//     primaryCurriculum,
+//     secondaryCurriculum,
+//     onEmailUpdate,
+//     onEmailChange
+// }: ConfirmationScreenProps) {
+//     const router = useRouter();
+//     const [confirmedEmail, setConfirmedEmail] = useState<string>(email);
+//     const [isResending, setIsResending] = useState<boolean>(false);
+//     const [isEditing, setIsEditing] = useState<boolean>(false);
+//     const [newEmail, setNewEmail] = useState<string>(email);
+//     const [isUpdating, setIsUpdating] = useState<boolean>(false);
+//     const [checkingStatus, setCheckingStatus] = useState<boolean>(true);
+//     const [alreadyConfirmed, setAlreadyConfirmed] = useState<boolean>(false);
+
+//     useEffect(() => {
+//         async function checkEmailStatus(): Promise<void> {
+//             try {
+//                 const supabase = createClient();
+//                 const { data: { user } } = await supabase.auth.getUser();
+    
+//                 if (user?.email_confirmed_at) {
+//                     setAlreadyConfirmed(true);
+//                     toast.success('Email verified successfully.');
+//                     setTimeout(() => router.push('/login'), 1200);
+//                     return;
+//                 }
+    
+//                 // Verify status via server action
+//                 const { confirmed } = await checkEmailConfirmed(confirmedEmail);
+//                 if (confirmed) {
+//                     setAlreadyConfirmed(true);
+//                     toast.success('Email verified successfully.');
+//                     setTimeout(() => router.push('/login'), 1200);
+//                 } else {
+//                     setCheckingStatus(false);
+//                 }
+//             } catch (err: unknown) {
+//                 console.error('[EMAIL_STATUS_CHECK_FAULT]:', getErrorMessage(err));
+//                 setCheckingStatus(false);
+//             }
+//         }
+    
+//         checkEmailStatus();
+//     }, [confirmedEmail, router]);
+
+
+//     async function handleResend(): Promise<void> {
+//         if (!confirmedEmail) {
+//             toast.error('Email address not found.');
+//             return;
+//         }
+//         setIsResending(true);
+//         try {
+//             const supabase = createClient();
+//             const { error } = await supabase.auth.resend({
+//                 type: 'signup',
+//                 email: confirmedEmail,
+//                 options: { emailRedirectTo: `${window.location.origin}/confirm` },
+//             });
+//             if (error) throw error;
+//             toast.success('A new verification link has been sent.');
+//         } catch (err: unknown) {
+//             toast.error(getErrorMessage(err) || 'Too many attempts. Please try again in an hour.');
+//         } finally {
+//             setIsResending(false);
+//         }
+//     }
+
+//     async function handleEmailUpdate(e: React.FormEvent): Promise<void> {
+//         e.preventDefault();
+//         setIsUpdating(true);
+//         try {
+//             const res: { success: boolean; error?: string } = await onEmailUpdate(confirmedEmail, newEmail, paymentReference);
+//             if (res.success) {
+//                 setConfirmedEmail(newEmail);
+//                 onEmailChange?.(newEmail);
+//                 setIsEditing(false);
+//                 toast.success('Email updated. Please check your new inbox.');
+//             } else {
+//                 toast.error(res.error || 'Could not update email.');
+//             }
+//         } catch (err: unknown) {
+//             toast.error(getErrorMessage(err));
+//         } finally {
+//             setIsUpdating(false);
+//         }
+//     }
+
+//     if (checkingStatus) {
+//         return (
+//             <div className="flex flex-col items-center justify-center py-20 gap-6 animate-in fade-in">
+//                 <Loader2 className="h-8 w-8 animate-spin text-school-primary" />
+//                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+//                     Checking verification status...
+//                 </p>
+//             </div>
+//         );
+//     }
+
+//     if (alreadyConfirmed) {
+//         return (
+//             <div className="flex flex-col items-center text-center py-10 gap-8 animate-in fade-in zoom-in-95">
+//                 <div className="h-28 w-28 rounded-[2.5rem] border-4 border-emerald-200 bg-emerald-50 flex items-center justify-center shadow-2xl">
+//                     <CheckCircle2 className="h-12 w-12 text-emerald-600" />
+//                 </div>
+//                 <div className="space-y-2">
+//                     <h2 className="text-3xl font-extrabold uppercase italic tracking-tighter">Email Verified</h2>
+//                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+//                         Redirecting to login...
+//                     </p>
+//                 </div>
+//                 <Loader2 className="h-5 w-5 animate-spin text-emerald-500" />
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="flex flex-col items-center text-center py-6 gap-8 animate-in fade-in zoom-in-95">
+            
+//             {/* ── STATUS ICON ── */}
+//             <div className="relative">
+//                 <div className="h-24 w-24 rounded-[2rem] border-4 border-amber-200 bg-amber-50 flex items-center justify-center shadow-xl">
+//                     <ShieldCheck className="h-10 w-10 text-amber-600" />
+//                 </div>
+//             </div>
+
+//             <div className="space-y-3 w-full max-w-sm">
+//                 <h2 className="text-3xl font-extrabold uppercase italic tracking-tighter leading-none">Confirm Your Email</h2>
+//                 <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.15em] px-6">
+//                     We have sent a verification link to your email address to complete your setup.
+//                 </p>
+//             </div>
+
+//             {/* ── SELECTION SUMMARY ── */}
+//             <div className="w-full max-w-sm bg-surface border border-border rounded-2xl p-5 text-left space-y-4 shadow-sm">
+//                 <div className="flex items-center justify-between border-b border-border pb-3">
+//                     <span className="text-[9px] font-bold uppercase text-muted-foreground tracking-widest">Subscription Plan</span>
+//                     <span className="text-[10px] font-black uppercase text-school-primary">
+//                         {planName}
+//                     </span>
+//                 </div>
+                
+//                 <div className="space-y-4">
+//                     <div className="flex items-start gap-3">
+//                         <Layers className="h-4 w-4 text-muted-foreground/40 mt-0.5" />
+//                         <div>
+//                             <p className="text-[8px] font-bold uppercase text-muted-foreground leading-none mb-1">Selected Curriculum</p>
+//                             <p className="text-[11px] font-extrabold uppercase italic text-foreground">
+//                                 {primaryCurriculum}
+//                                 {secondaryCurriculum && <span className="text-muted-foreground font-medium ml-1"> & {secondaryCurriculum}</span>}
+//                             </p>
+//                         </div>
+//                     </div>
+//                     <div className="flex items-start gap-3">
+//                         <CreditCard className="h-4 w-4 text-muted-foreground/40 mt-0.5" />
+//                         <div>
+//                             <p className="text-[8px] font-bold uppercase text-muted-foreground leading-none mb-1">Payment Reference</p>
+//                             <p className="text-[10px] font-mono text-muted-foreground">
+//                                 {paymentReference}
+//                             </p>
+//                         </div>
+//                     </div>
+//                 </div>
+//             </div>
+
+//             {/* ── EMAIL ADDRESS MANAGEMENT ── */}
+//             <div className="w-full max-w-sm space-y-4">
+//                 {!isEditing ? (
+//                     <div className="bg-card border border-border/50 rounded-xl p-4 flex items-center justify-between">
+//                         <div className="text-left">
+//                             <p className="text-[8px] font-bold uppercase text-muted-foreground tracking-widest mb-1">Email Address</p>
+//                             <p className="text-sm font-extrabold italic text-foreground underline decoration-school-primary/30 underline-offset-4">
+//                                 {confirmedEmail}
+//                             </p>
+//                         </div>
+//                         <button 
+//                             onClick={() => setIsEditing(true)} 
+//                             className="h-10 w-10 flex items-center justify-center rounded-lg hover:bg-school-primary/10 text-muted-foreground hover:text-school-primary transition-colors"
+//                         >
+//                             <Edit3 className="h-4 w-4" />
+//                         </button>
+//                     </div>
+//                 ) : (
+//                     <form onSubmit={handleEmailUpdate} className="space-y-3 p-1 animate-in slide-in-from-top-2">
+//                         <Input 
+//                             value={newEmail} 
+//                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEmail(e.target.value.toLowerCase())}
+//                             className="text-center font-bold h-14 rounded-xl border-school-primary/50 bg-surface text-sm" 
+//                             type="email" 
+//                             required 
+//                             autoFocus
+//                         />
+//                         <div className="flex gap-2">
+//                             <button 
+//                                 type="button" 
+//                                 onClick={() => setIsEditing(false)}
+//                                 className="flex-1 h-12 rounded-xl bg-muted font-bold text-[10px] uppercase tracking-widest"
+//                             >
+//                                 Cancel
+//                             </button>
+//                             <button 
+//                                 type="submit" 
+//                                 disabled={isUpdating}
+//                                 className="flex-1 h-12 rounded-xl bg-school-primary text-white font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-school-primary/20 transition-all active:scale-95"
+//                             >
+//                                 {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "Update Email"}
+//                             </button>
+//                         </div>
+//                     </form>
+//                 )}
+//             </div>
+
+//             {/* ── FOOTER ACTIONS ── */}
+//             <div className="space-y-8 w-full">
+//                 <button 
+//                     onClick={handleResend} 
+//                     disabled={isResending || isEditing}
+//                     className={cn(
+//                         "text-[11px] font-extrabold uppercase flex items-center gap-2 mx-auto transition-all active:scale-95",
+//                         isResending ? "text-muted-foreground" : "text-school-primary hover:brightness-110"
+//                     )}
+//                 >
+//                     {isResending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4 fill-current" />}
+//                     Resend Verification Link
+//                 </button>
+                
+//                 <div className="pt-4 border-t border-border w-full max-w-xs mx-auto">
+//                     <a href="/login" className="text-[10px] font-extrabold text-muted-foreground uppercase flex items-center justify-center gap-2 group">
+//                         Proceed to Login <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+//                     </a>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { useOnboardingStore, CurriculumTemplate } from '@/store/onboardingStore';
 import { toast } from 'sonner';
-import { Loader2, ArrowRight, Zap, Edit3, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { 
+    Loader2, 
+    ArrowRight, 
+    Zap, 
+    Edit3, 
+    ShieldCheck, 
+    CheckCircle2, 
+    Layers,
+    CreditCard
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { getErrorMessage } from '@/lib/error-handler';
 import { checkEmailConfirmed } from '../actions/auth';
+import { cn } from '@/lib/utils';
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
 
 interface ConfirmationScreenProps {
     email: string;
@@ -1229,6 +1750,11 @@ interface ConfirmationScreenProps {
     onEmailChange?: (newEmail: string) => void;
 }
 
+/**
+ * CONFIRMATION SCREEN
+ * Logic: Resolves curriculum names from IDs stored in Zustand for display.
+ * Visuals: Simplified terms for end-user clarity (School, Payment, Curriculum).
+ */
 export function ConfirmationScreen({
     email,
     paymentReference,
@@ -1236,84 +1762,62 @@ export function ConfirmationScreen({
     onEmailChange
 }: ConfirmationScreenProps) {
     const router = useRouter();
-    const [confirmedEmail, setConfirmedEmail] = useState(email);
-    const [isResending, setIsResending] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [newEmail, setNewEmail] = useState(email);
-    const [isUpdating, setIsUpdating] = useState(false);
+    
+    // Registry Context from Zustand Store
+    const { curricula, schoolData, adminData, paymentData } = useOnboardingStore();
+    
+    const [confirmedEmail, setConfirmedEmail] = useState<string>(email);
+    const [isResending, setIsResending] = useState<boolean>(false);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [newEmail, setNewEmail] = useState<string>(email);
+    const [isUpdating, setIsUpdating] = useState<boolean>(false);
+    const [checkingStatus, setCheckingStatus] = useState<boolean>(true);
+    const [alreadyConfirmed, setAlreadyConfirmed] = useState<boolean>(false);
 
-    // ── Checking auth status on mount ──
-    const [checkingStatus, setCheckingStatus] = useState(true);
-    const [alreadyConfirmed, setAlreadyConfirmed] = useState(false);
+    // ── CURRICULUM RESOLUTION LOGIC ──
+    // Determine the Primary ID (Check School first, then Individual Admin Data)
+    const primaryId: string | undefined = schoolData?.curriculumId 
+    const secondaryId: string | null | undefined = schoolData?.secondaryCurriculumId;
 
-    // useEffect(() => {
-    //     async function checkEmailStatus() {
-    //         try {
-    //             const supabase = createClient();
-
-    //             // Refresh the session first — picks up confirmation that
-    //             // happened in a different tab/device since this page loaded
-    //             const { data: { user }, error } = await supabase.auth.getUser();
-
-    //             if (error) {
-    //                 console.error('[EMAIL_STATUS_CHECK_FAULT]:', error);
-    //                 setCheckingStatus(false);
-    //                 return;
-    //             }
-
-    //             if (user?.email_confirmed_at) {
-    //                 setAlreadyConfirmed(true);
-    //                 toast.success('Email already verified.');
-    //                 // Small delay so the success state is visible before redirect
-    //                 setTimeout(() => router.push('/login'), 1200);
-    //             } else {
-    //                 setCheckingStatus(false);
-    //             }
-    //         } catch (err) {
-    //             console.error('[EMAIL_STATUS_CHECK_FAULT]:', getErrorMessage(err));
-    //             setCheckingStatus(false);
-    //         }
-    //     }
-
-    //     checkEmailStatus();
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []);
+    // Map IDs to Names from the curricula master list
+    const primaryName: string = curricula.find((c: CurriculumTemplate) => c.id === primaryId)?.name || 'Primary Curriculum';
+    const secondaryName: string | null = secondaryId ? (curricula.find((c: CurriculumTemplate) => c.id === secondaryId)?.name || null) : null;
+    
+    const planLabel: string = paymentData?.plan ? paymentData.plan.charAt(0).toUpperCase() + paymentData.plan.slice(1) + " Plan" : "Active Subscription";
 
     useEffect(() => {
-        async function checkEmailStatus() {
+        async function checkEmailStatus(): Promise<void> {
             try {
                 const supabase = createClient();
                 const { data: { user } } = await supabase.auth.getUser();
     
                 if (user?.email_confirmed_at) {
                     setAlreadyConfirmed(true);
-                    toast.success('Email already verified.');
+                    toast.success('Email verified successfully.');
                     setTimeout(() => router.push('/login'), 1200);
                     return;
                 }
     
-                // No active session — check via server action using the email itself
                 const { confirmed } = await checkEmailConfirmed(confirmedEmail);
                 if (confirmed) {
                     setAlreadyConfirmed(true);
-                    toast.success('Email already verified.');
+                    toast.success('Email verified successfully.');
                     setTimeout(() => router.push('/login'), 1200);
                 } else {
                     setCheckingStatus(false);
                 }
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error('[EMAIL_STATUS_CHECK_FAULT]:', getErrorMessage(err));
                 setCheckingStatus(false);
             }
         }
     
         checkEmailStatus();
-    }, [confirmedEmail]);
+    }, [confirmedEmail, router]);
 
-
-    async function handleResend() {
+    async function handleResend(): Promise<void> {
         if (!confirmedEmail) {
-            toast.error('No email on file. Please refresh and try again.');
+            toast.error('Email address not found.');
             return;
         }
         setIsResending(true);
@@ -1324,40 +1828,35 @@ export function ConfirmationScreen({
                 email: confirmedEmail,
                 options: { emailRedirectTo: `${window.location.origin}/confirm` },
             });
-            if (error) {
-                console.error('[RESEND_FAULT]:', error);
-                throw error;
-            }
-            toast.success('Security link re-transmitted.');
+            if (error) throw error;
+            toast.success('A new verification link has been sent.');
         } catch (err: unknown) {
-            console.error('[RESEND_CATCH]:', err);
-            toast.error(getErrorMessage(err) || 'Failed to resend. You may be rate-limited (3/hr).');
+            toast.error(getErrorMessage(err) || 'Rate limit reached. Please wait a while.');
         } finally {
             setIsResending(false);
         }
     }
 
-    async function handleEmailUpdate(e: React.FormEvent) {
+    async function handleEmailUpdate(e: React.FormEvent): Promise<void> {
         e.preventDefault();
         setIsUpdating(true);
         try {
-            const res = await onEmailUpdate(confirmedEmail, newEmail, paymentReference);
+            const res: { success: boolean; error?: string } = await onEmailUpdate(confirmedEmail, newEmail, paymentReference);
             if (res.success) {
                 setConfirmedEmail(newEmail);
                 onEmailChange?.(newEmail);
                 setIsEditing(false);
-                toast.success('Identity updated. New link dispatched.');
+                toast.success('Email updated. Please check your new inbox.');
             } else {
-                toast.error(res.error || 'Update failed.');
+                toast.error(res.error || 'Could not update email.');
             }
-        } catch (err) {
+        } catch (err: unknown) {
             toast.error(getErrorMessage(err));
         } finally {
             setIsUpdating(false);
         }
     }
 
-    // ── Loading state while checking confirmation status ──
     if (checkingStatus) {
         return (
             <div className="flex flex-col items-center justify-center py-20 gap-6 animate-in fade-in">
@@ -1369,7 +1868,6 @@ export function ConfirmationScreen({
         );
     }
 
-    // ── Already confirmed — brief success state before redirect ──
     if (alreadyConfirmed) {
         return (
             <div className="flex flex-col items-center text-center py-10 gap-8 animate-in fade-in zoom-in-95">
@@ -1377,7 +1875,7 @@ export function ConfirmationScreen({
                     <CheckCircle2 className="h-12 w-12 text-emerald-600" />
                 </div>
                 <div className="space-y-2">
-                    <h2 className="text-3xl font-extrabold uppercase italic">Email Verified</h2>
+                    <h2 className="text-3xl font-extrabold uppercase italic tracking-tighter">Email Verified</h2>
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                         Redirecting to login...
                     </p>
@@ -1387,50 +1885,119 @@ export function ConfirmationScreen({
         );
     }
 
-    // ── Default: pending confirmation UI ──
     return (
-        <div className="flex flex-col items-center text-center py-10 gap-10 animate-in fade-in zoom-in-95">
-            <div className="h-28 w-28 rounded-[2.5rem] border-4 border-emerald-200 bg-emerald-50 flex items-center justify-center shadow-2xl">
-                <ShieldCheck className="h-12 w-12 text-emerald-600" />
+        <div className="flex flex-col items-center text-center py-6 gap-8 animate-in fade-in zoom-in-95">
+            
+            {/* ── STATUS ICON ── */}
+            <div className="h-24 w-24 rounded-[2rem] border-4 border-amber-200 bg-amber-50 flex items-center justify-center shadow-xl">
+                <ShieldCheck className="h-10 w-10 text-amber-600" />
             </div>
 
-            <div className="space-y-4 w-full max-w-sm">
-                <h2 className="text-3xl font-extrabold uppercase italic">Activation Pending</h2>
-                {!isEditing ? (
-                    <div className="space-y-2">
-                        <p className="text-muted-foreground text-[10px] font-bold uppercase">Link dispatched to:</p>
-                        <div className="flex items-center justify-center gap-2">
-                            <span className="text-foreground font-extrabold underline">{confirmedEmail}</span>
-                            <button onClick={() => setIsEditing(true)} className="p-1 hover:text-school-primary">
-                                <Edit3 className="h-3 w-3" />
-                            </button>
+            <div className="space-y-3 w-full max-w-sm">
+                <h2 className="text-3xl font-extrabold uppercase italic tracking-tighter leading-none">Confirm Your Email</h2>
+                <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.15em] px-6">
+                    Check your inbox for the activation link to start using your account.
+                </p>
+            </div>
+
+            {/* ── SELECTION SUMMARY ── */}
+            <div className="w-full max-w-sm bg-surface border border-border rounded-2xl p-5 text-left space-y-4 shadow-sm">
+                <div className="flex items-center justify-between border-b border-border pb-3">
+                    <span className="text-[9px] font-bold uppercase text-muted-foreground tracking-widest">Subscription Plan</span>
+                    <span className="text-[10px] font-black uppercase text-school-primary">
+                        {planLabel}
+                    </span>
+                </div>
+                
+                <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                        <Layers className="h-4 w-4 text-muted-foreground/40 mt-0.5" />
+                        <div>
+                            <p className="text-[8px] font-bold uppercase text-muted-foreground leading-none mb-1">Assigned Curriculum</p>
+                            <p className="text-[11px] font-extrabold uppercase italic text-foreground">
+                                {primaryName}
+                                {secondaryName && <span className="text-muted-foreground font-medium ml-1"> & {secondaryName}</span>}
+                            </p>
                         </div>
                     </div>
+                    <div className="flex items-start gap-3">
+                        <CreditCard className="h-4 w-4 text-muted-foreground/40 mt-0.5" />
+                        <div>
+                            <p className="text-[8px] font-bold uppercase text-muted-foreground leading-none mb-1">Payment Reference</p>
+                            <p className="text-[10px] font-mono text-muted-foreground">
+                                {paymentReference}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* ── EMAIL ADDRESS MANAGEMENT ── */}
+            <div className="w-full max-w-sm space-y-4">
+                {!isEditing ? (
+                    <div className="bg-card border border-border/50 rounded-xl p-4 flex items-center justify-between transition-all hover:border-school-primary/20">
+                        <div className="text-left">
+                            <p className="text-[8px] font-bold uppercase text-muted-foreground tracking-widest mb-1">Registered Email</p>
+                            <p className="text-sm font-extrabold italic text-foreground underline decoration-school-primary/30 underline-offset-4">
+                                {confirmedEmail}
+                            </p>
+                        </div>
+                        <button 
+                            onClick={() => setIsEditing(true)} 
+                            className="h-10 w-10 flex items-center justify-center rounded-lg hover:bg-school-primary/10 text-muted-foreground hover:text-school-primary transition-colors"
+                        >
+                            <Edit3 className="h-4 w-4" />
+                        </button>
+                    </div>
                 ) : (
-                    <form onSubmit={handleEmailUpdate} className="space-y-4">
-                        <Input value={newEmail} onChange={e => setNewEmail(e.target.value.toLowerCase())}
-                            className="text-center font-bold h-12 rounded-xl" type="email" required />
+                    <form onSubmit={handleEmailUpdate} className="space-y-3 p-1 animate-in slide-in-from-top-2">
+                        <Input 
+                            value={newEmail} 
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEmail(e.target.value.toLowerCase())}
+                            className="text-center font-bold h-14 rounded-xl border-school-primary/50 bg-surface text-sm" 
+                            type="email" 
+                            required 
+                            autoFocus
+                        />
                         <div className="flex gap-2">
-                            <button type="button" onClick={() => setIsEditing(false)}
-                                className="flex-1 h-10 rounded-xl bg-muted font-bold text-[10px] uppercase">Cancel</button>
-                            <button type="submit" disabled={isUpdating}
-                                className="flex-1 h-10 rounded-xl bg-school-primary text-white font-bold text-[10px] uppercase">
-                                {isUpdating ? <Loader2 className="animate-spin mx-auto" /> : "Update"}
+                            <button 
+                                type="button" 
+                                onClick={() => setIsEditing(false)}
+                                className="flex-1 h-12 rounded-xl bg-muted font-bold text-[10px] uppercase tracking-widest"
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                type="submit" 
+                                disabled={isUpdating}
+                                className="flex-1 h-12 rounded-xl bg-school-primary text-white font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-school-primary/20 transition-all active:scale-95"
+                            >
+                                {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "Update Email"}
                             </button>
                         </div>
                     </form>
                 )}
             </div>
 
+            {/* ── FOOTER ACTIONS ── */}
             <div className="space-y-8 w-full">
-                <button onClick={handleResend} disabled={isResending || isEditing}
-                    className="text-[11px] font-extrabold uppercase flex items-center gap-2 mx-auto text-school-primary">
-                    {isResending ? <Loader2 className="animate-spin" /> : <Zap className="h-4 w-4 fill-current" />}
-                    Re-transmit Link
+                <button 
+                    onClick={handleResend} 
+                    disabled={isResending || isEditing}
+                    className={cn(
+                        "text-[11px] font-extrabold uppercase flex items-center gap-2 mx-auto transition-all active:scale-95",
+                        isResending ? "text-muted-foreground" : "text-school-primary hover:brightness-110"
+                    )}
+                >
+                    {isResending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4 fill-current" />}
+                    Resend Verification Link
                 </button>
-                <a href="/login" className="text-[10px] font-extrabold text-muted-foreground uppercase flex items-center justify-center gap-2">
-                    Access Terminal <ArrowRight className="h-4 w-4" />
-                </a>
+                
+                <div className="pt-4 border-t border-border w-full max-w-xs mx-auto">
+                    <a href="/login" className="text-[10px] font-extrabold text-muted-foreground uppercase flex items-center justify-center gap-2 group">
+                        Proceed to Login <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                    </a>
+                </div>
             </div>
         </div>
     );

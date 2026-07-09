@@ -805,10 +805,10 @@ export function PaymentStep() {
                     <ShieldCheck className="h-7 w-7 text-school-primary" />
                 </div>
                 <h1 className="text-2xl md:text-3xl font-extrabold text-foreground uppercase italic tracking-tighter leading-none">
-                    License Tier
+                    Payment
                 </h1>
                 <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest opacity-70 italic">
-                    Select institutional hub capacity
+                    Select your payment plan
                 </p>
             </div>
 
@@ -916,7 +916,7 @@ export function PaymentStep() {
                     ) : (
                         <div className="flex items-center justify-center gap-3">
                             <CreditCard className="h-4 w-4" />
-                            <span>Finalize Hub Sync</span>
+                            <span>Proceed to Payment</span>
                             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </div>
                     )}

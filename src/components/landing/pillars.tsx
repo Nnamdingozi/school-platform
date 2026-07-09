@@ -353,7 +353,7 @@ const pillars = [
     icon: School,
     title: "Institutional Core",
     description:
-      "Centralized governance for modern schools. Provision classrooms, manage staff registries, and monitor school-wide telemetry.",
+      "Unified governance for academic ecosystems. Orchestrate classroom provisioning, synchronize personnel registries, and monitor institutional diagnostics through a centralized command interface.",
     features: [
       { icon: ShieldCheck, text: "Role-Based Access Logic" },
       { icon: BarChart3, text: "Institutional Analytics" },
@@ -362,12 +362,12 @@ const pillars = [
   {
     tier: "Tier 01",
     icon: Cpu,
-    title: "Synthesis Engine",
+    title: "Curriculum-Synchronized Synthesis ",
     description:
-      "AI-powered pedagogical tools for instructors. Generate syllabus-aligned modules, automated assessments, and video scripts.",
+      "Intelligent instructional logic for professional faculty. Synthesize curriculum-synchronized modules, rigorous evaluative assessments, and structured academic narratives.",
     features: [
       { icon: Zap, text: "AI Content Synthesis" },
-      { icon: ClipboardCheck, text: "Automated Grading Node" },
+      { icon: ClipboardCheck, text: "Automated Grading Module" },
     ],
   },
   {

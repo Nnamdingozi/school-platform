@@ -925,7 +925,7 @@ export function OnboardingShell({ initialCurricula, initialPlans }: OnboardingSh
                     <div className="absolute inset-0 blur-xl bg-school-primary-50 -z-10" />
                 </div>
                 <p className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-muted-foreground animate-pulse italic">
-                    Initializing_Registry_Terminal...
+                    Initializing School Hub...
                 </p>
             </div>
         );
@@ -993,7 +993,7 @@ export function OnboardingShell({ initialCurricula, initialPlans }: OnboardingSh
                     </div>
                     <div className="space-y-1">
                         <h2 className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 italic">
-                            Institutional Hub Sealed
+                            Registration Complete
                         </h2>
                         <div className="flex items-center gap-2">
                              <ShieldCheck className="h-3 w-3 text-emerald-500/40" />

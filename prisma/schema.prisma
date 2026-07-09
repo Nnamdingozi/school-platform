@@ -2,102 +2,104 @@ generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
-  
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")  // 👈 add this line
+  directUrl = env("DIRECT_URL") // 👈 add this line
 }
 
 model School {
-  id           String     @id @default(uuid())
-  name         String
-  curriculumId String
-  curriculum   Curriculum @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
+  id                    String      @id @default(uuid())
+  name                  String
+  curriculumId          String
+  curriculum            Curriculum  @relation("SchoolPrimaryCurriculum", fields: [curriculumId], references: [id])
+  secondaryCurriculumId String?
+  secondaryCurriculum   Curriculum? @relation("SchoolSecondaryCurriculum", fields: [secondaryCurriculumId], references: [id])
 
-  whatsappCredits Int @default(0)
-
-    // Branding
-  primaryColor   String @default("#f59e0b")
-  secondaryColor String @default("#1e293b")
-
-  // Relations
-  users            Profile[]
-  classes          Class[]
-  curricula        Curriculum[]      @relation("SchoolCurriculum")
-  grades           Grade[]
-  terms            Term[]
-  subjects         Subject[]
-  topics           Topic[]
-  classEnrollments ClassEnrollment[]
-  feedbacks        Feedback[]
-  gradeSubjects    GradeSubject[]
-  schoolLessons    SchoolLesson[]
-
-  ParentStudent   ParentStudent[]
-  subscription    Subscription?
-  activityLogs    ActivityLog[]
-  assessments     Assessment[]
-  studentSubjects StudentSubject[]
-
+  // Existing Relations
+  whatsappCredits          Int                       @default(0)
+  primaryColor             String                    @default("#f59e0b")
+  secondaryColor           String                    @default("#1e293b")
+  users                    Profile[]
+  classes                  Class[]
+  curricula                Curriculum[]              @relation("SchoolCurriculum")
+  grades                   Grade[]
+  terms                    Term[]
+  subjects                 Subject[]
+  topics                   Topic[]
+  classEnrollments         ClassEnrollment[]
+  feedbacks                Feedback[]
+  gradeSubjects            GradeSubject[]
+  schoolLessons            SchoolLesson[]
+  ParentStudent            ParentStudent[]
+  subscription             Subscription?
+  activityLogs             ActivityLog[]
+  assessments              Assessment[]
+  studentSubjects          StudentSubject[]
   creditTransactions       CreditTransaction[]
   subscriptionTransactions SubscriptionTransaction[]
-
-  // ✅ ADD THIS
-  questionOverrides QuestionOverride[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Exam          Exam[]
-  GlobalLesson  GlobalLesson[]
-  examQuestions ExamQuestion[]
-
-  invitations  Invitation[]
+  questionOverrides        QuestionOverride[]
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  Exam                     Exam[]
+  GlobalLesson             GlobalLesson[]
+  examQuestions            ExamQuestion[]
+  invitations              Invitation[]
+  books                    Book[]
 }
 
 model Profile {
-  id           String  @id @default(uuid())
-  email        String
-  name         String?
-  role         Role
-  phone        String?
-  schoolId     String?
-  curriculumId String
-  theme  String  @default("light")
-
-
-
+  id        String   @id @default(uuid())
+  email     String
+  name      String?
+  role      Role
+  phone     String?
+  schoolId  String?
+  theme     String   @default("light")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
-  school     School?    @relation(fields: [schoolId], references: [id])
-  curriculum Curriculum @relation(fields: [curriculumId], references: [id])
+  // 1. Primary Curriculum Relation
+  curriculumId String
+  curriculum   Curriculum @relation("ProfilePrimaryCurriculum", fields: [curriculumId], references: [id], map: "profile_primary_curriculum_fkey")
 
-  // Classes
+  // 2. Secondary Curriculum Relation (Optional)
+  secondaryCurriculumId String?
+  secondaryCurriculum   Curriculum? @relation("ProfileSecondaryCurriculum", fields: [secondaryCurriculumId], references: [id])
+
+  // 3. General Curriculum Relation (Satisfies Curriculum.users)
+  // We use the same curriculumId but map it to a unique foreign key name
+  curriculumGeneral Curriculum @relation("UserCurriculum", fields: [curriculumId], references: [id], map: "profile_general_curriculum_fkey")
+
+  // Books relation
+  ownedBooks Book[] @relation("UserOwnedBooks")
+
+  // School Relation
+  school School? @relation(fields: [schoolId], references: [id])
+
+  // Teaching & Enrollment Relations
   taughtClasses    Class[]           @relation("TeacherClasses")
   classEnrollments ClassEnrollment[]
   studentSubjects  StudentSubject[]
 
-  // Assessments
+  // Assessment Relations
   assessments Assessment[] @relation("StudentAssessments")
 
-  // Grade subjects
+  // Grade Subject Relations
   gradeSubjectsTaught GradeSubject[] @relation("TeacherGradeSubjects")
   selectedSubjects    GradeSubject[] @relation("UserSelectedSubjects")
   ownedGradeSubjects  GradeSubject[] @relation("ProfileToGradeSubject")
 
-  // Parent ↔ Student
+  // Notification & Log Relations
+  notifications Notification[]
+  subscription  Subscription?  @relation("ProfileSubscription")
+  activityLogs  ActivityLog[]
+  createdExams  Exam[]         @relation("ExamCreator")
+
+  // Parent ↔ Student Relations
   ParentStudent_ParentStudent_parentIdToprofiles  ParentStudent[] @relation("ParentStudent_parentIdToprofiles")
   ParentStudent_ParentStudent_studentIdToprofiles ParentStudent[] @relation("ParentStudent_studentIdToprofiles")
-
-  // Notifications
-  notifications Notification[]
-
-  subscription Subscription? @relation("ProfileSubscription")
-  activityLogs ActivityLog[]
-  createdExams Exam[]        @relation("ExamCreator")
 
   @@unique([schoolId, email])
   @@index([schoolId])
@@ -125,20 +127,29 @@ model ParentStudent {
 // ---------------- Curriculum Hierarchy ----------------
 
 model Curriculum {
-  id             String    @id @default(uuid())
-  name           String
-  type           String    @default("generic") // 'nigerian' | 'british' | 'american' | 'generic'
-  schoolId       String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  subjectLabel   String    @default("Subject")
-  termLabel      String    @default("Term")
-  yearLabel      String    @default("Year")
-  school         School?   @relation("SchoolCurriculum", fields: [schoolId], references: [id])
-  grades         Grade[]
-  primarySchools School[]  @relation("SchoolPrimaryCurriculum")
-  subjects       Subject[]
-  users          Profile[]
+  id           String   @id @default(uuid())
+  name         String
+  type         String   @default("generic")
+  schoolId     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  subjectLabel String   @default("Subject")
+  termLabel    String   @default("Term")
+  yearLabel    String   @default("Year")
+
+  // Institutional Relations
+  primarySchools   School[] @relation("SchoolPrimaryCurriculum")
+  secondarySchools School[] @relation("SchoolSecondaryCurriculum")
+  school           School?  @relation("SchoolCurriculum", fields: [schoolId], references: [id])
+
+  // Individual/Profile Relations
+  primaryProfiles   Profile[] @relation("ProfilePrimaryCurriculum")
+  secondaryProfiles Profile[] @relation("ProfileSecondaryCurriculum")
+  users             Profile[] @relation("UserCurriculum") // Links to curriculumGeneral in Profile
+
+  // Content Hierarchy Relations
+  grades   Grade[]
+  subjects Subject[]
 
   @@index([schoolId])
 }
@@ -162,6 +173,29 @@ model Grade {
   @@unique([curriculumId, level])
   @@index([schoolId])
   @@index([curriculumId])
+}
+
+model Book {
+  id             String       @id @default(uuid())
+  title          String
+  author         String?
+  gradeSubjectId String
+  gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id])
+
+  // Optional School (for School-based library)
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  // Optional Profile (for Individual Learner's personal library)
+  profileId String?
+  profile   Profile? @relation("UserOwnedBooks", fields: [profileId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([gradeSubjectId])
+  @@index([schoolId])
+  @@index([profileId])
 }
 
 model Term {
@@ -266,13 +300,13 @@ model StudentSubject {
   id             String           @id @default(uuid())
   studentId      String?
   gradeSubjectId String
-  schoolId       String?          // ← make optional
+  schoolId       String? // ← make optional
   status         EnrollmentStatus @default(APPROVED)
   isCompulsory   Boolean          @default(true)
 
-  student      Profile?      @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  gradeSubject GradeSubject  @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
-  school       School?       @relation(fields: [schoolId], references: [id]) // ← also optional
+  student      Profile?     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  gradeSubject GradeSubject @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
+  school       School?      @relation(fields: [schoolId], references: [id]) // ← also optional
 
   @@unique([schoolId, studentId, gradeSubjectId])
 }
@@ -524,16 +558,15 @@ model ExamQuestion {
   @@index([examId])
 }
 
-
 model ScannedPaper {
   id        String   @id @default(cuid())
-  subject   String   // e.g., "Mathematics"
-  year      Int      // e.g., 2023
-  type      String   // e.g., "WAEC" or "JAMB"
-  questions Json     // [{ text, answer, explanation, marks }]
-  schoolId  String?  // Tier 2 Isolation
-  creatorId String   // Tier 3 Ownership
-  imageUrl  String?  // Link to GCS
+  subject   String // e.g., "Mathematics"
+  year      Int // e.g., 2023
+  type      String // e.g., "WAEC" or "JAMB"
+  questions Json // [{ text, answer, explanation, marks }]
+  schoolId  String? // Tier 2 Isolation
+  creatorId String // Tier 3 Ownership
+  imageUrl  String? // Link to GCS
   createdAt DateTime @default(now())
 }
 
@@ -578,6 +611,8 @@ model GradeSubject {
   teachers        Profile[]        @relation("TeacherGradeSubjects")
   selectedByUsers Profile[]        @relation("UserSelectedSubjects")
   studentSubjects StudentSubject[]
+
+  books Book[]
 
   @@unique([schoolId, gradeId, subjectId])
 }
@@ -632,11 +667,12 @@ model Invitation {
   createdAt    DateTime  @default(now())
   curriculumId String
 
-  school       School    @relation(fields: [schoolId], references: [id])
+  school School @relation(fields: [schoolId], references: [id])
 
   @@index([token])
   @@index([email])
 }
+
 model ActivityLog {
   id          String       @id @default(uuid())
   schoolId    String? // 👈 Change to optional (String?)
