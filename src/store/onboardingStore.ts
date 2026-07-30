@@ -1227,6 +1227,166 @@
 
 
 
+// import { create } from 'zustand';
+// import { persist } from 'zustand/middleware';
+// import { SubscriptionPlanItem } from '@/app/actions/subscription.actions';
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// export type PlanType = 'starter' | 'pro' | 'enterprise' | 'individual';
+// export type PaymentProvider = 'paystack' | 'stripe' | null;
+// export type OnboardingPaymentStatus = 'pending' | 'paid';
+
+// export interface CurriculumTemplate {
+//     id: string;
+//     name: string;
+//     yearLabel: string;
+//     termLabel: string;
+// }
+
+// export interface OnboardingAdminProfile {
+//     name: string;
+//     email: string;
+//     password?: string;
+//     phone?: string;
+// }
+
+// export interface OnboardingPaymentProtocol {
+//     provider: PaymentProvider;
+//     plan: PlanType;
+//     reference: string;
+//     verified: boolean;
+// }
+
+// export interface InstitutionalHubData {
+//     schoolName: string;
+//     curriculumId: string;
+//     secondaryCurriculumId: string | null;
+//     primaryColor: string;
+//     secondaryColor: string;
+//     country: string;
+//     timezone: string;
+// }
+
+// export interface OnboardingState {
+//     // ── Hub State ──
+//     step: number;
+//     adminData: OnboardingAdminProfile | null;
+//     schoolData: InstitutionalHubData | null;
+//     paymentData: OnboardingPaymentProtocol | null;
+    
+//     // ── Global Tier-1 Data ──
+//     curricula: CurriculumTemplate[]; 
+//     plans: SubscriptionPlanItem[];
+
+//     // ── Status Flags ──
+//     isProvisioned: boolean;
+//     confirmedEmail: string | null;
+//     isLoading: boolean;
+//     error: string | null;
+//     paymentStatus: OnboardingPaymentStatus;
+
+//     // ── Registry Actions ──
+//     setStep: (step: number) => void;
+//     nextStep: () => void;
+//     prevStep: () => void;
+//     setAdminData: (data: OnboardingAdminProfile) => void;
+//     setSchoolData: (data: InstitutionalHubData) => void;
+//     setPaymentData: (data: OnboardingPaymentProtocol) => void;
+//     setCurricula: (curricula: CurriculumTemplate[]) => void;
+//     setPlans: (plans: SubscriptionPlanItem[]) => void;
+//     setProvisioned: (value: boolean) => void;
+//     setConfirmedEmail: (email: string | null) => void;
+//     setLoading: (loading: boolean) => void;
+//     setError: (error: string | null) => void;
+    
+//     /**
+//      * RESET PROTOCOL
+//      * Rule 11: Purges the entire local onboarding buffer to allow a clean initialization.
+//      */
+//     reset: () => void;
+// }
+
+// export const useOnboardingStore = create<OnboardingState>()(
+//     persist(
+//         (set, get) => ({
+//             step: 1,
+//             adminData: null,
+//             schoolData: null,
+//             paymentData: null,
+//             curricula: [],
+//             plans: [],
+//             isProvisioned: false,
+//             confirmedEmail: null,
+//             isLoading: false,
+//             error: null,
+//             paymentStatus: 'pending',
+
+//             // Logic Handlers
+//             setStep: (step: number) => set({ step, error: null }),
+//             nextStep: () => set((s: OnboardingState) => ({ step: Math.min(s.step + 1, 3), error: null })),
+//             prevStep: () => set((s: OnboardingState) => ({ step: Math.max(s.step - 1, 1), error: null })),
+//             setAdminData: (adminData: OnboardingAdminProfile) => set({ adminData }),
+//             setSchoolData: (schoolData: InstitutionalHubData) => set({ schoolData }),
+//             setCurricula: (curricula: CurriculumTemplate[]) => set({ curricula }),
+//             setPlans: (plans: SubscriptionPlanItem[]) => set({ plans }),
+//             setPaymentData: (paymentData: OnboardingPaymentProtocol) => set({ 
+//                 paymentData, 
+//                 paymentStatus: paymentData?.verified ? 'paid' : 'pending' 
+//             }),
+//             setProvisioned: (isProvisioned: boolean) => set({ 
+//                 isProvisioned,
+//                 paymentStatus: isProvisioned ? 'paid' : 'pending' 
+//             }),
+//             setConfirmedEmail: (confirmedEmail: string | null) => set({ confirmedEmail }),
+//             setLoading: (isLoading: boolean) => set({ isLoading }),
+//             setError: (error: string | null) => set({ error }),
+
+//             /**
+//              * RESET PROTOCOL
+//              * Prevents wiping data if a user has already paid or provisioned.
+//              */
+//             reset: () => {
+//                 const state: OnboardingState = get();
+//                 if (state.paymentStatus === 'paid' || state.isProvisioned) {
+//                     console.warn("Security Protocol: Cannot reset a provisioned registry.");
+//                     return;
+//                 }
+                
+//                 set({
+//                     step: 1,
+//                     adminData: null,
+//                     schoolData: null,
+//                     paymentData: null,
+//                     isProvisioned: false,
+//                     confirmedEmail: null,
+//                     isLoading: false,
+//                     error: null,
+//                     paymentStatus: 'pending'
+//                 });
+//             },
+//         }),
+//         {
+//             name: 'onboarding-registry-v2', 
+//             onRehydrateStorage: () => (state: OnboardingState | undefined) => {
+//                 state?.setLoading(false);
+//             },
+//             partialize: (state: OnboardingState) => ({
+//                 step: state.step,
+//                 adminData: state.adminData,
+//                 schoolData: state.schoolData,
+//                 paymentData: state.paymentData,
+//                 isProvisioned: state.isProvisioned,
+//                 confirmedEmail: state.confirmedEmail,
+//                 paymentStatus: state.paymentStatus,
+//             }) as OnboardingState,
+//         }
+//     )
+// );
+
+
+
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { SubscriptionPlanItem } from '@/app/actions/subscription.actions';
@@ -1249,6 +1409,8 @@ export interface OnboardingAdminProfile {
     email: string;
     password?: string;
     phone?: string;
+    curriculumId?: string;
+    secondaryCurriculumId?: string | null;
 }
 
 export interface OnboardingPaymentProtocol {
@@ -1300,10 +1462,6 @@ export interface OnboardingState {
     setLoading: (loading: boolean) => void;
     setError: (error: string | null) => void;
     
-    /**
-     * RESET PROTOCOL
-     * Rule 11: Purges the entire local onboarding buffer to allow a clean initialization.
-     */
     reset: () => void;
 }
 
@@ -1342,10 +1500,6 @@ export const useOnboardingStore = create<OnboardingState>()(
             setLoading: (isLoading: boolean) => set({ isLoading }),
             setError: (error: string | null) => set({ error }),
 
-            /**
-             * RESET PROTOCOL
-             * Prevents wiping data if a user has already paid or provisioned.
-             */
             reset: () => {
                 const state: OnboardingState = get();
                 if (state.paymentStatus === 'paid' || state.isProvisioned) {

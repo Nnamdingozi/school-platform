@@ -3,6 +3,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getErrorMessage } from "@/lib/error-handler";
 
 export async function addSchoolBook(data: {
     title: string;
@@ -22,6 +23,7 @@ export async function addSchoolBook(data: {
         revalidatePath('/dashboard/settings'); // Or wherever your library UI lives
         return { success: true, data: book };
     } catch (err) {
+        getErrorMessage(err)
         return { success: false, error: "Failed to add book to library." };
     }
 }

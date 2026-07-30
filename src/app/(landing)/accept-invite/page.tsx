@@ -453,6 +453,122 @@
 // }
 
 
+// import { Metadata } from "next";
+// import { redirect } from "next/navigation";
+// import { prisma } from "@/lib/prisma";
+// import { createClient } from "@/lib/supabase/server";
+// import { SetPasswordForm } from "@/components/set-password-form";
+// import { getErrorMessage } from "@/lib/error-handler";
+
+// export const metadata: Metadata = {
+//     title: "Synchronize Identity | Registry | SchoolPaaS",
+//     description: "Finalizing institutional identity synchronization for the academic hub.",
+// };
+
+// interface PageProps {
+//     searchParams: Promise<{ 
+//         code?: string | string[];
+//         token?: string | string[];
+//         email?: string | string[];
+//         error?: string | string[];
+//         error_description?: string | string[];
+//     }>;
+// }
+
+// export default async function AcceptInvitePage({ searchParams }: PageProps) {
+//     const params = await searchParams;
+
+//     // ── Supabase error passed in URL ──────────────────────────────────────────
+//     const urlError = Array.isArray(params.error) ? params.error[0] : params.error;
+//     if (urlError) {
+//         const description = Array.isArray(params.error_description)
+//             ? params.error_description[0]
+//             : params.error_description;
+//         console.error(`[INVITE_URL_ERROR]: ${urlError} — ${description}`);
+//         redirect(`/login?error=${encodeURIComponent(description ?? urlError)}`);
+//     }
+
+//     const supabase = await createClient();
+
+//     // ── Stage 1: PKCE code exchange (only if code present) ───────────────────
+//     const code = Array.isArray(params.code) ? params.code[0] : params.code;
+//     if (code) {
+//         const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+//         if (exchangeError) {
+//             console.error('[INVITE_CODE_EXCHANGE_FAULT]:', exchangeError.message);
+//             redirect('/login?error=invite_link_invalid_or_expired');
+//         }
+//     }
+
+//     // ── Stage 2: Verify session ───────────────────────────────────────────────
+//     const { data: { user }, error: userError } = await supabase.auth.getUser();
+//     if (userError || !user) {
+//         redirect('/login?error=session_not_established');
+//     }
+
+//     // ── Stage 3: Extract token ────────────────────────────────────────────────
+//     // Supabase invite links can deliver the token two ways:
+//     // 1. Via URL param ?token=xxx (when redirectTo contains the token in the URL)
+//     // 2. Via user_metadata.custom_token (after PKCE code exchange)
+//     // We check both so either flow works.
+//     const tokenFromUrl = Array.isArray(params.token) ? params.token[0] : params.token;
+//     const tokenFromMetadata = user.user_metadata?.custom_token as string | undefined;
+//     const customToken = tokenFromUrl ?? tokenFromMetadata;
+
+//     if (!customToken) {
+//         console.error('[INVITE_TOKEN_MISSING]: url params:', params, 'metadata:', user.user_metadata);
+//         redirect('/login?error=invite_token_missing');
+//     }
+
+//     // ── Stage 4: Validate invitation in DB ────────────────────────────────────
+//     const invitation = await prisma.invitation.findFirst({
+//         where: {
+//             token: customToken,
+//             acceptedAt: null,
+//             expiresAt: { gt: new Date() },
+//         },
+//         include: {
+//             school: { select: { id: true, name: true } }
+//         }
+//     });
+
+//     if (!invitation) {
+//         redirect('/login?error=invite_expired_or_already_used');
+//     }
+
+//     // ── Stage 5: Email sanity check ───────────────────────────────────────────
+//     if (invitation.email !== user.email) {
+//         console.error(`[INVITE_EMAIL_MISMATCH]: expected ${invitation.email}, got ${user.email}`);
+//         redirect('/login?error=email_mismatch');
+//     }
+
+//     // ── Stage 6: Render ───────────────────────────────────────────────────────
+//     try {
+//         return (
+//             <section className="flex items-center justify-center py-20 px-4 animate-in fade-in duration-1000">
+//                 <div className="w-full max-w-md">
+//                     <SetPasswordForm
+//                         userEmail={user.email!}
+//                         invitationToken={customToken}
+//                         schoolName={invitation.school.name}
+//                     />
+//                 </div>
+//             </section>
+//         );
+//     } catch (error: unknown) {
+//         if (
+//             error instanceof Error &&
+//             (error as { digest?: string }).digest?.startsWith('NEXT_REDIRECT')
+//         ) {
+//             throw error;
+//         }
+//         const message = getErrorMessage(error);
+//         console.error(`[INVITATION_HANDSHAKE_FAULT]: ${message}`);
+//         redirect(`/login?error=${encodeURIComponent(message)}`);
+//     }
+// }
+
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -466,8 +582,10 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-    searchParams: Promise<{ 
+    searchParams: Promise<{
         code?: string | string[];
+        token_hash?: string | string[];
+        type?: string | string[];
         token?: string | string[];
         email?: string | string[];
         error?: string | string[];
@@ -490,9 +608,28 @@ export default async function AcceptInvitePage({ searchParams }: PageProps) {
 
     const supabase = await createClient();
 
-    // ── Stage 1: PKCE code exchange (only if code present) ───────────────────
+    // ── Stage 1a: token_hash verification (new Supabase email template flow) ──
+    // This is the primary path now that the invite email links directly to
+    // this page with ?token_hash=...&type=invite instead of routing through
+    // GoTrue's /verify redirect (which delivers session tokens via URL
+    // fragment and is invisible to server components).
+    const tokenHash = Array.isArray(params.token_hash) ? params.token_hash[0] : params.token_hash;
+    const otpType = Array.isArray(params.type) ? params.type[0] : params.type;
+
+    if (tokenHash) {
+        const { error: verifyError } = await supabase.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: (otpType as 'invite' | 'email' | 'recovery' | 'email_change') ?? 'invite',
+        });
+        if (verifyError) {
+            console.error('[INVITE_VERIFY_FAULT]:', verifyError.message);
+            redirect('/login?error=invite_link_invalid_or_expired');
+        }
+    }
+
+    // ── Stage 1b: PKCE code exchange (legacy/fallback path) ────────────────────
     const code = Array.isArray(params.code) ? params.code[0] : params.code;
-    if (code) {
+    if (!tokenHash && code) {
         const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
         if (exchangeError) {
             console.error('[INVITE_CODE_EXCHANGE_FAULT]:', exchangeError.message);
@@ -507,9 +644,9 @@ export default async function AcceptInvitePage({ searchParams }: PageProps) {
     }
 
     // ── Stage 3: Extract token ────────────────────────────────────────────────
-    // Supabase invite links can deliver the token two ways:
-    // 1. Via URL param ?token=xxx (when redirectTo contains the token in the URL)
-    // 2. Via user_metadata.custom_token (after PKCE code exchange)
+    // Supabase invite links can deliver the token multiple ways:
+    // 1. Via URL param ?token=xxx (legacy redirectTo flow)
+    // 2. Via user_metadata.custom_token (after code/token_hash exchange)
     // We check both so either flow works.
     const tokenFromUrl = Array.isArray(params.token) ? params.token[0] : params.token;
     const tokenFromMetadata = user.user_metadata?.custom_token as string | undefined;

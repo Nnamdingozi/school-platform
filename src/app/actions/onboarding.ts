@@ -1482,6 +1482,253 @@
 // }
 
 
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { supabaseAdmin } from "@/lib/supabase/admin";
+// import { Role, ActivityType, Prisma, School, Profile, Subscription, Curriculum } from "@prisma/client";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { logActivity } from "@/app/actions/activitylog";
+
+// interface AdminData {
+//     name: string;
+//     email: string;
+//     password?: string;
+// }
+
+// interface HubData {
+//     schoolName: string;
+//     curriculumId: string;
+//     secondaryCurriculumId: string | null;
+//     primaryColor: string;
+//     secondaryColor: string;
+// }
+
+// interface CurriculaResponse {
+//     success: boolean;
+//     data: Pick<Curriculum, "id" | "name" | "yearLabel" | "termLabel">[];
+//     error?: string;
+// }
+
+// /**
+//  * FETCH CURRICULA
+//  * Rule: Standardized registry retrieval
+//  */
+// export async function getCurricula(): Promise<CurriculaResponse> {
+//     try {
+//         const curricula = await prisma.curriculum.findMany({
+//             where: { schoolId: null },
+//             select: { id: true, name: true, yearLabel: true, termLabel: true },
+//             orderBy: { name: 'asc' },
+//         });
+//         return { success: true, data: curricula };
+//     } catch (err: unknown) {
+//         return { success: false, data: [], error: getErrorMessage(err) };
+//     }
+// }
+
+// /**
+//  * COMPLETE ONBOARDING
+//  * Logic: Atomic transaction ensuring data consistency post-payment.
+//  * Includes support for dual curriculum selection.
+//  */
+// export async function completeOnboarding(
+//     adminData: AdminData,
+//     schoolData: HubData,
+//     paymentReference: string,
+//     plan: string
+// ): Promise<{ success: boolean; error?: string }> {
+
+//     try {
+//         // 1. IDEMPOTENCY CHECK
+//         const existingPayment: Subscription | null = await prisma.subscription.findFirst({
+//             where: { paystackReference: paymentReference }
+//         });
+        
+//         if (existingPayment) return { success: true };
+
+//         // 2. IDENTITY AUDIT
+//         const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+//         if (listError) throw new Error("Terminal Audit Failed: Could not reach identity registry.");
+
+//         const existingAuthUser = users.find((u) => u.email?.toLowerCase() === adminData.email.toLowerCase());
+        
+//         let userId: string;
+
+//         if (existingAuthUser) {
+//             userId = existingAuthUser.id;
+//         } else {
+//             // 3. PROVISION AUTH USER
+//             const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+//                 email: adminData.email,
+//                 password: adminData.password,
+//                 email_confirm: false,
+//                 user_metadata: { 
+//                     name: adminData.name, 
+//                     role: Role.SCHOOL_ADMIN 
+//                 },
+//             });
+
+//             if (authError || !authData.user) {
+//                 throw new Error(authError?.message || "Identity Provisioning Protocol Failed.");
+//             }
+//             userId = authData.user.id;
+//         }
+
+//         // 4. ATOMIC DB TRANSACTION
+//         const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+            
+//             // Provision Institutional Hub with Primary and Optional Secondary Curriculum
+//             const school: School = await tx.school.create({
+//                 data: {
+//                     name: schoolData.schoolName,
+//                     curriculumId: schoolData.curriculumId,
+//                     secondaryCurriculumId: schoolData.secondaryCurriculumId,
+//                     primaryColor: schoolData.primaryColor,
+//                     secondaryColor: schoolData.secondaryColor,
+//                     whatsappCredits: plan === 'enterprise' ? 2000 : plan === 'pro' ? 500 : 100,
+//                     subscription: {
+//                         create: {
+//                             plan,
+//                             status: 'active',
+//                             paystackReference: paymentReference,
+//                             currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+//                         },
+//                     },
+//                 },
+//             });
+
+//             // Provision/Update Profile (Linking Auth User to School and mapping curricula)
+//             const profile: Profile = await tx.profile.upsert({
+//                 where: { id: userId },
+//                 update: {
+//                     schoolId: school.id,
+//                     curriculumId: schoolData.curriculumId,
+//                     secondaryCurriculumId: schoolData.secondaryCurriculumId,
+//                     role: Role.SCHOOL_ADMIN,
+//                 },
+//                 create: {
+//                     id: userId,
+//                     email: adminData.email,
+//                     name: adminData.name,
+//                     role: Role.SCHOOL_ADMIN,
+//                     schoolId: school.id,
+//                     curriculumId: schoolData.curriculumId,
+//                     secondaryCurriculumId: schoolData.secondaryCurriculumId,
+//                 },
+//             });
+
+//             return { school, profile };
+//         });
+
+//         // 5. DISPATCH ACTIVATION EMAIL
+//         await supabaseAdmin.auth.resend({
+//             type: 'signup',
+//             email: adminData.email,
+//             options: {
+//                 emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/confirm`,
+//             },
+//         });
+
+//         // 6. LOG INITIALIZATION
+//         await logActivity({
+//             schoolId: result.school.id,
+//             actorId: result.profile.id,
+//             actorRole: result.profile.role,
+//             type: ActivityType.SETTINGS_UPDATED,
+//             title: 'Hub Provisioned',
+//             description: `Registry synchronized for ${schoolData.schoolName}. Tier: ${plan}`,
+//         });
+
+//         return { success: true };
+
+//     } catch (err: unknown) {
+//         console.error('[ONBOARDING_CRITICAL_FAULT]:', getErrorMessage(err));
+//         return { 
+//             success: false, 
+//             error: getErrorMessage(err) 
+//         };
+//     }
+// }
+
+// /**
+//  * VERIFY PAYSTACK PAYMENT
+//  */
+// export async function verifyPaystackPayment(reference: string): Promise<{ success: boolean; reference?: string; error?: string }> {
+//     try {
+//         const res: Response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+//             headers: { 
+//                 Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+//                 'Content-Type': 'application/json'
+//             },
+//         });
+
+//         const json: { status: boolean; data?: { status: string } } = await res.json();
+//         if (!json.status || json.data?.status !== 'success') {
+//             return { success: false, error: 'Payment verification protocol failed.' };
+//         }
+
+//         return { success: true, reference };
+//     } catch (err: unknown) {
+//         return { success: false, error: 'Gateway timeout.' };
+//     }
+// }
+
+// /**
+//  * UPDATE ONBOARDING EMAIL
+//  * Logic: Allows paid users to correct email typos and re-trigger activation.
+//  */
+// export async function updateOnboardingEmail(
+//     oldEmail: string, 
+//     newEmail: string, 
+//     paymentReference: string
+// ): Promise<{ success: boolean; error?: string }> {
+//     try {
+//         // 1. Verification Check: Match old email to the payment reference
+//         const profile: (Profile & { school: (School & { subscription: Subscription | null }) | null }) | null = await prisma.profile.findFirst({
+//             where: { email: oldEmail },
+//             include: { 
+//                 school: { 
+//                     include: { subscription: true } 
+//                 } 
+//             }
+//         });
+
+//         if (!profile || profile.school?.subscription?.paystackReference !== paymentReference) {
+//             return { success: false, error: "Identity Update Denied: Reference mismatch." };
+//         }
+
+//         // 2. Update Supabase Auth Registry
+//         const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(
+//             profile.id,
+//             { email: newEmail }
+//         );
+//         if (authError) throw authError;
+
+//         // 3. Update Prisma Profile Hub
+//         await prisma.profile.update({
+//             where: { id: profile.id },
+//             data: { email: newEmail }
+//         });
+
+//         // 4. Dispatch New Activation Protocol
+//         await supabaseAdmin.auth.resend({
+//             type: 'signup',
+//             email: newEmail,
+//             options: {
+//                 emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/confirm`,
+//             },
+//         });
+
+//         return { success: true };
+//     } catch (err: unknown) {
+//         console.error("[EMAIL_CORRECTION_FAULT]:", getErrorMessage(err));
+//         return { success: false, error: "Registry identity update failed." };
+//     }
+// }
+
+
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -1489,6 +1736,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { Role, ActivityType, Prisma, School, Profile, Subscription, Curriculum } from "@prisma/client";
 import { getErrorMessage } from "@/lib/error-handler";
 import { logActivity } from "@/app/actions/activitylog";
+import { User } from "@supabase/supabase-js";
 
 interface AdminData {
     name: string;
@@ -1512,7 +1760,7 @@ interface CurriculaResponse {
 
 /**
  * FETCH CURRICULA
- * Rule: Standardized registry retrieval
+ * Rule: Standardized registry retrieval for selection.
  */
 export async function getCurricula(): Promise<CurriculaResponse> {
     try {
@@ -1521,6 +1769,7 @@ export async function getCurricula(): Promise<CurriculaResponse> {
             select: { id: true, name: true, yearLabel: true, termLabel: true },
             orderBy: { name: 'asc' },
         });
+        console.log("curriculum data found:", curricula)
         return { success: true, data: curricula };
     } catch (err: unknown) {
         return { success: false, data: [], error: getErrorMessage(err) };
@@ -1530,7 +1779,7 @@ export async function getCurricula(): Promise<CurriculaResponse> {
 /**
  * COMPLETE ONBOARDING
  * Logic: Atomic transaction ensuring data consistency post-payment.
- * Includes support for dual curriculum selection.
+ * Provisions School and Profile with primary/secondary curriculum IDs.
  */
 export async function completeOnboarding(
     adminData: AdminData,
@@ -1551,7 +1800,9 @@ export async function completeOnboarding(
         const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers();
         if (listError) throw new Error("Terminal Audit Failed: Could not reach identity registry.");
 
-        const existingAuthUser = users.find((u) => u.email?.toLowerCase() === adminData.email.toLowerCase());
+        const existingAuthUser: User | undefined = users.find(
+            (u: User) => u.email?.toLowerCase() === adminData.email.toLowerCase()
+        );
         
         let userId: string;
 
@@ -1578,7 +1829,7 @@ export async function completeOnboarding(
         // 4. ATOMIC DB TRANSACTION
         const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
             
-            // Provision Institutional Hub with Primary and Optional Secondary Curriculum
+            // Provision Institutional Hub
             const school: School = await tx.school.create({
                 data: {
                     name: schoolData.schoolName,
@@ -1598,7 +1849,7 @@ export async function completeOnboarding(
                 },
             });
 
-            // Provision/Update Profile (Linking Auth User to School and mapping curricula)
+            // Provision/Update Profile
             const profile: Profile = await tx.profile.upsert({
                 where: { id: userId },
                 update: {
@@ -1670,13 +1921,13 @@ export async function verifyPaystackPayment(reference: string): Promise<{ succes
 
         return { success: true, reference };
     } catch (err: unknown) {
+        getErrorMessage(err)
         return { success: false, error: 'Gateway timeout.' };
     }
 }
 
 /**
  * UPDATE ONBOARDING EMAIL
- * Logic: Allows paid users to correct email typos and re-trigger activation.
  */
 export async function updateOnboardingEmail(
     oldEmail: string, 
@@ -1684,7 +1935,6 @@ export async function updateOnboardingEmail(
     paymentReference: string
 ): Promise<{ success: boolean; error?: string }> {
     try {
-        // 1. Verification Check: Match old email to the payment reference
         const profile: (Profile & { school: (School & { subscription: Subscription | null }) | null }) | null = await prisma.profile.findFirst({
             where: { email: oldEmail },
             include: { 
@@ -1698,20 +1948,17 @@ export async function updateOnboardingEmail(
             return { success: false, error: "Identity Update Denied: Reference mismatch." };
         }
 
-        // 2. Update Supabase Auth Registry
         const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(
             profile.id,
             { email: newEmail }
         );
         if (authError) throw authError;
 
-        // 3. Update Prisma Profile Hub
         await prisma.profile.update({
             where: { id: profile.id },
             data: { email: newEmail }
         });
 
-        // 4. Dispatch New Activation Protocol
         await supabaseAdmin.auth.resend({
             type: 'signup',
             email: newEmail,

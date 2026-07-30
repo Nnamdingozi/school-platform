@@ -377,7 +377,7 @@ export function InviteUsersClient({ initialSchoolId }: InviteUsersClientProps) {
 
         if (newRows.length > 0) {
             setRows(newRows)
-            toast.success(`${newRows.length} identities synchronized from dataset.`);
+            toast.success(`${newRows.length} User Successfully Added to School database.`);
         }
     }
 
@@ -428,11 +428,11 @@ export function InviteUsersClient({ initialSchoolId }: InviteUsersClientProps) {
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-border pb-10">
                     <div className="space-y-1">
                         <h1 className="text-2xl md:text-4xl font-extrabold tracking-tighter uppercase italic leading-none">
-                            Identity Dispatch
+                            Send Invitations
                         </h1>
                         <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-widest mt-2 flex items-center gap-2">
                             <span className="h-1.5 w-1.5 rounded-full bg-school-primary animate-pulse" />
-                            Onboarding Terminal: {profile?.school?.name || "Global Core"}
+                            Invite Users To: {profile?.school?.name || "Global Core"}
                         </p>
                     </div>
                     {rows.length > 1 && !allSent && (
@@ -440,7 +440,7 @@ export function InviteUsersClient({ initialSchoolId }: InviteUsersClientProps) {
                             onClick={() => setRows([makeRow()])} 
                             className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-destructive transition-all"
                         >
-                            <X className="w-3.5 h-3.5 inline mr-1.5" /> Reset Registry
+                            <X className="w-3.5 h-3.5 inline mr-1.5" /> Reset Invitation
                         </button>
                     )}
                 </header>
@@ -461,10 +461,10 @@ export function InviteUsersClient({ initialSchoolId }: InviteUsersClientProps) {
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 text-school-primary">
                                 <Info className="h-5 w-5" />
-                                <span className="text-[10px] font-extrabold uppercase tracking-widest">Protocol Registry</span>
+                                <span className="text-[10px] font-extrabold uppercase tracking-widest">User Details Template</span>
                             </div>
                             <p className="text-[11px] text-muted-foreground leading-relaxed italic font-medium">
-                                Utilize the registry template to ensure precise identity synchronization across the institutional architecture.
+                                Utilize the User Details template to ensure precise User Details are added to the School database.
                             </p>
                         </div>
                         <CSVTemplateButton 
@@ -495,7 +495,7 @@ export function InviteUsersClient({ initialSchoolId }: InviteUsersClientProps) {
                             onClick={addRow} 
                             className="w-full py-6 rounded-2xl border-2 border-dashed border-border bg-surface/50 hover:bg-surface hover:border-school-primary/30 text-muted-foreground hover:text-school-primary text-[10px] font-extrabold uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3"
                         >
-                            <Plus className="h-4 w-4" /> Add Identity Entry
+                            <Plus className="h-4 w-4" /> Add New User
                         </button>
 
                         <div className="flex justify-end pt-8">
@@ -505,7 +505,7 @@ export function InviteUsersClient({ initialSchoolId }: InviteUsersClientProps) {
                                 className="bg-school-primary text-on-school-primary font-extrabold px-12 py-5 rounded-2xl hover:brightness-110 active:scale-95 transition-all disabled:opacity-20 shadow-xl shadow-school-primary-200 text-xs tracking-widest uppercase flex items-center gap-3"
                             >
                                 {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                                Dispatch Registry Access
+                                Send Invitation
                             </button>
                         </div>
                     </div>
@@ -566,7 +566,7 @@ function InviteRowItem({ row, onUpdate, onRemove, onResend }: {
                     value={row.name}
                     onChange={e => onUpdate({ name: e.target.value })}
                     disabled={isSent || isSending}
-                    placeholder="Full Identification"
+                    placeholder="Full Name"
                     className="bg-surface border border-border rounded-xl px-4 py-3.5 text-sm font-semibold text-foreground focus:ring-2 focus:ring-school-primary-200 outline-none transition-all placeholder:text-muted-foreground/30"
                 />
                 <div className="relative group">
@@ -600,7 +600,7 @@ function InviteRowItem({ row, onUpdate, onRemove, onResend }: {
                         onClick={onResend} 
                         className="text-[9px] font-extrabold uppercase tracking-widest text-school-primary hover:underline transition-all"
                     >
-                        Retry Transmission Protocol
+                        ReSend Invitation
                     </button>
                 </div>
             )}

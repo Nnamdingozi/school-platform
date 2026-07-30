@@ -580,7 +580,7 @@ export function CSVImporter({
           await onDataUpload(results.data);
         } catch (err: unknown) {
           const message = getErrorMessage(err)
-          setError(message || "Data integration protocols failed.");
+          setError(message || "Data integration failed.");
         }
       },
       error: () => {

@@ -847,7 +847,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
     return {
         title: `Invite Users | ${profile?.school?.name || "Institution"} | SchoolPaaS`,
-        description: "Scale your institutional network by inviting staff and families."
+        description: "Add Users to your School Platform  by inviting students,  staff and Parents/Guadians."
     };
 }
 

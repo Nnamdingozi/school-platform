@@ -71,7 +71,7 @@ export function Navbar() {
               LogIn
             </Button>
           </Link>
-          <Link href="/onboardingSelector">
+          <Link href="/onboarding/onboardingOptions">
             <Button 
                 className="bg-school-primary text-on-school-primary font-extrabold text-[10px] uppercase tracking-widest rounded-xl px-6 hover:brightness-110 transition-all shadow-lg shadow-school-primary-200"
             >

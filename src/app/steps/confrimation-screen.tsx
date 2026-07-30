@@ -1764,7 +1764,7 @@ export function ConfirmationScreen({
     const router = useRouter();
     
     // Registry Context from Zustand Store
-    const { curricula, schoolData, adminData, paymentData } = useOnboardingStore();
+    const { curricula, schoolData, paymentData } = useOnboardingStore();
     
     const [confirmedEmail, setConfirmedEmail] = useState<string>(email);
     const [isResending, setIsResending] = useState<boolean>(false);
