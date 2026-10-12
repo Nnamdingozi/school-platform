@@ -444,7 +444,7 @@ export default async function TeacherDashboardPage() {
       redirect('/login');
     }
 
-    const teacherData = await getRegistryProfile(user.email!);
+    const teacherData = await getRegistryProfile(user.id);
 
     if (!teacherData || teacherData.role !== 'TEACHER') {
         // Log the denial if necessary and redirect

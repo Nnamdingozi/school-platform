@@ -304,8 +304,8 @@
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
 import { getErrorMessage } from '@/lib/error-handler'
-import { redirect } from 'next/navigation'
-import { Role } from '@prisma/client'
+import { Profile, Role } from "@prisma/client";
+import { User } from "@supabase/supabase-js";
 import { logActivity } from '@/lib/activitylogger'
 /**
  * USER REGISTRATION
@@ -403,46 +403,81 @@ export async function loginUser(data: {
     }
 }
 
-/**
- * USER LOGOUT
- * Rule 10: Secure backend logout with activity tracking.
- */
-export async function logoutAction(): Promise<void> {
+// /**
+//  * USER LOGOUT
+//  * Rule 10: Secure backend logout with activity tracking.
+//  */
+// export async function logoutAction(): Promise<void> {
+//     try {
+//         const supabase = await createClient()
+
+//         // Identify user before session is destroyed
+//         const { data: { user } } = await supabase.auth.getUser()
+
+//         if (user?.email) {
+//             const profile = await prisma.profile.findFirst({
+//                 where:  { email: user.email },
+//                 select: { id: true, name: true, role: true, schoolId: true },
+//             })
+
+//             if (profile) {
+//                 // Log logout event before signing out
+//                 await logActivity({
+//                     schoolId:    profile.schoolId, // Supports null for Independent Users
+//                     actorId:     profile.id,
+//                     actorName:   profile.name,
+//                     actorRole:   profile.role,
+//                     type:        'LOGOUT',
+//                     title:       'Logged Out',
+//                     description: `${profile.name ?? 'User'} signed out of the platform`,
+//                 })
+//             }
+//         }
+
+//         await supabase.auth.signOut()
+//     } catch (err: unknown) {
+//         console.error('logoutAction error:', getErrorMessage(err))
+//     }
+
+//     // Always redirect to login page
+//     redirect('/')
+// }
+
+
+
+export async function logoutAction(): Promise<{ success: boolean }> {
     try {
-        const supabase = await createClient()
+        const supabase = await createClient();
 
         // Identify user before session is destroyed
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user } }: { data: { user: User | null } } = await supabase.auth.getUser();
 
         if (user?.email) {
-            const profile = await prisma.profile.findFirst({
+            const profile: Profile | null = await prisma.profile.findFirst({
                 where:  { email: user.email },
-                select: { id: true, name: true, role: true, schoolId: true },
-            })
+            });
 
             if (profile) {
-                // Log logout event before signing out
                 await logActivity({
-                    schoolId:    profile.schoolId, // Supports null for Independent Users
+                    schoolId:    profile.schoolId,
                     actorId:     profile.id,
                     actorName:   profile.name,
                     actorRole:   profile.role,
                     type:        'LOGOUT',
                     title:       'Logged Out',
                     description: `${profile.name ?? 'User'} signed out of the platform`,
-                })
+                });
             }
         }
 
-        await supabase.auth.signOut()
+        // This clears the Supabase Auth Cookies automatically
+        await supabase.auth.signOut();
+        return { success: true };
     } catch (err: unknown) {
-        console.error('logoutAction error:', getErrorMessage(err))
+        console.error('logoutAction error:', getErrorMessage(err));
+        return { success: false };
     }
-
-    // Always redirect to login page
-    redirect('/login')
 }
-
 
 
 export async function checkEmailConfirmed(email: string): Promise<{ confirmed: boolean }> {

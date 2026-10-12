@@ -796,3 +796,50 @@ export async function updateIndividualEmail(
         return { success: false, error: "Registry identity update failed." };
     }
 }
+
+
+export async function resendConfirmationEmail(
+    email: string
+): Promise<{ success: boolean; error?: string }> {
+    try {
+        const trimmedEmail = email.trim().toLowerCase();
+ 
+        if (!trimmedEmail || !trimmedEmail.includes("@")) {
+            return { success: false, error: "Enter a valid email address." };
+        }
+ 
+        // Optional: confirm a profile actually exists for this email before
+        // spending a Supabase resend call — avoids leaking whether an email
+        // is registered if you'd rather not reveal that (skip this check if
+        // you want that ambiguity preserved for security reasons).
+        const profile = await prisma.profile.findFirst({
+            where: { email: trimmedEmail },
+            select: { id: true },
+        });
+ 
+        if (!profile) {
+            // Return a generic success-shaped response to avoid confirming
+            // or denying account existence to an anonymous caller.
+            return { success: true };
+        }
+ 
+        const { error } = await supabaseAdmin.auth.resend({
+            type: "signup",
+            email: trimmedEmail,
+            options: {
+                emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/confirm`,
+            },
+        });
+ 
+        if (error) {
+            console.error("[RESEND_CONFIRMATION_FAULT]:", error.message);
+            return { success: false, error: "Failed to resend confirmation email." };
+        }
+ 
+        return { success: true };
+    } catch (err: unknown) {
+        console.error("[RESEND_CONFIRMATION_FAULT]:", getErrorMessage(err));
+        return { success: false, error: getErrorMessage(err) };
+    }
+}
+ 

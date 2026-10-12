@@ -482,7 +482,7 @@ export function SetPasswordForm({ userEmail, invitationToken, schoolName }: SetP
                 }
 
                 // 4. Hydrate global profile store
-                const profile = await getRegistryProfile(userEmail);
+                const profile = await getRegistryProfile(currentUser.id);
                 if (!profile) {
                     toast.error('Identity record not discovered in registry.');
                     return;

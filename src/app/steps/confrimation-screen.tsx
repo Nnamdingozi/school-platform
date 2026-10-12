@@ -1995,7 +1995,7 @@ export function ConfirmationScreen({
                 
                 <div className="pt-4 border-t border-border w-full max-w-xs mx-auto">
                     <a href="/login" className="text-[10px] font-extrabold text-muted-foreground uppercase flex items-center justify-center gap-2 group">
-                        Proceed to Login <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                       email confirmed?  Proceed to Login <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                     </a>
                 </div>
             </div>

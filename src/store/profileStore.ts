@@ -67,72 +67,178 @@
 // }));
 
 
-import { create } from 'zustand'
-import {
-    AnyProfile,
-    SidebarProfileData,
-} from '@/types/profile'
+// import { create } from 'zustand'
+// import {
+//     AnyProfile,
+//     SidebarProfileData,
+// } from '@/types/profile'
 
-// ── State ──────────────────────────────────────────────────────────────────────
+// // ── State ──────────────────────────────────────────────────────────────────────
 
-interface ProfileState {
-    profile:     AnyProfile | null  // ✅ union type — handles both parent and teacher
-    sidebarData: SidebarProfileData | null
-    isLoading:   boolean
-    error:       string | null
-}
+// interface ProfileState {
+//     profile:     AnyProfile | null  // ✅ union type — handles both parent and teacher
+//     sidebarData: SidebarProfileData | null
+//     isLoading:   boolean
+//     error:       string | null
+// }
 
-// ── Actions ────────────────────────────────────────────────────────────────────
+// // ── Actions ────────────────────────────────────────────────────────────────────
 
-interface ProfileActions {
-    setProfile:     (profile: AnyProfile) => void          // ✅ AnyProfile not ProfileInStore
-    updateProfile:  (updates: Partial<AnyProfile>) => void // ✅ AnyProfile not ProfileInStore
-    clearProfile:   () => void
-    setLoading:     (loading: boolean) => void
-    setError:       (error: string | null) => void
-    setSidebarData: (sidebarData: SidebarProfileData | null) => void
-}
+// interface ProfileActions {
+//     setProfile:     (profile: AnyProfile) => void          // ✅ AnyProfile not ProfileInStore
+//     updateProfile:  (updates: Partial<AnyProfile>) => void // ✅ AnyProfile not ProfileInStore
+//     clearProfile:   () => void
+//     setLoading:     (loading: boolean) => void
+//     setError:       (error: string | null) => void
+//     setSidebarData: (sidebarData: SidebarProfileData | null) => void
+// }
 
-// ── Combined store type ────────────────────────────────────────────────────────
+// // ── Combined store type ────────────────────────────────────────────────────────
 
-type ProfileStore = ProfileState & ProfileActions
+// type ProfileStore = ProfileState & ProfileActions
 
-// ── Store ──────────────────────────────────────────────────────────────────────
+// // ── Store ──────────────────────────────────────────────────────────────────────
 
-export const useProfileStore = create<ProfileStore>((set) => ({
+// export const useProfileStore = create<ProfileStore>((set) => ({
 
-    // ── Initial state ──────────────────────────────────────────────────────
-    profile:     null,
-    sidebarData: null,
-    isLoading:   true,
-    error:       null,
+//     // ── Initial state ──────────────────────────────────────────────────────
+//     profile:     null,
+//     sidebarData: null,
+//     isLoading:   true,
+//     error:       null,
 
-    // ── Actions ────────────────────────────────────────────────────────────
-    setProfile: (profileData) => {
-        set({
-            profile:   profileData,
-            isLoading: false,
-            error:     null,
-        })
-    },
+//     // ── Actions ────────────────────────────────────────────────────────────
+//     setProfile: (profileData) => {
+//         set({
+//             profile:   profileData,
+//             isLoading: false,
+//             error:     null,
+//         })
+//     },
 
-    updateProfile: (updates) => set((state) => ({
-        profile: state.profile
-            ? { ...state.profile, ...updates }
-            : null,
-    })),
+//     updateProfile: (updates) => set((state) => ({
+//         profile: state.profile
+//             ? { ...state.profile, ...updates }
+//             : null,
+//     })),
 
-    clearProfile: () => set({
-        profile:     null,
-        sidebarData: null,
-        isLoading:   false,
-        error:       null,
-    }),
+//     clearProfile: () => set({
+//         profile:     null,
+//         sidebarData: null,
+//         isLoading:   false,
+//         error:       null,
+//     }),
 
 
     
 
-    setLoading:     (loading) => set({ isLoading: loading }),
-    setError:       (error)   => set({ error, isLoading: false }),
-    setSidebarData: (sidebarData) => set({ sidebarData }),
-}))
+//     setLoading:     (loading) => set({ isLoading: loading }),
+//     setError:       (error)   => set({ error, isLoading: false }),
+//     setSidebarData: (sidebarData) => set({ sidebarData }),
+// }))
+
+
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import {
+    AnyProfile,
+    SidebarProfileData,
+} from '@/types/profile';
+
+// ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+interface ProfileState {
+    profile: AnyProfile | null;     // Union type: supports Teacher, Parent, Admin, Individual
+    sidebarData: SidebarProfileData | null;
+    isLoading: boolean;
+    error: string | null;
+}
+
+interface ProfileActions {
+    setProfile: (profile: AnyProfile) => void;
+    updateProfile: (updates: Partial<AnyProfile>) => void;
+    clearProfile: () => void; // Standard alias for reset
+    reset: () => void;        // Logic used by Logout Protocol
+    setLoading: (loading: boolean) => void;
+    setError: (error: string | null) => void;
+    setSidebarData: (sidebarData: SidebarProfileData | null) => void;
+}
+
+type ProfileStore = ProfileState & ProfileActions;
+
+/**
+ * PROFILE REGISTRY STORE
+ * Logic: Manages active user identity and role-specific sidebar navigation.
+ * Rule 11: High-fidelity Registry state management.
+ * Rule 15: Zero 'any' types - uses AnyProfile union.
+ */
+export const useProfileStore = create<ProfileStore>()(
+    persist(
+        (set) => ({
+            // ── Initial Registry State ──
+            profile: null,
+            sidebarData: null,
+            isLoading: true,
+            error: null,
+
+            // ── Identity Actions ──
+            setProfile: (profileData: AnyProfile): void => {
+                set({
+                    profile: profileData,
+                    isLoading: false,
+                    error: null,
+                });
+            },
+
+            updateProfile: (updates: Partial<AnyProfile>): void => {
+                set((state: ProfileState) => ({
+                    profile: state.profile
+                        ? { ...state.profile, ...updates } as AnyProfile
+                        : null,
+                }));
+            },
+
+            /**
+             * RESET PROTOCOL
+             * Purges all identity and UI state during session termination.
+             */
+            reset: (): void => {
+                set({
+                    profile: null,
+                    sidebarData: null,
+                    isLoading: false,
+                    error: null,
+                });
+            },
+
+            clearProfile: (): void => {
+                set({
+                    profile: null,
+                    sidebarData: null,
+                    isLoading: false,
+                    error: null,
+                });
+            },
+
+            // ── UI & Status Actions ──
+            setLoading: (loading: boolean): void => {
+                set({ isLoading: loading });
+            },
+
+            setError: (error: string | null): void => {
+                set({ error, isLoading: false });
+            },
+
+            setSidebarData: (sidebarData: SidebarProfileData | null): void => {
+                set({ sidebarData });
+            },
+        }),
+        {
+            name: 'profile-registry-storage', // Persist user profile across refreshes
+            partialize: (state: ProfileStore) => ({
+                profile: state.profile,
+                sidebarData: state.sidebarData,
+            }) as ProfileStore,
+        }
+    )
+);

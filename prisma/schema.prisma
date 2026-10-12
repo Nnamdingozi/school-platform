@@ -321,6 +321,7 @@ model Assessment {
   score          Float?
   maxScore       Float?
   comments       String?
+  responses      Json?          // Structured per-question review data for quiz-type assessments
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   gradeSubject   GradeSubject   @relation(fields: [gradeSubjectId], references: [id])
@@ -332,6 +333,7 @@ model Assessment {
   examId         String?
 
   @@index([schoolId])
+  @@index([studentId, topicId])
 }
 
 model GlobalLesson {

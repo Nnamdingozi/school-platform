@@ -3265,6 +3265,223 @@
 // }
 
 
+// "use server";
+
+// import { prisma } from "@/lib/prisma";
+// import { google } from "@ai-sdk/google";
+// import { generateObject } from "ai";
+// import { z } from "zod";
+// import { Prisma, QuestionCategory, QuestionType, OwnershipType, Role } from "@prisma/client";
+// import { getErrorMessage } from "@/lib/error-handler";
+// import { contentScope } from "@/lib/content-scope";
+// import { logActivity } from "@/app/actions/activitylog";
+
+// // ── Types (Rule 15: Strict Registry Types) ──────────────────────────────────
+
+// export interface VisualAid {
+//   title: string;
+//   description: string;
+//   imagePrompt: string;
+//   url?: string; 
+// }
+
+// export interface EnhancedLessonContent {
+//   metadata: {
+//     topicContext: string;
+//     difficultyLevel: string;
+//   };
+//   teacherLogic: {
+//     teachingMethod: string;
+//     timeAllocation: string;
+//     pedagogicalTips: string;
+//     introductionHook: string;
+//   };
+//   studentContent: {
+//     title: string;
+//     learningObjectives: string[];
+//     explanation: string;
+//     summary: string;
+//     vocabulary: string[];
+//     visualAids: VisualAid[];
+//     examples: {
+//       task: string;
+//       solution: string;
+//     }[];
+//     quiz: {
+//       question: string;
+//       options: string[];
+//       answer: string;
+//       explanation: string;
+//     }[];
+//   };
+// }
+
+// /* ───────── AI PROTOCOL SCHEMA ───────── */
+
+// const LessonAiSchema = z.object({
+//   metadata: z.object({
+//     topicContext: z.string(),
+//     difficultyLevel: z.string(),
+//   }),
+//   teacherLogic: z.object({
+//     teachingMethod: z.string(),
+//     timeAllocation: z.string(),
+//     pedagogicalTips: z.string(),
+//     introductionHook: z.string(),
+//   }),
+//   studentContent: z.object({
+//     title: z.string(),
+//     learningObjectives: z.array(z.string()),
+//     explanation: z.string(),
+//     summary: z.string(),
+//     vocabulary: z.array(z.string()),
+//     visualAids: z.array(
+//       z.object({
+//         title: z.string(),
+//         description: z.string(),
+//         imagePrompt: z.string(),
+//       })
+//     ),
+//     quiz: z.array(
+//       z.object({
+//         question: z.string(),
+//         options: z.array(z.string()),
+//         answer: z.string(),
+//         explanation: z.string(),
+//       })
+//     ),
+//   }),
+// });
+
+// /* ───────── MAIN SYNTHESIS ACTION ───────── */
+
+// interface GenerateTopicParams {
+//   topicId: string;
+//   userId: string;
+//   schoolId?: string | null;
+//   userRole: Role;
+// }
+
+// /**
+//  * GENERATE TOPIC CONTENT (Syllabus Synthesis Hub)
+//  * Fix: Updated model ID to 'gemini-1.5-flash-latest' to resolve API Version Fault.
+//  */
+// export async function generateTopicContent({ 
+//   topicId, 
+//   userId, 
+//   schoolId, 
+//   userRole 
+// }: GenerateTopicParams) {
+//   try {
+//     const topic = await prisma.topic.findFirst({
+//       where: { 
+//         id: topicId,
+//         ...contentScope({ schoolId }) 
+//       },
+//       include: {
+//         gradeSubject: {
+//           include: {
+//             grade: { include: { curriculum: true } },
+//             subject: true,
+//           },
+//         },
+//       },
+//     });
+
+//     if (!topic) throw new Error("Registry Error: Academic module not found or access denied");
+
+//     const existingLesson = await prisma.globalLesson.findFirst({
+//       where: { 
+//         topicId,
+//         schoolId: topic.schoolId 
+//       },
+//     });
+
+//     if (existingLesson) {
+//       return { success: true, message: "Hub synchronization skipped: Content already exists." };
+//     }
+
+//     const curriculum = topic.gradeSubject.grade.curriculum;
+// const subjectName = topic.gradeSubject.subject.name;
+// const isGlobalContent = topic.isGlobal;
+// const contentSchoolId = isGlobalContent ? null : topic.schoolId;
+
+// const dynamicPrompt = `You are a Senior Instructional Architect for the ${curriculum.name} curriculum.
+// Synthesize a COMPREHENSIVE academic hub for the module: ${topic.title}. 
+// Subject: ${subjectName}. Level: ${topic.gradeSubject.grade.displayName}.
+
+// CURRICULUM ALIGNMENT PROTOCOL:
+// 1. LINGUISTIC PRECISION: You must use the specific academic terminology and "marking scheme" vocabulary of the ${curriculum.name}. 
+//    - If Nigeria: Use WAEC/NECO standard wordings (e.g., 'perennating organs', 'transpiration', 'xerophytic'). 
+//    - If British: Follow National Curriculum for England (GCSE/IGCSE/A-Level) terminology.
+//    - If American: Align with Common Core (CCSS) or NGSS standards.
+// 2. CONTENT ADEQUACY: Ensure depth and complexity are strictly calibrated for ${topic.gradeSubject.grade.displayName}. Do not exceed the syllabus scope unless necessary for conceptual clarity.
+// 3. EXAMPLES: Use a "Global-Local" approach. Provide primary examples relevant to the ${curriculum.name} region (e.g., Nigerian savanna zones for Nigeria curriculum), but include secondary global equivalents to ensure international utility.
+
+// STRICT REGISTRY REQUIREMENTS:
+// 1. EXPLANATION: Construct a massive, high-fidelity lesson note (minimum 1000 words). Use academic Markdown with clear headings and tables for comparisons where useful.
+// 2. VISUAL ASSETS: Generate exactly 3 distinct image prompts for diagram synthesis.
+// 3. ASSESSMENT: Generate exactly 10 multiple-choice questions for the practice hub that mirror the style and rigor of ${curriculum.name} examinations.
+
+// STRICT SCOPE:
+// - Topic: ${topic.title}
+// - Content Context: ${topic.description ?? "Follow standard syllabus principles."}
+// - Student Level: ${topic.gradeSubject.grade.displayName}
+// - Curriculum System: ${curriculum.name}
+// `;
+
+//     // ✅ FIXED: Changed 'gemini-1.5-flash' to 'gemini-1.5-flash-latest'
+//     const { object: ai } = await generateObject({
+//       model: google("gemini-2.5-flash"),
+//       schema: LessonAiSchema,
+//       prompt: dynamicPrompt,
+//     });
+    
+//     await prisma.$transaction(async (tx) => {
+//       await tx.globalLesson.create({
+//         data: {
+//           topicId,
+//           schoolId: contentSchoolId,
+//           isGlobal: isGlobalContent,
+//           title: ai.studentContent.title,
+//           aiContent: (ai as unknown) as Prisma.InputJsonValue,
+//           ownershipType: isGlobalContent ? OwnershipType.GLOBAL : OwnershipType.SCHOOL,
+//         },
+//       });
+
+//       const questionData = ai.studentContent.quiz.map((q) => ({
+//         topicId,
+//         text: q.question,
+//         options: (q.options as unknown) as Prisma.InputJsonValue,
+//         correctAnswer: q.answer,
+//         explanation: q.explanation,
+//         type: QuestionType.MCQ,
+//         category: QuestionCategory.PRACTICE,
+//         points: 1,
+//       }));
+
+//       await tx.question.createMany({
+//         data: questionData,
+//       });
+
+//       await logActivity({
+//         schoolId: schoolId ?? null,
+//         actorId: userId,
+//         actorRole: userRole,
+//         type: "ASSESSMENT_CREATED", 
+//         title: `AI Module Synthesized: ${topic.title}`,
+//         description: `Generated material and 10 assessment nodes for ${topic.title}.`
+//       });
+//     });
+    
+//     return { success: true };
+
+//   } catch (err: unknown) {
+//     console.error("[SYNTHESIS_HUB_FAULT]:", getErrorMessage(err));
+//     return { success: false, error: getErrorMessage(err) };
+//   }
+// }
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -3317,6 +3534,11 @@ export interface EnhancedLessonContent {
 }
 
 /* ───────── AI PROTOCOL SCHEMA ───────── */
+// IMPORTANT: This Zod schema is the actual contract the AI SDK enforces on
+// generateObject's output — it must stay in sync with EnhancedLessonContent
+// above. A field declared in the TS interface but missing here will always
+// come back `undefined` at runtime (no type error will catch this, since
+// the AI SDK result gets cast via `as unknown as Prisma.InputJsonValue`).
 
 const LessonAiSchema = z.object({
   metadata: z.object({
@@ -3340,6 +3562,12 @@ const LessonAiSchema = z.object({
         title: z.string(),
         description: z.string(),
         imagePrompt: z.string(),
+      })
+    ),
+    examples: z.array(
+      z.object({
+        task: z.string(),
+        solution: z.string(),
       })
     ),
     quiz: z.array(
@@ -3421,7 +3649,8 @@ CURRICULUM ALIGNMENT PROTOCOL:
 STRICT REGISTRY REQUIREMENTS:
 1. EXPLANATION: Construct a massive, high-fidelity lesson note (minimum 1000 words). Use academic Markdown with clear headings and tables for comparisons where useful.
 2. VISUAL ASSETS: Generate exactly 3 distinct image prompts for diagram synthesis.
-3. ASSESSMENT: Generate exactly 10 multiple-choice questions for the practice hub that mirror the style and rigor of ${curriculum.name} examinations.
+3. WORKED EXAMPLES: Generate 2-4 fully worked examples relevant to ${topic.title}, each with a clear "task" (the problem/question posed) and a step-by-step "solution" that models the reasoning a student should follow.
+4. ASSESSMENT: Generate exactly 10 multiple-choice questions for the practice hub that mirror the style and rigor of ${curriculum.name} examinations.
 
 STRICT SCOPE:
 - Topic: ${topic.title}

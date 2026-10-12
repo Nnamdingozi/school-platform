@@ -341,7 +341,7 @@ export function LoginForm() {
 
             setLoadingMsg('Hydrating registry...')
 
-            const profile = await getRegistryProfile(data.user.email)
+            const profile = await getRegistryProfile(data.user.id)
 
             if (!profile) {
                 toast.error('Identity record not discovered in registry.')

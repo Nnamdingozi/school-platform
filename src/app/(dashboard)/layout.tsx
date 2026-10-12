@@ -590,7 +590,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     // Contextual fetch based on identity role (Parent vs Staff/Student)
     const profileData = profileBase.role === Role.PARENT
         ? await getParentProfile(authUser.email!)
-        : await getRegistryProfile(authUser.email!);
+        : await getRegistryProfile(profileBase.id);
 
     if (!profileData) redirect('/login?error=registry_sync_failure');
 

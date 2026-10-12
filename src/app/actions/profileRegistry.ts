@@ -369,6 +369,130 @@
 
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { getErrorMessage } from '@/lib/error-handler'
+// import { Role } from '@prisma/client'
+
+// /**
+//  * FETCH UNIVERSAL REGISTRY PROFILE
+//  * Supports: ADMIN, TEACHER, STUDENT, INDIVIDUAL_LEARNER
+//  * Rule 5: Scopes institutional data (classes, school-lessons) to the user's school.
+//  * Rule 7: Resolves the 3-Tier data stack (Global Core + School Customization).
+//  */
+// export async function getRegistryProfile(email: string) {
+//     if (!email) return null;
+
+//     try {
+//         // 1. Initial lightweight lookup to resolve the Role and SchoolId context
+//         const base = await prisma.profile.findFirst({
+//             where: { email: email.toLowerCase() },
+//             select: { id: true, schoolId: true, role: true }
+//         });
+
+//         if (!base) return null;
+
+//         // Security Guard: Parents have their own specialized fetcher/data-shape
+//         if (base.role === Role.PARENT) {
+//             throw new Error("Logic Error: Use getParentProfile for family-tier accounts.");
+//         }
+
+//         const schoolId = base.schoolId;
+
+//         // 2. Comprehensive Registry Fetch
+//         const profile = await prisma.profile.findUnique({
+//             where: { id: base.id },
+//             include: {
+//                 // Tier 2: Institutional Metadata
+//                 school: {
+//                     include: {
+//                         curriculum: true,
+//                         // Contextual counts for dashboard vitals
+//                         _count: {
+//                             select: {
+//                                 users: true,
+//                                 classes: true
+//                             }
+//                         }
+//                     }
+//                 },
+//                 // Tier 1: Core Curriculum
+//                 curriculum: true,
+                
+//                 // Tier 3: User layer telemetry
+//                 notifications: {
+//                     orderBy: { createdAt: 'desc' },
+//                     take: 20,
+//                 },
+
+//                 // Tier 2/3: Classroom Placements
+//                 // Fetches classes taught (Staff) or classes enrolled (Student)
+//                 taughtClasses: {
+//                     where: { schoolId: schoolId ?? undefined },
+//                     include: { grade: true }
+//                 },
+//                 classEnrollments: {
+//                     where: { schoolId: schoolId ?? undefined },
+//                     include: { 
+//                         class: { 
+//                             include: { 
+//                                 grade: true,
+//                                 teacher: { select: { name: true, email: true } } 
+//                             } 
+//                         } 
+//                     }
+//                 },
+
+//                 // THE ACADEMIC REGISTRY (Rule 7 & 11)
+//                 selectedSubjects: {
+//                     include: {
+//                         grade: { select: { displayName: true, level: true } },
+//                         subject: { select: { name: true } },
+//                         topics: {
+//                             include: {
+//                                 term: {
+//                                     select: {
+//                                         id: true,
+//                                         displayName: true,
+//                                         index: true,
+//                                         startDate: true,
+//                                         endDate: true,
+//                                     },
+//                                 },
+//                                 // Tier 1: Global knowledge core
+//                                 GlobalLesson: {
+//                                     select: { id: true, aiContent: true, isGlobal: true }
+//                                 },
+//                                 // Tier 2: Institutional customization (Rule 5 Isolation)
+//                                 SchoolLesson: {
+//                                     where: { schoolId: schoolId ?? "NO_SCHOOL_CONTEXT" },
+//                                     select: { 
+//                                         id: true, 
+//                                         customContent: true, 
+//                                         isCustomized: true,
+//                                         status: true
+//                                     }
+//                                 }
+//                             },
+//                         },
+//                         // Enrollment context for this specific subject
+//                         studentSubjects: {
+//                             where: { studentId: base.id }
+//                         },
+//                     },
+//                 },
+//             },
+//         });
+
+//         return profile;
+//     } catch (err: unknown) {
+//         console.error('[REGISTRY_DATA_FETCH_ERROR]:', getErrorMessage(err));
+//         return null;
+//     }
+// }
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
@@ -380,14 +504,22 @@ import { Role } from '@prisma/client'
  * Supports: ADMIN, TEACHER, STUDENT, INDIVIDUAL_LEARNER
  * Rule 5: Scopes institutional data (classes, school-lessons) to the user's school.
  * Rule 7: Resolves the 3-Tier data stack (Global Core + School Customization).
+ *
+ * IMPORTANT: Takes userId (the Supabase Auth UID / Profile primary key), NOT
+ * email. `email` is not a standalone unique field on Profile — it's only
+ * unique in combination with schoolId — so an email-based lookup can
+ * silently resolve to the wrong row (wrong role, wrong schoolId) when the
+ * same email exists across multiple Profile rows. `id` is the true PK and
+ * removes that ambiguity entirely.
  */
-export async function getRegistryProfile(email: string) {
-    if (!email) return null;
+export async function getRegistryProfile(userId: string) {
+    if (!userId) return null;
 
     try {
-        // 1. Initial lightweight lookup to resolve the Role and SchoolId context
-        const base = await prisma.profile.findFirst({
-            where: { email: email.toLowerCase() },
+        // 1. Initial lightweight lookup to resolve the Role and SchoolId context —
+        //    unambiguous, keyed by primary key.
+        const base = await prisma.profile.findUnique({
+            where: { id: userId },
             select: { id: true, schoolId: true, role: true }
         });
 
@@ -419,7 +551,7 @@ export async function getRegistryProfile(email: string) {
                 },
                 // Tier 1: Core Curriculum
                 curriculum: true,
-                
+
                 // Tier 3: User layer telemetry
                 notifications: {
                     orderBy: { createdAt: 'desc' },
@@ -434,13 +566,13 @@ export async function getRegistryProfile(email: string) {
                 },
                 classEnrollments: {
                     where: { schoolId: schoolId ?? undefined },
-                    include: { 
-                        class: { 
-                            include: { 
+                    include: {
+                        class: {
+                            include: {
                                 grade: true,
-                                teacher: { select: { name: true, email: true } } 
-                            } 
-                        } 
+                                teacher: { select: { name: true, email: true } }
+                            }
+                        }
                     }
                 },
 
@@ -467,9 +599,9 @@ export async function getRegistryProfile(email: string) {
                                 // Tier 2: Institutional customization (Rule 5 Isolation)
                                 SchoolLesson: {
                                     where: { schoolId: schoolId ?? "NO_SCHOOL_CONTEXT" },
-                                    select: { 
-                                        id: true, 
-                                        customContent: true, 
+                                    select: {
+                                        id: true,
+                                        customContent: true,
                                         isCustomized: true,
                                         status: true
                                     }

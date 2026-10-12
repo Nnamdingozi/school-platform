@@ -2341,6 +2341,222 @@
 
 
 
+// 'use server'
+
+// import { prisma } from '@/lib/prisma'
+// import { revalidatePath } from 'next/cache'
+// import { Prisma, LessonStatus, Role, ActivityType } from '@prisma/client'
+// import { type EnhancedLessonContent } from '@/app/actions/ai-generator'
+// import { contentScope } from '@/lib/content-scope'
+// import { logActivity } from "@/app/actions/activitylog";
+
+// function getErrorMessage(error: unknown): string {
+//   if (error instanceof Error) return error.message;
+//   return "An unknown registry protocol error occurred";
+// }
+
+// // ── Explicit Return Type ──────────────────────────────────────────────────────
+
+// type GetStudentLessonResult =
+//   | {
+//       success: true;
+//       isGenerated: boolean;
+//       topicMetadata: { title: string; subject: string } | null;
+//       data: { id: string; title: string; aiContent: EnhancedLessonContent } | null;
+//     }
+//   | {
+//       success: false;
+//       error: string;
+//       isGenerated: false;
+//       topicMetadata: null;
+//       data: null;
+//     };
+
+// export async function getStudentLesson(
+//   topicId: string,
+//   schoolId: string | null,
+//   userRole: Role
+// ): Promise<GetStudentLessonResult> {
+//   try {
+//     // 1. Verify Topic existence
+//     const topic = await prisma.topic.findUnique({
+//       where: { id: topicId },
+//       include: { gradeSubject: { include: { subject: true } } }
+//     });
+
+//     // ✅ Fixed: was missing isGenerated, topicMetadata, data fields
+//     if (!topic) return {
+//       success: false,
+//       error: "Topic not discovered in registry.",
+//       isGenerated: false,
+//       topicMetadata: null,
+//       data: null,
+//     };
+
+//     let rawContent: EnhancedLessonContent | null = null;
+//     let lessonId: string = "";
+
+//     // 2. Resolve Content Source (Institutional Custom vs Global Blueprint)
+//     if (schoolId) {
+//       const schoolLesson = await prisma.schoolLesson.findUnique({
+//         where: { topicId_schoolId: { topicId, schoolId } },
+//         include: { globalLesson: true }
+//       });
+
+//       if (schoolLesson && schoolLesson.status === LessonStatus.PUBLISHED) {
+//         lessonId = schoolLesson.id;
+//         rawContent = (schoolLesson.customContent ?? schoolLesson.globalLesson.aiContent) as unknown as EnhancedLessonContent;
+//       }
+//     }
+
+//     if (!rawContent) {
+//       const globalLesson = await prisma.globalLesson.findFirst({
+//         where: { topicId },
+//         orderBy: { isGlobal: 'desc' }
+//       });
+
+//       if (globalLesson) {
+//         lessonId = globalLesson.id;
+//         rawContent = (globalLesson.aiContent as unknown) as EnhancedLessonContent;
+//       }
+//     }
+
+//     // 3. Fallback: Topic exists but no AI content generated yet — unchanged
+//     if (!rawContent) {
+//       return {
+//         success: true,
+//         isGenerated: false,
+//         topicMetadata: { title: topic.title, subject: topic.gradeSubject.subject.name },
+//         data: null,
+//       };
+//     }
+
+//     // 4. ROLE-BASED CONTENT MASKING — unchanged, your logic is correct
+//     const processedContent: EnhancedLessonContent = {
+//       ...rawContent,
+//       studentContent: {
+//         ...rawContent.studentContent,
+//         explanation: userRole === Role.STUDENT
+//           ? "Full explanation is restricted to the Classroom Hub. Use this summary for revision."
+//           : rawContent.studentContent.explanation,
+//         examples: userRole === Role.STUDENT ? [] : rawContent.studentContent.examples,
+//         visualAids: userRole === Role.STUDENT ? [] : rawContent.studentContent.visualAids,
+//       }
+//     };
+
+//     return {
+//       success: true,
+//       isGenerated: true,
+//       topicMetadata: { title: topic.title, subject: topic.gradeSubject.subject.name },
+//       data: {
+//         id: lessonId,
+//         title: topic.title,
+//         aiContent: processedContent,
+//       },
+//     };
+
+//   } catch (err) {
+//     // ✅ Fixed: was missing isGenerated, topicMetadata, data fields
+//     return {
+//       success: false,
+//       error: getErrorMessage(err),
+//       isGenerated: false,
+//       topicMetadata: null,
+//       data: null,
+//     };
+//   }
+// }
+
+// // ── publishLesson — unchanged ─────────────────────────────────────────────────
+
+// export async function publishLesson({
+//   topicId,
+//   schoolId,
+//   content,
+//   userId,
+//   userRole
+// }: {
+//   topicId: string
+//   schoolId: string
+//   content: EnhancedLessonContent,
+//   userId: string,
+//   userRole: Role
+// }) {
+//   try {
+//     const blueprint = await prisma.globalLesson.findFirst({
+//       where: { topicId }
+//     });
+
+//     if (!blueprint) throw new Error("Registry Error: Underlying module hub blueprint not discovered.");
+
+//     await prisma.schoolLesson.upsert({
+//       where: { topicId_schoolId: { topicId, schoolId } },
+//       update: {
+//         customContent: (content as unknown) as Prisma.InputJsonValue,
+//         status: LessonStatus.PUBLISHED,
+//         isCustomized: true,
+//       },
+//       create: {
+//         topicId,
+//         schoolId,
+//         globalLessonId: blueprint.id,
+//         customContent: (content as unknown) as Prisma.InputJsonValue,
+//         status: LessonStatus.PUBLISHED,
+//         isCustomized: true,
+//       }
+//     });
+
+//     await logActivity({
+//       schoolId,
+//       actorId: userId,
+//       actorRole: userRole,
+//       type: ActivityType.SETTINGS_UPDATED,
+//       title: `Academic Hub Published`,
+//       description: `Customized institutional module published for module ID: ${topicId}`
+//     });
+
+//     revalidatePath(`/student/lessons/${topicId}`)
+//     return { success: true }
+
+//   } catch (err) {
+//     console.error("[HUB_PUBLISH_FAULT]:", err);
+//     return { success: false, error: getErrorMessage(err) }
+//   }
+// }
+
+// // ── getLessonForTeacher — unchanged ──────────────────────────────────────────
+
+// export async function getLessonForTeacher(topicId: string, schoolId: string) {
+//   try {
+//     const schoolLesson = await prisma.schoolLesson.findUnique({
+//       where: {
+//         topicId_schoolId: { topicId, schoolId }
+//       },
+//       include: { globalLesson: true }
+//     })
+
+//     if (schoolLesson) return { success: true, data: schoolLesson }
+
+//     const globalLesson = await prisma.globalLesson.findFirst({
+//       where: { topicId, ...contentScope({ schoolId }) },
+//       orderBy: { schoolId: 'desc' }
+//     })
+
+//     return {
+//       success: true,
+//       data: globalLesson ? {
+//         id: "",
+//         customContent: globalLesson.aiContent,
+//         status: LessonStatus.DRAFT,
+//         globalLesson
+//       } : null
+//     }
+//   } catch (err) {
+//     return { success: false, error: getErrorMessage(err) }
+//   }
+// }
+
+
 'use server'
 
 import { prisma } from '@/lib/prisma'
@@ -2361,7 +2577,7 @@ type GetStudentLessonResult =
   | {
       success: true;
       isGenerated: boolean;
-      topicMetadata: { title: string; subject: string } | null;
+      topicMetadata: { title: string; subject: string; gradeSubjectId: string } | null;
       data: { id: string; title: string; aiContent: EnhancedLessonContent } | null;
     }
   | {
@@ -2384,7 +2600,6 @@ export async function getStudentLesson(
       include: { gradeSubject: { include: { subject: true } } }
     });
 
-    // ✅ Fixed: was missing isGenerated, topicMetadata, data fields
     if (!topic) return {
       success: false,
       error: "Topic not discovered in registry.",
@@ -2426,28 +2641,41 @@ export async function getStudentLesson(
       return {
         success: true,
         isGenerated: false,
-        topicMetadata: { title: topic.title, subject: topic.gradeSubject.subject.name },
+        topicMetadata: { title: topic.title, subject: topic.gradeSubject.subject.name, gradeSubjectId: topic.gradeSubjectId },
         data: null,
       };
     }
 
-    // 4. ROLE-BASED CONTENT MASKING — unchanged, your logic is correct
+    // 4. ROLE-BASED CONTENT MASKING
+    // Restriction applies ONLY to institutional students attached to a school —
+    // that's the actual "Classroom Hub" experience the masked copy refers to.
+    // Individual learners (Role.INDIVIDUAL_LEARNER, no schoolId) always get
+    // the full explanation, examples, and visual aids — there is no classroom
+    // to defer them to. Checking schoolId alongside role guards against any
+    // future role drift or misassignment producing the wrong experience.
+    const isRestrictedSchoolStudent: boolean = userRole === Role.STUDENT && schoolId !== null;
+
     const processedContent: EnhancedLessonContent = {
       ...rawContent,
       studentContent: {
         ...rawContent.studentContent,
-        explanation: userRole === Role.STUDENT
+        explanation: isRestrictedSchoolStudent
           ? "Full explanation is restricted to the Classroom Hub. Use this summary for revision."
           : rawContent.studentContent.explanation,
-        examples: userRole === Role.STUDENT ? [] : rawContent.studentContent.examples,
-        visualAids: userRole === Role.STUDENT ? [] : rawContent.studentContent.visualAids,
+        // ?? [] guards legacy rows generated before `examples` existed in
+        // the AI schema — remove once all lessons have been regenerated.
+        examples: isRestrictedSchoolStudent ? [] : (rawContent.studentContent.examples ?? []),
+        visualAids: isRestrictedSchoolStudent ? [] : (rawContent.studentContent.visualAids ?? []),
+        // quiz is NEVER masked — it's the assessment for the topic and
+        // must reach every student, school-attached or independent.
+        quiz: rawContent.studentContent.quiz ?? [],
       }
     };
 
     return {
       success: true,
       isGenerated: true,
-      topicMetadata: { title: topic.title, subject: topic.gradeSubject.subject.name },
+      topicMetadata: { title: topic.title, subject: topic.gradeSubject.subject.name, gradeSubjectId: topic.gradeSubjectId },
       data: {
         id: lessonId,
         title: topic.title,
@@ -2456,7 +2684,6 @@ export async function getStudentLesson(
     };
 
   } catch (err) {
-    // ✅ Fixed: was missing isGenerated, topicMetadata, data fields
     return {
       success: false,
       error: getErrorMessage(err),
