@@ -544,11 +544,19 @@ interface CurriculumRow {
     termLabel: string;
 }
 
+interface GradeRow {
+    id: string;
+    displayName: string;
+    curriculumId: string;
+
+}
+
 interface RegistrationData {
     name: string;
     email: string;
     password: string;
     curriculumId: string;
+    gradeId: string;
     secondaryCurriculumId?: string | null;
 }
 
@@ -572,6 +580,28 @@ export async function getCurricula(): Promise<{
         return { success: false, data: [], error: getErrorMessage(err) };
     }
 }
+
+
+export async function getGrade(cId): Promise<{
+    success: boolean;
+    data: GradeRow[];
+    error?: string;
+}> {
+    try {
+        const grade: GradeRow[] = await prisma.grade.findMany({
+            where: { schoolId: null, curriculumId: cId },
+            select: { id: true, displayName: true },
+            orderBy: { displayName: "asc" },
+        });
+        return { success: true, data: grade };
+    } catch (err: unknown) {
+        return { success: false, data: [], error: getErrorMessage(err) };
+    }
+}
+
+
+
+
 
 /**
  * REGISTER INDIVIDUAL LEARNER
@@ -616,6 +646,7 @@ export async function registerIndividualLearner(data: RegistrationData): Promise
             update: {
                 name: data.name,
                 curriculumId: data.curriculumId,
+                gradeId: data.gradeId,
                 secondaryCurriculumId: data.secondaryCurriculumId ?? null,
                 role: Role.INDIVIDUAL_LEARNER,
             },
@@ -625,6 +656,7 @@ export async function registerIndividualLearner(data: RegistrationData): Promise
                 name: data.name,
                 role: Role.INDIVIDUAL_LEARNER,
                 curriculumId: data.curriculumId,
+                gradeId: data.gradeId,
                 secondaryCurriculumId: data.secondaryCurriculumId ?? null,
             },
         });

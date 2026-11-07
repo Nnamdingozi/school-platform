@@ -1806,3 +1806,75 @@ export default async function StudentDashboardPage() {
         );
     }
 }
+
+
+
+// export default async function StudentDashboardPage() {
+//     try {
+//         const supabase = await createClient();
+//         const { data: { user: authUser } } = await supabase.auth.getUser();
+//         if (!authUser) redirect("/login");
+
+//         const profile = await prisma.profile.findUnique({
+//             where: { id: authUser.id },
+//             select: { id: true, schoolId: true }
+//         });
+
+//         if (!profile) redirect("/login?error=identity_not_discovered");
+
+//         const subStatus = await checkSubscription(profile.id, profile.schoolId);
+//         if (!subStatus.isActive) {
+//             const tier = profile.schoolId ? "institutional" : "individual";
+//             redirect(`/billing?reason=subscription_expired&tier=${tier}`);
+//         }
+
+//         const dashboardData = await getStudentDashboardData(profile.id);
+        
+//         if (!dashboardData) {
+//             redirect("/onboarding/individual");
+//         }
+
+//         // ✅ Fetch initial practice questions pool for the practice engine
+//         const practiceResult = await fetchMultiTopicPracticeQuestions({
+//             userId: profile.id,
+//             limit: 10,
+//         });
+
+//         // ✅ Rule 15 Bridge: Cast to strictly aligned interface.
+//         const initialData = (dashboardData as unknown) as StudentDashboardData;
+
+//         return (
+//             <main className="min-h-screen bg-background">
+//                 <StudentDashboardClient 
+//                     initialData={initialData}
+//                     initialPracticeQuestions={practiceResult.questions || []} // 👈 Pass fetched questions here
+//                 />
+//             </main>
+//         );
+
+//     } catch (error: unknown) {
+//         const message = getErrorMessage(error);
+//         console.error(`[STUDENT_HUB_SERVER_FAULT]: ${message}`);
+
+//         return (
+//             <main className="min-h-screen bg-background flex items-center justify-center p-6">
+//                 <div className="max-w-md w-full bg-card border border-destructive/20 p-8 rounded-[2rem] text-center space-y-4 shadow-xl">
+//                     <div className="h-16 w-16 bg-destructive-50 rounded-full flex items-center justify-center mx-auto mb-2">
+//                         <Activity className="h-8 w-8 text-destructive" />
+//                     </div>
+//                     <h2 className="text-xl font-extrabold text-foreground uppercase italic tracking-tighter">
+//                         Registry Sync Error
+//                     </h2>
+//                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-relaxed">
+//                         {message}
+//                     </p>
+//                     <div className="pt-4">
+//                         <a href="/login" className="text-[10px] font-extrabold text-school-primary uppercase tracking-widest hover:underline">
+//                             Re-initialize Session
+//                         </a>
+//                     </div>
+//                 </div>
+//             </main>
+//         );
+//     }
+// }

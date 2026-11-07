@@ -152,6 +152,7 @@ export interface RegisterState {
     email: string;
     name: string;
     curriculumId: string; 
+    gradeId: string;
     plans: SubscriptionPlanItem[];
     isRegistered: boolean;
     paymentStatus: PaymentStatus;
@@ -162,7 +163,7 @@ export interface RegisterState {
     setStep: (step: number) => void;
     nextStep: () => void;
     prevStep: () => void;
-    setIdentity: (name: string, email: string, curriculumId: string) => void;
+    setIdentity: (name: string, email: string, curriculumId: string, gradeId: string) => void;
     setPlans: (plans: SubscriptionPlanItem[]) => void;
     setPaymentSuccess: (reference: string, planSlug: string) => void;
     setComplete: (val: boolean) => void;
@@ -176,6 +177,7 @@ export const useRegisterStore = create<RegisterState>()(
             email: '',
             name: '',
             curriculumId: '',
+            gradeId: '',
             plans: [],
             isRegistered: false,
             paymentStatus: 'pending',
@@ -194,9 +196,9 @@ export const useRegisterStore = create<RegisterState>()(
                 if (state.paymentStatus === 'paid') return state;
                 return { step: Math.max(state.step - 1, 1) };
             }),
-            setIdentity: (name: string, email: string, curriculumId: string) => {
+            setIdentity: (name: string, email: string, curriculumId: string, gradeId: string) => {
                 if (get().paymentStatus === 'paid') return;
-                set({ name, email, curriculumId });
+                set({ name, email, curriculumId, gradeId });
             },
             setPlans: (plans: SubscriptionPlanItem[]) => set({ plans }),
             setPaymentSuccess: (reference: string, planSlug: string) => set({
@@ -208,7 +210,7 @@ export const useRegisterStore = create<RegisterState>()(
             reset: () => {
                 if (get().paymentStatus === 'paid') return;
                 set({ 
-                    step: 1, email: '', name: '', curriculumId: '', 
+                    step: 1, email: '', name: '', curriculumId: '', gradeId: '',
                     isRegistered: false, paymentStatus: 'pending',
                     selectedPlanSlug: null, paymentReference: null
                 });

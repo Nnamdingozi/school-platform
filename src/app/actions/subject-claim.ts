@@ -216,3 +216,173 @@ export async function releaseSubjectAction(params: {
     return { success: false, error: getErrorMessage(err) };
   }
 }
+
+/**
+ * FETCH INDIVIDUAL LEARNER SUBJECT LIBRARY
+ * Pulls global subjects and grade mappings for a student without a school.
+ */
+
+
+
+export async function getIndividualLearnerSubjects(userId: string) {
+  try {
+      // 1. Fetch the user's profile to get their curriculum and grade context
+      const profile = await prisma.profile.findUnique({
+          where: { id: userId },
+          select: { curriculumId: true, gradeId: true }
+      });
+
+      if (!profile || !profile.gradeId) {
+          return [];
+      }
+
+      // 2. Query grade subjects filtered strictly by the user's gradeId with no constraints limiting count
+      const gradeSubjects = await prisma.gradeSubject.findMany({
+          where: {
+              schoolId: null, // Global templates only
+              gradeId: profile.gradeId,
+          },
+          include: {
+              subject: { select: { id: true, name: true } },
+              grade: { select: { id: true, displayName: true, level: true } }
+          },
+          orderBy: [
+              { grade: { level: 'asc' } },
+              { subject: { name: 'asc' } }
+          ]
+      });
+
+      // 3. Map to match the expected page shape (`SubjectRegistryNode`)
+      return gradeSubjects.map(gs => ({
+          id: gs.id,
+          name: gs.subject.name,
+          code: null,
+          isGlobal: true,
+          isOwned: false,
+          profileId: null,
+          subject: {
+              id: gs.subject.id,
+              name: gs.subject.name,
+              isGlobal: true
+          },
+          grade: {
+              id: gs.grade.id,
+              displayName: gs.grade.displayName
+          },
+          profile: null
+      }));
+
+  } catch (err: unknown) {
+      console.error("Fetch Individual Registry Error:", getErrorMessage(err));
+      return [];
+  }
+}
+
+
+// export async function toggleLearnerSubjectLibrary({ gradeSubjectId, userId, action }: { gradeSubjectId: string; userId: string; action: 'claim' | 'release' }) {
+//   try {
+//     if (action === 'claim') {
+//       // Upsert or create entry in StudentSubject for the individual learner (schoolId is null)
+//       await prisma.studentSubject.upsert({
+//         where: {
+//           schoolId_studentId_gradeSubjectId: {
+//             schoolId: null as any, // Prisma handles null unique fields conditionally depending on setup, or use create/delete directly
+//             studentId: userId,
+//             gradeSubjectId: gradeSubjectId,
+//           }
+//         },
+//         update: { status: 'APPROVED' },
+//         create: {
+//           studentId: userId,
+//           gradeSubjectId: gradeSubjectId,
+//           schoolId: null,
+//           status: 'APPROVED',
+//           isCompulsory: false
+//         }
+//       });
+//     } else {
+//       // Remove from StudentSubject library
+//       await prisma.studentSubject.deleteMany({
+//         where: {
+//           studentId: userId,
+//           gradeSubjectId: gradeSubjectId,
+//           schoolId: null
+//         }
+//       });
+//     }
+
+//     revalidatePath("/subjects/manage");
+//     revalidatePath("/student/subjects");
+//     return { success: true };
+//   } catch (error: any) {
+//     return { success: false, error: error.message };
+//   }
+// }
+
+
+
+export async function toggleLearnerSubjectLibrary({ gradeSubjectId, userId, action }: { gradeSubjectId: string; userId: string; action: 'claim' | 'release' }) {
+  try {
+    if (action === 'claim') {
+      // Check if it already exists for this individual learner
+      const existing = await prisma.studentSubject.findFirst({
+        where: {
+          studentId: userId,
+          gradeSubjectId: gradeSubjectId,
+          schoolId: null,
+        }
+      });
+
+      if (!existing) {
+        await prisma.studentSubject.create({
+          data: {
+            studentId: userId,
+            gradeSubjectId: gradeSubjectId,
+            schoolId: null,
+            status: 'APPROVED',
+            isCompulsory: false
+          }
+        });
+      }
+    } else {
+      // Remove from library
+      await prisma.studentSubject.deleteMany({
+        where: {
+          studentId: userId,
+          gradeSubjectId: gradeSubjectId,
+          schoolId: null
+        }
+      });
+    }
+
+    revalidatePath("/subjects/manage");
+    revalidatePath("/student/subject");
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+  
+export async function getAllGlobalSubjects(gradeId?: string | null) {
+  try {
+    const subjects = await prisma.gradeSubject.findMany({
+      where: {
+        schoolId: null, // Always fetch global modules
+        // Only apply grade filtering if a valid gradeId is present on the learner profile
+        ...(gradeId ? { gradeId } : {}),
+      },
+      include: {
+        subject: { select: { name: true } },
+        grade: { select: { displayName: true, id: true } },
+      },
+      orderBy: {
+        grade: { displayOrder: 'asc' }
+      }
+    });
+
+    return subjects;
+  } catch (error) {
+    console.error("Failed to fetch global subjects:", error);
+    return [];
+  }
+}
